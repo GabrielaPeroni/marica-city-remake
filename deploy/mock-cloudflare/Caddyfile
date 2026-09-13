@@ -4,7 +4,7 @@
 	admin off
 }
 
-:443 {
+localhost:443 {
 	tls internal
 	reverse_proxy app:8000 {
 		header_up X-Forwarded-Proto https
