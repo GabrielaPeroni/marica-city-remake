@@ -1,10 +1,22 @@
+from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from .models import Category, Place, PlaceApproval, PlaceReview
+from .models import Category, Place, PlaceApproval, PlaceImage, PlaceReview
 
 User = get_user_model()
+
+# 1x1 pixel transparent GIF - smallest valid image Pillow will accept.
+TINY_GIF = (
+    b"GIF87a\x01\x00\x01\x00\x80\x01\x00\x00\x00\x00ccc,"
+    b"\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;"
+)
+
+
+def make_test_image(name="test.gif"):
+    return SimpleUploadedFile(name, TINY_GIF, content_type="image/gif")
 
 
 class CategoryModelTests(TestCase):
@@ -148,6 +160,50 @@ class PlaceImageModelTests(TestCase):
         """Test gallery_images property"""
         images = self.place.gallery_images
         self.assertEqual(images.count(), 0)
+
+    def test_primary_image_uses_prefetch_cache(self):
+        """Regression: primary_image used filter().first(), which always
+        hits the DB and defeats prefetch_related, causing N+1 in place
+        lists. Accessing it must not issue extra queries when prefetched."""
+        for i in range(3):
+            PlaceImage.objects.create(
+                place=self.place,
+                image=make_test_image(f"img{i}.gif"),
+                is_primary=(i == 1),
+            )
+
+        places = Place.objects.filter(pk=self.place.pk).prefetch_related("images")
+        with self.assertNumQueries(2):  # 1 for places, 1 for prefetching images
+            places = list(places)
+            for place in places:
+                place.primary_image
+
+        self.assertEqual(places[0].primary_image.caption, "")
+        self.assertTrue(places[0].primary_image.is_primary)
+
+    def test_primary_image_returns_none_without_primary(self):
+        """No image flagged primary should mean no fallback, not a crash"""
+        PlaceImage.objects.create(place=self.place, image=make_test_image())
+        self.assertIsNone(self.place.primary_image)
+
+    def test_only_one_image_stays_primary_across_sequential_saves(self):
+        """Verified correct, not a bug: PlaceImage.save() demotes other
+        primaries via an UPDATE before inserting/saving itself, so marking
+        a second image primary always leaves exactly one primary, never
+        two and never zero."""
+        img1 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("a.gif"), is_primary=True
+        )
+        img2 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("b.gif"), is_primary=True
+        )
+
+        img1.refresh_from_db()
+        img2.refresh_from_db()
+        primaries = list(PlaceImage.objects.filter(place=self.place, is_primary=True))
+        self.assertEqual(len(primaries), 1)
+        self.assertEqual(primaries[0].pk, img2.pk)
+        self.assertFalse(img1.is_primary)
 
 
 class PlaceApprovalModelTests(TestCase):
@@ -486,6 +542,48 @@ class PlaceUpdateViewTests(TestCase):
             response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
         )
 
+    def test_deleting_primary_image_via_formset_promotes_another(self):
+        """Deleting the current primary image through the edit formset
+        must leave exactly one primary image among what remains, not zero."""
+        img1 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("a.gif"), is_primary=True
+        )
+        img2 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("b.gif"), is_primary=False
+        )
+
+        self.client.login(username="creator", password="pass123")
+
+        form_data = {
+            "name": self.place.name,
+            "description": self.place.description,
+            "address": self.place.address,
+            "categories": [self.category.id],
+            "images-TOTAL_FORMS": "2",
+            "images-INITIAL_FORMS": "2",
+            "images-MIN_NUM_FORMS": "0",
+            "images-MAX_NUM_FORMS": "10",
+            "images-0-id": str(img1.pk),
+            "images-0-caption": "",
+            "images-0-display_order": "0",
+            "images-0-DELETE": "on",
+            "images-1-id": str(img2.pk),
+            "images-1-caption": "",
+            "images-1-display_order": "0",
+        }
+
+        response = self.client.post(
+            reverse("explore:place_edit", kwargs={"pk": self.place.pk}), data=form_data
+        )
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
+        )
+
+        remaining = list(self.place.images.all())
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0].pk, img2.pk)
+        self.assertTrue(remaining[0].is_primary)
+
 
 class PlaceDeleteViewTests(TestCase):
     """Tests for place deletion functionality"""
@@ -636,6 +734,40 @@ class PlaceDetailViewTests(TestCase):
             reverse("explore:place_detail", kwargs={"pk": self.unapproved_place.pk})
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_approved_but_inactive_place_hidden_from_other_users(self):
+        """Regression: the visibility check only looked at is_approved, so
+        an approved-but-deactivated place (is_active=False, e.g. an admin
+        toggled it off without going through the reject workflow) leaked
+        to any logged-in non-owner/non-moderator, unlike the anonymous and
+        list-view paths which both require is_approved AND is_active."""
+        inactive_place = Place.objects.create(
+            name="Deactivated Place",
+            description="Was approved, then deactivated",
+            address="Some address",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=False,
+        )
+
+        self.client.login(username="other", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Owner and moderator can still see it
+        self.client.login(username="creator", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 200)
 
     def test_edit_button_shown_to_authorized_users(self):
         """Test edit button is shown to authorized users"""
@@ -1284,3 +1416,58 @@ class MapDataAPITests(TestCase):
         self.assertEqual(data["count"], 2)
         self.assertEqual(data["places"][0]["name"], "Newer Place")
         self.assertEqual(data["places"][1]["name"], "Approved Place")
+
+    def test_api_query_count_does_not_scale_with_place_count(self):
+        """Regression: rating/review_count/category lookups were computed
+        per-place in the loop (categories.first() also bypassed the
+        prefetch cache), so the query count grew with the number of
+        places. It must now stay flat."""
+        for i in range(5):
+            place = Place.objects.create(
+                name=f"Bulk Place {i}",
+                description="d",
+                address="a",
+                latitude=-22.9,
+                longitude=-43.1,
+                created_by=self.user,
+                is_approved=True,
+                is_active=True,
+            )
+            place.categories.add(self.category)
+            PlaceReview.objects.create(
+                place=place, user=self.user, rating=5, comment="Great"
+            )
+
+        with self.assertNumQueries(3):
+            response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+
+class PlaceAdminTests(TestCase):
+    """PlaceAdmin.fieldsets must only reference real Place fields."""
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.superuser = User.objects.create_superuser(
+            username="superadmin", email="super@example.com", password="pass123"
+        )
+        self.place = Place.objects.create(
+            name="Admin Test Place",
+            description="Desc",
+            address="Addr",
+            created_by=self.superuser,
+        )
+
+    def test_place_admin_get_form_does_not_raise(self):
+        """Regression: fieldsets referenced contact_phone/email/website,
+        fields that live on accounts.User, not Place - crashed add/change."""
+        request = self.factory.get(f"/admin/explore/place/{self.place.pk}/change/")
+        request.user = self.superuser
+        place_admin = admin.site._registry[Place]
+        form_class = place_admin.get_form(request, self.place)
+        self.assertNotIn("contact_phone", form_class.base_fields)
+
+    def test_place_admin_change_view_loads(self):
+        self.client.login(username="superadmin", password="pass123")
+        response = self.client.get(f"/admin/explore/place/{self.place.pk}/change/")
+        self.assertEqual(response.status_code, 200)

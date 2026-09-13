@@ -105,11 +105,12 @@ def place_detail_view(request, pk):
         place = get_object_or_404(
             Place.objects.prefetch_related("images", "categories"), pk=pk
         )
-        # Mas usuários regulares só podem ver seus próprios lugares se não aprovados
+        # Mas usuários regulares só podem ver lugares aprovados E ativos
+        # (a menos que sejam o próprio criador ou um moderador)
         if (
             place.created_by != request.user
             and not request.user.can_moderate
-            and not place.is_approved
+            and not (place.is_approved and place.is_active)
         ):
             place = get_object_or_404(Place, pk=pk, is_approved=True, is_active=True)
     else:

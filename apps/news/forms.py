@@ -118,6 +118,7 @@ class NewsForm(forms.ModelForm):
         cleaned_data = super().clean()
         category = cleaned_data.get("category")
         event_date = cleaned_data.get("event_date")
+        event_end_date = cleaned_data.get("event_end_date")
         event_location = cleaned_data.get("event_location")
 
         # Validate event-specific fields if category is Event
@@ -130,6 +131,13 @@ class NewsForm(forms.ModelForm):
                 self.add_error(
                     "event_location", "Local do evento é obrigatório para eventos."
                 )
+
+        # Event end date must not be before its start date
+        if event_date and event_end_date and event_end_date < event_date:
+            self.add_error(
+                "event_end_date",
+                "A data final do evento não pode ser anterior à data de início.",
+            )
 
         # Validate excerpt length
         excerpt = cleaned_data.get("excerpt")
