@@ -39,7 +39,7 @@ dev = [
     "django-extra-checks>=0.13.3,<0.14",
 
     # Type checking (optional)
-    "mypy>=1.8.0,<2.0",
+    "mypy>=2.3.1,<3.0",
     "django-stubs>=6.0.9,<7.0",
 
     # Tool configurations
