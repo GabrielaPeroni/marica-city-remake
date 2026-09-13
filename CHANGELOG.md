@@ -31,6 +31,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   3→4, `django-extra-checks` (confirmed unused). GitHub Actions bumped to their
   latest majors (`actions/checkout`, `setup-python`, `setup-node`, `setup-uv`,
   `codeql-action`).
+- `Place.primary_image` and the map/favorites JSON APIs now read from prefetched
+  querysets instead of issuing per-place queries in list/loop views.
+
+### Fixed
+
+- `PlaceAdmin` fieldsets referenced `Place` fields removed in a past migration,
+  crashing the admin add/change page for places entirely.
+- `NewsForm` didn't validate that an event's end date isn't before its start date.
+- `place_detail_view` only checked `is_approved`, not `is_active`, when deciding
+  whether a non-owner/non-moderator could view a place — an approved-but-
+  deactivated place was visible to any logged-in user.
 
 ## [0.2.0] - 2026-09-13
 
