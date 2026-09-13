@@ -3,6 +3,7 @@ Views de API para o aplicativo explore
 Fornece endpoints JSON para integração com mapas e outros recursos
 """
 
+from django.db.models import Avg, Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
@@ -24,6 +25,12 @@ def map_data_api(request):
             longitude__isnull=False,
         )
         .prefetch_related("images", "categories")
+        # Aggregate rating/review count in SQL instead of one query per
+        # place in the loop below (distinct=True avoids join fan-out).
+        .annotate(
+            avg_rating=Avg("reviews__rating"),
+            rating_count=Count("reviews", distinct=True),
+        )
         .order_by("-created_at")
     )
 
@@ -34,8 +41,9 @@ def map_data_api(request):
         primary_image = place.primary_image
         image_url = primary_image.image.url if primary_image else None
 
-        # Obter primeira categoria para ícone/cor
-        first_category = place.categories.first()
+        # Obter primeira categoria para ícone/cor (usa o cache do prefetch)
+        categories = list(place.categories.all())
+        first_category = categories[0] if categories else None
         category_name = first_category.name if first_category else "Outros"
         category_icon = first_category.icon if first_category else "📍"
 
@@ -54,8 +62,8 @@ def map_data_api(request):
                 "category": category_name,
                 "category_icon": category_icon,
                 "url": f"/explore/place/{place.id}/",
-                "rating": float(place.average_rating) if place.average_rating else None,
-                "review_count": place.reviews.count(),
+                "rating": round(place.avg_rating, 1) if place.avg_rating else None,
+                "review_count": place.rating_count,
             }
         )
 
@@ -88,6 +96,10 @@ def places_by_ids_api(request):
             is_active=True,
         )
         .prefetch_related("images", "categories", "created_by")
+        .annotate(
+            avg_rating=Avg("reviews__rating"),
+            rating_count=Count("reviews", distinct=True),
+        )
         .order_by("-created_at")
     )
 
@@ -116,8 +128,8 @@ def places_by_ids_api(request):
                 "image_url": image_url,
                 "categories": categories,
                 "url": f"/explore/place/{place.id}/",
-                "rating": float(place.average_rating) if place.average_rating else None,
-                "review_count": place.reviews.count(),
+                "rating": round(place.avg_rating, 1) if place.avg_rating else None,
+                "review_count": place.rating_count,
             }
         )
 

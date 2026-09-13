@@ -1322,6 +1322,31 @@ class MapDataAPITests(TestCase):
         self.assertEqual(data["places"][0]["name"], "Newer Place")
         self.assertEqual(data["places"][1]["name"], "Approved Place")
 
+    def test_api_query_count_does_not_scale_with_place_count(self):
+        """Regression: rating/review_count/category lookups were computed
+        per-place in the loop (categories.first() also bypassed the
+        prefetch cache), so the query count grew with the number of
+        places. It must now stay flat."""
+        for i in range(5):
+            place = Place.objects.create(
+                name=f"Bulk Place {i}",
+                description="d",
+                address="a",
+                latitude=-22.9,
+                longitude=-43.1,
+                created_by=self.user,
+                is_approved=True,
+                is_active=True,
+            )
+            place.categories.add(self.category)
+            PlaceReview.objects.create(
+                place=place, user=self.user, rating=5, comment="Great"
+            )
+
+        with self.assertNumQueries(3):
+            response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
 
 class PlaceAdminTests(TestCase):
     """PlaceAdmin.fieldsets must only reference real Place fields."""
