@@ -2,7 +2,7 @@ from pathlib import Path
 
 from decouple import config
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", default=False, cast=bool)
@@ -89,12 +89,27 @@ USE_I18N = True
 
 USE_TZ = True
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "ratelimit-cache",
+# Points at Redis via CACHE_URL/REDIS_URL in prod; LocMemCache otherwise
+# (not safe across multiple processes/workers).
+_CACHE_URL = config("CACHE_URL", default=config("REDIS_URL", default=""))
+
+if _CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": _CACHE_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "ratelimit-cache",
+        }
+    }
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -128,10 +143,54 @@ RATELIMIT_ENABLE = config("RATELIMIT_ENABLE", default=True, cast=bool)
 RATELIMIT_USE_CACHE = "default"  # Usar cache padrão para limitação de taxa
 RATELIMIT_VIEW = "apps.explore.ratelimit_handlers.ratelimited_error"
 
-# Silenciar avisos do django-ratelimit para LocMemCache em desenvolvimento
-# Para produção com múltiplos processos, mude para Redis ou Memcached
+# Silenciar avisos do django-ratelimit sobre LocMemCache em desenvolvimento
 SILENCED_SYSTEM_CHECKS = ["django_ratelimit.E003", "django_ratelimit.W001"]
 
 # Configuração de testes
 # Usar executor de testes personalizado para excluir .github da descoberta de testes
 TEST_RUNNER = "config.test_runner.CustomTestRunner"
+
+# dev.py/prod.py adjust levels and formatter on top of this.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "[{levelname}] {asctime} {name}: {message}",
+            "style": "{",
+        },
+        "structured": {
+            "format": (
+                'level={levelname} time="{asctime}" logger={name} message="{message}"'
+            ),
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
