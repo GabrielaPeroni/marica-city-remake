@@ -635,11 +635,11 @@ wheels = [
 
 [[package]]
 name = "django-extra-checks"
-version = "0.13.3"
+version = "0.17.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/4a/4c/e470431b0c5614683a63a0084bef58153081b4756c6a6a809bba2ebb2768/django-extra-checks-0.13.3.tar.gz", hash = "sha256:02782cee0763f48f4cd471e8cb4a3aeee6b3b5a02d351a8ed32b0f3213e30385", size = 26815, upload-time = "2022-11-19T17:57:16.861Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/2b/2ce50c5736d00a39f737944d7a174cef154368b0b10a6164c614a60c22ab/django_extra_checks-0.17.0.tar.gz", hash = "sha256:619f79f37de23931d08539ed97b2b945c2887c73f753eccc98544ffd3f7d3e60", size = 14782, upload-time = "2026-05-21T09:41:27.681Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/b2/8650ad86563b8b65d4fab37b9f9e644b0dad843d24a288cade9779568d42/django_extra_checks-0.13.3-py3-none-any.whl", hash = "sha256:4f62eb1788219ec2635ccc83ba46d78dc0af7452058842dcffb1634710360b6d", size = 21730, upload-time = "2022-11-19T17:57:15.421Z" },
+    { url = "https://files.pythonhosted.org/packages/58/3d/92f6b4727b936ed293eafad1236600cb7bd36b27d189abea59dd6f65bebf/django_extra_checks-0.17.0-py3-none-any.whl", hash = "sha256:f41e2e4455e5467aa9b3e28500d4d140b9fb9eedf5e42e0fb71498846813608a", size = 21390, upload-time = "2026-05-21T09:41:26.283Z" },
 ]
 
 [[package]]
@@ -1933,7 +1933,7 @@ dev = [
     { name = "black", specifier = ">=26.3.1,<27.0" },
     { name = "commitizen", specifier = ">=4.18.0,<5.0" },
     { name = "coverage", specifier = ">=7.11.0,<8.0" },
-    { name = "django-extra-checks", specifier = ">=0.13.3,<0.14" },
+    { name = "django-extra-checks", specifier = ">=0.17.0,<0.18" },
     { name = "django-stubs", specifier = ">=6.0.9,<7.0" },
     { name = "django-upgrade", specifier = ">=1.15.0,<2.0" },
     { name = "flake8", specifier = ">=7.3.0,<8.0" },

@@ -36,7 +36,7 @@ dev = [
 
     # Pre-commit and testing
     "pre-commit>=4.6.2,<5.0",
-    "django-extra-checks>=0.13.3,<0.14",
+    "django-extra-checks>=0.17.0,<0.18",
 
     # Type checking (optional)
     "mypy>=2.3.1,<3.0",
