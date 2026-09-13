@@ -186,6 +186,25 @@ class PlaceImageModelTests(TestCase):
         PlaceImage.objects.create(place=self.place, image=make_test_image())
         self.assertIsNone(self.place.primary_image)
 
+    def test_only_one_image_stays_primary_across_sequential_saves(self):
+        """Verified correct, not a bug: PlaceImage.save() demotes other
+        primaries via an UPDATE before inserting/saving itself, so marking
+        a second image primary always leaves exactly one primary, never
+        two and never zero."""
+        img1 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("a.gif"), is_primary=True
+        )
+        img2 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("b.gif"), is_primary=True
+        )
+
+        img1.refresh_from_db()
+        img2.refresh_from_db()
+        primaries = list(PlaceImage.objects.filter(place=self.place, is_primary=True))
+        self.assertEqual(len(primaries), 1)
+        self.assertEqual(primaries[0].pk, img2.pk)
+        self.assertFalse(img1.is_primary)
+
 
 class PlaceApprovalModelTests(TestCase):
     """Tests for PlaceApproval model"""
@@ -522,6 +541,48 @@ class PlaceUpdateViewTests(TestCase):
         self.assertRedirects(
             response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
         )
+
+    def test_deleting_primary_image_via_formset_promotes_another(self):
+        """Deleting the current primary image through the edit formset
+        must leave exactly one primary image among what remains, not zero."""
+        img1 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("a.gif"), is_primary=True
+        )
+        img2 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("b.gif"), is_primary=False
+        )
+
+        self.client.login(username="creator", password="pass123")
+
+        form_data = {
+            "name": self.place.name,
+            "description": self.place.description,
+            "address": self.place.address,
+            "categories": [self.category.id],
+            "images-TOTAL_FORMS": "2",
+            "images-INITIAL_FORMS": "2",
+            "images-MIN_NUM_FORMS": "0",
+            "images-MAX_NUM_FORMS": "10",
+            "images-0-id": str(img1.pk),
+            "images-0-caption": "",
+            "images-0-display_order": "0",
+            "images-0-DELETE": "on",
+            "images-1-id": str(img2.pk),
+            "images-1-caption": "",
+            "images-1-display_order": "0",
+        }
+
+        response = self.client.post(
+            reverse("explore:place_edit", kwargs={"pk": self.place.pk}), data=form_data
+        )
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
+        )
+
+        remaining = list(self.place.images.all())
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0].pk, img2.pk)
+        self.assertTrue(remaining[0].is_primary)
 
 
 class PlaceDeleteViewTests(TestCase):
