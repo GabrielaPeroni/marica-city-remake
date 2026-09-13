@@ -3,7 +3,10 @@ import sys
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    # Defaults to dev settings so local workflows keep working unchanged;
+    # set DJANGO_SETTINGS_MODULE=config.settings.prod explicitly in
+    # production deployments (see config/settings/README or CLAUDE.md).
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

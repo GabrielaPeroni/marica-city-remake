@@ -105,7 +105,11 @@ marica-city-remake/
 ├── config/                         # Configurações Django
 │   ├── __init__.py
 │   ├── asgi.py                    # Configuração ASGI para async
-│   ├── settings.py                # Configurações principais do Django
+│   ├── settings/                  # Pacote de settings (por ambiente)
+│   │   ├── __init__.py
+│   │   ├── base.py                # Configurações comuns a todos os ambientes
+│   │   ├── dev.py                 # Overrides de desenvolvimento (padrão)
+│   │   └── prod.py                # Overrides de produção (hardening de segurança)
 │   ├── urls.py                    # Configuração de URLs raiz
 │   └── wsgi.py                    # Configuração WSGI para deploy
 │
@@ -684,7 +688,25 @@ static/
 
 ## 🔧 Arquitetura Backend
 
-### Configuração de Settings (config/settings.py)
+### Configuração de Settings (config/settings/)
+
+As configurações estão divididas em um pacote por ambiente, em vez de um
+único `settings.py`:
+
+- **`base.py`** — tudo que é comum aos dois ambientes: apps instalados,
+  middleware, templates, banco de dados, validadores de senha,
+  `CACHES` (configurável via `CACHE_URL`/`REDIS_URL`, com fallback para
+  `LocMemCache`) e o esqueleto de `LOGGING` (console/stdout).
+- **`dev.py`** — importa de `base.py`; `DEBUG=True` por padrão, hosts
+  permissivos (`localhost,127.0.0.1,0.0.0.0`), sem exigir HTTPS. É o módulo
+  usado por padrão (`manage.py`, `wsgi.py`, `asgi.py` e o CI de testes).
+- **`prod.py`** — importa de `base.py`; ativa o hardening de segurança
+  (`SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`,
+  `SECURE_HSTS_*`, `SECURE_PROXY_SSL_HEADER` para funcionar atrás de um
+  proxy/CDN como o Cloudflare, `SECURE_CONTENT_TYPE_NOSNIFF`) e usa um
+  formatter de log estruturado (`key=value`) mais adequado a coletores de
+  log de containers. Ativado definindo
+  `DJANGO_SETTINGS_MODULE=config.settings.prod` no ambiente de deploy.
 
 **Configurações Principais:**
 

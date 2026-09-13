@@ -2,9 +2,13 @@ from pathlib import Path
 
 from decouple import config
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# config/settings/base.py -> config/settings/ -> config/ -> repo root
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
+# DEBUG and ALLOWED_HOSTS have sensible shared defaults here, but are
+# re-declared explicitly in dev.py / prod.py so each environment's intent
+# is obvious without having to cross-reference this file.
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
@@ -89,12 +93,33 @@ USE_I18N = True
 
 USE_TZ = True
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "ratelimit-cache",
+# Cache backend (also used for django-ratelimit, see RATELIMIT_USE_CACHE below).
+#
+# Configurable via env so prod can point at Redis without code changes:
+#   CACHE_URL=rediss://:password@host:6379/0   (or REDIS_URL, checked as a fallback)
+# Leaving both unset keeps the LocMemCache default, which is fine for local
+# dev/tests but is per-process and NOT safe for a multi-process/multi-worker
+# production deployment (rate limiting and any other cached state would be
+# inconsistent across workers).
+_CACHE_URL = config("CACHE_URL", default=config("REDIS_URL", default=""))
+
+if _CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": _CACHE_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "ratelimit-cache",
+        }
+    }
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -129,9 +154,65 @@ RATELIMIT_USE_CACHE = "default"  # Usar cache padrão para limitação de taxa
 RATELIMIT_VIEW = "apps.explore.ratelimit_handlers.ratelimited_error"
 
 # Silenciar avisos do django-ratelimit para LocMemCache em desenvolvimento
-# Para produção com múltiplos processos, mude para Redis ou Memcached
+# Quando CACHE_URL/REDIS_URL aponta para Redis (ex.: em produção), esses
+# avisos não se aplicam, mas mantê-los silenciados também no LocMemCache
+# de dev evita ruído desnecessário.
 SILENCED_SYSTEM_CHECKS = ["django_ratelimit.E003", "django_ratelimit.W001"]
 
 # Configuração de testes
 # Usar executor de testes personalizado para excluir .github da descoberta de testes
 TEST_RUNNER = "config.test_runner.CustomTestRunner"
+
+# Logging
+#
+# Shared base: everything logs to the console (stdout/stderr), which is the
+# right target for both `runserver` in dev and a containerized prod
+# deployment (container log collectors — Docker, Cloudflare, any PaaS —
+# expect app logs on stdout/stderr rather than files). dev.py and prod.py
+# each set their own levels/formatter on top of this skeleton.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "[{levelname}] {asctime} {name}: {message}",
+            "style": "{",
+        },
+        "structured": {
+            # key=value style output that's easy for container log collectors
+            # (Docker, Cloudflare, any PaaS log pipeline) to parse as
+            # semi-structured text without needing a JSON logging library.
+            "format": (
+                'level={levelname} time="{asctime}" logger={name} message="{message}"'
+            ),
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
