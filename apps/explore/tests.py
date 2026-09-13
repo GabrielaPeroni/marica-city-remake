@@ -1,11 +1,22 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from .models import Category, Place, PlaceApproval, PlaceReview
+from .models import Category, Place, PlaceApproval, PlaceImage, PlaceReview
 
 User = get_user_model()
+
+# 1x1 pixel transparent GIF - smallest valid image Pillow will accept.
+TINY_GIF = (
+    b"GIF87a\x01\x00\x01\x00\x80\x01\x00\x00\x00\x00ccc,"
+    b"\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;"
+)
+
+
+def make_test_image(name="test.gif"):
+    return SimpleUploadedFile(name, TINY_GIF, content_type="image/gif")
 
 
 class CategoryModelTests(TestCase):
@@ -149,6 +160,31 @@ class PlaceImageModelTests(TestCase):
         """Test gallery_images property"""
         images = self.place.gallery_images
         self.assertEqual(images.count(), 0)
+
+    def test_primary_image_uses_prefetch_cache(self):
+        """Regression: primary_image used filter().first(), which always
+        hits the DB and defeats prefetch_related, causing N+1 in place
+        lists. Accessing it must not issue extra queries when prefetched."""
+        for i in range(3):
+            PlaceImage.objects.create(
+                place=self.place,
+                image=make_test_image(f"img{i}.gif"),
+                is_primary=(i == 1),
+            )
+
+        places = Place.objects.filter(pk=self.place.pk).prefetch_related("images")
+        with self.assertNumQueries(2):  # 1 for places, 1 for prefetching images
+            places = list(places)
+            for place in places:
+                place.primary_image
+
+        self.assertEqual(places[0].primary_image.caption, "")
+        self.assertTrue(places[0].primary_image.is_primary)
+
+    def test_primary_image_returns_none_without_primary(self):
+        """No image flagged primary should mean no fallback, not a crash"""
+        PlaceImage.objects.create(place=self.place, image=make_test_image())
+        self.assertIsNone(self.place.primary_image)
 
 
 class PlaceApprovalModelTests(TestCase):

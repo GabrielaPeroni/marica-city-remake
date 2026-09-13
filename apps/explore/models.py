@@ -115,7 +115,13 @@ class Place(models.Model):
 
     @property
     def primary_image(self):
-        return self.images.filter(is_primary=True).first()
+        # Iterate the (possibly prefetched) `images` cache instead of
+        # filter().first(), which always issues a fresh query and defeats
+        # prefetch_related in place-list views.
+        for image in self.images.all():
+            if image.is_primary:
+                return image
+        return None
 
     @property
     def gallery_images(self):
