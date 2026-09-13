@@ -93,7 +93,7 @@
       <i class="bi bi-list-ul me-2"></i>Todas as Notícias
     </h2>
     <div class="d-flex gap-2">
-      <select class="form-select form-select-sm" id="categoryFilter" onchange="filterNews(this.value, '{{ current_sort }}')">
+      <select class="form-select form-select-sm" id="categoryFilter" aria-label="Filtrar por categoria" onchange="filterNews(this.value, '{{ current_sort }}')">
         <option value="all" {% if current_category == 'all' %}selected{% endif %}>Todas as Categorias</option>
         {% for category in categories %}
         <option value="{{ category.name }}" {% if current_category == category.name %}selected{% endif %}>
@@ -101,7 +101,7 @@
         </option>
         {% endfor %}
       </select>
-      <select class="form-select form-select-sm" id="sortFilter" onchange="filterNews('{{ current_category }}', this.value)">
+      <select class="form-select form-select-sm" id="sortFilter" aria-label="Ordenar notícias" onchange="filterNews('{{ current_category }}', this.value)">
         <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Mais Recentes</option>
         <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Mais Antigas</option>
         <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Mais Visualizadas</option>

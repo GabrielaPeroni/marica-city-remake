@@ -63,6 +63,10 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Node.js / frontend tooling
+node_modules/
+static/js/dist/
+
 # Claude
 /claude_context
 /.claude

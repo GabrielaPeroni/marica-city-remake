@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const submitButton = form.querySelector('button[type="submit"]');
       const originalButtonText = submitButton.textContent;
-      const formId = form.id;
 
       // Desabilitar formulário durante o envio
       submitButton.disabled = true;

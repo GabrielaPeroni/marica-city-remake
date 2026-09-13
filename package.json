@@ -1,0 +1,16 @@
+{
+  "name": "marica-city-remake",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend tooling (lint + build) for MaricaCity static JS assets.",
+  "scripts": {
+    "lint:js": "eslint static/js",
+    "build:js": "node scripts/build-js.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8"
+  }
+}

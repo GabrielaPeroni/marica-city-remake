@@ -68,7 +68,6 @@ function initializeFavoritesUI() {
   // Se o usuário estiver logado, sincronizar com backend
   const isLoggedIn = document.body.dataset.userAuthenticated === 'true';
   if (isLoggedIn) {
-    const csrfToken = getCookie('csrftoken');
     favoritesService.loadFromBackend().then(() => {
       // Atualizar UI após carregar do backend
       buttons.forEach(button => {
