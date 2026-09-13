@@ -1,19 +1,31 @@
-# MaricaCity - Sistema de turismo local
+# MaricaCity — Plataforma de Turismo Local
 
-Este projeto é um **remake** de um aplicativo feito para o projeto Qualifica Maricá
-O repositório original pode ser encontrado aqui: [Marica-City](https://github.com/GabrielaPeroni/Marica-City).
+MaricaCity é uma plataforma web para descoberta e avaliação de pontos turísticos de Maricá (RJ). É um **remake** de um projeto acadêmico original ([Marica-City](https://github.com/GabrielaPeroni/Marica-City)), reconstruído com foco em uma base de código mais robusta, organizada e preparada para produção.
 
-- Projeto criado para fins acadêmicos para a matéria 'Desenvolvimento Rápido em Python'
-- A estrutura permite adicionar múltiplos apps e páginas facilmente.
-- Todas as dependências gerenciadas com [uv](https://docs.astral.sh/uv/).
+## Funcionalidades
 
-Para mais detalhes sobre a implementação do CRUD, consulte [CRUD.md](./documentacao/CRUD.md), e para uma visão completa da estrutura do projeto e arquitetura, consulte [STRUCTURE.md](./documentacao/STRUCTURE.md)
+- **Lugares turísticos**: cadastro de pontos turísticos por usuários, com upload de múltiplas imagens e fluxo de aprovação por administradores antes da publicação.
+- **Avaliações**: sistema de reviews com nota de 1 a 5 estrelas (uma avaliação por usuário por lugar).
+- **Favoritos**: usuários podem salvar lugares favoritos, com sincronização entre sessões.
+- **Notícias e eventos**: seção de notícias com categorias, rascunho/publicação/arquivamento e contagem de visualizações; eventos com data, local e destaque na página inicial.
+- **Autenticação**: login tradicional e via Google OAuth.
+- **Painel administrativo**: fila de aprovação, backlog, gestão de usuários (papéis, ativação/desativação) e métricas, além do Django Admin padrão.
+- **Permissões por papel**: usuários comuns podem criar lugares (pendentes de aprovação), avaliar e favoritar; administradores moderam todo o conteúdo.
 
-- Exercicios da materia se encontram na pasta [aula_exercicios](./aula_exercicios)
+## Stack e arquitetura
 
-# 🚀 Como rodar o projeto
+- **Backend**: [Django 5.2](https://www.djangoproject.com/), organizado em apps por domínio (`core`, `accounts`, `explore`, `news`) — veja [STRUCTURE.md](./documentacao/STRUCTURE.md) para a arquitetura completa e [CRUD.md](./documentacao/CRUD.md) para os detalhes de implementação do CRUD.
+- **Banco de dados**: SQLite por padrão em desenvolvimento; PostgreSQL suportado via variáveis de ambiente para produção.
+- **Frontend**: templates Django com Bootstrap 5, JavaScript vanilla organizado por página/componente, com ESLint para lint e esbuild como pipeline de bundling opcional.
+- **Dependências**: gerenciadas com [uv](https://docs.astral.sh/uv/).
+- **Qualidade e CI**: black, isort, autoflake, flake8 e Prettier via pre-commit; testes Django e checagens de segurança/migração rodam em CI a cada PR.
+- **Rate limiting**: `django-ratelimit` para proteção contra abuso em endpoints sensíveis.
 
-### Pre-requisitos
+O plano de melhorias em andamento (hardening de segurança, deploy, cobertura de testes, etc.) está documentado em [IMPROVEMENT_PLAN.md](./documentacao/IMPROVEMENT_PLAN.md).
+
+## 🚀 Como rodar o projeto
+
+### Pré-requisitos
 
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) instalado
@@ -24,19 +36,25 @@ Para mais detalhes sobre a implementação do CRUD, consulte [CRUD.md](./documen
 uv sync
 ```
 
-### 2. Rode migrations:
+### 2. Copie o arquivo de ambiente e preencha as variáveis:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Rode as migrations:
 
 ```bash
 uv run python manage.py migrate
 ```
 
-### 3. Crie um superuser (opcional):
+### 4. Crie um superuser (opcional):
 
 ```bash
 uv run python manage.py createsuperuser
 ```
 
-### 4. Rode o servidor:
+### 5. Rode o servidor:
 
 ```bash
 uv run python manage.py runserver

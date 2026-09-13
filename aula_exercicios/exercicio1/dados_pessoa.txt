@@ -1,5 +1,0 @@
-Nome: a
-RG: 1
-CPF: 1
-Ano de Nascimento: 1
-Idade: 2024 anos
