@@ -1,5 +1,6 @@
+from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from .models import Category, Place, PlaceApproval, PlaceReview
@@ -1284,3 +1285,33 @@ class MapDataAPITests(TestCase):
         self.assertEqual(data["count"], 2)
         self.assertEqual(data["places"][0]["name"], "Newer Place")
         self.assertEqual(data["places"][1]["name"], "Approved Place")
+
+
+class PlaceAdminTests(TestCase):
+    """PlaceAdmin.fieldsets must only reference real Place fields."""
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.superuser = User.objects.create_superuser(
+            username="superadmin", email="super@example.com", password="pass123"
+        )
+        self.place = Place.objects.create(
+            name="Admin Test Place",
+            description="Desc",
+            address="Addr",
+            created_by=self.superuser,
+        )
+
+    def test_place_admin_get_form_does_not_raise(self):
+        """Regression: fieldsets referenced contact_phone/email/website,
+        fields that live on accounts.User, not Place - crashed add/change."""
+        request = self.factory.get(f"/admin/explore/place/{self.place.pk}/change/")
+        request.user = self.superuser
+        place_admin = admin.site._registry[Place]
+        form_class = place_admin.get_form(request, self.place)
+        self.assertNotIn("contact_phone", form_class.base_fields)
+
+    def test_place_admin_change_view_loads(self):
+        self.client.login(username="superadmin", password="pass123")
+        response = self.client.get(f"/admin/explore/place/{self.place.pk}/change/")
+        self.assertEqual(response.status_code, 200)

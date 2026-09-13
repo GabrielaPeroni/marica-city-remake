@@ -104,10 +104,6 @@ class PlaceAdmin(admin.ModelAdmin):
             {"fields": ("name", "description", "address", "categories")},
         ),
         (
-            "Informações de Contato",
-            {"fields": ("contact_phone", "contact_email", "contact_website")},
-        ),
-        (
             "Localização",
             {"fields": ("latitude", "longitude"), "classes": ("collapse",)},
         ),
