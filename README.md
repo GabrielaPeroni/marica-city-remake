@@ -5,7 +5,7 @@ O repositório original pode ser encontrado aqui: [Marica-City](https://github.c
 
 - Projeto criado para fins acadêmicos para a matéria 'Desenvolvimento Rápido em Python'
 - A estrutura permite adicionar múltiplos apps e páginas facilmente.
-- Todas as dependências gerenciadas com Poetry e Makefile.
+- Todas as dependências gerenciadas com [uv](https://docs.astral.sh/uv/).
 
 Para mais detalhes sobre a implementação do CRUD, consulte [CRUD.md](./documentacao/CRUD.md), e para uma visão completa da estrutura do projeto e arquitetura, consulte [STRUCTURE.md](./documentacao/STRUCTURE.md)
 
@@ -16,46 +16,30 @@ Para mais detalhes sobre a implementação do CRUD, consulte [CRUD.md](./documen
 ### Pre-requisitos
 
 - Python 3.10+
-- Make (para Windows, instale usando chocolatey: `choco install make` ou use Git Bash)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) instalado
 
-### 1. Instale as dependências e ative o ambiente virtual
-
-```bash
-make setup
-```
-
-### 2. Crie um superuser (opcional) e rode o servidor:
+### 1. Instale as dependências:
 
 ```bash
-make superuser
-make run
-```
-
-## 📖 Setup manual (sem o MakeFile)
-
-### 1. Instale Poetry e dependencias:
-
-```bash
-pip install poetry
-poetry install
+uv sync
 ```
 
 ### 2. Rode migrations:
 
 ```bash
-poetry run python manage.py migrate
+uv run python manage.py migrate
 ```
 
 ### 3. Crie um superuser (opcional):
 
 ```bash
-poetry run python manage.py createsuperuser
+uv run python manage.py createsuperuser
 ```
 
 ### 4. Rode o servidor:
 
 ```bash
-poetry run python manage.py runserver
+uv run python manage.py runserver
 ```
 
 ## 📜 Licença

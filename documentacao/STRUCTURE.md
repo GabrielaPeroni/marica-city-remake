@@ -195,9 +195,8 @@ marica-city-remake/
 │   └── STRUCTURE.md               # Este arquivo - Estrutura completa
 │
 ├── manage.py                       # Script de gerenciamento Django
-├── pyproject.toml                  # Dependências Poetry e config de ferramentas
-├── poetry.lock                     # Versões de dependências travadas
-├── Makefile                        # Comandos de desenvolvimento multiplataforma
+├── pyproject.toml                  # Dependências (uv) e config de ferramentas
+├── uv.lock                         # Versões de dependências travadas
 ├── db.sqlite3                      # Banco de dados SQLite (desenvolvimento)
 ├── .env                            # Variáveis de ambiente
 ├── .gitignore                      # Regras de ignore do Git
@@ -1186,26 +1185,30 @@ def approval_queue_view(request):
 ### Dependências Backend (pyproject.toml)
 
 ```toml
-[tool.poetry.dependencies]
-python = "^3.10"
-Django = "^5.2"
-Pillow = "^11.0"               # Processamento de imagens
-django-ratelimit = "^4.1"      # Limitação de taxa
-psycopg2-binary = "^2.9"       # Adaptador PostgreSQL
-python-dotenv = "^1.0"         # Variáveis de ambiente
+[project]
+requires-python = ">=3.10"
+dependencies = [
+    "django>=5.2.7,<6.0",         # Framework web
+    "pillow>=11.3.0,<12.0",       # Processamento de imagens
+    "django-ratelimit>=4.1.0,<5.0", # Limitação de taxa
+    "psycopg2-binary>=2.9.11,<3.0", # Adaptador PostgreSQL
+    "python-decouple>=3.8,<4.0",  # Variáveis de ambiente
+]
 ```
 
 ### Dependências de Desenvolvimento
 
 ```toml
-[tool.poetry.group.dev.dependencies]
-black = "^24.0"                # Formatação de código
-isort = "^5.13"                # Ordenação de imports
-flake8 = "^7.0"                # Linting
-mypy = "^1.8"                  # Verificação de tipo
-django-stubs = "^4.2"          # Type stubs do Django
-pre-commit = "^3.6"            # Git hooks
-coverage = "^7.4"              # Cobertura de testes
+[dependency-groups]
+dev = [
+    "black>=24.1.1,<25.0",        # Formatação de código
+    "isort>=5.13.2,<6.0",         # Ordenação de imports
+    "flake8>=6.1.0,<7.0",         # Linting
+    "mypy>=1.8.0,<2.0",           # Verificação de tipo
+    "django-stubs>=4.2.7,<5.0",   # Type stubs do Django
+    "pre-commit>=3.6.0,<4.0",     # Git hooks
+    "coverage>=7.11.0,<8.0",      # Cobertura de testes
+]
 ```
 
 ### Bibliotecas Frontend (CDN)
@@ -1220,9 +1223,8 @@ coverage = "^7.4"              # Cobertura de testes
 
 ### Ferramentas de Desenvolvimento
 
-- **Poetry** - Gerenciamento de dependências Python
+- **uv** - Gerenciamento de dependências e ambientes Python
 - **pre-commit** - Git hooks para qualidade de código
-- **Make** - Executor de tarefas multiplataforma (Makefile)
 - **SQLite** - Banco de dados de desenvolvimento
 - **PostgreSQL** - Banco de dados de produção (opcional)
 
@@ -1260,8 +1262,8 @@ coverage = "^7.4"              # Cobertura de testes
 - **Framework de Testes**: Django TestCase
 - **Cobertura de Testes**: Configurada em pyproject.toml
 - **Dados de Teste**: Criados via fixtures ou em métodos setUp
-- **Executar Testes**: `make test` ou `poetry run python manage.py test`
-- **Relatório de Cobertura**: `make coverage`
+- **Executar Testes**: `uv run python manage.py test`
+- **Relatório de Cobertura**: `uv run coverage run --source='.' manage.py test && uv run coverage report`
 
 ### Ferramentas de Qualidade de Código
 
