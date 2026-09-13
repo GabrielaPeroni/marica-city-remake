@@ -29,15 +29,12 @@ ENV/
 env.bak/
 venv.bak/
 
-# Poetry
-poetry.lock
-
 # Django
 *.log
 local_settings.py
-# db.sqlite3 <-- Comenting for presentation
+db.sqlite3
 db.sqlite3-journal
-#/media <-- Comenting for presentation
+/media
 /staticfiles
 /cache
 
