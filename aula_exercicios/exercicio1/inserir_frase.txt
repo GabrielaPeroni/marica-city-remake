@@ -1,7 +1,0 @@
-Donec nunc urna, varius commodo libero eu, mollis vestibulum velit.
-Aliquam condimentum nec mi ut faucibus. Morbi non lobortis mi. Duis et dolor a lacus scelerisque gravida.
-Donec cursus odio a purus interdum, eu lobortis erat imperdiet. Nunc convallis enim eget ipsum efficitur condimentum.
-Cras et ligula id neque placerat dictum. Nam quis vehicula est. Pellentesque id ante dictum, placerat leo nec, vehicula quam.
-Vestibulum sapien augue, volutpat in feugiat ut, imperdiet non metus. Duis feugiat varius porttitor. Phasellus quis mi nisi.
-Donec convallis, lectus a sagittis lobortis, felis quam venenatis sem, a tincidunt augue libero vel tellus.
-Donec luctus, sem in dictum sagittis, ex justo cursus est, sit amet volutpat purus purus nec ex.

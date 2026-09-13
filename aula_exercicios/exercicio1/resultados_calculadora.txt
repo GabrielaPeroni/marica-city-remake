@@ -1,5 +1,0 @@
-Números: 5 e 6
-Soma: 11
-Subtração: -1
-Multiplicação: 30
-Divisão: 0.8333333333333334
