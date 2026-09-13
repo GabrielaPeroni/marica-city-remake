@@ -20,47 +20,35 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          version: latest
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-3.11-v2-${{ hashFiles('**/poetry.lock') }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-interaction --no-root
-
-      - name: Install project
-        run: poetry install --no-interaction
+          uv sync --locked
 
       - name: Check __init__.py files
         run: |
-          poetry run python .github/check_innit.py
+          uv run python .github/check_innit.py
 
       - name: Run Black
         run: |
-          poetry run black --check --diff .
+          uv run black --check --diff .
 
       - name: Run isort
         run: |
-          poetry run isort --check-only --diff .
+          uv run isort --check-only --diff .
 
       - name: Run autoflake
         run: |
-          poetry run autoflake --check --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports --recursive apps/ config/ manage.py .github/check_innit.py
+          uv run autoflake --check --remove-all-unused-imports --remove-unused-variables --remove-duplicate-keys --ignore-init-module-imports --recursive apps/ config/ manage.py .github/check_innit.py
 
       - name: Run flake8
         run: |
-          poetry run flake8 --select=TMS010,TMS011,TMS012,TMS013,TMS020,TMS021,TMS022 apps/ config/ manage.py .github/check_innit.py
+          uv run flake8 --select=TMS010,TMS011,TMS012,TMS013,TMS020,TMS021,TMS022 apps/ config/ manage.py .github/check_innit.py
 
       - name: Install Prettier
         uses: actions/setup-node@v4
@@ -102,27 +90,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          version: latest
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-3.11-v2-${{ hashFiles('**/poetry.lock') }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-interaction --no-root
-
-      - name: Install project
-        run: poetry install --no-interaction
+          uv sync --locked
 
       - name: Create .env file for testing
         run: |
@@ -134,12 +110,12 @@ jobs:
 
       - name: Check Django system
         run: |
-          poetry run python manage.py check --deploy
+          uv run python manage.py check --deploy
 
       - name: Run Django migrations check
         run: |
-          poetry run python manage.py makemigrations --check --dry-run
+          uv run python manage.py makemigrations --check --dry-run
 
       - name: Run Django tests
         run: |
-          poetry run python manage.py test apps --verbosity=2
+          uv run python manage.py test apps --verbosity=2
