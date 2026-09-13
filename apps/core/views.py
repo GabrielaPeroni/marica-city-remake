@@ -3,13 +3,24 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import connection
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_GET
 
 from apps.accounts.models import User
 from apps.explore.models import Category, Place, PlaceReview
 from apps.news.forms import NewsForm
 from apps.news.models import News, NewsCategory
+
+
+@require_GET
+def health_view(request):
+    """Liveness/readiness probe; does a cheap SELECT 1 to also catch DB outages."""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT 1")
+    return JsonResponse({"status": "ok"})
 
 
 def landing_view(request):

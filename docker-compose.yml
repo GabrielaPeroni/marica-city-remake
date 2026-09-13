@@ -1,0 +1,53 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: maricacity
+      DB_USER: maricacity
+      DB_PASSWORD: maricacity
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: maricacity
+      POSTGRES_USER: maricacity
+      POSTGRES_PASSWORD: maricacity
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maricacity"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+
+  # Mock Cloudflare edge: TLS termination + X-Forwarded-Proto, for testing the prod
+  # SECURE_PROXY_SSL_HEADER/SECURE_SSL_REDIRECT path locally. Opt-in via --profile mock-cloudflare;
+  # a real deployment replaces this with actual Cloudflare (proxy or Tunnel) — see documentacao/DEPLOYMENT.md.
+  mock-cloudflare:
+    image: caddy:2-alpine
+    profiles: ["mock-cloudflare"]
+    volumes:
+      - ./deploy/mock-cloudflare/Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      - "8443:443"
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
