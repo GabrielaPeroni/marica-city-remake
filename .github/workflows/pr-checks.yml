@@ -67,10 +67,6 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     env:
-      # Explicit rather than relying on the default, so CI never accidentally
-      # runs against prod settings (which force HTTPS redirects/secure
-      # cookies and would break `runserver`-less test clients over plain
-      # HTTP).
       DJANGO_SETTINGS_MODULE: config.settings.dev
 
     services:
