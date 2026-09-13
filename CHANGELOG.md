@@ -13,12 +13,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependabot config for `pip`, `npm`, and `github-actions` ecosystems, weekly.
 - Coverage floor in CI (`--fail-under=70`) on top of the existing test job.
 - `commitizen` for Conventional Commits-based versioning/changelog automation.
+- Multi-stage `Dockerfile` (gunicorn + whitenoise), `docker-compose.yml` for local
+  parity (app + postgres + redis), an opt-in `mock-cloudflare` proxy for testing
+  the prod HTTPS path locally, and `documentacao/DEPLOYMENT.md`.
+- `GET /healthz/` health check endpoint.
+- Cloudflare R2 (S3-compatible) media storage via `django-storages`, opt-in via
+  `AWS_STORAGE_BUCKET_NAME` — falls back to local disk when unset.
 
 ### Changed
 
 - Replaced `safety` with `pip-audit` as the dependency vulnerability scanner (dev
   dependency and CI step), removing `safety`'s transitive `nltk` dependency and
   its unpatched CVE.
+- Bumped 8 dev/runtime dependencies to current majors after a full audit found 0
+  vulnerabilities but significant staleness: `django-redis` 5→7, `isort` 5→9,
+  `flake8` 6→7, `django-stubs` 4→6, `mypy` 1→2, `pre-commit` 3→4, `commitizen`
+  3→4, `django-extra-checks` (confirmed unused). GitHub Actions bumped to their
+  latest majors (`actions/checkout`, `setup-python`, `setup-node`, `setup-uv`,
+  `codeql-action`).
 
 ## [0.2.0] - 2026-09-13
 
