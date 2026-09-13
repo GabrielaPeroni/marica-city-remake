@@ -674,6 +674,40 @@ class PlaceDetailViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    def test_approved_but_inactive_place_hidden_from_other_users(self):
+        """Regression: the visibility check only looked at is_approved, so
+        an approved-but-deactivated place (is_active=False, e.g. an admin
+        toggled it off without going through the reject workflow) leaked
+        to any logged-in non-owner/non-moderator, unlike the anonymous and
+        list-view paths which both require is_approved AND is_active."""
+        inactive_place = Place.objects.create(
+            name="Deactivated Place",
+            description="Was approved, then deactivated",
+            address="Some address",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=False,
+        )
+
+        self.client.login(username="other", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 404)
+
+        # Owner and moderator can still see it
+        self.client.login(username="creator", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse("explore:place_detail", kwargs={"pk": inactive_place.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+
     def test_edit_button_shown_to_authorized_users(self):
         """Test edit button is shown to authorized users"""
         # Creator sees edit button
