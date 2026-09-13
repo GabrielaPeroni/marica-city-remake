@@ -1,0 +1,17 @@
+.venv/
+.uvcache/
+.git/
+.github/
+node_modules/
+__pycache__/
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+.env
+.env.*
+!.env.example
+media/
+staticfiles/
+documentacao/
+*.md
+.pre-commit-config.yaml

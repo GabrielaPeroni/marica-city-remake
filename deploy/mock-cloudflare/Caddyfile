@@ -1,0 +1,14 @@
+# Local stand-in for Cloudflare's edge: terminates TLS (self-signed) and forwards
+# X-Forwarded-Proto so prod settings' SECURE_PROXY_SSL_HEADER path is exercisable locally.
+{
+	admin off
+}
+
+localhost:443 {
+	tls internal
+	reverse_proxy app:8000 {
+		header_up X-Forwarded-Proto https
+		header_up X-Forwarded-For {remote_host}
+		header_up Host {host}
+	}
+}
