@@ -50,6 +50,10 @@ jobs:
         run: |
           uv run flake8 --select=TMS010,TMS011,TMS012,TMS013,TMS020,TMS021,TMS022 apps/ config/ manage.py .github/check_innit.py
 
+      - name: Run pip-audit
+        run: |
+          uv run pip-audit
+
       - name: Install Prettier
         uses: actions/setup-node@v4
         with:
@@ -121,3 +125,8 @@ jobs:
       - name: Run Django tests
         run: |
           uv run python manage.py test apps --verbosity=2
+
+      - name: Run tests under coverage and enforce floor
+        run: |
+          uv run coverage run manage.py test apps --verbosity=0
+          uv run coverage report --fail-under=70

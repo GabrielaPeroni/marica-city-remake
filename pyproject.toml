@@ -27,7 +27,7 @@ dev = [
     "flake8-mock-spec>=1.4.0,<2.0",
 
     # Security and upgrades
-    "safety>=3.0.1,<4.0",
+    "pip-audit>=2.7.3,<3.0",
     "django-upgrade>=1.15.0,<2.0",
     "pyupgrade>=3.15.0,<4.0",
 
@@ -41,6 +41,9 @@ dev = [
 
     # Tool configurations
     "coverage>=7.11.0,<8.0",
+
+    # Versioning and changelog automation
+    "commitizen>=3.29.0,<4.0",
 ]
 
 [tool.black]
@@ -131,3 +134,11 @@ exclude_lines = [
     "raise AssertionError",
     "raise NotImplementedError",
 ]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = ["pyproject.toml:version"]
+changelog_file = "CHANGELOG.md"
+update_changelog_on_bump = true
+tag_format = "v$version"

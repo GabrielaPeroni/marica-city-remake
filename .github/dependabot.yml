@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # uv has no native Dependabot ecosystem yet; "pip" is documented as compatible
+  # with pyproject.toml/uv.lock for version updates.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

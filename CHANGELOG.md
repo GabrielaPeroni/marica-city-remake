@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CodeQL scanning (`python`, `javascript-typescript`) on push to main and PRs.
+- Dependabot config for `pip`, `npm`, and `github-actions` ecosystems, weekly.
+- Coverage floor in CI (`--fail-under=70`) on top of the existing test job.
+- `commitizen` for Conventional Commits-based versioning/changelog automation.
+
+### Changed
+
+- Replaced `safety` with `pip-audit` as the dependency vulnerability scanner (dev
+  dependency and CI step), removing `safety`'s transitive `nltk` dependency and
+  its unpatched CVE.
+
 ## [0.2.0] - 2026-09-13
 
 ### Added
