@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
   userRoleSelects.forEach(select => {
     select.addEventListener('change', function () {
       const userId = this.dataset.userId;
-      const newRole = this.value;
       const originalRole = this.querySelector('option[selected]')?.value;
 
       if (

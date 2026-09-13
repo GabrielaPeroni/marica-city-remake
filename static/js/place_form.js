@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Contar imagens existentes ao carregar a página
   formsetForms.forEach((formDiv, index) => {
-    const imageInput = formDiv.querySelector('input[type="file"]');
     const deleteInput = formDiv.querySelector('input[name*="DELETE"]');
     const existingImageUrl = formDiv.dataset.existingImageUrl;
 

@@ -6,7 +6,6 @@
 let landingMap;
 let markers = [];
 let infoWindow;
-let markerCluster;
 
 async function initLandingMap() {
   const mapContainer = document.getElementById('landing-map');

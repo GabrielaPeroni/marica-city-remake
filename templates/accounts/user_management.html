@@ -88,6 +88,7 @@
                 <td>
                   <select class="form-select form-select-sm user-role-select"
                           data-user-id="{{ user_item.id }}"
+                          aria-label="Alterar tipo de usuário para {{ user_item.username }}"
                           {% if user_item == user %}disabled{% endif %}>
                     <option value="staff" {% if user_item.is_staff %}selected{% endif %}>Staff</option>
                     <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>Regular</option>
