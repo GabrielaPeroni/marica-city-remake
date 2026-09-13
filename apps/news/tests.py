@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import User
+from apps.news.forms import NewsForm
 from apps.news.models import News, NewsCategory
 
 
@@ -137,6 +138,43 @@ class NewsModelTests(TestCase):
         self.assertLessEqual(
             news.publish_date, timezone.now() + timezone.timedelta(seconds=1)
         )
+
+
+class NewsFormEventDateValidationTests(TestCase):
+    """NewsForm must reject an event ending before it starts"""
+
+    def setUp(self):
+        self.event_category, _ = NewsCategory.objects.get_or_create(
+            name=NewsCategory.EVENT
+        )
+
+    def _base_data(self, **overrides):
+        data = {
+            "title": "Some Event",
+            "category": self.event_category.pk,
+            "content": "Content",
+            "excerpt": "",
+            "event_date": "2026-06-10T10:00",
+            "event_end_date": "2026-06-12T10:00",
+            "event_location": "Praça Central",
+            "status": News.DRAFT,
+        }
+        data.update(overrides)
+        return data
+
+    def test_valid_event_dates_pass(self):
+        form = NewsForm(data=self._base_data())
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_event_end_date_before_start_date_is_invalid(self):
+        form = NewsForm(
+            data=self._base_data(
+                event_date="2026-06-12T10:00",
+                event_end_date="2026-06-10T10:00",
+            )
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("event_end_date", form.errors)
 
 
 class NewsListViewTests(TestCase):
