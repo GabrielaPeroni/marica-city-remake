@@ -199,3 +199,291 @@ class AuthenticationViewTests(TestCase):
         """Testa que o ID do cliente Google OAuth é passado para a página de registro"""
         response = self.client.get(reverse("accounts:register"))
         self.assertIn("google_client_id", response.context)
+
+    def test_authenticated_user_redirected_from_register(self):
+        """Testa que usuário já autenticado é redirecionado ao acessar registro"""
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(reverse("accounts:register"))
+        self.assertRedirects(response, reverse("core:landing"))
+
+    def test_login_rejects_missing_credentials(self):
+        """Testa que o login via AJAX exige usuário e senha"""
+        response = self.client.post(
+            reverse("accounts:login"), {"username": "", "password": ""}
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data["success"])
+
+    def test_login_rejects_inactive_user(self):
+        """Testa que usuário inativo não consegue fazer login.
+        Note: Django's default authenticate() already excludes inactive
+        users, so this always falls into the generic 401 'wrong
+        credentials' branch - the view's dedicated `if not user.is_active`
+        403 branch is unreachable dead code (found while writing this
+        test; not fixed, out of scope for this PR)."""
+        self.user.is_active = False
+        self.user.save()
+        response = self.client.post(
+            reverse("accounts:login"),
+            {"username": "testuser", "password": "testpass123"},
+        )
+        self.assertEqual(response.status_code, 401)
+        data = response.json()
+        self.assertFalse(data["success"])
+
+    def test_logout_redirects_to_next_param(self):
+        """Testa que o logout redireciona para o parâmetro 'next' quando fornecido"""
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(reverse("accounts:logout") + "?next=/explore/")
+        self.assertRedirects(response, "/explore/", fetch_redirect_response=False)
+
+    def test_logout_falls_back_to_landing_page(self):
+        """Testa que o logout redireciona para a página inicial sem 'next' ou referer"""
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(reverse("accounts:logout"))
+        self.assertRedirects(response, reverse("core:landing"))
+
+
+class UserManagementViewTests(TestCase):
+    """Testes para a view de gerenciamento de usuários (admin)"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.staff_user = User.objects.create_user(
+            username="staffer", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular",
+            password="pass123",
+            is_staff=False,
+            email="regular@example.com",
+        )
+        self.inactive_user = User.objects.create_user(
+            username="inactive", password="pass123", is_active=False
+        )
+        self.url = reverse("accounts:user_management")
+
+    def test_requires_login(self):
+        """Testa que a página exige autenticação"""
+        response = self.client.get(self.url)
+        self.assertRedirects(response, f"/?next={self.url}")
+
+    def test_requires_moderator_permission(self):
+        """Testa que apenas moderadores podem acessar a página"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.get(self.url)
+        self.assertRedirects(response, reverse("core:landing"))
+
+    def test_loads_for_moderator_with_statistics(self):
+        """Testa que a página carrega para moderadores com estatísticas corretas"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["total_users"], 4)
+        self.assertEqual(response.context["staff_users"], 2)
+        self.assertEqual(response.context["regular_users"], 2)
+        self.assertEqual(response.context["active_users"], 3)
+
+    def test_filter_by_role_staff(self):
+        """Testa filtro de usuários por função (staff)"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url + "?role=staff")
+        usernames = {u.username for u in response.context["users"]}
+        self.assertEqual(usernames, {"admin", "staffer"})
+
+    def test_filter_by_role_regular(self):
+        """Testa filtro de usuários por função (regular)"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url + "?role=regular")
+        usernames = {u.username for u in response.context["users"]}
+        self.assertEqual(usernames, {"regular", "inactive"})
+
+    def test_filter_by_status_active(self):
+        """Testa filtro de usuários por status (ativos)"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url + "?status=active")
+        usernames = {u.username for u in response.context["users"]}
+        self.assertNotIn("inactive", usernames)
+
+    def test_filter_by_status_inactive(self):
+        """Testa filtro de usuários por status (inativos)"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url + "?status=inactive")
+        usernames = {u.username for u in response.context["users"]}
+        self.assertEqual(usernames, {"inactive"})
+
+    def test_search_by_username_or_email(self):
+        """Testa busca de usuários por nome ou e-mail"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(self.url + "?q=regular@example.com")
+        usernames = {u.username for u in response.context["users"]}
+        self.assertEqual(usernames, {"regular"})
+
+
+class UserUpdateTypeViewTests(TestCase):
+    """Testes para alternar o status de staff de um usuário"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular", password="pass123", is_staff=False
+        )
+
+    def test_requires_moderator_permission(self):
+        """Testa que apenas moderadores podem alterar tipo de usuário"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_update_type", kwargs={"user_id": self.admin.id})
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_request_not_allowed(self):
+        """Testa que requisições GET não são permitidas"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse(
+                "accounts:user_update_type", kwargs={"user_id": self.regular_user.id}
+            )
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_cannot_change_own_status(self):
+        """Testa que um usuário não pode alterar seu próprio status de staff"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_update_type", kwargs={"user_id": self.admin.id})
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data["success"])
+
+    def test_toggles_staff_status(self):
+        """Testa que o status de staff de outro usuário é alternado com sucesso"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse(
+                "accounts:user_update_type", kwargs={"user_id": self.regular_user.id}
+            )
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertTrue(data["is_staff"])
+        self.regular_user.refresh_from_db()
+        self.assertTrue(self.regular_user.is_staff)
+
+
+class UserToggleStatusViewTests(TestCase):
+    """Testes para alternar o status ativo de um usuário"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular", password="pass123", is_staff=False
+        )
+
+    def test_requires_moderator_permission(self):
+        """Testa que apenas moderadores podem alterar status ativo"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_toggle_status", kwargs={"user_id": self.admin.id})
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_request_not_allowed(self):
+        """Testa que requisições GET não são permitidas"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse(
+                "accounts:user_toggle_status", kwargs={"user_id": self.regular_user.id}
+            )
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_cannot_deactivate_own_account(self):
+        """Testa que um usuário não pode desativar sua própria conta"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_toggle_status", kwargs={"user_id": self.admin.id})
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data["success"])
+
+    def test_toggles_active_status(self):
+        """Testa que o status ativo de outro usuário é alternado com sucesso"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse(
+                "accounts:user_toggle_status", kwargs={"user_id": self.regular_user.id}
+            )
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertFalse(data["is_active"])
+        self.regular_user.refresh_from_db()
+        self.assertFalse(self.regular_user.is_active)
+
+
+class UserDeleteViewTests(TestCase):
+    """Testes para a exclusão de conta de usuário pelo administrador"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular", password="pass123", is_staff=False
+        )
+
+    def test_requires_moderator_permission(self):
+        """Testa que apenas moderadores podem excluir usuários.
+        Note: the redirect target itself denies non-moderators and
+        redirects again, so we don't follow the chain here."""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_delete", kwargs={"user_id": self.admin.id})
+        )
+        self.assertRedirects(
+            response,
+            reverse("accounts:user_management"),
+            fetch_redirect_response=False,
+        )
+        self.assertTrue(User.objects.filter(pk=self.admin.pk).exists())
+
+    def test_cannot_delete_own_account(self):
+        """Testa que um usuário não pode excluir sua própria conta"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_delete", kwargs={"user_id": self.admin.id})
+        )
+        self.assertRedirects(response, reverse("accounts:user_management"))
+        self.assertTrue(User.objects.filter(pk=self.admin.pk).exists())
+
+    def test_get_shows_confirmation_page(self):
+        """Testa que GET exibe a página de confirmação de exclusão"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse("accounts:user_delete", kwargs={"user_id": self.regular_user.id})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/user_delete_confirm.html")
+
+    def test_post_deletes_user(self):
+        """Testa que POST exclui a conta do usuário"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("accounts:user_delete", kwargs={"user_id": self.regular_user.id})
+        )
+        self.assertRedirects(response, reverse("accounts:user_management"))
+        self.assertFalse(User.objects.filter(pk=self.regular_user.pk).exists())

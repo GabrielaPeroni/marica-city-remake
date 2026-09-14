@@ -129,4 +129,4 @@ jobs:
       - name: Run tests under coverage and enforce floor
         run: |
           uv run coverage run manage.py test apps --verbosity=0
-          uv run coverage report --fail-under=70
+          uv run coverage report --fail-under=90
