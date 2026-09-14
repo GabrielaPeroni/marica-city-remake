@@ -1,9 +1,9 @@
 # Estrutura do Projeto MaricaCity
 
-**Versão**: 1.0.0
+**Versão**: 0.2.0
 **Django**: 5.2.7
 **Python**: 3.13.3
-**Última Atualização**: 2025-11-09
+**Última Atualização**: 2026-09-13
 
 ---
 
@@ -193,16 +193,40 @@ marica-city-remake/
 │
 ├── staticfiles/                    # Arquivos estáticos coletados (produção)
 │
+├── deploy/
+│   └── mock-cloudflare/
+│       └── Caddyfile              # Proxy Caddy local (perfil docker-compose opcional) para testar o path HTTPS/HSTS sem Cloudflare real
+│
 ├── documentacao/                   # Documentação do projeto
 │   ├── CRUD.md                    # Documentação detalhada CRUD
-│   ├── LICENSE.txt                # Informações de licença
-│   └── STRUCTURE.md               # Este arquivo - Estrutura completa
+│   ├── STRUCTURE.md               # Este arquivo - Estrutura completa
+│   ├── CONTRIBUTING.md            # Guia de contribuição (setup, testes, lint, workflow de PR)
+│   ├── DEPLOYMENT.md              # Runbook de deploy (Docker, Cloudflare, docker-compose)
+│   ├── IMPROVEMENT_PLAN.md        # Plano mestre de polimento (histórico de PRs)
+│   └── LICENSE.txt                # Informações de licença
+│
+├── .github/
+│   ├── workflows/
+│   │   ├── pr-checks.yml          # Lint (black/isort/autoflake/flake8/prettier) + pip-audit + testes + coverage gate
+│   │   └── codeql.yml             # CodeQL (python + javascript-typescript), agendado semanalmente
+│   ├── dependabot.yml             # Atualizações automáticas de dependências (pip + npm + actions)
+│   ├── PULL_REQUEST_TEMPLATE.md   # Checklist de PR
+│   └── check_innit.py             # Verificação customizada de arquivos __init__.py
 │
 ├── manage.py                       # Script de gerenciamento Django
-├── pyproject.toml                  # Dependências (uv) e config de ferramentas
+├── pyproject.toml                  # Dependências (uv) e config de ferramentas (inclui [tool.commitizen])
 ├── uv.lock                         # Versões de dependências travadas
-├── db.sqlite3                      # Banco de dados SQLite (desenvolvimento)
-├── .env                            # Variáveis de ambiente
+├── package.json                    # Dependências JS (ESLint + esbuild) para lint/bundle de static/js
+├── eslint.config.js                # Configuração do ESLint
+├── scripts/
+│   └── build-js.mjs                # Bundler esbuild para os entrypoints de static/js
+├── Dockerfile                       # Build multi-stage (uv → venv, collectstatic, gunicorn+whitenoise, usuário não-root)
+├── docker-compose.yml               # Stack local: app + postgres + redis (+ perfil opcional mock-cloudflare/Caddy)
+├── .dockerignore
+├── db.sqlite3                      # Banco de dados SQLite (desenvolvimento, não versionado)
+├── .env.example                    # Modelo de variáveis de ambiente (copiar para .env)
+├── .env                            # Variáveis de ambiente (não versionado)
+├── CHANGELOG.md                    # Gerado/atualizado via commitizen (Keep a Changelog)
 ├── .gitignore                      # Regras de ignore do Git
 ├── .pre-commit-config.yaml        # Configuração de hooks pre-commit
 └── README.md                       # Visão geral do projeto
@@ -762,6 +786,7 @@ CACHES = {
 
 ```
 config/urls.py (URLconf Raiz)
+    ├── healthz/                → health_view (JSON, sem auth, checa DB)
     ├── admin/                  → Django Admin
     ├── accounts/               → apps.accounts.urls
     ├── explore/                → apps.explore.urls
@@ -1210,11 +1235,15 @@ def approval_queue_view(request):
 [project]
 requires-python = ">=3.10"
 dependencies = [
-    "django>=5.2.7,<6.0",         # Framework web
-    "pillow>=11.3.0,<12.0",       # Processamento de imagens
-    "django-ratelimit>=4.1.0,<5.0", # Limitação de taxa
-    "psycopg2-binary>=2.9.11,<3.0", # Adaptador PostgreSQL
-    "python-decouple>=3.8,<4.0",  # Variáveis de ambiente
+    "django>=5.2.7,<6.0",              # Framework web
+    "psycopg2-binary>=2.9.11,<3.0",    # Adaptador PostgreSQL
+    "python-decouple>=3.8,<4.0",       # Variáveis de ambiente
+    "pillow>=12.3.0,<13.0",            # Processamento de imagens
+    "django-ratelimit>=4.1.0,<5.0",    # Limitação de taxa
+    "django-redis>=7.0.0,<8.0",        # Cache/rate-limit backend Redis-ready para prod
+    "gunicorn>=26.2.0,<27.0",          # Servidor WSGI de produção
+    "whitenoise>=6.12.0,<7.0",         # Servir estáticos em produção sem nginx
+    "django-storages[s3]>=1.14.6,<2.0", # Storage S3-compatível (Cloudflare R2) para media
 ]
 ```
 
@@ -1223,15 +1252,34 @@ dependencies = [
 ```toml
 [dependency-groups]
 dev = [
-    "black>=24.1.1,<25.0",        # Formatação de código
-    "isort>=5.13.2,<6.0",         # Ordenação de imports
-    "flake8>=6.1.0,<7.0",         # Linting
-    "mypy>=1.8.0,<2.0",           # Verificação de tipo
-    "django-stubs>=4.2.7,<5.0",   # Type stubs do Django
-    "pre-commit>=3.6.0,<4.0",     # Git hooks
-    "coverage>=7.11.0,<8.0",      # Cobertura de testes
+    # Formatação e linting
+    "black>=26.3.1,<27.0",
+    "isort>=9.0.1,<10.0",
+    "autoflake>=2.2.1,<3.0",
+    "flake8>=7.3.0,<8.0",
+    "flake8-mock-spec>=1.4.0,<2.0",
+
+    # Segurança e upgrades automáticos
+    "pip-audit>=2.7.3,<3.0",
+    "django-upgrade>=1.15.0,<2.0",
+    "pyupgrade>=3.15.0,<4.0",
+
+    # Pre-commit e testes
+    "pre-commit>=4.6.2,<5.0",
+    "django-extra-checks>=0.17.0,<0.18",
+    "coverage>=7.11.0,<8.0",
+
+    # Verificação de tipo (opcional)
+    "mypy>=2.3.1,<3.0",
+    "django-stubs>=6.0.9,<7.0",
+
+    # Versionamento e changelog (Conventional Commits)
+    "commitizen>=4.18.0,<5.0",
 ]
 ```
+
+Versões travadas em `uv.lock`; `pyproject.toml` é a fonte da verdade para os
+ranges — confira lá antes de assumir uma versão específica.
 
 ### Bibliotecas Frontend (CDN)
 
@@ -1281,19 +1329,26 @@ dev = [
 
 ### Testes
 
-- **Framework de Testes**: Django TestCase
-- **Cobertura de Testes**: Configurada em pyproject.toml
-- **Dados de Teste**: Criados via fixtures ou em métodos setUp
-- **Executar Testes**: `uv run python manage.py test`
-- **Relatório de Cobertura**: `uv run coverage run --source='.' manage.py test && uv run coverage report`
+- **Framework de Testes**: Django TestCase (`apps/*/tests.py`, arquivo único por app — ainda não convertido para pacote `tests/`)
+- **Contagem atual**: 127 testes, todos passando (`uv run python manage.py test apps`)
+- **Cobertura de Testes**: Configurada em `[tool.coverage.*]` no pyproject.toml; piso de 70% aplicado em CI (`coverage report --fail-under=70`)
+- **Dados de Teste**: Criados via fixtures ou em métodos setUp; `populate_test_data` (explore) e `seed_news` (news) populam dados de exemplo
+- **Executar Testes**: `uv run python manage.py test apps`
+- **Relatório de Cobertura**: `uv run coverage run manage.py test apps && uv run coverage report`
 
 ### Ferramentas de Qualidade de Código
 
 - **Black**: Formatação de código (line-length=88)
 - **isort**: Ordenação de imports (profile=black)
-- **flake8**: Linting (max-line-length=88)
-- **mypy**: Verificação de tipo (django-stubs)
+- **autoflake**: Remove imports/variáveis não utilizados
+- **flake8** + **flake8-mock-spec**: Linting (apenas as regras `TMS0*` de mock-spec estão habilitadas)
+- **mypy** + **django-stubs**: Verificação de tipo (opcional/dev)
+- **pip-audit**: Auditoria de vulnerabilidades nas dependências Python (roda em CI)
+- **django-upgrade** / **pyupgrade**: Modernização automática de sintaxe
+- **Prettier**: Formatação de JS/CSS/HTML/JSON/YAML/Markdown (config em `.github/.prettierrc`)
+- **ESLint** (`npm run lint:js`) + **esbuild** (`npm run build:js`): lint e bundling do JS em `static/js`
 - **pre-commit**: Verificações automatizadas no commit
+- **commitizen**: Conventional Commits + geração de `CHANGELOG.md` e tags de versão
 
 ### Hooks Pre-commit
 
@@ -1308,11 +1363,21 @@ Configurado em `.pre-commit-config.yaml`:
 - prettier (JS/CSS/HTML)
 - Verificação customizada para arquivos `__init__.py`
 
+### CI/CD (GitHub Actions)
+
+- **`pr-checks.yml`** — em cada PR e push para `main`: job `lintert` (check `__init__.py`, black, isort, autoflake, flake8, pip-audit, prettier) e job `tests` (Postgres de serviço, `check --deploy`, `makemigrations --check --dry-run`, testes Django, coverage com piso de 70%).
+- **`codeql.yml`** — CodeQL para Python e JavaScript/TypeScript, em push/PR para `main` e semanalmente (segunda-feira 06:00 UTC).
+- **Dependabot** (`.github/dependabot.yml`) — atualizações automáticas de dependências pip, npm e GitHub Actions.
+- **Nenhum workflow de CD** — não há deploy automático a partir de um merge; ver `documentacao/DEPLOYMENT.md` para o processo manual/documentado.
+
 ---
 
 ## 📄 Documentação Adicional
 
 - **CRUD.md** - Documentação detalhada de implementação CRUD
+- **CONTRIBUTING.md** - Guia prático para contribuir (setup uv, testes, lint, workflow de branch/PR, o que a CI verifica)
+- **DEPLOYMENT.md** - Runbook de deploy: Docker, variáveis de ambiente de produção, wiring do Cloudflare (proxy ou Tunnel), docker-compose local e o perfil `mock-cloudflare`
+- **IMPROVEMENT_PLAN.md** - Plano mestre de polimento com o histórico de todos os PRs mesclados
 - **README.md** - Guia de início rápido
 
 ---
@@ -1321,7 +1386,6 @@ Configurado em `.pre-commit-config.yaml`:
 
 ### Recursos Planejados
 
-- Integração Vite para bundling de assets
 - Reformulação de design (Fase 9)
 - Notificações por e-mail para aprovações/rejeições
 - Compartilhamento social para locais e notícias
