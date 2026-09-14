@@ -1,10 +1,12 @@
+import json
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from .models import Category, Place, PlaceApproval, PlaceImage, PlaceReview
+from .models import Category, Favorite, Place, PlaceApproval, PlaceImage, PlaceReview
 
 User = get_user_model()
 
@@ -186,6 +188,11 @@ class PlaceImageModelTests(TestCase):
         PlaceImage.objects.create(place=self.place, image=make_test_image())
         self.assertIsNone(self.place.primary_image)
 
+    def test_place_image_string_representation(self):
+        """Test PlaceImage string representation includes place name and id"""
+        image = PlaceImage.objects.create(place=self.place, image=make_test_image())
+        self.assertEqual(str(image), f"{self.place.name} - Image {image.id}")
+
     def test_only_one_image_stays_primary_across_sequential_saves(self):
         """Verified correct, not a bug: PlaceImage.save() demotes other
         primaries via an UPDATE before inserting/saving itself, so marking
@@ -255,6 +262,14 @@ class PlaceApprovalModelTests(TestCase):
         self.place.refresh_from_db()
         self.assertFalse(self.place.is_approved)
         self.assertFalse(self.place.is_active)
+
+    def test_place_approval_string_representation(self):
+        """Test PlaceApproval string representation"""
+        approval = PlaceApproval.objects.create(
+            place=self.place, reviewer=self.admin, action="APPROVE"
+        )
+        expected = f"{self.place.name} - Aprovado by {self.admin}"
+        self.assertEqual(str(approval), expected)
 
 
 class ExploreViewTests(TestCase):
@@ -428,6 +443,70 @@ class PlaceCreateViewTests(TestCase):
             response, reverse("explore:place_detail", kwargs={"pk": place.pk})
         )
 
+    def test_place_creation_with_image_auto_promotes_first_as_primary(self):
+        """Test uploading images without marking one primary auto-promotes the first"""
+        self.client.login(username="creator", password="pass123")
+
+        form_data = {
+            "name": "Restaurant With Photos",
+            "description": "Great food",
+            "address": "123 Main Street",
+            "categories": [self.category.id],
+            "images-TOTAL_FORMS": "1",
+            "images-INITIAL_FORMS": "0",
+            "images-MIN_NUM_FORMS": "0",
+            "images-MAX_NUM_FORMS": "10",
+            "images-0-caption": "",
+            "images-0-display_order": "0",
+        }
+        files = {"images-0-image": make_test_image("dish.gif")}
+
+        response = self.client.post(
+            reverse("explore:place_create"), data={**form_data, **files}
+        )
+
+        place = Place.objects.get(name="Restaurant With Photos")
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": place.pk})
+        )
+        self.assertEqual(place.images.count(), 1)
+        self.assertTrue(place.images.first().is_primary)
+
+    def test_place_creation_with_two_primary_images_keeps_only_one(self):
+        """Test uploading two images both marked primary keeps only one primary"""
+        self.client.login(username="creator", password="pass123")
+
+        form_data = {
+            "name": "Restaurant With Two Photos",
+            "description": "Great food",
+            "address": "123 Main Street",
+            "categories": [self.category.id],
+            "images-TOTAL_FORMS": "2",
+            "images-INITIAL_FORMS": "0",
+            "images-MIN_NUM_FORMS": "0",
+            "images-MAX_NUM_FORMS": "10",
+            "images-0-caption": "",
+            "images-0-is_primary": "on",
+            "images-0-display_order": "0",
+            "images-1-caption": "",
+            "images-1-is_primary": "on",
+            "images-1-display_order": "0",
+        }
+        files = {
+            "images-0-image": make_test_image("a.gif"),
+            "images-1-image": make_test_image("b.gif"),
+        }
+
+        response = self.client.post(
+            reverse("explore:place_create"), data={**form_data, **files}
+        )
+
+        place = Place.objects.get(name="Restaurant With Two Photos")
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": place.pk})
+        )
+        self.assertEqual(place.images.filter(is_primary=True).count(), 1)
+
     def test_place_creation_with_invalid_data(self):
         """Test place creation with invalid data"""
         self.client.login(username="creator", password="pass123")
@@ -541,6 +620,48 @@ class PlaceUpdateViewTests(TestCase):
         self.assertRedirects(
             response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
         )
+
+    def test_update_demotes_extra_primaries_left_over_in_db(self):
+        """If two images somehow both ended up flagged primary (bypassing
+        PlaceImage.save()'s normal single-primary enforcement), saving the
+        place again without touching those images should demote all but
+        one back to a single primary."""
+        img1 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("a.gif")
+        )
+        img2 = PlaceImage.objects.create(
+            place=self.place, image=make_test_image("b.gif")
+        )
+        # Bypass save() override to force an inconsistent double-primary state
+        PlaceImage.objects.filter(place=self.place).update(is_primary=True)
+
+        self.client.login(username="creator", password="pass123")
+        form_data = {
+            "name": self.place.name,
+            "description": self.place.description,
+            "address": self.place.address,
+            "categories": [self.category.id],
+            "images-TOTAL_FORMS": "2",
+            "images-INITIAL_FORMS": "2",
+            "images-MIN_NUM_FORMS": "0",
+            "images-MAX_NUM_FORMS": "10",
+            "images-0-id": str(img1.pk),
+            "images-0-caption": "",
+            "images-0-is_primary": "on",
+            "images-0-display_order": "0",
+            "images-1-id": str(img2.pk),
+            "images-1-caption": "",
+            "images-1-is_primary": "on",
+            "images-1-display_order": "0",
+        }
+        response = self.client.post(
+            reverse("explore:place_edit", kwargs={"pk": self.place.pk}), data=form_data
+        )
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
+        )
+        primaries = PlaceImage.objects.filter(place=self.place, is_primary=True)
+        self.assertEqual(primaries.count(), 1)
 
     def test_deleting_primary_image_via_formset_promotes_another(self):
         """Deleting the current primary image through the edit formset
@@ -1186,6 +1307,56 @@ class PlaceReviewViewTests(TestCase):
         # Should not create review
         self.assertEqual(PlaceReview.objects.count(), 0)
 
+    def test_review_create_get_shows_empty_form(self):
+        """Test GET request shows an empty review form for a place not yet reviewed"""
+        self.client.login(username="reviewer", password="pass123")
+        response = self.client.get(
+            reverse("explore:review_create", kwargs={"place_pk": self.place.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "explore/review_form.html")
+        self.assertFalse(response.context["form"].is_bound)
+
+    def test_review_edit_get_shows_prefilled_form(self):
+        """Test GET request shows the review form prefilled for the owner"""
+        review = PlaceReview.objects.create(
+            place=self.place, user=self.user, rating=4, comment="Nice"
+        )
+        self.client.login(username="reviewer", password="pass123")
+        response = self.client.get(
+            reverse("explore:review_edit", kwargs={"pk": review.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["review"], review)
+        self.assertEqual(response.context["form"].instance, review)
+
+    def test_review_delete_get_shows_confirmation_for_owner(self):
+        """Test GET request shows the delete confirmation page for the owner"""
+        review = PlaceReview.objects.create(
+            place=self.place, user=self.user, rating=4, comment="Nice"
+        )
+        self.client.login(username="reviewer", password="pass123")
+        response = self.client.get(
+            reverse("explore:review_delete", kwargs={"pk": review.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "explore/review_delete_confirm.html")
+        self.assertEqual(response.context["review"], review)
+
+    def test_review_delete_denied_for_non_owner(self):
+        """Test a non-owner, non-moderator cannot access the delete confirmation"""
+        other_user = User.objects.create_user(username="other2", password="pass123")
+        review = PlaceReview.objects.create(
+            place=self.place, user=other_user, rating=4, comment="Nice"
+        )
+        self.client.login(username="reviewer", password="pass123")
+        response = self.client.get(
+            reverse("explore:review_delete", kwargs={"pk": review.pk})
+        )
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
+        )
+
     def test_review_validation_requires_comment(self):
         """Test review form requires comment"""
         self.client.login(username="reviewer", password="pass123")
@@ -1471,3 +1642,744 @@ class PlaceAdminTests(TestCase):
         self.client.login(username="superadmin", password="pass123")
         response = self.client.get(f"/admin/explore/place/{self.place.pk}/change/")
         self.assertEqual(response.status_code, 200)
+
+    def test_approve_places_action_approves_and_logs(self):
+        """Bulk 'approve_places' admin action approves places and records history"""
+        pending = Place.objects.create(
+            name="Pending Place",
+            description="Desc",
+            address="Addr",
+            created_by=self.superuser,
+            is_approved=False,
+        )
+        place_admin = admin.site._registry[Place]
+        request = self.factory.get("/admin/explore/place/")
+        request.user = self.superuser
+        request._messages = self.client.session
+        from django.contrib.messages.storage.fallback import FallbackStorage
+
+        setattr(request, "session", self.client.session)
+        setattr(request, "_messages", FallbackStorage(request))
+
+        place_admin.approve_places(request, Place.objects.filter(pk=pending.pk))
+
+        pending.refresh_from_db()
+        self.assertTrue(pending.is_approved)
+        self.assertEqual(
+            PlaceApproval.objects.filter(place=pending, action="APPROVE").count(), 1
+        )
+
+    def test_approve_places_action_skips_already_approved(self):
+        """Places already approved are not re-approved or re-logged"""
+        place_admin = admin.site._registry[Place]
+        request = self.factory.get("/admin/explore/place/")
+        request.user = self.superuser
+        from django.contrib.messages.storage.fallback import FallbackStorage
+
+        setattr(request, "session", self.client.session)
+        setattr(request, "_messages", FallbackStorage(request))
+
+        approved = Place.objects.create(
+            name="Already Approved",
+            description="Desc",
+            address="Addr",
+            created_by=self.superuser,
+            is_approved=True,
+        )
+        place_admin.approve_places(request, Place.objects.filter(pk=approved.pk))
+        self.assertEqual(PlaceApproval.objects.filter(place=approved).count(), 0)
+
+    def test_place_admin_save_model_sets_created_by_on_create(self):
+        """Test PlaceAdmin.save_model sets created_by only when creating"""
+        place_admin = admin.site._registry[Place]
+        request = self.factory.post("/admin/explore/place/add/")
+        request.user = self.superuser
+
+        place = Place(name="New Place", description="d", address="a")
+        place_admin.save_model(request, place, form=None, change=False)
+        self.assertEqual(place.created_by, self.superuser)
+
+    def test_place_admin_save_model_keeps_creator_on_change(self):
+        """Test PlaceAdmin.save_model does not overwrite created_by when editing"""
+        place_admin = admin.site._registry[Place]
+        other_admin = User.objects.create_superuser(
+            username="other_super", email="other@example.com", password="pass123"
+        )
+        request = self.factory.post(f"/admin/explore/place/{self.place.pk}/change/")
+        request.user = other_admin
+
+        place_admin.save_model(request, self.place, form=None, change=True)
+        self.assertEqual(self.place.created_by, self.superuser)
+
+    def test_place_approval_admin_save_model_sets_reviewer_on_create(self):
+        """Test PlaceApprovalAdmin.save_model sets reviewer only when creating"""
+        approval_admin = admin.site._registry[PlaceApproval]
+        request = self.factory.post("/admin/explore/placeapproval/add/")
+        request.user = self.superuser
+
+        approval = PlaceApproval(place=self.place, action="APPROVE")
+        approval_admin.save_model(request, approval, form=None, change=False)
+        self.assertEqual(approval.reviewer, self.superuser)
+
+    def test_place_review_admin_comment_preview_truncates_long_comments(self):
+        """Test get_comment_preview truncates comments over 50 chars"""
+        review_admin = admin.site._registry[PlaceReview]
+        creator = User.objects.create_user(username="reviewer2", password="pass123")
+        review = PlaceReview.objects.create(
+            place=self.place,
+            user=creator,
+            rating=5,
+            comment="A" * 60,
+        )
+        preview = review_admin.get_comment_preview(review)
+        self.assertEqual(preview, "A" * 50 + "...")
+
+    def test_place_review_admin_comment_preview_keeps_short_comments(self):
+        """Test get_comment_preview does not alter short comments"""
+        review_admin = admin.site._registry[PlaceReview]
+        creator = User.objects.create_user(username="reviewer3", password="pass123")
+        review = PlaceReview.objects.create(
+            place=self.place, user=creator, rating=5, comment="Short"
+        )
+        self.assertEqual(review_admin.get_comment_preview(review), "Short")
+
+    def test_revoke_approval_action_revokes_and_logs(self):
+        """Bulk 'revoke_approval' admin action revokes approval and records history"""
+        place_admin = admin.site._registry[Place]
+        request = self.factory.get("/admin/explore/place/")
+        request.user = self.superuser
+        from django.contrib.messages.storage.fallback import FallbackStorage
+
+        setattr(request, "session", self.client.session)
+        setattr(request, "_messages", FallbackStorage(request))
+
+        approved = Place.objects.create(
+            name="Approved Place",
+            description="Desc",
+            address="Addr",
+            created_by=self.superuser,
+            is_approved=True,
+        )
+        place_admin.revoke_approval(request, Place.objects.filter(pk=approved.pk))
+
+        approved.refresh_from_db()
+        self.assertFalse(approved.is_approved)
+        self.assertEqual(
+            PlaceApproval.objects.filter(place=approved, action="REJECT").count(), 1
+        )
+
+
+class BacklogViewTests(TestCase):
+    """Tests for the admin backlog view (queue/history modes, filters, sorting)"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular", password="pass123", is_staff=False
+        )
+        self.category = Category.objects.create(name="Restaurants", slug="restaurants")
+
+        self.pending_place = Place.objects.create(
+            name="Pending",
+            description="d",
+            address="a",
+            created_by=self.regular_user,
+            is_approved=False,
+            is_active=True,
+        )
+        self.approved_place = Place.objects.create(
+            name="Approved",
+            description="d",
+            address="a",
+            created_by=self.regular_user,
+            is_approved=True,
+            is_active=True,
+        )
+        self.approved_place.categories.add(self.category)
+        self.rejected_place = Place.objects.create(
+            name="Rejected",
+            description="d",
+            address="a",
+            created_by=self.regular_user,
+            is_approved=False,
+            is_active=False,
+        )
+
+    def test_backlog_requires_login(self):
+        """Test backlog view requires authentication"""
+        response = self.client.get(reverse("explore:backlog"))
+        self.assertRedirects(response, "/?next=/explore/admin/backlog/")
+
+    def test_backlog_requires_moderator(self):
+        """Test non-moderators cannot access the backlog"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.get(reverse("explore:backlog"))
+        self.assertRedirects(response, reverse("explore:explore"))
+
+    def test_backlog_default_history_mode_shows_all(self):
+        """Test default (history) mode shows places of any status"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["places"].count(), 3)
+        self.assertEqual(response.context["view_mode"], "history")
+
+    def test_backlog_queue_mode_shows_only_pending(self):
+        """Test queue mode shows only pending, active places"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?view=queue")
+        self.assertEqual(response.context["places"].count(), 1)
+        self.assertEqual(response.context["places"].first(), self.pending_place)
+
+    def test_backlog_status_filter_approved(self):
+        """Test filtering backlog by approved status"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?status=approved")
+        self.assertEqual(response.context["places"].count(), 1)
+        self.assertEqual(response.context["places"].first(), self.approved_place)
+
+    def test_backlog_status_filter_pending(self):
+        """Test filtering backlog by pending status in history mode"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?status=pending")
+        self.assertEqual(response.context["places"].count(), 1)
+        self.assertEqual(response.context["places"].first(), self.pending_place)
+
+    def test_backlog_status_filter_rejected(self):
+        """Test filtering backlog by rejected (inactive) status"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?status=rejected")
+        self.assertEqual(response.context["places"].count(), 1)
+        self.assertEqual(response.context["places"].first(), self.rejected_place)
+
+    def test_backlog_category_filter(self):
+        """Test filtering backlog by category slug"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?category=restaurants")
+        self.assertEqual(response.context["places"].count(), 1)
+        self.assertEqual(response.context["places"].first(), self.approved_place)
+
+    def test_backlog_sorting_by_name(self):
+        """Test backlog can be sorted by name"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog") + "?sort=name")
+        self.assertEqual(response.context["current_sort"], "name")
+
+    def test_backlog_status_counts(self):
+        """Test backlog exposes counts for each status"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:backlog"))
+        self.assertEqual(response.context["total_count"], 3)
+        self.assertEqual(response.context["approved_count"], 1)
+        self.assertEqual(response.context["pending_count"], 1)
+        self.assertEqual(response.context["rejected_count"], 1)
+
+
+class ApprovalWorkflowViewTests(TestCase):
+    """Tests for approval_queue, approve_place and reject_place views"""
+
+    def setUp(self):
+        self.client = Client()
+        self.admin_user = User.objects.create_user(
+            username="admin", password="pass123", is_staff=True
+        )
+        self.regular_user = User.objects.create_user(
+            username="regular", password="pass123", is_staff=False
+        )
+        self.place = Place.objects.create(
+            name="Pending Place",
+            description="d",
+            address="a",
+            created_by=self.regular_user,
+            is_approved=False,
+        )
+
+    def test_approval_queue_requires_moderator(self):
+        """Test approval queue redirects non-moderators"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.get(reverse("explore:approval_queue"))
+        self.assertRedirects(response, reverse("explore:explore"))
+
+    def test_approval_queue_redirects_moderator_to_backlog_queue_view(self):
+        """Regression: approval_queue_view used to concatenate the URL name
+        with a query string instead of reversing it first, raising
+        NoReverseMatch for every moderator who used this shortcut."""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(reverse("explore:approval_queue"))
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
+
+    def test_approve_place_requires_moderator(self):
+        """Test only moderators can approve places"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.post(
+            reverse("explore:approve_place", kwargs={"pk": self.place.pk})
+        )
+        self.assertRedirects(response, reverse("explore:explore"))
+        self.place.refresh_from_db()
+        self.assertFalse(self.place.is_approved)
+
+    def test_approve_place_get_redirects_to_detail(self):
+        """Test GET request to approve_place redirects to place detail"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse("explore:approve_place", kwargs={"pk": self.place.pk})
+        )
+        self.assertRedirects(
+            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
+        )
+
+    def test_approve_place_post_approves_and_creates_record(self):
+        """Test POST request approves the place and logs the approval"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("explore:approve_place", kwargs={"pk": self.place.pk}),
+            data={"comments": "Looks great"},
+        )
+        self.place.refresh_from_db()
+        self.assertTrue(self.place.is_approved)
+
+        approval = PlaceApproval.objects.get(place=self.place)
+        self.assertEqual(approval.action, PlaceApproval.ActionType.APPROVE)
+        self.assertEqual(approval.comments, "Looks great")
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
+
+    def test_reject_place_requires_moderator(self):
+        """Test only moderators can reject places"""
+        self.client.login(username="regular", password="pass123")
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Spam"},
+        )
+        self.assertRedirects(response, reverse("explore:explore"))
+
+    def test_reject_place_without_reason_shows_error(self):
+        """Test rejecting without a reason redirects back with an error.
+        Note: reject_place's own redirect target (GET) redirects again to
+        the backlog, so we don't follow the chain here."""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}), data={}
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(PlaceApproval.objects.filter(place=self.place).count(), 0)
+
+    def test_reject_place_with_outros_requires_custom_comment(self):
+        """Test choosing 'Outros' without specifying a comment shows an error"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Outros", "comments": ""},
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(PlaceApproval.objects.filter(place=self.place).count(), 0)
+
+    def test_reject_place_with_outros_and_comment_redirects_to_backlog_queue_view(
+        self,
+    ):
+        """Regression: reject_place_view had the same string-concatenation
+        redirect bug as approval_queue_view - the rejection applied
+        correctly but the success response raised NoReverseMatch."""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Outros", "comments": "Endereço inválido"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
+        approval = PlaceApproval.objects.get(place=self.place)
+        self.assertEqual(approval.action, PlaceApproval.ActionType.REJECT)
+        self.assertEqual(approval.comments, "Endereço inválido")
+
+    def test_reject_place_with_standard_reason_redirects_to_backlog_queue_view(self):
+        """Test a standard (non-'Outros') reason is used as the comment and
+        the success redirect resolves correctly."""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Conteúdo duplicado"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
+        approval = PlaceApproval.objects.get(place=self.place)
+        self.assertEqual(approval.comments, "Conteúdo duplicado")
+        self.place.refresh_from_db()
+        self.assertFalse(self.place.is_active)
+
+    def test_reject_place_get_redirects_to_backlog(self):
+        """Test GET request to reject_place redirects to the backlog"""
+        self.client.login(username="admin", password="pass123")
+        response = self.client.get(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk})
+        )
+        self.assertRedirects(response, reverse("explore:backlog"))
+
+
+class ToggleFavoriteViewTests(TestCase):
+    """Tests for the toggle_favorite AJAX endpoint"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="fan", password="pass123")
+        self.creator = User.objects.create_user(username="creator", password="pass123")
+        self.place = Place.objects.create(
+            name="Test Place",
+            description="d",
+            address="a",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=True,
+        )
+
+    def test_get_request_not_allowed(self):
+        """Test GET requests are rejected with 405"""
+        response = self.client.get(
+            reverse("explore:toggle_favorite", kwargs={"pk": self.place.pk})
+        )
+        self.assertEqual(response.status_code, 405)
+
+    def test_unapproved_place_returns_404(self):
+        """Test toggling favorite on a non-approved place returns 404"""
+        unapproved = Place.objects.create(
+            name="Unapproved",
+            description="d",
+            address="a",
+            created_by=self.creator,
+            is_approved=False,
+        )
+        response = self.client.post(
+            reverse("explore:toggle_favorite", kwargs={"pk": unapproved.pk})
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_authenticated_user_can_add_favorite(self):
+        """Test authenticated user adding a favorite creates a Favorite record"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:toggle_favorite", kwargs={"pk": self.place.pk})
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertTrue(data["is_favorited"])
+        self.assertEqual(data["favorites_count"], 1)
+        self.assertTrue(
+            Favorite.objects.filter(user=self.user, place=self.place).exists()
+        )
+
+    def test_authenticated_user_can_remove_favorite(self):
+        """Test toggling an existing favorite removes it"""
+        Favorite.objects.create(user=self.user, place=self.place)
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:toggle_favorite", kwargs={"pk": self.place.pk})
+        )
+        data = response.json()
+        self.assertFalse(data["is_favorited"])
+        self.assertEqual(data["favorites_count"], 0)
+        self.assertFalse(
+            Favorite.objects.filter(user=self.user, place=self.place).exists()
+        )
+
+    def test_anonymous_user_gets_client_side_confirmation(self):
+        """Test anonymous users get a success response without DB changes"""
+        response = self.client.post(
+            reverse("explore:toggle_favorite", kwargs={"pk": self.place.pk})
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(Favorite.objects.count(), 0)
+
+
+class FavoritesListViewTests(TestCase):
+    """Tests for the favorites list page"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="fan", password="pass123")
+        self.creator = User.objects.create_user(username="creator", password="pass123")
+        self.place = Place.objects.create(
+            name="Test Place",
+            description="d",
+            address="a",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=True,
+        )
+
+    def test_authenticated_user_sees_their_favorites(self):
+        """Test authenticated users see their own favorited places"""
+        Favorite.objects.create(user=self.user, place=self.place)
+        self.client.login(username="fan", password="pass123")
+        response = self.client.get(reverse("explore:favorites"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["is_authenticated"])
+        self.assertEqual(response.context["favorites_count"], 1)
+
+    def test_anonymous_user_sees_empty_context(self):
+        """Test anonymous users get an empty favorites context (client renders localStorage)"""
+        response = self.client.get(reverse("explore:favorites"))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context["is_authenticated"])
+        self.assertEqual(response.context["favorites_count"], 0)
+
+
+class SyncFavoritesViewTests(TestCase):
+    """Tests for syncing localStorage favorites to the backend"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="fan", password="pass123")
+        self.creator = User.objects.create_user(username="creator", password="pass123")
+        self.place = Place.objects.create(
+            name="Test Place",
+            description="d",
+            address="a",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=True,
+        )
+
+    def test_sync_requires_login(self):
+        """Test sync endpoint requires authentication"""
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data=json.dumps({"favorites": [self.place.pk]}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_request_not_allowed(self):
+        """Test GET requests to sync endpoint are rejected"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.get(reverse("explore:sync_favorites"))
+        self.assertEqual(response.status_code, 405)
+
+    def test_sync_merges_new_favorites(self):
+        """Test local favorite IDs not yet in the backend get created"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data=json.dumps({"favorites": [self.place.pk]}),
+            content_type="application/json",
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(data["added"], 1)
+        self.assertTrue(
+            Favorite.objects.filter(user=self.user, place=self.place).exists()
+        )
+
+    def test_sync_skips_already_favorited_places(self):
+        """Test places already favorited are not duplicated or re-added"""
+        Favorite.objects.create(user=self.user, place=self.place)
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data=json.dumps({"favorites": [self.place.pk]}),
+            content_type="application/json",
+        )
+        data = response.json()
+        self.assertEqual(data["added"], 0)
+        self.assertEqual(Favorite.objects.filter(user=self.user).count(), 1)
+
+    def test_sync_ignores_nonexistent_or_unapproved_places(self):
+        """Test IDs that don't map to an approved place are silently skipped"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data=json.dumps({"favorites": [999999]}),
+            content_type="application/json",
+        )
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(data["added"], 0)
+
+    def test_sync_returns_500_on_unexpected_error(self):
+        """Test a non-integer favorite ID triggers the generic error handler"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data=json.dumps({"favorites": ["not-an-id"]}),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 500)
+        data = response.json()
+        self.assertFalse(data["success"])
+        self.assertIn("error", data)
+
+    def test_sync_rejects_invalid_json(self):
+        """Test malformed JSON body returns a 400 error"""
+        self.client.login(username="fan", password="pass123")
+        response = self.client.post(
+            reverse("explore:sync_favorites"),
+            data="not json",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertFalse(data["success"])
+
+
+class FavoritesApiListViewTests(TestCase):
+    """Tests for the favorites API list endpoint used to sync localStorage"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="fan", password="pass123")
+        self.creator = User.objects.create_user(username="creator", password="pass123")
+        self.place = Place.objects.create(
+            name="Test Place",
+            description="d",
+            address="a",
+            created_by=self.creator,
+            is_approved=True,
+            is_active=True,
+        )
+
+    def test_requires_login(self):
+        """Test the endpoint requires authentication"""
+        response = self.client.get(reverse("explore:favorites_api_list"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_returns_favorite_place_ids(self):
+        """Test the endpoint returns the current user's favorite place IDs"""
+        Favorite.objects.create(user=self.user, place=self.place)
+        self.client.login(username="fan", password="pass123")
+        response = self.client.get(reverse("explore:favorites_api_list"))
+        data = response.json()
+        self.assertTrue(data["success"])
+        self.assertEqual(data["favorites"], [self.place.pk])
+        self.assertEqual(data["count"], 1)
+
+
+class FavoriteModelTests(TestCase):
+    """Tests for the Favorite model"""
+
+    def test_favorite_string_representation(self):
+        """Test Favorite string representation"""
+        user = User.objects.create_user(username="fan", password="pass123")
+        creator = User.objects.create_user(username="creator", password="pass123")
+        place = Place.objects.create(
+            name="Test Place", description="d", address="a", created_by=creator
+        )
+        favorite = Favorite.objects.create(user=user, place=place)
+        self.assertEqual(str(favorite), f"{user.username} favorited {place.name}")
+
+
+class PlacesByIdsAPITests(TestCase):
+    """Tests for the places_by_ids_api endpoint"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="creator", password="pass123")
+        self.category = Category.objects.create(
+            name="Restaurant", slug="restaurant", icon="🍽️"
+        )
+        self.place = Place.objects.create(
+            name="Approved Place",
+            description="d",
+            address="a",
+            created_by=self.user,
+            is_approved=True,
+            is_active=True,
+        )
+        self.place.categories.add(self.category)
+        self.url = reverse("explore:places_by_ids_api")
+
+    def test_no_ids_returns_empty_list(self):
+        """Test missing 'ids' query param returns an empty result"""
+        response = self.client.get(self.url)
+        data = response.json()
+        self.assertEqual(data["places"], [])
+        self.assertEqual(data["count"], 0)
+
+    def test_invalid_id_format_returns_400(self):
+        """Test non-numeric IDs return a 400 error"""
+        response = self.client.get(self.url, {"ids": "abc,def"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_returns_places_matching_ids(self):
+        """Test the endpoint returns matching approved places"""
+        response = self.client.get(self.url, {"ids": str(self.place.pk)})
+        data = response.json()
+        self.assertEqual(data["count"], 1)
+        place_data = data["places"][0]
+        self.assertEqual(place_data["name"], "Approved Place")
+        self.assertEqual(place_data["categories"][0]["name"], "Restaurant")
+
+    def test_excludes_unapproved_places(self):
+        """Test unapproved places are excluded even if their ID is requested"""
+        unapproved = Place.objects.create(
+            name="Unapproved",
+            description="d",
+            address="a",
+            created_by=self.user,
+            is_approved=False,
+        )
+        response = self.client.get(
+            self.url, {"ids": f"{self.place.pk},{unapproved.pk}"}
+        )
+        data = response.json()
+        self.assertEqual(data["count"], 1)
+        self.assertEqual(data["places"][0]["id"], self.place.pk)
+
+
+class ExplorePageSearchTests(TestCase):
+    """Tests for search filtering on the explore page"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="creator", password="pass123")
+        self.category = Category.objects.create(name="Restaurants", slug="restaurants")
+        self.matching_place = Place.objects.create(
+            name="Pizza Place",
+            description="Great pizza",
+            address="a",
+            created_by=self.user,
+            is_approved=True,
+            is_active=True,
+        )
+        self.other_place = Place.objects.create(
+            name="Bookstore",
+            description="Lots of books",
+            address="a",
+            created_by=self.user,
+            is_approved=True,
+            is_active=True,
+        )
+
+    def test_search_query_filters_by_name(self):
+        """Test the search query filters places by name"""
+        response = self.client.get(reverse("explore:explore") + "?q=Pizza")
+        self.assertEqual(response.context["all_places"].count(), 1)
+        self.assertEqual(response.context["all_places"].first(), self.matching_place)
+
+    def test_search_query_filters_by_description(self):
+        """Test the search query also matches the description"""
+        response = self.client.get(reverse("explore:explore") + "?q=books")
+        self.assertEqual(response.context["all_places"].count(), 1)
+        self.assertEqual(response.context["all_places"].first(), self.other_place)
