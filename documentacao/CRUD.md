@@ -55,8 +55,8 @@ O projeto implementa operações CRUD seguindo o padrão MVT (Model-View-Templat
 
 #### 3. **Reviews (Avaliações)** — CRUD Completo
 
-- `review_create_view`: Usuários podem avaliar lugares (1 review por usuário para cada lugar).
-- `place_detail_view`: Exibe todas as avaliações do lugar.
+- `review_create_view`: Usuários podem avaliar lugares (1 review por usuário para cada lugar). A view verifica se já existe uma `PlaceReview` do usuário para o lugar antes de mostrar o formulário; a unicidade também é garantida no banco por `unique_together = ("user", "place")` no model.
+- `place_detail_view`: Exibe todas as avaliações do lugar. Para não-donos/não-moderadores, só retorna o lugar se `is_approved=True` **e** `is_active=True` — um lugar aprovado mas desativado (ex.: rejeitado após já ter sido aprovado) não é exposto a outros usuários.
 - `review_edit_view`: Dono ou admin pode editar uma avaliação.
 - `review_delete_view`: Dono ou admin pode deletar uma avaliação.
 
@@ -85,6 +85,14 @@ O projeto implementa operações CRUD seguindo o padrão MVT (Model-View-Templat
 
 - `news_list_view`: Lista notícias e eventos.
 - `news_detail_view`: Exibe detalhes com contador de visualizações.
+
+---
+
+#### 7. **API JSON e Infraestrutura**
+
+- `map_data_api`: Retorna marcadores de todos os lugares aprovados/ativos para o mapa da landing page. Rating/categoria são calculados via anotações SQL (`annotate`), não por query separada por lugar.
+- `places_by_ids_api`: Retorna lugares por uma lista de IDs (usado pela sincronização de favoritos no frontend); também usa anotações para evitar N+1.
+- `GET /healthz/` (`apps.core.views.health_view`): endpoint de health check sem autenticação, executa `SELECT 1` no banco e retorna `{"status": "ok"}`. Usado pelo `HEALTHCHECK` do Docker e por qualquer orquestrador/monitor de uptime.
 
 ---
 
