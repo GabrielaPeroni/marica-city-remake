@@ -316,7 +316,7 @@ def approval_queue_view(request):
         return redirect("explore:explore")
 
     # Redirecionar para a visualização unificada no modo de fila
-    return redirect("explore:backlog" + "?view=queue")
+    return redirect(reverse("explore:backlog") + "?view=queue")
 
 
 @login_required
@@ -389,7 +389,7 @@ def reject_place_view(request, pk):
             request,
             f'Lugar "{place.name}" foi removido.',
         )
-        return redirect("explore:backlog" + "?view=queue")
+        return redirect(reverse("explore:backlog") + "?view=queue")
 
     # If GET request, redirect to backlog (modal handles rejection)
     return redirect("explore:backlog")

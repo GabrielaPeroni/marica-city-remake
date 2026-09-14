@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase
-from django.urls import NoReverseMatch, reverse
+from django.urls import reverse
 
 from .models import Category, Favorite, Place, PlaceApproval, PlaceImage, PlaceReview
 
@@ -1903,15 +1903,17 @@ class ApprovalWorkflowViewTests(TestCase):
         response = self.client.get(reverse("explore:approval_queue"))
         self.assertRedirects(response, reverse("explore:explore"))
 
-    def test_approval_queue_redirect_crashes_on_malformed_url_name(self):
-        """NEW BUG (not fixed, out of scope): approval_queue_view calls
-        redirect("explore:backlog" + "?view=queue") - string concatenation
-        instead of redirect(reverse("explore:backlog") + "?view=queue"),
-        so Django tries to reverse the literal name "backlog?view=queue"
-        and raises NoReverseMatch instead of redirecting."""
+    def test_approval_queue_redirects_moderator_to_backlog_queue_view(self):
+        """Regression: approval_queue_view used to concatenate the URL name
+        with a query string instead of reversing it first, raising
+        NoReverseMatch for every moderator who used this shortcut."""
         self.client.login(username="admin", password="pass123")
-        with self.assertRaises(NoReverseMatch):
-            self.client.get(reverse("explore:approval_queue"))
+        response = self.client.get(reverse("explore:approval_queue"))
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
 
     def test_approve_place_requires_moderator(self):
         """Test only moderators can approve places"""
@@ -1990,31 +1992,39 @@ class ApprovalWorkflowViewTests(TestCase):
         )
         self.assertEqual(PlaceApproval.objects.filter(place=self.place).count(), 0)
 
-    def test_reject_place_with_outros_and_comment_crashes_on_success_redirect(self):
-        """NEW BUG (not fixed, out of scope): the rejection itself succeeds
-        (approval record created, place deactivated) but reject_place_view's
-        success redirect uses redirect("explore:backlog" + "?view=queue") -
-        the same string-concatenation bug as approval_queue_view - so the
-        response never reaches the client; it raises NoReverseMatch."""
+    def test_reject_place_with_outros_and_comment_redirects_to_backlog_queue_view(
+        self,
+    ):
+        """Regression: reject_place_view had the same string-concatenation
+        redirect bug as approval_queue_view - the rejection applied
+        correctly but the success response raised NoReverseMatch."""
         self.client.login(username="admin", password="pass123")
-        with self.assertRaises(NoReverseMatch):
-            self.client.post(
-                reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
-                data={"reason": "Outros", "comments": "Endereço inválido"},
-            )
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Outros", "comments": "Endereço inválido"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
         approval = PlaceApproval.objects.get(place=self.place)
         self.assertEqual(approval.action, PlaceApproval.ActionType.REJECT)
         self.assertEqual(approval.comments, "Endereço inválido")
 
-    def test_reject_place_with_standard_reason_crashes_on_success_redirect(self):
-        """Test a standard (non-'Outros') reason is used as the comment; the
-        rejection itself is applied before hitting the same redirect bug."""
+    def test_reject_place_with_standard_reason_redirects_to_backlog_queue_view(self):
+        """Test a standard (non-'Outros') reason is used as the comment and
+        the success redirect resolves correctly."""
         self.client.login(username="admin", password="pass123")
-        with self.assertRaises(NoReverseMatch):
-            self.client.post(
-                reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
-                data={"reason": "Conteúdo duplicado"},
-            )
+        response = self.client.post(
+            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            data={"reason": "Conteúdo duplicado"},
+        )
+        self.assertRedirects(
+            response,
+            reverse("explore:backlog") + "?view=queue",
+            fetch_redirect_response=False,
+        )
         approval = PlaceApproval.objects.get(place=self.place)
         self.assertEqual(approval.comments, "Conteúdo duplicado")
         self.place.refresh_from_db()
