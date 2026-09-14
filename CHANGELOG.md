@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GET /healthz/` health check endpoint.
 - Cloudflare R2 (S3-compatible) media storage via `django-storages`, opt-in via
   `AWS_STORAGE_BUCKET_NAME` — falls back to local disk when unset.
+- `documentacao/CONTRIBUTING.md` and `.github/PULL_REQUEST_TEMPLATE.md`.
 
 ### Changed
 
@@ -42,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `place_detail_view` only checked `is_approved`, not `is_active`, when deciding
   whether a non-owner/non-moderator could view a place — an approved-but-
   deactivated place was visible to any logged-in user.
+
+### Removed
+
+- `static/css/components/carousel.css` — never linked from any template, and its
+  selectors didn't match current landing-page markup anyway.
 
 ## [0.2.0] - 2026-09-13
 
