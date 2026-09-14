@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-14
+
 ### Added
 
 - CodeQL scanning (`python`, `javascript-typescript`) on push to main and PRs.
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `codeql-action`).
 - `Place.primary_image` and the map/favorites JSON APIs now read from prefetched
   querysets instead of issuing per-place queries in list/loop views.
+- Test coverage 78% → 95% (127 → 254 tests); CI coverage floor raised 70 → 90.
 
 ### Fixed
 
@@ -43,6 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `place_detail_view` only checked `is_approved`, not `is_active`, when deciding
   whether a non-owner/non-moderator could view a place — an approved-but-
   deactivated place was visible to any logged-in user.
+- `approval_queue_view` and `reject_place_view` raised `NoReverseMatch` on every
+  use — both built a redirect by concatenating a URL name with a query string
+  instead of reversing it first.
 
 ### Removed
 

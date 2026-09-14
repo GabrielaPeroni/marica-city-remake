@@ -1,6 +1,6 @@
 [project]
 name = "site-python"
-version = "0.2.0"
+version = "0.3.0"
 description = "Django site with uv"
 authors = [{ name = "Noell" }]
 readme = "README.md"
@@ -140,7 +140,7 @@ exclude_lines = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.2.0"
+version = "0.3.0"
 version_files = ["pyproject.toml:version"]
 changelog_file = "CHANGELOG.md"
 update_changelog_on_bump = true
