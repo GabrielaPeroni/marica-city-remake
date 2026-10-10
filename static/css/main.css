@@ -5,32 +5,32 @@
 
 /* CSS Variables */
 :root {
-  /* Palette: Maricá's flag red and navy, softened, on warm neutrals */
-  --brand-red: #c4202e;
-  --brand-red-dark: #a01826;
-  --brand-red-tint: #fbecee;
-  --navy-900: #14213d;
-  --navy-700: #223358;
-  --navy-500: #41557f;
-  --ink: #1c2434;
-  --ink-muted: #586174;
-  --ink-soft: #8a92a3;
-  --page: #f8f6f2;
+  /* Palette: a muted Maricá red on warm charcoal and off-white neutrals */
+  --brand-red: #b23b40;
+  --brand-red-dark: #8f2c31;
+  --brand-red-tint: #f7ebea;
+  --dark-900: #2b2826;
+  --dark-700: #45403c;
+  --dark-500: #6e6761;
+  --ink: #2b2826;
+  --ink-muted: #655e58;
+  --ink-soft: #968e87;
+  --page: #f7f5f1;
   --surface: #ffffff;
-  --surface-alt: #f1eee8;
-  --line: #e4dfd7;
-  --teal: #0f766e;
-  --teal-tint: #dff3ef;
-  --amber: #a8590b;
-  --amber-tint: #fdf0d5;
-  --green: #1f7a5a;
-  --star: #e0a526;
+  --surface-alt: #efece6;
+  --line: #e3ded6;
+  --teal: #47705f;
+  --teal-tint: #e4eee8;
+  --amber: #9a5a1c;
+  --amber-tint: #f8eeda;
+  --green: #3f7558;
+  --star: #d9a441;
 
-  --primary-color: var(--navy-900);
-  --secondary-color: var(--navy-500);
+  --primary-color: var(--dark-900);
+  --secondary-color: var(--dark-500);
   --accent-color: var(--brand-red);
   --bg-light: var(--surface-alt);
-  --bg-dark: var(--navy-900);
+  --bg-dark: var(--dark-900);
   --text-primary: var(--ink);
   --text-secondary: var(--ink-muted);
   --text-light: #ffffff;
@@ -40,14 +40,14 @@
   --bs-body-color: var(--ink);
   --bs-secondary-color: var(--ink-muted);
   --bs-border-color: var(--line);
-  --bs-primary-rgb: 34, 51, 88;
-  --bs-secondary-rgb: 88, 97, 116;
-  --bs-dark-rgb: 20, 33, 61;
-  --bs-light-rgb: 241, 238, 232;
-  --bs-danger-rgb: 196, 32, 46;
-  --bs-info-rgb: 15, 118, 110;
-  --bs-success-rgb: 31, 122, 90;
-  --bs-warning-rgb: 168, 89, 11;
+  --bs-primary-rgb: 69, 64, 60;
+  --bs-secondary-rgb: 101, 94, 88;
+  --bs-dark-rgb: 43, 40, 38;
+  --bs-light-rgb: 239, 236, 230;
+  --bs-danger-rgb: 178, 59, 64;
+  --bs-info-rgb: 71, 112, 95;
+  --bs-success-rgb: 63, 117, 88;
+  --bs-warning-rgb: 154, 90, 28;
 
   /* Typography */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -74,9 +74,9 @@
   --transition-slow: 500ms ease;
 
   /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(20, 33, 61, 0.07);
-  --shadow-md: 0 4px 12px rgba(20, 33, 61, 0.1);
-  --shadow-lg: 0 12px 24px rgba(20, 33, 61, 0.14);
+  --shadow-sm: 0 2px 4px rgba(43, 40, 38, 0.07);
+  --shadow-md: 0 4px 12px rgba(43, 40, 38, 0.1);
+  --shadow-lg: 0 12px 24px rgba(43, 40, 38, 0.14);
 }
 
 /* Global Styles */
@@ -387,7 +387,7 @@ img:hover {
   right: 24px;
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  background: linear-gradient(135deg, var(--dark-900) 0%, var(--dark-700) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -452,7 +452,7 @@ img:hover {
 }
 
 .user-dashboard-header {
-  background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  background: linear-gradient(135deg, var(--dark-900) 0%, var(--dark-700) 100%);
   color: white;
   padding: 1rem;
 }
@@ -524,21 +524,21 @@ html {
 
 /* Input focus animations */
 .list-group {
-  --bs-list-group-active-bg: var(--navy-900);
-  --bs-list-group-active-border-color: var(--navy-900);
+  --bs-list-group-active-bg: var(--dark-900);
+  --bs-list-group-active-border-color: var(--dark-900);
 }
 
 .pagination {
-  --bs-pagination-color: var(--navy-700);
-  --bs-pagination-hover-color: var(--navy-900);
-  --bs-pagination-active-bg: var(--navy-900);
-  --bs-pagination-active-border-color: var(--navy-900);
+  --bs-pagination-color: var(--dark-700);
+  --bs-pagination-hover-color: var(--dark-900);
+  --bs-pagination-active-bg: var(--dark-900);
+  --bs-pagination-active-border-color: var(--dark-900);
   --bs-pagination-border-color: var(--line);
 }
 
 .form-check-input:checked {
-  background-color: var(--navy-700);
-  border-color: var(--navy-700);
+  background-color: var(--dark-700);
+  border-color: var(--dark-700);
 }
 
 .form-control:focus,
@@ -555,26 +555,26 @@ html {
 /* Bootstrap components on the site palette */
 .btn-dark,
 .btn-primary {
-  --bs-btn-bg: var(--navy-900);
-  --bs-btn-border-color: var(--navy-900);
-  --bs-btn-hover-bg: var(--navy-700);
-  --bs-btn-hover-border-color: var(--navy-700);
-  --bs-btn-active-bg: var(--navy-700);
-  --bs-btn-active-border-color: var(--navy-700);
-  --bs-btn-disabled-bg: var(--navy-500);
-  --bs-btn-disabled-border-color: var(--navy-500);
+  --bs-btn-bg: var(--dark-900);
+  --bs-btn-border-color: var(--dark-900);
+  --bs-btn-hover-bg: var(--dark-700);
+  --bs-btn-hover-border-color: var(--dark-700);
+  --bs-btn-active-bg: var(--dark-700);
+  --bs-btn-active-border-color: var(--dark-700);
+  --bs-btn-disabled-bg: var(--dark-500);
+  --bs-btn-disabled-border-color: var(--dark-500);
 }
 
 .btn-outline-dark,
 .btn-outline-primary {
-  --bs-btn-color: var(--navy-900);
-  --bs-btn-border-color: var(--navy-900);
+  --bs-btn-color: var(--dark-900);
+  --bs-btn-border-color: var(--dark-900);
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: var(--navy-900);
-  --bs-btn-hover-border-color: var(--navy-900);
+  --bs-btn-hover-bg: var(--dark-900);
+  --bs-btn-hover-border-color: var(--dark-900);
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: var(--navy-900);
-  --bs-btn-active-border-color: var(--navy-900);
+  --bs-btn-active-bg: var(--dark-900);
+  --bs-btn-active-border-color: var(--dark-900);
 }
 
 .btn-danger {
@@ -611,6 +611,13 @@ html {
 
 .form-control:focus,
 .form-select:focus {
-  border-color: var(--navy-500);
-  box-shadow: 0 0 0 0.2rem rgba(65, 85, 127, 0.2);
+  border-color: var(--dark-500);
+  box-shadow: 0 0 0 0.2rem rgba(110, 103, 97, 0.2);
+}
+
+/* Very wide screens: let the content column grow instead of floating in the middle */
+@media (min-width: 1800px) {
+  .container {
+    max-width: 1560px;
+  }
 }

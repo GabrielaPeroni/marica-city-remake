@@ -11,6 +11,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
+          <a class="nav-link {% if route == 'landing' %}active{% endif %}" {% if route == 'landing' %}aria-current="page"{% endif %} href="{% url 'core:landing' %}">Início</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {% if ns == 'explore' %}active{% endif %}" {% if ns == 'explore' %}aria-current="page"{% endif %} href="{% url 'explore:explore' %}">Explorar</a>
         </li>
         <li class="nav-item">

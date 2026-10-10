@@ -49,7 +49,7 @@
   gap: 0.25rem;
   padding: 1rem;
   color: #fff;
-  background: linear-gradient(135deg, var(--navy-900), var(--navy-500));
+  background: linear-gradient(135deg, var(--dark-900), var(--dark-500));
 }
 
 /* Sem foto, o bloco fica baixo para o título dominar o card */
@@ -58,27 +58,27 @@
 }
 
 .news-card-media--placeholder.tone-1 {
-  background: linear-gradient(135deg, #7f1d1d, #b91c1c);
+  background: linear-gradient(135deg, #7a2a2e, #a8444a);
 }
 
 .news-card-media--placeholder.tone-2 {
-  background: linear-gradient(135deg, #0c4a6e, #0369a1);
+  background: linear-gradient(135deg, #3d4a52, #5c6f7a);
 }
 
 .news-card-media--placeholder.tone-3 {
-  background: linear-gradient(135deg, #134e4a, #0f766e);
+  background: linear-gradient(135deg, #35564a, #4f7a69);
 }
 
 .news-card-media--placeholder.tone-4 {
-  background: linear-gradient(135deg, #2b3a5e, #41557f);
+  background: linear-gradient(135deg, #4a423d, #6e6761);
 }
 
 .news-card-media--placeholder.kind-event {
-  background: linear-gradient(135deg, #14532d, #15803d);
+  background: linear-gradient(135deg, #35604a, #4c7a5d);
 }
 
 .news-card-media--placeholder.kind-announcement {
-  background: linear-gradient(135deg, #78350f, #b45309);
+  background: linear-gradient(135deg, #6e4214, #95601f);
 }
 
 .news-card-media--placeholder .bi {
@@ -146,12 +146,12 @@
 
 .news-kind.kind-event {
   background: var(--teal-tint);
-  color: #0b4f4a;
+  color: #274237;
 }
 
 .news-kind.kind-announcement {
   background: var(--amber-tint);
-  color: #6b3a07;
+  color: #5c3610;
 }
 
 /* Lead story */
@@ -217,7 +217,7 @@
   text-align: center;
   border-radius: 6px;
   background: var(--teal-tint);
-  color: #0b4f4a;
+  color: #274237;
   padding: 0.35rem 0;
   line-height: 1.1;
 }

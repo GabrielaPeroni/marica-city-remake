@@ -18,11 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Site palette refreshed around Maricá's flag colours: a softened signature
-  red for the navbar and primary actions, deep navy replacing near-black
+- Site palette refreshed: a muted version of Maricá's signature
+  red for the navbar and primary actions, warm charcoal replacing near-black
   (footer, dark buttons, admin sidebar), and warm off-white surfaces in place
   of cool greys. Page headers are now a light band instead of a red block.
   Colours live as tokens in `static/css/main.css`; all text pairs meet WCAG AA.
+- Landing hero fills the viewport and lines up with the navbar's content
+  column; the content column widens on very wide screens. Navbar gains an
+  'Início' link.
 - News list and detail rebuilt on the same card language as Explorar; one navbar
   style for all pages (active link derived from the URL instead of per-template
   arguments); Sobre page restructured; register page uses the shared navbar.

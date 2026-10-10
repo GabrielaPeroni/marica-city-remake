@@ -3,8 +3,8 @@
 :root {
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 70px;
-  --sidebar-bg: var(--navy-900);
-  --sidebar-text: #c3cbdb;
+  --sidebar-bg: var(--dark-900);
+  --sidebar-text: #cfc9c2;
   --sidebar-text-active: #ffffff;
   --sidebar-active-bg: #ffffff14;
   --sidebar-hover-bg: #ffffff14;

@@ -35,7 +35,7 @@
 }
 
 .page-header a:focus-visible {
-  outline: 3px solid var(--navy-700);
+  outline: 3px solid var(--dark-700);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -76,7 +76,7 @@
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
-  color: var(--navy-900);
+  color: var(--dark-900);
 }
 
 .page-header-subtitle {
@@ -222,7 +222,7 @@
 
 /* Footer */
 .site-footer {
-  background: var(--navy-900);
+  background: var(--dark-900);
   color: rgba(255, 255, 255, 0.75);
   padding: 2.5rem 0 1.5rem;
 }
