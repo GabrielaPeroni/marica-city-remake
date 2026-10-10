@@ -8,23 +8,26 @@
 {% endblock %}
 
 {% block content %}
-{% include 'includes/navbar.html' with active_page='explore' navbar_class='bg-dark' navbar_style='background: linear-gradient(to right, #c1121f, #9c0303) !important;' %}
+{% include 'includes/navbar.html' %}
 
-<div class="container mt-5 mb-5">
+<header class="page-header">
+  <div class="container">
+    <nav aria-label="Trilha de navegação">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">Explorar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% if review %}Editar avaliação{% else %}Nova avaliação{% endif %}</li>
+      </ol>
+    </nav>
+    <h1>{% if review %}Editar sua avaliação{% else %}Escrever avaliação{% endif %}</h1>
+    <p class="page-header-subtitle">{{ place.name }}</p>
+  </div>
+</header>
+
+<div class="container py-4 py-md-5">
   <div class="row">
     <div class="col-12 col-lg-8 mx-auto">
-      <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">Explorar</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>
-          <li class="breadcrumb-item active">{% if review %}Editar Avaliação{% else %}Nova Avaliação{% endif %}</li>
-        </ol>
-      </nav>
-
       <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h2 class="h4 mb-0">{% if review %}Editar Sua Avaliação{% else %}Escrever Avaliação{% endif %}</h2>
-        </div>
         <div class="card-body">
           <div class="mb-4 p-3 bg-light rounded">
             <h3 class="h5 mb-1">{{ place.name }}</h3>

@@ -8,21 +8,19 @@
 {% endblock %}
 
 {% block content %}
-{% include 'includes/navbar.html' with active_page='explore' navbar_class='bg-dark' navbar_style='background: linear-gradient(to right, #c1121f, #9c0303) !important;' %}
+{% include 'includes/navbar.html' %}
 
-<div class="bg-dark text-white page-header-gradient">
-
-  <div class="container py-4">
-    <div class="text-center">
-      <h1 class="h3 fw-bold text-uppercase mb-2">
-        <i class="bi bi-heart-fill me-2"></i>Meus Favoritos
-      </h1>
-      <p class="mb-0 text-white-50">
-        {{ favorites_count }} lugar{% if favorites_count != 1 %}es{% endif %} salvo{% if favorites_count != 1 %}s{% endif %}
-      </p>
+<header class="page-header">
+  <div class="container">
+    <div class="page-header-row">
+      <div>
+        <h1>Meus Favoritos</h1>
+        <p class="page-header-subtitle">{{ favorites_count }} lugar{{ favorites_count|pluralize:"es" }} salvo{{ favorites_count|pluralize }}.</p>
+      </div>
+      <a href="{% url 'explore:explore' %}" class="btn btn-light"><i class="bi bi-compass me-1" aria-hidden="true"></i>Explorar mais lugares</a>
     </div>
   </div>
-</div>
+</header>
 
 <div class="container py-5">
   {% if favorites %}

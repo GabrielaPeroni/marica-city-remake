@@ -19,6 +19,7 @@
   </head>
 
   <body class="d-flex flex-column min-vh-100" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
       {% if messages %}
         {% for message in messages %}
@@ -34,7 +35,7 @@
       {% endif %}
     </div>
 
-    <main class="flex-grow-1">
+    <main id="conteudo" class="flex-grow-1">
       {% block content %}{% endblock %}
     </main>
 
@@ -44,11 +45,34 @@
     </a>
     {% endif %}
 
-    <footer class="bg-dark text-white mt-auto">
-      <div class="container py-4">
-        <div class="text-center">
-          <p class="mb-0">&copy; 2024 MaricaCity. Todos os direitos reservados.</p>
+    <footer class="site-footer mt-auto">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <a class="site-footer-brand" href="{% url 'core:landing' %}">MaricaCity</a>
+            <p class="mt-2 mb-0">Guia colaborativo dos melhores lugares, notícias e eventos de Maricá.</p>
+          </div>
+          <nav class="col-6 col-md-3" aria-label="Rodapé: descobrir">
+            <h2>Descobrir</h2>
+            <ul>
+              <li><a href="{% url 'explore:explore' %}">Explorar lugares</a></li>
+              <li><a href="{% url 'news:news_list' %}">Notícias e eventos</a></li>
+              <li><a href="{% url 'core:about' %}">Sobre o projeto</a></li>
+            </ul>
+          </nav>
+          <nav class="col-6 col-md-3" aria-label="Rodapé: participar">
+            <h2>Participar</h2>
+            <ul>
+              {% if user.is_authenticated %}
+              <li><a href="{% url 'explore:favorites' %}">Meus favoritos</a></li>
+              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">Adicionar um lugar</a></li>{% endif %}
+              {% else %}
+              <li><a href="{% url 'accounts:register' %}">Criar conta</a></li>
+              {% endif %}
+            </ul>
+          </nav>
         </div>
+        <div class="site-footer-bottom">&copy; {% now "Y" %} MaricaCity. Todos os direitos reservados.</div>
       </div>
     </footer>
 
