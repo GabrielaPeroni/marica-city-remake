@@ -778,3 +778,26 @@ body {
     width: 35px;
   }
 }
+
+/* The shared navbar now sits above the hero, so the hero no longer needs the full viewport */
+.hero-section {
+  height: clamp(420px, calc(100vh - 62px), 720px);
+}
+
+#categoriesSection .card-title {
+  font-size: clamp(0.8rem, 3.2vw, 1.25rem);
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+@media (max-width: 575.98px) {
+  #categoriesSection .card {
+    padding: 1rem 0.5rem !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-section {
+    height: clamp(420px, 72vh, 580px);
+  }
+}

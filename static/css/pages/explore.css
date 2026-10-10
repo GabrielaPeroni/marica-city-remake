@@ -89,10 +89,6 @@
 }
 
 /* Place Detail Specific */
-.place-detail-container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
 
 /* Custom grid layout for place detail - main content wider than default Bootstrap */
 .place-detail-main {

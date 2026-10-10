@@ -10,11 +10,11 @@
       {% csrf_token %}
       <div class="mb-2">
         <label for="dropdownUsername{{ dropdown_id|default:'' }}" class="form-label fw-semibold small mb-1">Nome de usuário</label>
-        <input type="text" class="form-control" id="dropdownUsername{{ dropdown_id|default:'' }}" name="username" required>
+        <input type="text" class="form-control" id="dropdownUsername{{ dropdown_id|default:'' }}" name="username" autocomplete="username" required>
       </div>
       <div class="mb-2">
         <label for="dropdownPassword{{ dropdown_id|default:'' }}" class="form-label fw-semibold small mb-1">Senha</label>
-        <input type="password" class="form-control" id="dropdownPassword{{ dropdown_id|default:'' }}" name="password" required>
+        <input type="password" class="form-control" id="dropdownPassword{{ dropdown_id|default:'' }}" name="password" autocomplete="current-password" required>
       </div>
       <p class="text-muted small mb-3">
         Não tem uma conta?

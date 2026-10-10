@@ -29,6 +29,8 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs["autocomplete"] = "username"
+        self.fields["email"].widget.attrs["autocomplete"] = "email"
         self.fields["password1"].widget.attrs.update(
             {
                 "class": "form-control",

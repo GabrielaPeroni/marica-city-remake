@@ -69,3 +69,6 @@ static/js/dist/
 /.claude
 CLAUDE.md
 /backup
+
+# Browser automation output
+.playwright-mcp/

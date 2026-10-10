@@ -22,11 +22,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   style for all pages (active link derived from the URL instead of per-template
   arguments); Sobre page restructured; register page uses the shared navbar.
 - A featured news item only leads the news page while it is recent (14 days).
+- The news list shows the site's own items first and imported headlines as a
+  compact 'Na imprensa' list; place detail, register and the landing page now
+  use the shared navbar and page header.
 
 ### Fixed
 
 - News category badges were always yellow (the template compared against names
   that never matched).
+- Searching inside a category ignored the query and listed every place; a search
+  with no matches now says so instead of "no places yet".
+- The broken Google Maps embed is no longer rendered when no API key is set; the
+  place page gains a "Como chegar" link that works without one.
+- Accessibility: working skip link, AA contrast for navbar and breadcrumb text,
+  one `<h1>` per page, hero carousel pause control and reduced-motion support.
 
 ## [0.3.0] - 2026-09-14
 
