@@ -1,9 +1,16 @@
+from datetime import datetime
+from datetime import timezone as dt_timezone
+from io import StringIO
+from pathlib import Path
+
 from django.contrib import admin
+from django.core.management import call_command
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import User
+from apps.news import importer
 from apps.news.forms import NewsForm
 from apps.news.models import News, NewsCategory
 
@@ -660,3 +667,77 @@ class NewsListSortingTests(TestCase):
         response = self.client.get(self.url)
         upcoming_events = list(response.context["upcoming_events"])
         self.assertIn(upcoming, upcoming_events)
+
+
+class NewsImporterTests(TestCase):
+    """Importer reads a saved feed; no network access"""
+
+    FEED = Path(__file__).parent / "testdata" / "feed_sample.xml"
+    NOW = datetime(2026, 10, 10, 12, 0, tzinfo=dt_timezone.utc)
+
+    def _import(self, **kwargs):
+        items = importer.parse_feed(self.FEED.read_bytes())
+        options = {"days": 30, "limit": 40, "now": self.NOW}
+        options.update(kwargs)
+        return importer.import_items(items, **options)
+
+    def test_parse_strips_source_suffix_and_skips_invalid_items(self):
+        items = importer.parse_feed(self.FEED.read_bytes())
+        urls = {item.source_url for item in items}
+        self.assertNotIn("http://example.com/insecure", urls)
+        self.assertNotIn("https://example.com/nodate", urls)
+        first = next(i for i in items if i.source_url == "https://example.com/a")
+        self.assertEqual(first.title, "Maricá inaugura nova ciclovia na orla")
+        self.assertEqual(first.source_name, "Jornal A")
+
+    def test_import_keeps_only_recent_relevant_items(self):
+        self.assertEqual(self._import(), 2)
+        imported = News.objects.exclude(source_url="")
+        self.assertEqual(
+            set(imported.values_list("source_url", flat=True)),
+            {"https://example.com/a", "https://example.com/b"},
+        )
+        item = imported.get(source_url="https://example.com/a")
+        self.assertEqual(item.status, News.PUBLISHED)
+        self.assertEqual(
+            item.publish_date, datetime(2026, 10, 8, 14, 0, tzinfo=dt_timezone.utc)
+        )
+        self.assertTrue(item.is_external)
+        self.assertFalse(item.author.is_active)
+
+    def test_import_is_idempotent(self):
+        self._import()
+        self.assertEqual(self._import(), 0)
+        self.assertEqual(News.objects.exclude(source_url="").count(), 2)
+
+    def test_import_respects_limit(self):
+        self.assertEqual(self._import(limit=1), 1)
+
+    def test_purge_removes_only_imported_items(self):
+        author = User.objects.create_user(username="editor", password="pass123")
+        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
+        News.objects.create(
+            title="Manual", content="c", category=category, author=author
+        )
+        self._import()
+        self.assertEqual(importer.purge_imported(), 2)
+        self.assertEqual(News.objects.count(), 1)
+
+    def test_command_imports_from_file_and_purges(self):
+        out = StringIO()
+        call_command("fetch_news", file=str(self.FEED), days=36500, stdout=out)
+        self.assertIn("importada", out.getvalue())
+        self.assertTrue(News.objects.exclude(source_url="").exists())
+        call_command("fetch_news", purge=True, stdout=out)
+        self.assertFalse(News.objects.exclude(source_url="").exists())
+
+    def test_fetch_feed_rejects_non_https(self):
+        with self.assertRaises(ValueError):
+            importer.fetch_feed("http://example.com/feed")
+
+    def test_build_feed_url_uses_setting_override(self):
+        with self.settings(
+            NEWS_FEED_URL="https://proxy.example/feed?q={query}&d={days}"
+        ):
+            url = importer.build_feed_url("Maricá RJ", 7)
+        self.assertEqual(url, "https://proxy.example/feed?q=Maric%C3%A1+RJ&d=7")

@@ -139,6 +139,9 @@ LOGOUT_REDIRECT_URL = "core:landing"
 GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY", default="")
 
+# Feed usado por `manage.py fetch_news`; vazio usa o Google News RSS.
+NEWS_FEED_URL = config("NEWS_FEED_URL", default="")
+
 # Limitação de Taxa (para prevenir abuso de API)
 RATELIMIT_ENABLE = config("RATELIMIT_ENABLE", default=True, cast=bool)
 RATELIMIT_USE_CACHE = "default"  # Usar cache padrão para limitação de taxa

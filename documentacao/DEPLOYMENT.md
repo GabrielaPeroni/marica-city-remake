@@ -139,3 +139,17 @@ means changing the infra in front of the app (DNS + proxy settings, or a
 `cloudflared` tunnel) — the `mock-cloudflare` service and its config
 (`deploy/mock-cloudflare/Caddyfile`) are not part of that path and are never
 used in prod.
+
+## Importador de notícias (`fetch_news`)
+
+`uv run python manage.py fetch_news` lê um feed RSS e grava as manchetes dos
+últimos 30 dias como notícias externas (título, veículo, data e link para a
+matéria original; o texto não é copiado). É idempotente, então pode rodar em
+agenda. `--purge` remove tudo que foi importado.
+
+- **Origem do feed:** Google News por padrão. Defina `NEWS_FEED_URL` para
+  apontar para outro feed, por exemplo um Cloudflare Worker que faça proxy e
+  cache do RSS; a URL pode conter `{query}` e `{days}`. Só `https` é aceito.
+- **Agendamento com Cloudflare:** um Cron Trigger não executa comandos Django
+  diretamente. As opções são um cron no host que rode o comando, ou um Worker
+  agendado que mantenha o feed em cache e sirva de `NEWS_FEED_URL`.

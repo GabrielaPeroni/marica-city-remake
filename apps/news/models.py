@@ -31,6 +31,26 @@ class NewsCategory(models.Model):
     def __str__(self):
         return self.get_name_display()
 
+    @property
+    def kind(self):
+        """Chave estável usada pelas classes CSS (kind-news, kind-event...)"""
+        return {self.EVENT: "event", self.ANNOUNCEMENT: "announcement"}.get(
+            self.name, "news"
+        )
+
+    @property
+    def label(self):
+        return {"event": "Eventos", "announcement": "Anúncios"}.get(
+            self.kind, "Notícias"
+        )
+
+    @property
+    def icon_class(self):
+        return {
+            "event": "bi-calendar-event",
+            "announcement": "bi-megaphone",
+        }.get(self.kind, "bi-newspaper")
+
 
 class News(models.Model):
     """Notícias e eventos para a cidade de Maricá"""
@@ -121,6 +141,14 @@ class News(models.Model):
         help_text="Number of times this has been viewed",
     )
 
+    # Origem externa (itens importados de outros veículos)
+    source_name = models.CharField(
+        max_length=120, blank=True, help_text="Veículo que publicou a matéria original"
+    )
+    source_url = models.URLField(
+        max_length=1000, blank=True, help_text="Link para a matéria original"
+    )
+
     # Datas e horários
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -175,6 +203,15 @@ class News(models.Model):
                     self.publish_date = timezone.now()
 
         super().save(*args, **kwargs)
+
+    @property
+    def is_external(self):
+        return bool(self.source_url)
+
+    @property
+    def tone(self):
+        """Índice de cor estável por veículo, para variar cards sem imagem"""
+        return sum(map(ord, self.source_name)) % 5 if self.source_name else 0
 
     @property
     def is_event(self):

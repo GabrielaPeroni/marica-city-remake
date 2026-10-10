@@ -52,7 +52,14 @@ class NewsAdmin(admin.ModelAdmin):
         (
             "Opções de Publicação",
             {
-                "fields": ["status", "is_featured", "author", "publish_date"],
+                "fields": [
+                    "status",
+                    "is_featured",
+                    "author",
+                    "publish_date",
+                    "source_name",
+                    "source_url",
+                ],
                 "description": "A data de publicação é definida automaticamente ao publicar",
             },
         ),
