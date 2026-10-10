@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.core.paginator import Paginator
+from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
@@ -30,11 +31,25 @@ def news_list_view(request):
         news_items = news_items.order_by("publish_date")
     elif sort_by == "popular":
         news_items = news_items.order_by("-view_count", "-publish_date")
-    else:  # mais recentes (padrão)
-        news_items = news_items.order_by("-publish_date")
+    else:  # mais recentes (padrão): conteúdo próprio antes das manchetes externas
+        news_items = news_items.annotate(
+            is_press=Case(
+                When(source_url="", then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        ).order_by("is_press", "-publish_date")
 
     # Obter categorias para menu de filtro
-    categories = NewsCategory.objects.all()
+    categories = NewsCategory.objects.annotate(
+        published_count=Count(
+            "news_items",
+            filter=Q(
+                news_items__status=News.PUBLISHED,
+                news_items__publish_date__lte=timezone.now(),
+            ),
+        )
+    )
 
     # Separar eventos futuros
     upcoming_events = news_items.filter(
@@ -45,21 +60,25 @@ def news_list_view(request):
     featured_items = news_items.filter(is_featured=True)[:3]
 
     page = Paginator(news_items, PAGE_SIZE).get_page(request.GET.get("page"))
+    # Só um destaque recente ocupa o topo; um antigo não deve ficar preso ali.
     lead_item = None
-    if page.number == 1 and sort_by == "newest":
-        # Um destaque antigo não deve ficar preso no topo da página.
+    if page.number == 1 and sort_by == "newest" and category_filter == "all":
         recent = timezone.now() - timedelta(days=LEAD_MAX_AGE_DAYS)
-        if category_filter == "all":
-            lead_item = news_items.filter(
-                is_featured=True, publish_date__gte=recent
-            ).first()
-        lead_item = lead_item or (page.object_list[0] if page.object_list else None)
+        lead_item = news_items.filter(
+            is_featured=True, publish_date__gte=recent, source_url=""
+        ).first()
+
+    listed = [item for item in page if item != lead_item]
+    own_items = [item for item in listed if not item.is_external]
+    press_items = [item for item in listed if item.is_external]
 
     active_category = next((c for c in categories if c.name == category_filter), None)
 
     context = {
         "news_items": page,
         "lead_item": lead_item,
+        "own_items": own_items,
+        "press_items": press_items,
         "active_category": active_category,
         "total_count": page.paginator.count,
         "categories": categories,
