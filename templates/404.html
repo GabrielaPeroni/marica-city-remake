@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Página não encontrada - MaricaCity{% endblock %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+<header class="page-header">
+  <div class="container">
+    <h1>Página não encontrada</h1>
+    <p class="page-header-subtitle">O endereço pode ter mudado ou o conteúdo foi removido.</p>
+  </div>
+</header>
+
+<div class="container py-5">
+  <p class="mb-4">Tente um destes caminhos:</p>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'core:landing' %}" class="btn btn-dark">Página inicial</a>
+    <a href="{% url 'explore:explore' %}" class="btn btn-outline-dark">Explorar lugares</a>
+    <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark">Notícias e eventos</a>
+  </div>
+</div>
+{% endblock %}

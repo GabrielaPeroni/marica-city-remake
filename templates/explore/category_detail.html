@@ -65,21 +65,19 @@
     <div class="row g-4">
       {% for place in places %}
       <div class="col-12 col-md-6 col-lg-4">
-        <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none">
-          <div class="card place-card h-100 border-0 shadow-sm">
+          <div class="card place-card position-relative h-100 border-0 shadow-sm">
             <div class="position-relative place-card-image-wrapper">
               {% if place.primary_image %}
-              <img src="{{ place.primary_image.image.url }}" alt="{{ place.name }}" class="card-img-top place-card-img" loading="lazy">
+              <img src="{{ place.primary_image.image.url }}" alt="" class="card-img-top place-card-img" loading="lazy">
               {% else %}
               <div class="bg-light text-muted d-flex align-items-center justify-content-center place-card-placeholder">
-                <span class="display-4 fw-bold">{{ place.name|first }}</span>
+                <span class="display-4 fw-bold" aria-hidden="true">{{ place.name|first }}</span>
               </div>
               {% endif %}
               <button class="btn btn-light btn-sm rounded-circle position-absolute favorite-btn-overlay favorite-btn"
                       data-place-id="{{ place.pk }}"
                       title="Adicionar aos favoritos"
-                      aria-label="Adicionar aos favoritos"
-                      onclick="event.preventDefault(); event.stopPropagation();">
+                      aria-label="Adicionar aos favoritos">
                 <i class="bi bi-bookmark"></i>
               </button>
             </div>
@@ -91,13 +89,12 @@
                 </p>
                 {% endwith %}
               {% endif %}
-              <h5 class="card-title fw-bold mb-2" style="font-size: 1rem; color: #111827;">{{ place.name }}</h5>
+              <h2 class="card-title fw-bold mb-2" style="font-size: 1rem;"><a class="stretched-link text-decoration-none" style="color: #111827;" href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></h2>
               <p class="text-muted mb-0" style="font-size: 0.875rem;">
                 <i class="bi bi-geo-alt"></i> {{ place.address|truncatewords:5 }}
               </p>
             </div>
           </div>
-        </a>
       </div>
       {% endfor %}
     </div>

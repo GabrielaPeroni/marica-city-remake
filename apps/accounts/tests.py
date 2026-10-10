@@ -215,28 +215,44 @@ class AuthenticationViewTests(TestCase):
         data = response.json()
         self.assertFalse(data["success"])
 
-    def test_login_rejects_inactive_user(self):
-        """Testa que usuário inativo não consegue fazer login.
-        Note: Django's default authenticate() already excludes inactive
-        users, so this always falls into the generic 401 'wrong
-        credentials' branch - the view's dedicated `if not user.is_active`
-        403 branch is unreachable dead code (found while writing this
-        test; not fixed, out of scope for this PR)."""
+    def test_login_tells_inactive_user_account_is_disabled(self):
+        """Senha correta em conta desativada recebe a mensagem específica"""
         self.user.is_active = False
         self.user.save()
         response = self.client.post(
             reverse("accounts:login"),
             {"username": "testuser", "password": "testpass123"},
         )
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("desativada", response.json()["error"])
+
+    def test_login_does_not_reveal_inactive_account_on_wrong_password(self):
+        """Senha errada em conta desativada recebe o erro genérico"""
+        self.user.is_active = False
+        self.user.save()
+        response = self.client.post(
+            reverse("accounts:login"),
+            {"username": "testuser", "password": "wrong-password"},
+        )
         self.assertEqual(response.status_code, 401)
-        data = response.json()
-        self.assertFalse(data["success"])
+        self.assertNotIn("desativada", response.json()["error"])
 
     def test_logout_redirects_to_next_param(self):
         """Testa que o logout redireciona para o parâmetro 'next' quando fornecido"""
         self.client.login(username="testuser", password="testpass123")
         response = self.client.get(reverse("accounts:logout") + "?next=/explore/")
         self.assertRedirects(response, "/explore/", fetch_redirect_response=False)
+
+    def test_logout_ignores_external_next_url(self):
+        """Logout must not redirect to another site via ?next= or Referer"""
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(
+            reverse("accounts:logout") + "?next=https://evil.example/phish",
+            HTTP_REFERER="https://evil.example/",
+        )
+        self.assertRedirects(
+            response, reverse("core:landing"), fetch_redirect_response=False
+        )
 
     def test_logout_falls_back_to_landing_page(self):
         """Testa que o logout redireciona para a página inicial sem 'next' ou referer"""

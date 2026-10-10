@@ -182,7 +182,7 @@
                       {% endif %}
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                      <span class="text-warning" style="font-size: 0.85rem;">
+                      <span class="text-warning" style="font-size: 0.85rem;" role="img" aria-label="Nota {{ review.rating }} de 5">
                         {% for i in "12345" %}
                           {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
                         {% endfor %}

@@ -37,7 +37,7 @@
     <form method="get" class="d-flex align-items-center gap-2 py-2">
       <input type="hidden" name="category" value="{{ current_category }}">
       <label for="sortFilter" class="small text-muted mb-0">Ordenar</label>
-      <select class="form-select form-select-sm w-auto" id="sortFilter" name="sort" onchange="this.form.submit()">
+      <select class="form-select w-auto" id="sortFilter" name="sort" onchange="this.form.submit()">
         <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Mais recentes</option>
         <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Mais antigas</option>
         <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Mais vistas</option>

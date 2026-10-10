@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import UserRegistrationForm
 from .models import User
@@ -54,15 +55,6 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if not user.is_active:
-                return JsonResponse(
-                    {
-                        "success": False,
-                        "error": "Sua conta foi desativada. Entre em contato com o administrador.",
-                    },
-                    status=403,
-                )
-
             login(request, user)
             return JsonResponse(
                 {
@@ -71,14 +63,25 @@ def login_view(request):
                     "username": user.username,
                 }
             )
-        else:
+        # authenticate() devolve None para contas inativas; só revelamos a
+        # desativação a quem acertou a senha.
+        inactive = User.objects.filter(username=username, is_active=False).first()
+        if inactive and inactive.check_password(password):
             return JsonResponse(
                 {
                     "success": False,
-                    "error": "Nome de usuário ou senha incorretos.",
+                    "error": "Sua conta foi desativada. Entre em contato com o administrador.",
                 },
-                status=401,
+                status=403,
             )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Nome de usuário ou senha incorretos.",
+            },
+            status=401,
+        )
 
     # Requisição GET - não permitida para endpoint AJAX
     return JsonResponse({"success": False, "error": "Método não permitido"}, status=405)
@@ -91,7 +94,11 @@ def logout_view(request):
 
     # Redirect to the referring page or home
     next_url = request.GET.get("next") or request.META.get("HTTP_REFERER")
-    if next_url:
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
         return redirect(next_url)
     return redirect("core:landing")
 

@@ -14,6 +14,12 @@
 {% block content %}
 {% include 'includes/navbar.html' %}
 
+{% if request.GET.next and not user.is_authenticated %}
+<div class="alert alert-warning rounded-0 border-0 mb-0 text-center" role="status">
+  Entre na sua conta (menu <strong>Entrar</strong>) ou <a href="{% url 'accounts:register' %}" class="alert-link">crie uma conta gratuita</a> para continuar.
+</div>
+{% endif %}
+
 <!-- Seção do Carrossel Hero -->
 <section id="heroSection" class="hero-section" aria-roledescription="carrossel" aria-label="Destaques">
 
@@ -25,7 +31,7 @@
       <div class="swiper-slide">
         <!-- Contêiner da Imagem de Fundo -->
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/main.png' %}" alt="Maricá" class="hero-bg-image">
+          <img src="{% static 'images/hero/main.png' %}" alt="" class="hero-bg-image">
           <div class="hero-bg-overlay"></div>
         </div>
 
@@ -51,7 +57,7 @@
       <!-- Slide 2 -->
       <div class="swiper-slide">
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/hero_2.jpg' %}" alt="Maricá" class="hero-bg-image">
+          <img src="{% static 'images/hero/main.png' %}" alt="" class="hero-bg-image">
           <div class="hero-bg-overlay"></div>
         </div>
 
@@ -75,7 +81,7 @@
       <!-- Slide 3 -->
       <div class="swiper-slide">
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/hero_3.jpg' %}" alt="Maricá" class="hero-bg-image">
+          <img src="{% static 'images/hero/main.png' %}" alt="" class="hero-bg-image">
           <div class="hero-bg-overlay"></div>
         </div>
 

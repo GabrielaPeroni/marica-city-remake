@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   compact 'Na imprensa' list; place detail, register and the landing page now
   use the shared navbar and page header.
 
+### Security
+
+- Logout no longer redirects to arbitrary `?next=`/Referer URLs (open redirect).
+
 ### Fixed
 
 - News category badges were always yellow (the template compared against names
@@ -34,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with no matches now says so instead of "no places yet".
 - The broken Google Maps embed is no longer rendered when no API key is set; the
   place page gains a "Como chegar" link that works without one.
+- Logging in to a deactivated account with the right password now says the
+  account is disabled (that branch was unreachable before).
+- Place cards no longer nest the favourite button inside the card link; ratings
+  have a text alternative; small tap targets enlarged; branded 404/500 pages; a
+  login prompt explains the bounce when a logged-out visitor opens a protected page.
 - Accessibility: working skip link, AA contrast for navbar and breadcrumb text,
   one `<h1>` per page, hero carousel pause control and reduced-motion support.
 
