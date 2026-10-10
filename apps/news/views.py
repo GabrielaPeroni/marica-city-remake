@@ -1,7 +1,13 @@
+from datetime import timedelta
+
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from .models import News, NewsCategory
+
+PAGE_SIZE = 13  # 1 destaque + 12 no grid
+LEAD_MAX_AGE_DAYS = 14
 
 
 def news_list_view(request):
@@ -13,7 +19,7 @@ def news_list_view(request):
     # Consulta base - apenas itens publicados com publish_date <= agora
     news_items = News.objects.filter(
         status=News.PUBLISHED, publish_date__lte=timezone.now()
-    )
+    ).select_related("category", "author")
 
     # Filtrar por categoria se especificado
     if category_filter != "all":
@@ -38,8 +44,24 @@ def news_list_view(request):
     # Obter itens em destaque
     featured_items = news_items.filter(is_featured=True)[:3]
 
+    page = Paginator(news_items, PAGE_SIZE).get_page(request.GET.get("page"))
+    lead_item = None
+    if page.number == 1 and sort_by == "newest":
+        # Um destaque antigo não deve ficar preso no topo da página.
+        recent = timezone.now() - timedelta(days=LEAD_MAX_AGE_DAYS)
+        if category_filter == "all":
+            lead_item = news_items.filter(
+                is_featured=True, publish_date__gte=recent
+            ).first()
+        lead_item = lead_item or (page.object_list[0] if page.object_list else None)
+
+    active_category = next((c for c in categories if c.name == category_filter), None)
+
     context = {
-        "news_items": news_items,
+        "news_items": page,
+        "lead_item": lead_item,
+        "active_category": active_category,
+        "total_count": page.paginator.count,
         "categories": categories,
         "current_category": category_filter,
         "current_sort": sort_by,
@@ -67,6 +89,7 @@ def news_detail_view(request, slug):
             publish_date__lte=timezone.now(),
         )
         .exclude(id=news_item.id)
+        .select_related("category")
         .order_by("-publish_date")[:3]
     )
 

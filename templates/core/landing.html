@@ -252,6 +252,24 @@
   {% endif %}
 </section>
 
+{% if latest_news %}
+<section id="newsSection" class="bg-light py-5">
+  <div class="container">
+    <div class="section-heading">
+      <h2>Últimas notícias de Maricá</h2>
+      <a href="{% url 'news:news_list' %}">Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="row g-4">
+      {% for item in latest_news %}
+      <div class="col-md-4">
+        {% include 'includes/news_card.html' with item=item %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <section id="categoriesSection" class="bg-white py-5">
   <div class="container">
     <div class="text-center mb-5">
