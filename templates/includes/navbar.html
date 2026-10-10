@@ -1,22 +1,23 @@
 {% load static %}
 
 <!-- Componente reutilizavel da navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark {{ navbar_class|default:'' }}" {% if navbar_style %}style="{{ navbar_style }}"{% endif %}>
-  <div class="container-fluid px-4">
+{% with ns=request.resolver_match.namespace route=request.resolver_match.url_name %}
+<nav class="navbar navbar-expand-lg navbar-dark {{ navbar_class|default:'site-navbar' }}" aria-label="Navegação principal">
+  <div class="{% if navbar_class %}container-fluid px-4{% else %}container{% endif %}">
     <a class="navbar-brand" href="{% url 'core:landing' %}">MaricaCity</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link {% if active_page == 'explore' %}active border-bottom border-2{% endif %}" href="{% url 'explore:explore' %}">Explorar</a>
+          <a class="nav-link {% if ns == 'explore' %}active{% endif %}" {% if ns == 'explore' %}aria-current="page"{% endif %} href="{% url 'explore:explore' %}">Explorar</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if active_page == 'news' %}active border-bottom border-2{% endif %}" href="{% url 'news:news_list' %}">Notícias</a>
+          <a class="nav-link {% if ns == 'news' %}active{% endif %}" {% if ns == 'news' %}aria-current="page"{% endif %} href="{% url 'news:news_list' %}">Notícias</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if active_page == 'about' %}active border-bottom border-2{% endif %}" href="{% url 'core:about' %}">Sobre</a>
+          <a class="nav-link {% if route == 'about' %}active{% endif %}" {% if route == 'about' %}aria-current="page"{% endif %} href="{% url 'core:about' %}">Sobre</a>
         </li>
 
         {% if user.is_authenticated %}
@@ -61,3 +62,4 @@
     </div>
   </div>
 </nav>
+{% endwith %}

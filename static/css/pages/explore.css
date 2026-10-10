@@ -3,16 +3,6 @@
    Styles for explore, category detail, and place detail pages
    ========================================================================== */
 
-/* Common Page Header */
-.page-header-gradient {
-  background: linear-gradient(135deg, #c1121f 0%, #9c0303 100%);
-  min-height: 140px;
-}
-
-.page-header-nav {
-  z-index: 20;
-}
-
 .dropdown-menu-login {
   width: 320px;
 }
@@ -344,5 +334,40 @@
 
   .place-detail-title {
     font-size: 2rem;
+  }
+}
+
+/* On phones the category list becomes one scrollable row so places stay above the fold */
+@media (max-width: 767.98px) {
+  .sidebar-sticky {
+    position: static;
+  }
+
+  .sidebar-sticky h2 {
+    display: none;
+  }
+
+  .sidebar-sticky .list-group {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .sidebar-sticky .list-group-item {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.4rem 0.9rem !important;
+    margin: 0 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+  }
+
+  .sidebar-sticky .list-group-item.active {
+    background: #111827 !important;
+    border-color: #111827 !important;
+    color: #fff;
   }
 }

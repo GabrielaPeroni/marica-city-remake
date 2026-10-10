@@ -4,27 +4,7 @@
 {% block title %}Cadastro - MaricaCity{% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: linear-gradient(to right, #c1121f, #1f2937) !important;">
-  <div class="container-fluid px-4">
-    <a class="navbar-brand fw-bold text-uppercase" href="{% url 'core:landing' %}">MaricaCity</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link text-uppercase" href="{% url 'explore:explore' %}">Explorar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-uppercase" href="{% url 'core:about' %}">Sobre</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-outline-light btn-sm text-uppercase ms-2" href="{% url 'accounts:login' %}">Entrar</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+{% include 'includes/navbar.html' %}
 
 <div class="d-flex align-items-center justify-content-center py-5" style="min-height: calc(100vh - 200px);">
   <div class="container" style="max-width: 500px;">
