@@ -1,0 +1,34 @@
+{% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
+<a class="news-card {% if lead %}news-lead{% endif %}"
+   {% if item.is_external %}href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'news:news_detail' item.slug %}"{% endif %}>
+  {% if item.featured_image %}
+  <div class="news-card-media">
+    <img src="{{ item.featured_image.url }}" alt="" loading="lazy">
+  </div>
+  {% else %}
+  <div class="news-card-media news-card-media--placeholder kind-{{ item.category.kind }} tone-{{ item.tone }}" aria-hidden="true">
+    <i class="bi {{ item.category.icon_class }}"></i>
+    <span>{{ item.source_name|default:"MaricaCity" }}</span>
+  </div>
+  {% endif %}
+  <div class="news-card-body">
+    <span class="news-kind kind-{{ item.category.kind }}">{{ item.category.label }}</span>
+    <h3 class="news-card-title">{{ item.title }}</h3>
+    {% if not item.is_external and item.excerpt %}
+    <p class="news-card-excerpt">{{ item.excerpt }}</p>
+    {% endif %}
+    <div class="news-card-meta">
+      {% if item.is_event and item.event_date %}
+      <span><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{{ item.event_date|date:"d/m/Y · H:i" }}</span>
+      {% else %}
+      <span><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ item.publish_date|date:"d/m/Y" }}</span>
+      {% endif %}
+      {% if item.is_external %}
+      <span>{{ item.source_name }} <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span></span>
+      {% endif %}
+    </div>
+    {% if lead %}
+    <span class="news-lead-cta">{% if item.is_external %}Ler no site original{% else %}Ler matéria{% endif %} <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+    {% endif %}
+  </div>
+</a>

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `manage.py fetch_news`: imports recent Maricá headlines from an RSS feed (Google
+  News by default, overridable with `NEWS_FEED_URL`) as external news items that
+  link to the original article; `--purge` removes everything it imported.
+- `News.source_name` / `News.source_url` for externally published items.
+- Shared page header, category tabs and site footer used by every internal page;
+  "Últimas notícias" strip on the landing page; pagination on the news list.
+
+### Changed
+
+- News list and detail rebuilt on the same card language as Explorar; one navbar
+  style for all pages (active link derived from the URL instead of per-template
+  arguments); Sobre page restructured; register page uses the shared navbar.
+- A featured news item only leads the news page while it is recent (14 days).
+
+### Fixed
+
+- News category badges were always yellow (the template compared against names
+  that never matched).
+
 ## [0.3.0] - 2026-09-14
 
 ### Added

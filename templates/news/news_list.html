@@ -3,173 +3,126 @@
 
 {% block title %}Notícias & Eventos - MaricaCity{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
-{% endblock %}
-
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<div class="page-header">
-  <div class="container py-4">
-    <div class="text-center">
-      <h1 class="h3 fw-bold text-uppercase mb-2">
-        <i class="bi bi-newspaper me-2"></i>Notícias & Eventos
-      </h1>
-      <p class="mb-0 text-white-50">Fique por dentro das novidades de Maricá</p>
+<header class="page-header">
+  <div class="container">
+    <div class="page-header-row">
+      <div>
+        <h1>Notícias & Eventos</h1>
+        <p class="page-header-subtitle">O que está acontecendo em Maricá: {{ total_count }} publicaç{{ total_count|pluralize:"ão,ões" }}.</p>
+      </div>
+      <a href="{% url 'explore:explore' %}" class="btn btn-light">
+        <i class="bi bi-compass me-1" aria-hidden="true"></i>Explorar lugares
+      </a>
     </div>
+  </div>
+</header>
+
+<div class="section-tabs">
+  <div class="container section-tabs-inner">
+    <ul class="nav" aria-label="Filtrar por categoria">
+      <li class="nav-item">
+        <a class="nav-link {% if current_category == 'all' %}active{% endif %}" {% if current_category == 'all' %}aria-current="true"{% endif %} href="?sort={{ current_sort }}">Tudo</a>
+      </li>
+      {% for category in categories %}
+      <li class="nav-item">
+        <a class="nav-link {% if current_category == category.name %}active{% endif %}" {% if current_category == category.name %}aria-current="true"{% endif %} href="?category={{ category.name|urlencode }}&sort={{ current_sort }}">{{ category.label }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <form method="get" class="d-flex align-items-center gap-2 py-2">
+      <input type="hidden" name="category" value="{{ current_category }}">
+      <label for="sortFilter" class="small text-muted mb-0">Ordenar</label>
+      <select class="form-select form-select-sm w-auto" id="sortFilter" name="sort" onchange="this.form.submit()">
+        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Mais recentes</option>
+        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Mais antigas</option>
+        <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Mais vistas</option>
+      </select>
+      <noscript><button class="btn btn-sm btn-dark">Aplicar</button></noscript>
+    </form>
   </div>
 </div>
 
-<div class="container my-5">
+<div class="bg-light">
+  <div class="container py-4 py-md-5">
 
-  {% if featured_items %}
-  <div class="mb-5">
-    <h2 class="h4 fw-bold text-uppercase mb-3">
-      <i class="bi bi-star-fill text-warning me-2"></i>Destaques
-    </h2>
-    <div class="row g-4">
-      {% for item in featured_items %}
-      <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm hover-card">
-          {% if item.featured_image %}
-          <img src="{{ item.featured_image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
-          {% else %}
-          <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-            <i class="bi bi-image fs-1 text-white-50"></i>
-          </div>
-          {% endif %}
-          <div class="card-body">
-            <span class="badge bg-primary mb-2">{{ item.category }}</span>
-            <h5 class="card-title fw-bold">{{ item.title }}</h5>
-            <p class="card-text text-muted small">{{ item.excerpt|truncatewords:20 }}</p>
-            <div class="d-flex justify-content-between align-items-center small text-muted">
-              <span><i class="bi bi-calendar me-1"></i>{{ item.publish_date|date:"d/m/Y" }}</span>
-              <span><i class="bi bi-eye me-1"></i>{{ item.view_count }}</span>
+    {% if lead_item %}
+    <section class="mb-5" aria-label="Destaque">
+      {% include 'includes/news_card.html' with item=lead_item lead=True %}
+    </section>
+    {% endif %}
+
+    {% if upcoming_events %}
+    <section class="mb-5">
+      <div class="section-heading">
+        <h2>Próximos eventos</h2>
+        <a href="?category=Evento">Ver todos os eventos</a>
+      </div>
+      <div class="row g-3">
+        {% for event in upcoming_events %}
+        <div class="col-md-4">
+          <a class="event-chip" href="{% url 'news:news_detail' event.slug %}">
+            <div class="event-chip-date">
+              <strong>{{ event.event_date|date:"d" }}</strong>
+              <span>{{ event.event_date|date:"M" }}</span>
             </div>
-          </div>
-          <div class="card-footer bg-transparent border-0">
-            <a href="{% url 'news:news_detail' item.slug %}" class="btn btn-sm btn-dark w-100">
-              Ler Mais <i class="bi bi-arrow-right ms-1"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  {% if upcoming_events %}
-  <div class="mb-5">
-    <h2 class="h4 fw-bold text-uppercase mb-3">
-      <i class="bi bi-calendar-event me-2"></i>Próximos Eventos
-    </h2>
-    <div class="row g-3">
-      {% for event in upcoming_events %}
-      <div class="col-md-4">
-        <div class="card border-start border-4 border-primary shadow-sm">
-          <div class="card-body">
-            <small class="text-muted text-uppercase">{{ event.event_date|date:"d/m/Y - H:i" }}</small>
-            <h6 class="card-title fw-bold mt-2">{{ event.title }}</h6>
-            {% if event.event_location %}
-            <p class="card-text small text-muted mb-2">
-              <i class="bi bi-geo-alt me-1"></i>{{ event.event_location }}
-            </p>
-            {% endif %}
-            <a href="{% url 'news:news_detail' event.slug %}" class="btn btn-sm btn-outline-primary">
-              Ver Detalhes
-            </a>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="h4 fw-bold text-uppercase mb-0">
-      <i class="bi bi-list-ul me-2"></i>Todas as Notícias
-    </h2>
-    <div class="d-flex gap-2">
-      <select class="form-select form-select-sm" id="categoryFilter" aria-label="Filtrar por categoria" onchange="filterNews(this.value, '{{ current_sort }}')">
-        <option value="all" {% if current_category == 'all' %}selected{% endif %}>Todas as Categorias</option>
-        {% for category in categories %}
-        <option value="{{ category.name }}" {% if current_category == category.name %}selected{% endif %}>
-          {{ category.get_name_display }}
-        </option>
-        {% endfor %}
-      </select>
-      <select class="form-select form-select-sm" id="sortFilter" aria-label="Ordenar notícias" onchange="filterNews('{{ current_category }}', this.value)">
-        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Mais Recentes</option>
-        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Mais Antigas</option>
-        <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Mais Visualizadas</option>
-      </select>
-    </div>
-  </div>
-
-  {% if news_items %}
-  <div class="row g-4">
-    {% for item in news_items %}
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm hover-card">
-        {% if item.featured_image %}
-        <img src="{{ item.featured_image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 180px; object-fit: cover;">
-        {% else %}
-        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
-          <i class="bi bi-image fs-1 text-muted"></i>
-        </div>
-        {% endif %}
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <span class="badge
-              {% if item.category.name == 'news' %}bg-info
-              {% elif item.category.name == 'event' %}bg-success
-              {% else %}bg-warning{% endif %}">
-              {{ item.category }}
-            </span>
-            <small class="text-muted">{{ item.publish_date|date:"d/m/Y" }}</small>
-          </div>
-          <h5 class="card-title fw-bold">{{ item.title }}</h5>
-          <p class="card-text text-muted small">{{ item.excerpt|truncatewords:15 }}</p>
-          {% if item.is_event and item.event_date %}
-          <p class="small mb-2">
-            <i class="bi bi-calendar3 me-1"></i>{{ item.event_date|date:"d/m/Y - H:i" }}
-          </p>
-          {% endif %}
-          <div class="d-flex justify-content-between align-items-center small text-muted">
-            <span><i class="bi bi-person me-1"></i>{{ item.author.username }}</span>
-            <span><i class="bi bi-eye me-1"></i>{{ item.view_count }}</span>
-          </div>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <a href="{% url 'news:news_detail' item.slug %}" class="btn btn-sm btn-outline-dark w-100">
-            Ler Mais <i class="bi bi-arrow-right ms-1"></i>
+            <div>
+              <p class="event-chip-title">{{ event.title }}</p>
+              {% if event.event_location %}
+              <small class="text-muted"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ event.event_location }}</small>
+              {% endif %}
+            </div>
           </a>
         </div>
+        {% endfor %}
       </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="text-center py-5">
-    <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
-    <h5 class="text-muted">Nenhuma notícia encontrada</h5>
-    <p class="text-muted">Tente filtrar por outra categoria</p>
-  </div>
-  {% endif %}
+    </section>
+    {% endif %}
 
+    <section>
+      <div class="section-heading">
+        <h2>{% if active_category %}{{ active_category.label }}{% else %}Últimas publicações{% endif %}</h2>
+      </div>
+
+      {% if news_items %}
+      <div class="row g-4">
+        {% for item in news_items %}
+        {% if item.pk != lead_item.pk %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'includes/news_card.html' with item=item %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if news_items.has_other_pages %}
+      <nav class="mt-5" aria-label="Paginação de notícias">
+        <ul class="pagination justify-content-center mb-0">
+          {% if news_items.has_previous %}
+          <li class="page-item"><a class="page-link" href="?category={{ current_category|urlencode }}&sort={{ current_sort }}&page={{ news_items.previous_page_number }}">Anterior</a></li>
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Página {{ news_items.number }} de {{ news_items.paginator.num_pages }}</span></li>
+          {% if news_items.has_next %}
+          <li class="page-item"><a class="page-link" href="?category={{ current_category|urlencode }}&sort={{ current_sort }}&page={{ news_items.next_page_number }}">Próxima</a></li>
+          {% else %}
+          <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-inbox fs-1 text-muted mb-3 d-block" aria-hidden="true"></i>
+        <p class="h5">Nenhuma publicação nesta categoria</p>
+        <a href="{% url 'news:news_list' %}" class="btn btn-dark mt-2">Ver tudo</a>
+      </div>
+      {% endif %}
+    </section>
+
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function filterNews(category, sort) {
-  const url = new URL(window.location.href);
-  url.searchParams.set('category', category);
-  url.searchParams.set('sort', sort);
-  window.location.href = url.toString();
-}
-</script>
 {% endblock %}

@@ -3,135 +3,92 @@
 
 {% block title %}{{ news_item.title }} - MaricaCity{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
-{% endblock %}
-
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<div class="page-header">
-  <div class="container py-3">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}" class="text-white text-decoration-none">Notícias</a></li>
-        <li class="breadcrumb-item active text-white-50" aria-current="page">{{ news_item.category }}</li>
+<header class="page-header">
+  <div class="container">
+    <nav aria-label="Trilha de navegação">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">Notícias & Eventos</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">{{ news_item.category.label }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ news_item.title|truncatechars:50 }}</li>
       </ol>
     </nav>
+    <h1>{{ news_item.title }}</h1>
+    <p class="page-header-subtitle">
+      {% if news_item.is_external %}{{ news_item.source_name }}{% else %}Por {{ news_item.author.username }}{% endif %}
+      · {{ news_item.publish_date|date:"d/m/Y" }}
+      {% if news_item.is_featured %}· <i class="bi bi-star-fill" aria-hidden="true"></i> Destaque{% endif %}
+    </p>
   </div>
-</div>
+</header>
 
-<div class="container my-5">
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
-
+<div class="container py-4 py-md-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
       <article>
-        <div class="mb-4">
-          <span class="badge
-            {% if news_item.category.name == 'news' %}bg-info
-            {% elif news_item.category.name == 'event' %}bg-success
-            {% else %}bg-warning{% endif %} mb-2">
-            {{ news_item.category }}
-          </span>
-          {% if news_item.is_featured %}
-          <span class="badge bg-warning text-dark mb-2">
-            <i class="bi bi-star-fill me-1"></i>Destaque
-          </span>
-          {% endif %}
-          <h1 class="fw-bold mb-3">{{ news_item.title }}</h1>
-
-          <div class="d-flex flex-wrap gap-3 text-muted small mb-4">
-            <span>
-              <i class="bi bi-person-circle me-1"></i>
-              Por <strong>{{ news_item.author.username }}</strong>
-            </span>
-            <span>
-              <i class="bi bi-calendar3 me-1"></i>
-              {{ news_item.publish_date|date:"d/m/Y - H:i" }}
-            </span>
-            <span>
-              <i class="bi bi-eye me-1"></i>
-              {{ news_item.view_count }} visualizações
-            </span>
-          </div>
-
-          {% if news_item.is_event %}
-          <div class="alert alert-success border-start border-4 border-success" role="alert">
-            <h6 class="alert-heading fw-bold mb-2">
-              <i class="bi bi-calendar-event me-2"></i>Informações do Evento
-            </h6>
-            <p class="mb-2">
-              <strong>Data e Hora:</strong> {{ news_item.event_date|date:"d/m/Y - H:i" }}
-              {% if news_item.event_end_date %}
-              até {{ news_item.event_end_date|date:"d/m/Y - H:i" }}
-              {% endif %}
-            </p>
-            {% if news_item.event_location %}
-            <p class="mb-0">
-              <strong>Local:</strong> <i class="bi bi-geo-alt me-1"></i>{{ news_item.event_location }}
-            </p>
-            {% endif %}
-          </div>
-          {% endif %}
+        {% if news_item.is_event %}
+        <div class="alert alert-success border-0" role="note">
+          <strong><i class="bi bi-calendar-event me-2" aria-hidden="true"></i>Informações do evento</strong>
+          <p class="mb-0 mt-2">
+            {{ news_item.event_date|date:"d/m/Y - H:i" }}{% if news_item.event_end_date %} até {{ news_item.event_end_date|date:"d/m/Y - H:i" }}{% endif %}
+            {% if news_item.event_location %}<br><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ news_item.event_location }}{% endif %}
+          </p>
         </div>
+        {% endif %}
 
         {% if news_item.featured_image %}
         <figure class="mb-4">
-          <img src="{{ news_item.featured_image.url }}" class="img-fluid rounded shadow-sm" alt="{{ news_item.title }}">
+          <img src="{{ news_item.featured_image.url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ news_item.image_caption|default:news_item.title }}">
           {% if news_item.image_caption %}
           <figcaption class="text-muted small mt-2 text-center">{{ news_item.image_caption }}</figcaption>
           {% endif %}
         </figure>
         {% endif %}
 
+        {% if news_item.is_external %}
+        <div class="source-callout">
+          <p class="mb-3">Esta matéria foi publicada por <strong>{{ news_item.source_name|default:"um veículo externo" }}</strong>. O MaricaCity reúne a manchete e leva você até a fonte.</p>
+          <a class="btn btn-dark" href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">
+            Ler no site original <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span>
+          </a>
+        </div>
+        {% else %}
         <div class="content-body fs-6 lh-lg">
           {{ news_item.content|linebreaks }}
         </div>
+        {% endif %}
 
         <hr class="my-4">
 
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="text-muted small">
-            <i class="bi bi-clock me-1"></i>
-            Atualizado em {{ news_item.updated_at|date:"d/m/Y - H:i" }}
-          </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <span class="text-muted small">
+            <i class="bi bi-eye me-1" aria-hidden="true"></i>{{ news_item.view_count }} visualizaç{{ news_item.view_count|pluralize:"ão,ões" }}
+            {% if not news_item.is_external %}· Atualizado em {{ news_item.updated_at|date:"d/m/Y - H:i" }}{% endif %}
+          </span>
           <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Voltar para Notícias
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Todas as notícias
           </a>
         </div>
       </article>
-
-      {% if related_news %}
-      <div class="mt-5">
-        <h3 class="h5 fw-bold text-uppercase mb-3">
-          <i class="bi bi-collection me-2"></i>Notícias Relacionadas
-        </h3>
-        <div class="row g-3">
-          {% for item in related_news %}
-          <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm hover-card">
-              {% if item.featured_image %}
-              <img src="{{ item.featured_image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 120px; object-fit: cover;">
-              {% else %}
-              <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
-                <i class="bi bi-image fs-3 text-muted"></i>
-              </div>
-              {% endif %}
-              <div class="card-body">
-                <h6 class="card-title fw-bold small">{{ item.title|truncatewords:8 }}</h6>
-                <p class="card-text text-muted" style="font-size: 0.8rem;">{{ item.excerpt|truncatewords:10 }}</p>
-                <a href="{% url 'news:news_detail' item.slug %}" class="btn btn-sm btn-outline-dark w-100">
-                  Ler Mais
-                </a>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
-
     </div>
   </div>
+
+  {% if related_news %}
+  <section class="mt-5">
+    <div class="section-heading">
+      <h2>Mais em {{ news_item.category.label }}</h2>
+      <a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">Ver todas</a>
+    </div>
+    <div class="row g-4">
+      {% for item in related_news %}
+      <div class="col-md-4">
+        {% include 'includes/news_card.html' with item=item %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
 </div>
 {% endblock %}
