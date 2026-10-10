@@ -6,16 +6,15 @@
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<div class="d-flex align-items-center justify-content-center py-5" style="min-height: calc(100vh - 200px);">
-  <div class="container" style="max-width: 500px;">
-    <div class="text-center mb-5">
-      <h2 class="display-6 fw-bold mb-3">Crie sua conta</h2>
-      <p class="text-muted">
-        Já tem uma conta?
-        <a href="{% url 'accounts:login' %}" class="text-decoration-none">Entrar</a>
-      </p>
-    </div>
+<header class="page-header">
+  <div class="container">
+    <h1>Crie sua conta</h1>
+    <p class="page-header-subtitle">Salve favoritos, avalie e compartilhe os seus lugares de Maricá.</p>
+  </div>
+</header>
 
+<div class="bg-light py-4 py-md-5">
+  <div class="container" style="max-width: 500px;">
     <div class="card shadow">
       <div class="card-body p-4">
         <form method="post">

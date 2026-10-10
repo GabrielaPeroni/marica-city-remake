@@ -6,13 +6,23 @@
 // Função de inicialização
 function initializeSwipers() {
   // Inicializar Carrossel Hero
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   window.heroSwiperInstance = new Swiper('.hero-swiper', {
     loop: true,
     effect: 'fade',
-    speed: 600, // Transição mais rápida
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
+    speed: reduceMotion ? 0 : 600,
+    autoplay: reduceMotion
+      ? false
+      : {
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        },
+    a11y: {
+      prevSlideMessage: 'Slide anterior',
+      nextSlideMessage: 'Próximo slide',
+      paginationBulletMessage: 'Ir para o slide {{index}}',
     },
     navigation: {
       nextEl: '.swiper-button-next-custom',
@@ -27,6 +37,32 @@ function initializeSwipers() {
     touchRatio: 1,
     threshold: 10, // Limite inferior para deslize mais responsivo
   });
+
+  const pauseBtn = document.querySelector('.hero-pause-btn');
+  if (pauseBtn) {
+    const hero = window.heroSwiperInstance;
+    const setPaused = paused => {
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      pauseBtn.setAttribute(
+        'aria-label',
+        paused ? 'Retomar apresentação' : 'Pausar apresentação'
+      );
+      pauseBtn.querySelector('i').className = paused
+        ? 'bi bi-play-fill'
+        : 'bi bi-pause-fill';
+    };
+    setPaused(reduceMotion);
+    pauseBtn.addEventListener('click', () => {
+      const paused = pauseBtn.getAttribute('aria-pressed') === 'true';
+      if (paused) {
+        hero.params.autoplay = { delay: 5000, disableOnInteraction: false };
+        hero.autoplay.start();
+      } else {
+        hero.autoplay.stop();
+      }
+      setPaused(!paused);
+    });
+  }
 
   // Inicializar carrossel Swiper para lugares destacados
   const featuredSwiper = document.querySelector('.featured-swiper');

@@ -12,12 +12,10 @@
 {% endblock %}
 
 {% block content %}
+{% include 'includes/navbar.html' %}
+
 <!-- Seção do Carrossel Hero -->
-<section id="heroSection" class="hero-section">
-  <!-- Contêiner da Navbar (Fora dos slides) -->
-  <div class="hero-navbar-container">
-    {% include 'includes/navbar.html' with navbar_class='hero-navbar' %}
-  </div>
+<section id="heroSection" class="hero-section" aria-roledescription="carrossel" aria-label="Destaques">
 
   <!-- Contêiner Swiper -->
   <div class="swiper hero-swiper">
@@ -62,7 +60,7 @@
             <div class="row h-100">
               <div class="col-lg-6 d-flex flex-column justify-content-center">
                 <div class="hero-text-content">
-                  <h1 class="hero-heading">Viva Experiências Únicas</h1>
+                  <h2 class="hero-heading">Viva Experiências Únicas</h2>
                   <p class="hero-text">Descubra eventos locais, gastronomia autêntica e lugares escondidos. Maricá oferece experiências que vão além do comum.</p>
                   <a href="{% url 'news:news_list' %}" class="hero-cta-btn">
                     Ver Eventos <i class="bi bi-arrow-right"></i>
@@ -86,7 +84,7 @@
             <div class="row h-100">
               <div class="col-lg-6 d-flex flex-column justify-content-center">
                 <div class="hero-text-content">
-                  <h1 class="hero-heading">Compartilhe Seus Lugares Favoritos</h1>
+                  <h2 class="hero-heading">Compartilhe Seus Lugares Favoritos</h2>
                   <p class="hero-text">Contribua com a comunidade e ajude outros a descobrirem Maricá. Adicione lugares especiais e conte sua história.</p>
                   <a href="{% url 'explore:place_create' %}" class="hero-cta-btn">
                     Adicionar Lugar <i class="bi bi-arrow-right"></i>
@@ -108,6 +106,9 @@
       <div class="hero-pagination-custom swiper-pagination"></div>
       <button class="hero-arrow-btn swiper-button-next-custom">
         <i class="bi bi-chevron-right"></i>
+      </button>
+      <button class="hero-arrow-btn hero-pause-btn" type="button" aria-pressed="false" aria-label="Pausar apresentação">
+        <i class="bi bi-pause-fill" aria-hidden="true"></i>
       </button>
     </div>
   </div>
@@ -139,7 +140,7 @@
 
             {% if place.average_rating %}
             <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="text-warning small">
+              <span class="text-warning small" role="img" aria-label="Nota {{ place.average_rating }} de 5">
                 {% for i in "12345" %}
                   {% if i|add:"0" <= place.average_rating %}★{% else %}☆{% endif %}
                 {% endfor %}
@@ -287,7 +288,7 @@
               <div class="card border-2 h-100 text-center p-4 card-hover">
                 <div class="display-3 mb-3">{{ category.icon|default:"📍" }}</div>
                 <h5 class="card-title fw-bold text-uppercase text-dark">{{ category.name }}</h5>
-                <p class="card-text text-muted small">{{ category.active_places_count }} lugares</p>
+                <p class="card-text text-muted small">{{ category.active_places_count }} lugar{{ category.active_places_count|pluralize:"es" }}</p>
               </div>
             </a>
           </div>
@@ -323,13 +324,14 @@
   </div>
 </section>
 
+{% if GOOGLE_MAPS_API_KEY %}
 <section id="mapSection" class="py-5">
   <div class="container">
     <div class="text-center mb-4">
       <p class="text-uppercase text-muted small mb-2">EXPLORE NO MAPA</p>
       <h2 class="fw-bold mb-3">Navegue pelos Lugares de Maricá</h2>
       <p class="text-muted mb-4">
-        Descubra <span id="map-place-count" class="fw-bold">todos</span> os lugares cadastrados no mapa interativo
+        <span id="map-place-count" class="fw-bold">Todos os</span> lugares cadastrados, no mapa interativo
       </p>
     </div>
 
@@ -352,12 +354,15 @@
     </div>
   </div>
 </section>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <!-- Swiper já está carregado globalmente no base.html -->
 <script src="{% static 'js/landing.js' %}"></script>
+{% if GOOGLE_MAPS_API_KEY %}
 <script src="{% static 'js/landing_map.js' %}?v=2"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initLandingMap&loading=async" async defer></script>
+{% endif %}
 {# A autenticação do Google agora é gerenciada no modal de login global no base.html #}
 {% endblock %}

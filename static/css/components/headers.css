@@ -22,6 +22,25 @@
   border-bottom: 2px solid #fff;
 }
 
+/* Bootstrap's 55%-white links fail contrast on the red bar */
+.site-navbar .nav-link,
+.site-navbar .navbar-brand {
+  color: #fff;
+}
+
+.site-navbar .nav-link:hover {
+  text-decoration: underline;
+}
+
+.site-navbar a:focus-visible,
+.site-navbar button:focus-visible,
+.page-header a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -83,7 +102,11 @@
 
 .page-header .breadcrumb-item.active,
 .page-header .breadcrumb-item + .breadcrumb-item::before {
-  color: rgba(255, 255, 255, 0.65);
+  color: #fff;
+}
+
+.page-header .breadcrumb-item a {
+  text-decoration: underline;
 }
 
 .page-header-search {
@@ -192,8 +215,9 @@
   margin: 0;
 }
 
-.site-footer li + li {
-  margin-top: 0.4rem;
+.site-footer li a {
+  display: inline-block;
+  padding: 0.35rem 0;
 }
 
 .site-footer a:not(.site-footer-brand) {
