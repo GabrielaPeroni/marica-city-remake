@@ -84,6 +84,12 @@ def category_detail_view(request, slug):
         .order_by(sort_order)
     )
 
+    search_query = request.GET.get("q", "").strip()
+    if search_query:
+        places = places.filter(
+            Q(name__icontains=search_query) | Q(description__icontains=search_query)
+        ).distinct()
+
     # Obter todas as categorias para navegação
     all_categories = Category.objects.filter(is_active=True).order_by("display_order")
 

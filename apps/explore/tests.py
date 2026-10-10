@@ -2383,3 +2383,34 @@ class ExplorePageSearchTests(TestCase):
         response = self.client.get(reverse("explore:explore") + "?q=books")
         self.assertEqual(response.context["all_places"].count(), 1)
         self.assertEqual(response.context["all_places"].first(), self.other_place)
+
+
+class CategorySearchTests(TestCase):
+    """Search inside a category must filter, not list everything"""
+
+    def setUp(self):
+        user = User.objects.create_user(username="searcher", password="pass123")
+        self.category = Category.objects.create(name="Praias", slug="praias-busca")
+        for name in ("Praia do Sol", "Mirante Azul"):
+            place = Place.objects.create(
+                name=name,
+                description="d",
+                address="a",
+                created_by=user,
+                is_approved=True,
+                is_active=True,
+            )
+            place.categories.add(self.category)
+        self.url = reverse(
+            "explore:category_detail", kwargs={"slug": self.category.slug}
+        )
+
+    def test_query_filters_places_in_category(self):
+        response = self.client.get(self.url, {"q": "mirante"})
+        self.assertContains(response, "Mirante Azul")
+        self.assertNotContains(response, "Praia do Sol")
+
+    def test_no_match_shows_search_empty_state(self):
+        response = self.client.get(self.url, {"q": "zzzz"})
+        self.assertContains(response, "Nenhum resultado para")
+        self.assertNotContains(response, "Praia do Sol")
