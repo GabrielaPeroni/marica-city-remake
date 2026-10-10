@@ -106,10 +106,15 @@
       <div class="display-1 mb-4">
         {% if category.icon %}{{ category.icon }}{% else %}📍{% endif %}
       </div>
+      {% if request.GET.q %}
+      <p class="lead text-muted mb-3">Nenhum resultado para "{{ request.GET.q }}".</p>
+      <a href="{% url 'explore:category_detail' category.slug %}" class="btn btn-dark">Limpar busca</a>
+      {% else %}
       <p class="lead text-muted mb-2">Nenhum lugar disponível nesta categoria ainda.</p>
       <p class="text-muted">Seja o primeiro a adicionar um lugar!</p>
       {% if user.is_authenticated and user.can_create_places %}
       <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">Adicionar Lugar</a>
+      {% endif %}
       {% endif %}
     </div>
     {% endif %}

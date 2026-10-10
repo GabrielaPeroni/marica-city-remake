@@ -112,9 +112,14 @@
     </div>
     {% else %}
     <div class="text-center py-5">
+      {% if request.GET.q %}
+      <p class="lead text-muted mb-3">Nenhum resultado para "{{ request.GET.q }}".</p>
+      <a href="{% url 'explore:explore' %}" class="btn btn-dark">Limpar busca</a>
+      {% else %}
       <p class="lead text-muted">Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!</p>
       {% if user.is_authenticated and user.can_create_places %}
       <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">Adicionar um lugar</a>
+      {% endif %}
       {% endif %}
     </div>
     {% endif %}
