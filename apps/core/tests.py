@@ -418,3 +418,28 @@ class AdminNewsDeleteViewTests(TestCase):
         response = self.client.post(self.url)
         self.assertRedirects(response, reverse("core:admin_news_list"))
         self.assertFalse(News.objects.filter(pk=self.news.pk).exists())
+
+
+class ErrorPageTests(TestCase):
+    """Unknown URLs render the branded 404 page"""
+
+    @override_settings(DEBUG=False)
+    def test_unknown_url_uses_branded_404(self):
+        response = self.client.get("/pagina-que-nao-existe/")
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "Página não encontrada", status_code=404)
+        self.assertContains(response, reverse("explore:explore"), status_code=404)
+
+
+class LandingLoginPromptTests(TestCase):
+    """Anonymous visitors bounced from a protected page are told why"""
+
+    def test_next_param_shows_login_prompt(self):
+        response = self.client.get(
+            reverse("core:landing"), {"next": "/explore/place/create/"}
+        )
+        self.assertContains(response, "crie uma conta gratuita")
+
+    def test_no_prompt_without_next(self):
+        response = self.client.get(reverse("core:landing"))
+        self.assertNotContains(response, "crie uma conta gratuita")

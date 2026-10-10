@@ -801,3 +801,19 @@ body {
     height: clamp(420px, 72vh, 580px);
   }
 }
+
+/* Thin bullets keep their look but get a finger-sized hit area */
+.hero-pagination-custom .swiper-pagination-bullet {
+  position: relative;
+}
+
+.hero-pagination-custom .swiper-pagination-bullet::after {
+  content: '';
+  position: absolute;
+  inset: -20px 0;
+}
+
+.hero-arrow-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
