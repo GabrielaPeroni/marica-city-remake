@@ -239,6 +239,53 @@
   color: #111827;
 }
 
+/* External headlines: compact rows, so they inform without dominating the page */
+.press-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.press-list li + li {
+  border-top: 1px solid #e5e7eb;
+}
+
+.press-list a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  padding: 0.9rem 1.25rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.press-list a:hover .press-list-title,
+.press-list a:focus-visible .press-list-title {
+  text-decoration: underline;
+}
+
+.press-list a:focus-visible {
+  outline: 3px solid var(--brand-red);
+  outline-offset: -3px;
+}
+
+.press-list-title {
+  flex: 1 1 320px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.press-list-meta {
+  font-size: 0.85rem;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
 .source-callout {
   background: #f9fafb;
   border-left: 4px solid var(--brand-red);

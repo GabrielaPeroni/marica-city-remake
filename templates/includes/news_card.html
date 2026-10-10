@@ -12,7 +12,7 @@
   </div>
   {% endif %}
   <div class="news-card-body">
-    <span class="news-kind kind-{{ item.category.kind }}">{{ item.category.label }}</span>
+    <span class="news-kind kind-{{ item.category.kind }}">{{ item.category.label }}{% if item.is_past_event %} · encerrado{% endif %}</span>
     <h3 class="news-card-title">{{ item.title }}</h3>
     {% if not item.is_external and item.excerpt %}
     <p class="news-card-excerpt">{{ item.excerpt }}</p>

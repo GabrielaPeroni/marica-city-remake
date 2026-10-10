@@ -741,3 +741,42 @@ class NewsImporterTests(TestCase):
         ):
             url = importer.build_feed_url("Maricá RJ", 7)
         self.assertEqual(url, "https://proxy.example/feed?q=Maric%C3%A1+RJ&d=7")
+
+
+class NewsListLayoutTests(TestCase):
+    """Own content is listed before imported headlines; empty tabs are hidden"""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="editor2", password="pass123")
+        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
+        News.objects.create(
+            title="Matéria própria antiga",
+            content="c",
+            category=self.category,
+            author=self.author,
+            status=News.PUBLISHED,
+            publish_date=timezone.now() - timezone.timedelta(days=90),
+        )
+        News.objects.create(
+            title="Manchete externa recente",
+            content="c",
+            category=self.category,
+            author=self.author,
+            status=News.PUBLISHED,
+            publish_date=timezone.now() - timezone.timedelta(days=1),
+            source_name="Jornal X",
+            source_url="https://example.com/x",
+        )
+
+    def test_own_items_come_before_press_items(self):
+        response = self.client.get(reverse("news:news_list"))
+        titles = [n.title for n in response.context["news_items"]]
+        self.assertEqual(titles, ["Matéria própria antiga", "Manchete externa recente"])
+        self.assertEqual(len(response.context["own_items"]), 1)
+        self.assertEqual(len(response.context["press_items"]), 1)
+        self.assertContains(response, "Na imprensa")
+
+    def test_empty_category_tab_is_hidden(self):
+        NewsCategory.objects.get_or_create(name=NewsCategory.ANNOUNCEMENT)
+        response = self.client.get(reverse("news:news_list"))
+        self.assertNotContains(response, "?category=Anuncios")

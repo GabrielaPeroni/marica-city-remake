@@ -27,9 +27,11 @@
         <a class="nav-link {% if current_category == 'all' %}active{% endif %}" {% if current_category == 'all' %}aria-current="true"{% endif %} href="?sort={{ current_sort }}">Tudo</a>
       </li>
       {% for category in categories %}
+      {% if category.published_count or current_category == category.name %}
       <li class="nav-item">
         <a class="nav-link {% if current_category == category.name %}active{% endif %}" {% if current_category == category.name %}aria-current="true"{% endif %} href="?category={{ category.name|urlencode }}&sort={{ current_sort }}">{{ category.label }}</a>
       </li>
+      {% endif %}
       {% endfor %}
     </ul>
     <form method="get" class="d-flex align-items-center gap-2 py-2">
@@ -82,20 +84,40 @@
     {% endif %}
 
     <section>
-      <div class="section-heading">
-        <h2>{% if active_category %}{{ active_category.label }}{% else %}Últimas publicações{% endif %}</h2>
-      </div>
-
       {% if news_items %}
-      <div class="row g-4">
-        {% for item in news_items %}
-        {% if item.pk != lead_item.pk %}
+
+      {% if own_items %}
+      <div class="section-heading">
+        <h2>{% if active_category %}{{ active_category.label }}{% elif current_sort == 'popular' %}Mais vistas{% elif current_sort == 'oldest' %}Mais antigas{% else %}Do MaricaCity{% endif %}</h2>
+      </div>
+      <div class="row g-4 mb-5">
+        {% for item in own_items %}
         <div class="col-md-6 col-lg-4">
           {% include 'includes/news_card.html' with item=item %}
         </div>
-        {% endif %}
         {% endfor %}
       </div>
+      {% endif %}
+
+      {% if press_items %}
+      <div class="section-heading">
+        <h2>Na imprensa</h2>
+        <span class="small text-muted">Os links abrem o site de cada veículo</span>
+      </div>
+      <ul class="press-list">
+        {% for item in press_items %}
+        <li>
+          <a href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer">
+            <span class="press-list-title">{{ item.title }}</span>
+            <span class="press-list-meta">
+              {{ item.source_name }} · {{ item.publish_date|date:"d/m/Y" }}
+              <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span>
+            </span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
 
       {% if news_items.has_other_pages %}
       <nav class="mt-5" aria-label="Paginação de notícias">
