@@ -97,8 +97,8 @@
 }
 
 .place-detail-sidebar {
-  flex: 0 0 22%;
-  max-width: 22%;
+  flex: 0 0 25%;
+  max-width: 25%;
 }
 
 @media (max-width: 991.98px) {

@@ -24,8 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of cool greys. Page headers are now a light band instead of a red block.
   Colours live as tokens in `static/css/main.css`; all text pairs meet WCAG AA.
 - Landing hero fills the viewport and lines up with the navbar's content
-  column; the content column widens on very wide screens. Navbar gains an
-  'Início' link.
+  column; the content column and base font size step up on very wide
+  screens (1800px and 2400px). Navbar gains an 'Início' link.
+- Dev server serves static files through whitenoise with caching disabled, so
+  CSS/JS edits appear on a normal reload.
 - News list and detail rebuilt on the same card language as Explorar; one navbar
   style for all pages (active link derived from the URL instead of per-template
   arguments); Sobre page restructured; register page uses the shared navbar.

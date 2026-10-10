@@ -617,7 +617,21 @@ html {
 
 /* Very wide screens: let the content column grow instead of floating in the middle */
 @media (min-width: 1800px) {
+  html {
+    font-size: 106.25%;
+  }
+
   .container {
     max-width: 1560px;
+  }
+}
+
+@media (min-width: 2400px) {
+  html {
+    font-size: 118.75%;
+  }
+
+  .container {
+    max-width: 1840px;
   }
 }

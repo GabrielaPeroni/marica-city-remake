@@ -843,3 +843,9 @@ body {
     left: calc(50% - 780px + 0.75rem);
   }
 }
+
+@media (min-width: 2400px) {
+  .hero-controls {
+    left: calc(50% - 920px + 0.75rem);
+  }
+}

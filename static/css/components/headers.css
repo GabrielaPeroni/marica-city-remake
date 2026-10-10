@@ -87,6 +87,7 @@
 }
 
 .page-header .breadcrumb {
+  align-items: center;
   margin-bottom: 0.6rem;
   font-size: 0.875rem;
 }
@@ -293,5 +294,16 @@
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.page-header .breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .site-navbar .navbar-nav {
+    align-items: center;
   }
 }
