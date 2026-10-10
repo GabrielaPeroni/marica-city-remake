@@ -8,14 +8,14 @@
   border-radius: 0;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--line);
   transition: all 0.2s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #c1121f;
-  box-shadow: 0 0 0 0.2rem rgba(55, 65, 81, 0.1);
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 0.2rem rgba(196, 32, 46, 0.15);
 }
 
 textarea.form-control {
@@ -24,17 +24,17 @@ textarea.form-control {
 
 /* Hover Effects */
 .hover-bg-light:hover {
-  background-color: #f3f4f6;
+  background-color: var(--surface-alt);
 }
 
 /* Checkboxes */
 .form-check-input:checked {
-  background-color: #c1121f;
-  border-color: #c1121f;
+  background-color: var(--brand-red);
+  border-color: var(--brand-red);
 }
 
 /* Labels */
 .form-label {
-  color: #c1121f;
+  color: var(--brand-red);
   letter-spacing: 0.05em;
 }

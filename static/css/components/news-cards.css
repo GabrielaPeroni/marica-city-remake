@@ -30,7 +30,7 @@
 .news-card-media {
   position: relative;
   height: 180px;
-  background: #f3f4f6;
+  background: var(--surface-alt);
   overflow: hidden;
 }
 
@@ -49,7 +49,7 @@
   gap: 0.25rem;
   padding: 1rem;
   color: #fff;
-  background: linear-gradient(135deg, #1f2937, #374151);
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-500));
 }
 
 /* Sem foto, o bloco fica baixo para o título dominar o card */
@@ -70,7 +70,7 @@
 }
 
 .news-card-media--placeholder.tone-4 {
-  background: linear-gradient(135deg, #3b0764, #6b21a8);
+  background: linear-gradient(135deg, #2b3a5e, #41557f);
 }
 
 .news-card-media--placeholder.kind-event {
@@ -104,7 +104,7 @@
   font-weight: 700;
   line-height: 1.35;
   margin: 0;
-  color: #111827;
+  color: var(--ink);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -113,7 +113,7 @@
 
 .news-card-excerpt {
   font-size: 0.9rem;
-  color: #4b5563;
+  color: var(--ink-muted);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -128,7 +128,7 @@
   align-items: center;
   gap: 0.25rem 0.75rem;
   font-size: 0.8rem;
-  color: #4b5563;
+  color: var(--ink-muted);
 }
 
 .news-kind {
@@ -140,18 +140,18 @@
   text-transform: uppercase;
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  background: #e5e7eb;
-  color: #1f2937;
+  background: var(--line);
+  color: var(--ink);
 }
 
 .news-kind.kind-event {
-  background: #dcfce7;
-  color: #14532d;
+  background: var(--teal-tint);
+  color: #0b4f4a;
 }
 
 .news-kind.kind-announcement {
-  background: #fef3c7;
-  color: #78350f;
+  background: var(--amber-tint);
+  color: #6b3a07;
 }
 
 /* Lead story */
@@ -216,8 +216,8 @@
   width: 56px;
   text-align: center;
   border-radius: 6px;
-  background: #dcfce7;
-  color: #14532d;
+  background: var(--teal-tint);
+  color: #0b4f4a;
   padding: 0.35rem 0;
   line-height: 1.1;
 }
@@ -236,7 +236,7 @@
 .event-chip-title {
   font-weight: 700;
   margin: 0;
-  color: #111827;
+  color: var(--ink);
 }
 
 /* External headlines: compact rows, so they inform without dominating the page */
@@ -250,7 +250,7 @@
 }
 
 .press-list li + li {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--line);
 }
 
 .press-list a {
@@ -277,17 +277,17 @@
 .press-list-title {
   flex: 1 1 320px;
   font-weight: 600;
-  color: #111827;
+  color: var(--ink);
 }
 
 .press-list-meta {
   font-size: 0.85rem;
-  color: #4b5563;
+  color: var(--ink-muted);
   white-space: nowrap;
 }
 
 .source-callout {
-  background: #f9fafb;
+  background: var(--surface-alt);
   border-left: 4px solid var(--brand-red);
   border-radius: 0 8px 8px 0;
   padding: 1.25rem 1.5rem;

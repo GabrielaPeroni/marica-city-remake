@@ -22,7 +22,7 @@
 .place-card-image-wrapper {
   overflow: hidden;
   height: 220px;
-  background: #f3f4f6;
+  background: var(--surface-alt);
 }
 
 .place-card-img {
@@ -72,17 +72,17 @@
 
 /* Sidebar Links */
 .list-group-item-action {
-  color: #4b5563;
+  color: var(--ink-muted);
   transition: color 0.2s ease;
 }
 
 .list-group-item-action:hover {
-  color: #111827;
+  color: var(--ink);
   background: transparent !important;
 }
 
 .list-group-item-action.active {
-  color: #111827;
+  color: var(--ink);
   background: transparent !important;
   font-weight: 600;
   border: none;
@@ -115,7 +115,7 @@
   height: 500px;
   border-radius: 8px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: var(--surface-alt);
 }
 
 .place-carousel {
@@ -253,17 +253,17 @@
 .rating-star-label {
   cursor: pointer;
   font-size: 2rem;
-  color: #ddd;
+  color: var(--line);
   transition: color var(--transition-fast);
 }
 
 .rating-star-label:hover,
 .rating-star-label:hover ~ .rating-star-label {
-  color: #ffc107;
+  color: var(--star);
 }
 
 .rating-star-input:checked ~ .rating-star-label {
-  color: #ffc107;
+  color: var(--star);
 }
 
 /* Star Rating Container (for review forms) */
@@ -274,22 +274,22 @@
 .star-rating-container .star-label {
   cursor: pointer;
   font-size: 2rem;
-  color: #ddd;
+  color: var(--line);
   transition: color 0.2s;
   line-height: 1;
 }
 
 .star-rating-container .star-label:hover,
 .star-rating-container .star-label:hover ~ .star-label {
-  color: #ffc107;
+  color: var(--star);
 }
 
 .star-rating-container .form-check-input:checked ~ .star-label {
-  color: #ffc107;
+  color: var(--star);
 }
 
 .star-rating-container .star-label.star-selected {
-  color: #ffc107;
+  color: var(--star);
 }
 
 /* Related Places */
@@ -356,14 +356,14 @@
     white-space: nowrap;
     padding: 0.4rem 0.9rem !important;
     margin: 0 !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid var(--line) !important;
     border-radius: 999px !important;
     background: #fff !important;
   }
 
   .sidebar-sticky .list-group-item.active {
-    background: #111827 !important;
-    border-color: #111827 !important;
+    background: var(--ink) !important;
+    border-color: var(--ink) !important;
     color: #fff;
   }
 }

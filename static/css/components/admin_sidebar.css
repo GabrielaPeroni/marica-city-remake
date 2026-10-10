@@ -3,13 +3,13 @@
 :root {
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 70px;
-  --sidebar-bg: #9c0303;
-  --sidebar-text: #ffb6a5;
+  --sidebar-bg: var(--navy-900);
+  --sidebar-text: #c3cbdb;
   --sidebar-text-active: #ffffff;
-  --sidebar-active-bg: #ff9c9c25;
-  --sidebar-hover-bg: #ff9c9c25;
+  --sidebar-active-bg: #ffffff14;
+  --sidebar-hover-bg: #ffffff14;
   --sidebar-border: #ffffff1a;
-  --primary-blue: #ff937b;
+  --primary-blue: var(--brand-red);
 }
 
 /* Prevent flicker on page load - apply collapsed state immediately */
@@ -308,7 +308,7 @@ html.sidebar-initially-collapsed .sidebar-collapse-btn {
 
 /* Nav Badge */
 .nav-badge {
-  background: #ef4444;
+  background: var(--brand-red);
   color: white;
   font-size: 0.75rem;
   font-weight: 600;

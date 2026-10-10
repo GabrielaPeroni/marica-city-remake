@@ -225,7 +225,7 @@
           </div>
           {% else %}
           <div class="text-center py-4">
-            <i class="bi bi-inbox" style="font-size: 3rem; color: #9CA3AF;"></i>
+            <i class="bi bi-inbox" style="font-size: 3rem; color: var(--ink-soft);"></i>
             <p class="text-muted mt-2">Nenhum usuário recente encontrado.</p>
           </div>
           {% endif %}
@@ -246,7 +246,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   height: 100%;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--line);
 }
 
 .stat-card-enhanced:hover {
@@ -279,7 +279,7 @@
 
 .stat-label-enhanced {
   font-size: 0.875rem;
-  color: #6B7280;
+  color: var(--ink-muted);
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
@@ -287,7 +287,7 @@
 .stat-value-enhanced {
   font-size: 2rem;
   font-weight: 700;
-  color: #1F2937;
+  color: var(--ink);
   line-height: 1;
 }
 
@@ -297,7 +297,7 @@
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  background: #F3F4F6;
+  background: var(--surface-alt);
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -309,7 +309,7 @@
 .stat-trend small {
   margin-left: auto;
   font-weight: 400;
-  color: #6B7280;
+  color: var(--ink-muted);
 }
 
 .trend-up {
@@ -328,8 +328,8 @@
 }
 
 .trend-neutral {
-  color: #6B7280;
-  background: #F3F4F6;
+  color: var(--ink-muted);
+  background: var(--surface-alt);
 }
 
 /* Admin Action Cards */
@@ -366,7 +366,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--line);
 }
 
 .recent-users-table .table {
@@ -374,8 +374,8 @@
 }
 
 .recent-users-table .table thead th {
-  border-bottom: 2px solid #E5E7EB;
-  color: #6B7280;
+  border-bottom: 2px solid var(--line);
+  color: var(--ink-muted);
   font-weight: 600;
   font-size: 0.875rem;
   text-transform: uppercase;
@@ -386,11 +386,11 @@
 .recent-users-table .table tbody td {
   padding: 1rem 0.75rem;
   vertical-align: middle;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid var(--surface-alt);
 }
 
 .recent-users-table .table tbody tr:hover {
-  background: #F9FAFB;
+  background: var(--surface-alt);
 }
 
 .user-avatar-mini {
@@ -398,18 +398,18 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--line);
 }
 
 .user-avatar-placeholder-mini {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #E5E7EB;
+  background: var(--line);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #6B7280;
+  color: var(--ink-muted);
   font-size: 1rem;
 }
 

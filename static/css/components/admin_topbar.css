@@ -6,7 +6,7 @@
   justify-content: space-between;
   padding: 1.25rem 2rem;
   background: white;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -31,7 +31,7 @@
 }
 
 .mobile-menu-btn:hover {
-  background: #f3f4f6;
+  background: var(--surface-alt);
 }
 
 /* Welcome Message */
@@ -42,7 +42,7 @@
 .topbar-welcome h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
   margin: 0;
 }
 
@@ -57,7 +57,7 @@
 .search-box {
   display: flex;
   align-items: center;
-  background: #f3f4f6;
+  background: var(--surface-alt);
   border-radius: 8px;
   padding: 0.5rem 1rem;
   gap: 0.5rem;
@@ -66,12 +66,12 @@
 }
 
 .search-box:focus-within {
-  background: #e5e7eb;
+  background: var(--line);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 .search-box i {
-  color: #6b7280;
+  color: var(--ink-muted);
   font-size: 1rem;
 }
 
@@ -80,12 +80,12 @@
   background: transparent;
   outline: none;
   font-size: 0.9375rem;
-  color: #1f2937;
+  color: var(--ink);
   width: 100%;
 }
 
 .search-box input::placeholder {
-  color: #9ca3af;
+  color: var(--ink-soft);
 }
 
 /* Notification Button */
@@ -96,19 +96,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
+  background: var(--surface-alt);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .notification-btn:hover {
-  background: #e5e7eb;
+  background: var(--line);
 }
 
 .notification-btn i {
   font-size: 1.25rem;
-  color: #4b5563;
+  color: var(--ink-muted);
 }
 
 .notification-badge {
@@ -139,7 +139,7 @@
 }
 
 .user-menu:hover {
-  background: #f3f4f6;
+  background: var(--surface-alt);
 }
 
 .user-avatar {
@@ -147,30 +147,30 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--line);
 }
 
 .user-avatar-placeholder {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: var(--ink-muted);
   font-size: 1.5rem;
 }
 
 .user-name {
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .user-menu i.bi-chevron-down {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--ink-muted);
   transition: transform 0.2s ease;
 }
 
@@ -202,13 +202,13 @@
 
 .dropdown-header {
   padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .dropdown-header strong {
   display: block;
   font-size: 0.9375rem;
-  color: #1f2937;
+  color: var(--ink);
   margin-bottom: 0.25rem;
 }
 
@@ -218,7 +218,7 @@
 
 .dropdown-divider {
   height: 1px;
-  background: #e5e7eb;
+  background: var(--line);
   margin: 0;
 }
 
@@ -226,15 +226,15 @@
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  color: #4b5563;
+  color: var(--ink-muted);
   text-decoration: none;
   font-size: 0.9375rem;
   transition: all 0.2s ease;
 }
 
 .dropdown-item:hover {
-  background: #f3f4f6;
-  color: #1f2937;
+  background: var(--surface-alt);
+  color: var(--ink);
 }
 
 .dropdown-item.text-danger {
@@ -288,7 +288,7 @@
   .search-box::before {
     content: '\F52A';
     font-family: 'bootstrap-icons';
-    color: #6b7280;
+    color: var(--ink-muted);
     font-size: 1rem;
   }
 
