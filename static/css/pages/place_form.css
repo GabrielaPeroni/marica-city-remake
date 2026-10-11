@@ -15,7 +15,7 @@
 .form-control:focus,
 .form-select:focus {
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 0.2rem rgba(178, 59, 64, 0.15);
+  box-shadow: 0 0 0 0.2rem rgba(188, 47, 56, 0.15);
 }
 
 textarea.form-control {
