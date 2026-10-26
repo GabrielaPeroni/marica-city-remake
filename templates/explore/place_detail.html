@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}{{ place.name }} - MaricaCity{% endblock %}
 
@@ -25,7 +25,7 @@
         <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
         {% with place.categories.first as first_category %}
         {% if first_category %}
-        <li class="breadcrumb-item"><a href="{% url 'explore:category_detail' first_category.slug %}">{{ first_category.name }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'explore:category_detail' first_category.slug %}">{{ first_category|tr:"name" }}</a></li>
         {% endif %}
         {% endwith %}
         <li class="breadcrumb-item active" aria-current="page">{{ place.name }}</li>
@@ -110,7 +110,7 @@
           {% with place.categories.first as first_category %}
           <div class="mb-0">
             <span class="badge bg-light text-dark text-decoration-none" style="font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.5rem;">
-              {% if first_category.icon %}{{ first_category.icon }}{% endif %} {{ first_category.name }}
+              {% if first_category.icon %}{{ first_category.icon }}{% endif %} {{ first_category|tr:"name" }}
             </span>
           </div>
           {% endwith %}
@@ -119,7 +119,10 @@
 
       <!-- Descrição -->
       <div class="mb-4">
-        <p class="text-muted" style="line-height: 1.6; font-size: 0.875rem; white-space: pre-line;">{{ place.description }}</p>
+        <p class="text-muted" style="line-height: 1.6; font-size: 0.875rem; white-space: pre-line;">{{ place|tr:"description" }}</p>
+        {% if place|machine_translated %}
+        <p class="machine-note"><i class="bi bi-translate me-1" aria-hidden="true"></i>{% translate "Traduzido automaticamente do português." %}</p>
+        {% endif %}
       </div>
 
       <!-- Seção de Localização -->
@@ -213,7 +216,7 @@
                   {% endif %}
                 </div>
 
-                <p class="mb-0 text-muted" style="font-size: 0.8rem; white-space: pre-line;">{{ review.comment }}</p>
+                <p class="mb-0 text-muted" style="font-size: 0.8rem; white-space: pre-line;">{{ review|tr:"comment" }}</p>
               </div>
               {% endfor %}
             </div>

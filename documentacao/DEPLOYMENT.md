@@ -168,6 +168,21 @@ roda uma vez e sai). No `docker-compose.yml` ele é o serviço `scheduler`; fora
 do Docker, rode-o como um serviço do sistema ou troque por um cron que chame
 `run_scheduler --once`.
 
+## Tradução automática do conteúdo (`translate_content`)
+
+O conteúdo cadastrado (descrições de lugares, categorias, eventos, notícias e
+avaliações) é traduzido para inglês e espanhol por um LLM local via
+[Ollama](https://ollama.com). As traduções ficam no campo `translations` de cada
+registro e são servidas sem chamar o modelo, então o site não depende do Ollama
+em produção.
+
+- `ollama pull qwen2.5:14b` (ou outro modelo; ajuste `OLLAMA_MODEL`).
+- `uv run python manage.py translate_content` traduz o que é novo ou mudou desde
+  a última execução. Também roda dentro do `run_scheduler`.
+- `OLLAMA_URL` aponta para o servidor (padrão `http://localhost:11434`). Se ele
+  não responder, o comando avisa e sai sem erro.
+- Correções manuais: Django admin → o registro → "Traduções automáticas".
+
 ## Importador de notícias (`fetch_news`)
 
 `uv run python manage.py fetch_news` lê um feed RSS e grava as manchetes dos

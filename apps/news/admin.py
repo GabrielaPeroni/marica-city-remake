@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from apps.core.admin_mixins import TranslationsAdminMixin
+
 from .models import EventCandidate, News, NewsCategory
 
 
@@ -11,7 +13,7 @@ class NewsCategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(News)
-class NewsAdmin(admin.ModelAdmin):
+class NewsAdmin(TranslationsAdminMixin, admin.ModelAdmin):
     list_display = [
         "title",
         "category",
