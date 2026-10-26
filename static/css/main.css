@@ -667,3 +667,34 @@ html {
 .card .or-label {
   background: var(--bs-card-bg);
 }
+
+/* Favorite toggle: outlined heart until saved, then filled red */
+.btn.favorite-btn {
+  --bs-btn-color: var(--brand-red);
+  --bs-btn-bg: var(--surface);
+  --bs-btn-border-color: var(--brand-red);
+  --bs-btn-hover-color: var(--brand-red);
+  --bs-btn-hover-bg: var(--brand-red-tint);
+  --bs-btn-hover-border-color: var(--brand-red);
+  --bs-btn-active-color: var(--brand-red);
+  --bs-btn-active-bg: var(--brand-red-tint);
+  --bs-btn-active-border-color: var(--brand-red);
+}
+
+.btn.favorite-btn.favorited {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--brand-red);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--brand-red-dark);
+  --bs-btn-hover-border-color: var(--brand-red-dark);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--brand-red-dark);
+}
+
+/* Round overlay buttons on photos have no border */
+.btn.favorite-btn-overlay,
+.btn.favorite-heart-icon {
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-border-color: transparent;
+}

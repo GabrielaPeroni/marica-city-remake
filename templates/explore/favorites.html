@@ -52,7 +52,7 @@
           </p>
           <div class="d-flex gap-2 mt-auto">
             <a href="{% url 'explore:place_detail' favorite.place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">{% translate "Ver detalhes" %} →</a>
-            <button class="btn btn-outline-danger btn-sm favorite-btn"
+            <button class="btn btn-outline-danger btn-sm favorite-btn favorited"
                     data-place-id="{{ favorite.place.pk }}"
                     data-favorited="true"
                     data-remove-mode="true"
@@ -141,7 +141,7 @@
                       }
                       <div class="d-flex gap-2 mt-auto">
                         <a href="${place.url}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">${favoritesText.details} →</a>
-                        <button class="btn btn-outline-danger btn-sm favorite-btn"
+                        <button class="btn btn-outline-danger btn-sm favorite-btn favorited"
                                 data-place-id="${place.id}"
                                 data-favorited="true"
                                 data-remove-mode="true"
