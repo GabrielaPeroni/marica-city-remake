@@ -6,6 +6,7 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import gettext as _
 
 from .forms import UserRegistrationForm
 from .models import User
@@ -21,7 +22,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(
-                request, "Cadastro realizado com sucesso! Bem-vindo ao MaricaCity."
+                request, _("Cadastro realizado com sucesso! Bem-vindo ao MaricaCity.")
             )
             return redirect("core:landing")
     else:
@@ -47,7 +48,7 @@ def login_view(request):
             return JsonResponse(
                 {
                     "success": False,
-                    "error": "Por favor, preencha todos os campos.",
+                    "error": _("Por favor, preencha todos os campos."),
                 },
                 status=400,
             )
@@ -59,7 +60,8 @@ def login_view(request):
             return JsonResponse(
                 {
                     "success": True,
-                    "message": f"Bem-vindo de volta, {user.username}!",
+                    "message": _("Bem-vindo de volta, %(username)s!")
+                    % {"username": user.username},
                     "username": user.username,
                 }
             )
@@ -70,7 +72,9 @@ def login_view(request):
             return JsonResponse(
                 {
                     "success": False,
-                    "error": "Sua conta foi desativada. Entre em contato com o administrador.",
+                    "error": _(
+                        "Sua conta foi desativada. Entre em contato com o administrador."
+                    ),
                 },
                 status=403,
             )
@@ -78,19 +82,21 @@ def login_view(request):
         return JsonResponse(
             {
                 "success": False,
-                "error": "Nome de usuário ou senha incorretos.",
+                "error": _("Nome de usuário ou senha incorretos."),
             },
             status=401,
         )
 
     # Requisição GET - não permitida para endpoint AJAX
-    return JsonResponse({"success": False, "error": "Método não permitido"}, status=405)
+    return JsonResponse(
+        {"success": False, "error": _("Método não permitido")}, status=405
+    )
 
 
 @login_required
 def logout_view(request):
     logout(request)
-    messages.success(request, "Você saiu com sucesso.")
+    messages.success(request, _("Você saiu com sucesso."))
 
     # Redirect to the referring page or home
     next_url = request.GET.get("next") or request.META.get("HTTP_REFERER")
@@ -108,7 +114,7 @@ def logout_view(request):
 def user_management_view(request):
     """View de administração para gerenciar todos os usuários"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     # Obter parâmetros de filtro
@@ -164,11 +170,11 @@ def user_management_view(request):
 def user_update_type_view(request, user_id):
     """Alterna o status de staff do usuário"""
     if not request.user.can_moderate:
-        return JsonResponse({"success": False, "error": "Sem permissão"}, status=403)
+        return JsonResponse({"success": False, "error": _("Sem permissão")}, status=403)
 
     if request.method != "POST":
         return JsonResponse(
-            {"success": False, "error": "Método não permitido"}, status=405
+            {"success": False, "error": _("Método não permitido")}, status=405
         )
 
     user = get_object_or_404(User, id=user_id)
@@ -178,7 +184,7 @@ def user_update_type_view(request, user_id):
         return JsonResponse(
             {
                 "success": False,
-                "error": "Você não pode alterar seu próprio status",
+                "error": _("Você não pode alterar seu próprio status"),
             },
             status=400,
         )
@@ -187,15 +193,16 @@ def user_update_type_view(request, user_id):
     user.is_staff = not user.is_staff
     user.save()
 
-    role_display = "Staff" if user.is_staff else "Regular"
+    role_display = _("Staff") if user.is_staff else _("Regular")
     messages.success(
         request,
-        f"Status de {user.username} alterado para {role_display}.",
+        _("Status de %(username)s alterado para %(role_display)s.")
+        % {"username": user.username, "role_display": role_display},
     )
     return JsonResponse(
         {
             "success": True,
-            "message": "Status de usuário atualizado",
+            "message": _("Status de usuário atualizado"),
             "role_display": role_display,
             "is_staff": user.is_staff,
         }
@@ -206,11 +213,11 @@ def user_update_type_view(request, user_id):
 def user_toggle_status_view(request, user_id):
     """Alterna o status ativo do usuário"""
     if not request.user.can_moderate:
-        return JsonResponse({"success": False, "error": "Sem permissão"}, status=403)
+        return JsonResponse({"success": False, "error": _("Sem permissão")}, status=403)
 
     if request.method != "POST":
         return JsonResponse(
-            {"success": False, "error": "Método não permitido"}, status=405
+            {"success": False, "error": _("Método não permitido")}, status=405
         )
 
     user = get_object_or_404(User, id=user_id)
@@ -218,7 +225,7 @@ def user_toggle_status_view(request, user_id):
     # Prevenir desativação da própria conta
     if user == request.user:
         return JsonResponse(
-            {"success": False, "error": "Você não pode desativar sua própria conta"},
+            {"success": False, "error": _("Você não pode desativar sua própria conta")},
             status=400,
         )
 
@@ -226,13 +233,17 @@ def user_toggle_status_view(request, user_id):
     user.save()
 
     status_text = "ativado" if user.is_active else "desativado"
-    messages.success(request, f"Usuário {user.username} {status_text} com sucesso.")
+    messages.success(
+        request,
+        _("Usuário %(username)s %(status_text)s com sucesso.")
+        % {"username": user.username, "status_text": status_text},
+    )
 
     return JsonResponse(
         {
             "success": True,
             "is_active": user.is_active,
-            "message": f"Usuário {status_text}",
+            "message": _("Usuário %(status_text)s") % {"status_text": status_text},
         }
     )
 
@@ -241,20 +252,23 @@ def user_toggle_status_view(request, user_id):
 def user_delete_view(request, user_id):
     """Excluir conta de usuário"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para excluir usuários.")
+        messages.error(request, _("Você não tem permissão para excluir usuários."))
         return redirect("accounts:user_management")
 
     user = get_object_or_404(User, id=user_id)
 
     # Prevenir exclusão da própria conta
     if user == request.user:
-        messages.error(request, "Você não pode excluir sua própria conta.")
+        messages.error(request, _("Você não pode excluir sua própria conta."))
         return redirect("accounts:user_management")
 
     if request.method == "POST":
         username = user.username
         user.delete()
-        messages.success(request, f"Usuário {username} excluído com sucesso.")
+        messages.success(
+            request,
+            _("Usuário %(username)s excluído com sucesso.") % {"username": username},
+        )
         return redirect("accounts:user_management")
 
     context = {"user_to_delete": user}

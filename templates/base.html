@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="pt-BR">
+{% load i18n static %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/themes/light.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    {% load static %}
     <link rel="icon" type="image/x-icon" href="{% static 'images/icon/bus.ico' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <link rel="stylesheet" href="{% static 'css/components/headers.css' %}" />
@@ -20,7 +19,7 @@
   </head>
 
   <body class="d-flex flex-column min-vh-100" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
-    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <a class="skip-link" href="#conteudo">{% translate "Pular para o conteúdo" %}</a>
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
       {% if messages %}
         {% for message in messages %}
@@ -29,7 +28,7 @@
             <div class="toast-body">
               {{ message }}
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{% translate 'Fechar' %}"></button>
           </div>
         </div>
         {% endfor %}
@@ -40,8 +39,10 @@
       {% block content %}{% endblock %}
     </main>
 
+    {% include 'includes/language_switcher.html' %}
+
     {% if user.is_authenticated and user.can_moderate %}
-    <a href="{% url 'core:admin_dashboard' %}" class="floating-admin-btn" aria-label="Painel de Administração" title="Painel de Administração">
+    <a href="{% url 'core:admin_dashboard' %}" class="floating-admin-btn" aria-label="{% translate 'Painel de Administração' %}" title="{% translate 'Painel de Administração' %}">
       <i class="bi bi-gear-fill"></i>
     </a>
     {% endif %}
@@ -51,29 +52,29 @@
         <div class="row g-4">
           <div class="col-md-6">
             <a class="site-footer-brand" href="{% url 'core:landing' %}">MaricaCity</a>
-            <p class="mt-2 mb-0">Guia colaborativo dos melhores lugares, notícias e eventos de Maricá.</p>
+            <p class="mt-2 mb-0">{% translate "Guia colaborativo dos melhores lugares, notícias e eventos de Maricá." %}</p>
           </div>
-          <nav class="col-6 col-md-3" aria-label="Rodapé: descobrir">
-            <h2>Descobrir</h2>
+          <nav class="col-6 col-md-3" aria-label="{% translate 'Rodapé: descobrir' %}">
+            <h2>{% translate "Descobrir" %}</h2>
             <ul>
-              <li><a href="{% url 'explore:explore' %}">Explorar lugares</a></li>
-              <li><a href="{% url 'news:news_list' %}">Agenda de eventos</a></li>
-              <li><a href="{% url 'core:about' %}">Sobre o projeto</a></li>
+              <li><a href="{% url 'explore:explore' %}">{% translate "Explorar lugares" %}</a></li>
+              <li><a href="{% url 'news:news_list' %}">{% translate "Agenda de eventos" %}</a></li>
+              <li><a href="{% url 'core:about' %}">{% translate "Sobre o projeto" %}</a></li>
             </ul>
           </nav>
-          <nav class="col-6 col-md-3" aria-label="Rodapé: participar">
-            <h2>Participar</h2>
+          <nav class="col-6 col-md-3" aria-label="{% translate 'Rodapé: participar' %}">
+            <h2>{% translate "Participar" %}</h2>
             <ul>
               {% if user.is_authenticated %}
-              <li><a href="{% url 'explore:favorites' %}">Meus favoritos</a></li>
-              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">Adicionar um lugar</a></li>{% endif %}
+              <li><a href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
+              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">{% translate "Adicionar um lugar" %}</a></li>{% endif %}
               {% else %}
-              <li><a href="{% url 'accounts:register' %}">Criar conta</a></li>
+              <li><a href="{% url 'accounts:register' %}">{% translate "Criar conta" %}</a></li>
               {% endif %}
             </ul>
           </nav>
         </div>
-        <div class="site-footer-bottom">&copy; {% now "Y" %} MaricaCity. Todos os direitos reservados.</div>
+        <div class="site-footer-bottom">&copy; {% now "Y" %} MaricaCity. {% translate "Todos os direitos reservados." %}</div>
       </div>
     </footer>
 
@@ -81,6 +82,7 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/shoelace-autoloader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+    <script src="{% url 'javascript-catalog' %}"></script>
     <!-- Utilitários compartilhados (devem ser carregados primeiro) -->
     <script src="{% static 'js/utils.js' %}"></script>
 

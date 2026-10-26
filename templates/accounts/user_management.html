@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -26,7 +26,7 @@
       <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="admin-title">
-        <i class="bi bi-people-fill me-2"></i>Gerenciamento de Usuários
+        <i class="bi bi-people-fill me-2"></i>{% translate "Gerenciamento de Usuários" %}
       </h1>
     </div>
 
@@ -36,28 +36,28 @@
         <form method="get" class="row g-3">
           {% csrf_token %}
           <div class="col-md-3">
-            <label for="roleFilter" class="form-label">Tipo de Usuário</label>
+            <label for="roleFilter" class="form-label">{% translate "Tipo de Usuário" %}</label>
             <select class="form-select" id="roleFilter" name="role">
-              <option value="">Todos os tipos</option>
-              <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>Staff</option>
-              <option value="regular" {% if role_filter == 'regular' %}selected{% endif %}>Regular</option>
+              <option value="">{% translate "Todos os tipos" %}</option>
+              <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>{% translate "Staff" %}</option>
+              <option value="regular" {% if role_filter == 'regular' %}selected{% endif %}>{% translate "Regular" %}</option>
             </select>
           </div>
           <div class="col-md-3">
-            <label for="statusFilter" class="form-label">Status</label>
+            <label for="statusFilter" class="form-label">{% translate "Status" %}</label>
             <select class="form-select" id="statusFilter" name="status">
-              <option value="">Todos os status</option>
-              <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Ativo</option>
-              <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inativo</option>
+              <option value="">{% translate "Todos os status" %}</option>
+              <option value="active" {% if status_filter == 'active' %}selected{% endif %}>{% translate "Ativo" %}</option>
+              <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>{% translate "Inativo" %}</option>
             </select>
           </div>
           <div class="col-md-4">
-            <label for="searchQuery" class="form-label">Pesquisar</label>
-            <input type="text" class="form-control" id="searchQuery" name="q" value="{{ search_query }}" placeholder="Nome, email, nome de usuário...">
+            <label for="searchQuery" class="form-label">{% translate "Pesquisar" %}</label>
+            <input type="text" class="form-control" id="searchQuery" name="q" value="{{ search_query }}" placeholder="{% translate 'Nome, email, nome de usuário...' %}">
           </div>
           <div class="col-md-2 d-flex align-items-end">
             <button type="submit" class="btn btn-primary w-100">
-              <i class="bi bi-search me-1"></i>Filtrar
+              <i class="bi bi-search me-1"></i>{% translate "Filtrar" %}
             </button>
           </div>
         </form>
@@ -71,11 +71,11 @@
           <table class="table table-hover align-middle">
             <thead>
               <tr>
-                <th>Usuário</th>
-                <th>Tipo</th>
-                <th>Status</th>
-                <th>Membro desde</th>
-                <th>Ações</th>
+                <th>{% translate "Usuário" %}</th>
+                <th>{% translate "Tipo" %}</th>
+                <th>{% translate "Status" %}</th>
+                <th>{% translate "Membro desde" %}</th>
+                <th>{% translate "Ações" %}</th>
               </tr>
             </thead>
             <tbody>
@@ -90,31 +90,31 @@
                           data-user-id="{{ user_item.id }}"
                           aria-label="Alterar tipo de usuário para {{ user_item.username }}"
                           {% if user_item == user %}disabled{% endif %}>
-                    <option value="staff" {% if user_item.is_staff %}selected{% endif %}>Staff</option>
-                    <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>Regular</option>
+                    <option value="staff" {% if user_item.is_staff %}selected{% endif %}>{% translate "Staff" %}</option>
+                    <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>{% translate "Regular" %}</option>
                   </select>
                 </td>
                 <td>
                   <span class="badge status-badge-{{ user_item.id }} {% if user_item.is_active %}bg-success{% else %}bg-secondary{% endif %}">
-                    {% if user_item.is_active %}Ativo{% else %}Inativo{% endif %}
+                    {% if user_item.is_active %}{% translate "Ativo" %}{% else %}{% translate "Inativo" %}{% endif %}
                   </span>
                 </td>
                 <td>
-                  <small class="text-muted">{{ user_item.created_at|date:"d/m/Y" }}</small>
+                  <small class="text-muted">{{ user_item.created_at|date:"SHORT_DATE_FORMAT" }}</small>
                 </td>
                 <td>
-                  <div class="btn-group" role="group" aria-label="Ações do usuário">
+                  <div class="btn-group" role="group" aria-label="{% translate 'Ações do usuário' %}">
                     <button type="button"
                             class="btn btn-sm btn-outline-primary toggle-status-btn"
                             data-user-id="{{ user_item.id }}"
                             aria-label="{% if user_item.is_active %}Desativar usuário{% else %}Ativar usuário{% endif %}"
-                            {% if user_item == user %}disabled title="Você não pode modificar sua própria conta"{% endif %}>
+                            {% if user_item == user %}disabled title="{% translate 'Você não pode modificar sua própria conta' %}"{% endif %}>
                       <i class="bi bi-{% if user_item.is_active %}x-circle{% else %}check-circle{% endif %}"></i>
                     </button>
                     <a href="{% url 'accounts:user_delete' user_item.id %}"
                        class="btn btn-sm btn-outline-danger"
-                       aria-label="Excluir usuário"
-                       {% if user_item == user %}onclick="return false;" style="opacity: 0.5; cursor: not-allowed;" title="Você não pode excluir sua própria conta"{% endif %}>
+                       aria-label="{% translate 'Excluir usuário' %}"
+                       {% if user_item == user %}onclick="return false;" style="opacity: 0.5; cursor: not-allowed;" title="{% translate 'Você não pode excluir sua própria conta' %}"{% endif %}>
                       <i class="bi bi-trash"></i>
                     </a>
                   </div>
@@ -124,7 +124,7 @@
               <tr>
                 <td colspan="5" class="text-center py-4">
                   <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
-                  <p class="text-muted mt-2 mb-0">Nenhum usuário encontrado</p>
+                  <p class="text-muted mt-2 mb-0">{% translate "Nenhum usuário encontrado" %}</p>
                 </td>
               </tr>
               {% endfor %}

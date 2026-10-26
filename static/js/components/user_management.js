@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (
         !confirm(
-          'Tem certeza que deseja alterar o tipo deste usuário?\n\nIsso pode modificar as permissões do usuário no sistema.'
+          gettext(
+            'Tem certeza que deseja alterar o tipo deste usuário?\n\nIsso pode modificar as permissões do usuário no sistema.'
+          )
         )
       ) {
         this.value = originalRole;
@@ -53,14 +55,14 @@ document.addEventListener('DOMContentLoaded', function () {
             this.value = originalRole;
             showNotification(
               'error',
-              data.error || 'Erro ao atualizar tipo de usuário'
+              data.error || gettext('Erro ao atualizar tipo de usuário')
             );
           }
         })
         .catch(error => {
           console.error('Erro:', error);
           this.value = originalRole;
-          showNotification('error', 'Erro ao processar solicitação');
+          showNotification('error', gettext('Erro ao processar solicitação'));
         })
         .finally(() => {
           this.disabled = false;
@@ -77,8 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const statusBadge = row.querySelector(`.status-badge-${userId}`);
       const isActive = statusBadge.classList.contains('bg-success');
 
-      const action = isActive ? 'desativar' : 'ativar';
-      if (!confirm(`Tem certeza que deseja ${action} este usuário?`)) {
+      const question = isActive
+        ? gettext('Tem certeza que deseja desativar este usuário?')
+        : gettext('Tem certeza que deseja ativar este usuário?');
+      if (!confirm(question)) {
         return;
       }
 
@@ -98,23 +102,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.is_active) {
               statusBadge.classList.remove('bg-secondary');
               statusBadge.classList.add('bg-success');
-              statusBadge.textContent = 'Ativo';
+              statusBadge.textContent = gettext('Ativo');
               this.innerHTML = '<i class="bi bi-x-circle"></i>';
             } else {
               statusBadge.classList.remove('bg-success');
               statusBadge.classList.add('bg-secondary');
-              statusBadge.textContent = 'Inativo';
+              statusBadge.textContent = gettext('Inativo');
               this.innerHTML = '<i class="bi bi-check-circle"></i>';
             }
 
             showNotification('success', data.message);
           } else {
-            showNotification('error', data.error || 'Erro ao alterar status');
+            showNotification('error', data.error || gettext('Erro ao alterar status'));
           }
         })
         .catch(error => {
           console.error('Erro:', error);
-          showNotification('error', 'Erro ao processar solicitação');
+          showNotification('error', gettext('Erro ao processar solicitação'));
         })
         .finally(() => {
           this.disabled = false;

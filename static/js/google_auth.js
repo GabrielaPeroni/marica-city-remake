@@ -28,16 +28,16 @@ function handleCredentialResponse(response) {
       if (res.ok) {
         // Armazenar flag para mostrar toast de sucesso após redirect
         sessionStorage.setItem('loginSuccess', 'true');
-        sessionStorage.setItem('loginUsername', payload.name || 'usuário');
+        sessionStorage.setItem('loginUsername', payload.name || gettext('usuário'));
         window.location.href = '/';
       } else {
         console.error('Autenticação do Google falhou');
-        alert('Falha ao autenticar com Google. Por favor, tente novamente.');
+        alert(gettext('Falha ao autenticar com Google. Por favor, tente novamente.'));
       }
     })
     .catch(error => {
       console.error('Erro durante a autenticação do Google:', error);
-      alert('Erro ao conectar com o servidor. Por favor, tente novamente.');
+      alert(gettext('Erro ao conectar com o servidor. Por favor, tente novamente.'));
     });
 }
 

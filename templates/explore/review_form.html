@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}{% if review %}Editar{% else %}Escrever{% endif %} Avaliação - {{ place.name }}{% endblock %}
+{% block title %}{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %} - {{ place.name }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
@@ -12,14 +12,14 @@
 
 <header class="page-header">
   <div class="container">
-    <nav aria-label="Trilha de navegação">
+    <nav aria-label="{% translate 'Trilha de navegação' %}">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">Explorar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{% if review %}Editar avaliação{% else %}Nova avaliação{% endif %}</li>
+        <li class="breadcrumb-item active" aria-current="page">{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Nova avaliação" %}{% endif %}</li>
       </ol>
     </nav>
-    <h1>{% if review %}Editar sua avaliação{% else %}Escrever avaliação{% endif %}</h1>
+    <h1>{% if review %}{% translate "Editar sua avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %}</h1>
     <p class="page-header-subtitle">{{ place.name }}</p>
   </div>
 </header>
@@ -81,11 +81,11 @@
             <div class="d-flex gap-2">
               <button type="submit" class="btn btn-primary">
                 <i class="bi bi-check-circle me-2"></i>
-                {% if review %}Atualizar Avaliação{% else %}Enviar Avaliação{% endif %}
+                {% if review %}{% translate "Atualizar avaliação" %}{% else %}{% translate "Enviar avaliação" %}{% endif %}
               </button>
               <a href="{% url 'explore:place_detail' place.pk %}" class="btn btn-secondary">
                 <i class="bi bi-x-circle me-2"></i>
-                Cancelar
+                {% translate "Cancelar" %}
               </a>
             </div>
           </form>

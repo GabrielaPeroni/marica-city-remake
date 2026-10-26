@@ -20,9 +20,9 @@ function initializeSwipers() {
           pauseOnMouseEnter: true,
         },
     a11y: {
-      prevSlideMessage: 'Slide anterior',
-      nextSlideMessage: 'Próximo slide',
-      paginationBulletMessage: 'Ir para o slide {{index}}',
+      prevSlideMessage: gettext('Slide anterior'),
+      nextSlideMessage: gettext('Próximo slide'),
+      paginationBulletMessage: gettext('Ir para o slide {{index}}'),
     },
     navigation: {
       nextEl: '.swiper-button-next-custom',
@@ -45,7 +45,7 @@ function initializeSwipers() {
       pauseBtn.setAttribute('aria-pressed', String(paused));
       pauseBtn.setAttribute(
         'aria-label',
-        paused ? 'Retomar apresentação' : 'Pausar apresentação'
+        paused ? gettext('Retomar apresentação') : gettext('Pausar apresentação')
       );
       pauseBtn.querySelector('i').className = paused
         ? 'bi bi-play-fill'

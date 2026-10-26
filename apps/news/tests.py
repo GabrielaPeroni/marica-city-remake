@@ -973,3 +973,44 @@ class EventTriageViewTests(TestCase):
         self._post(action="reject")
         self.candidate.refresh_from_db()
         self.assertEqual(self.candidate.status, EventCandidate.REJECTED)
+
+
+class EventWhenFilterTests(TestCase):
+    """Event dates read naturally in each language"""
+
+    def setUp(self):
+        author = User.objects.create_user(username="dates", password="pass123")
+        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        tz = timezone.get_current_timezone()
+        self.event = News(
+            title="FLIM",
+            category=category,
+            author=author,
+            event_date=datetime(2026, 10, 30, tzinfo=tz),
+            event_end_date=datetime(2026, 11, 8, 23, 59, tzinfo=tz),
+        )
+
+    def _when(self, lang):
+        from django.utils import translation
+
+        from apps.news.templatetags.event_dates import event_when
+
+        with translation.override(lang):
+            return event_when(self.event)
+
+    def test_range_across_months(self):
+        self.assertEqual(self._when("pt-br"), "30 de outubro a 8 de novembro")
+        self.assertEqual(self._when("en"), "October 30 – November 8")
+        self.assertEqual(self._when("es"), "30 de octubre al 8 de noviembre")
+
+    def test_range_within_a_month(self):
+        self.event.event_date = self.event.event_date.replace(day=26)
+        self.event.event_end_date = self.event.event_end_date.replace(month=10, day=27)
+        self.assertEqual(self._when("pt-br"), "26 a 27 de outubro")
+        self.assertEqual(self._when("en"), "October 26–27")
+
+    def test_calendar_and_maps_links(self):
+        self.event.event_location = "Orla do Parque Nanci"
+        self.assertIn("calendar.google.com", self.event.calendar_url)
+        self.assertIn("20261030T030000Z", self.event.calendar_url)
+        self.assertIn("Orla+do+Parque+Nanci", self.event.maps_url)

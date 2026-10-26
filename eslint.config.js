@@ -37,6 +37,10 @@ const thirdPartyGlobals = {
   bootstrap: 'readonly',
   Swiper: 'readonly',
   google: 'readonly',
+  // Django JavaScriptCatalog (/jsi18n/), loaded first in base.html
+  gettext: 'readonly',
+  ngettext: 'readonly',
+  interpolate: 'readonly',
 };
 
 module.exports = [

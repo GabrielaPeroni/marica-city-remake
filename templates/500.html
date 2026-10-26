@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="pt-BR">
+{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Erro no servidor - MaricaCity</title>
+    <title>{% translate "Erro no servidor" %} - MaricaCity</title>
     <style>
       body { font-family: system-ui, sans-serif; margin: 0; color: #2b2826; background: #f7f5f1; }
       header { background: #bc2f38; color: #fff; padding: 2rem 1.5rem; }
@@ -12,10 +12,10 @@
     </style>
   </head>
   <body>
-    <header><h1>Algo deu errado</h1></header>
+    <header><h1>{% translate "Algo deu errado" %}</h1></header>
     <main>
-      <p>Tivemos um problema ao carregar esta página. Tente novamente em instantes.</p>
-      <p><a href="/">Voltar para a página inicial</a></p>
+      <p>{% translate "Tivemos um problema ao carregar esta página. Tente novamente em instantes." %}</p>
+      <p><a href="/">{% translate "Voltar para a página inicial" %}</a></p>
     </main>
   </body>
 </html>

@@ -27,7 +27,7 @@ function initAutocomplete() {
   autocompleteInput = document.createElement('input');
   autocompleteInput.type = 'text';
   autocompleteInput.className = addressTextarea.className;
-  autocompleteInput.placeholder = 'Comece a digitar o endereço...';
+  autocompleteInput.placeholder = gettext('Comece a digitar o endereço...');
   autocompleteInput.value = addressTextarea.value;
 
   // Inserir o input de autocompletar antes do textarea

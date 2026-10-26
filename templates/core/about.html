@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Sobre o Projeto - MaricaCity{% endblock %}
+{% block title %}{% translate "Sobre o projeto" %} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
 <header class="page-header">
   <div class="container">
-    <h1>Sobre o MaricaCity</h1>
-    <p class="page-header-subtitle">Conectando pessoas aos melhores lugares de Maricá.</p>
+    <h1>{% translate "Sobre o MaricaCity" %}</h1>
+    <p class="page-header-subtitle">{% translate "Conectando pessoas aos melhores lugares de Maricá." %}</p>
   </div>
 </header>
 
@@ -20,10 +20,10 @@
         <div class="card h-100 rounded-3">
           <div class="card-body p-4">
             <i class="bi bi-bullseye fs-2 text-danger" aria-hidden="true"></i>
-            <h2 class="h5 fw-bold mt-3">Nossa missão</h2>
+            <h2 class="h5 fw-bold mt-3">{% translate "Nossa missão" %}</h2>
             <p class="text-muted mb-0">
-              Ajudar moradores e visitantes a descobrir o melhor de Maricá, das praias aos restaurantes,
-              em um só lugar.
+              {% blocktranslate trimmed %}Ajudar moradores e visitantes a descobrir o melhor de Maricá, das praias aos restaurantes,
+              em um só lugar.{% endblocktranslate %}
             </p>
           </div>
         </div>
@@ -32,10 +32,10 @@
         <div class="card h-100 rounded-3">
           <div class="card-body p-4">
             <i class="bi bi-people fs-2 text-danger" aria-hidden="true"></i>
-            <h2 class="h5 fw-bold mt-3">Como funciona</h2>
+            <h2 class="h5 fw-bold mt-3">{% translate "Como funciona" %}</h2>
             <p class="text-muted mb-0">
-              A comunidade cadastra lugares, a moderação aprova e todos avaliam. O guia se mantém
-              atualizado por quem vive a cidade.
+              {% blocktranslate trimmed %}A comunidade cadastra lugares, a moderação aprova e todos avaliam. O guia se mantém
+              atualizado por quem vive a cidade.{% endblocktranslate %}
             </p>
           </div>
         </div>
@@ -44,10 +44,10 @@
         <div class="card h-100 rounded-3">
           <div class="card-body p-4">
             <i class="bi bi-heart fs-2 text-danger" aria-hidden="true"></i>
-            <h2 class="h5 fw-bold mt-3">Faça parte</h2>
+            <h2 class="h5 fw-bold mt-3">{% translate "Faça parte" %}</h2>
             <p class="text-muted mb-0">
-              Crie uma conta gratuita para salvar favoritos, avaliar e compartilhar os seus lugares
-              preferidos.
+              {% blocktranslate trimmed %}Crie uma conta gratuita para salvar favoritos, avaliar e compartilhar os seus lugares
+              preferidos.{% endblocktranslate %}
             </p>
           </div>
         </div>
@@ -56,13 +56,13 @@
 
     <div class="d-flex flex-wrap gap-2 mt-4">
       <a href="{% url 'explore:explore' %}" class="btn btn-dark">
-        <i class="bi bi-compass me-1" aria-hidden="true"></i>Explorar lugares
+        <i class="bi bi-compass me-1" aria-hidden="true"></i>{% translate "Explorar lugares" %}
       </a>
       <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark">
-        <i class="bi bi-newspaper me-1" aria-hidden="true"></i>Ver notícias e eventos
+        <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{% translate "Ver agenda de eventos" %}
       </a>
       {% if not user.is_authenticated %}
-      <a href="{% url 'accounts:register' %}" class="btn btn-outline-dark">Criar conta</a>
+      <a href="{% url 'accounts:register' %}" class="btn btn-outline-dark">{% translate "Criar conta" %}</a>
       {% endif %}
     </div>
   </div>

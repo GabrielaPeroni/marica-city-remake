@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
 {% block title %}{{ title }} - MaricaCity{% endblock %}
 
@@ -12,15 +12,15 @@
 
 <header class="page-header">
   <div class="container" style="max-width: 900px;">
-    <nav aria-label="Trilha de navegação">
+    <nav aria-label="{% translate 'Trilha de navegação' %}">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">Explorar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
         {% if place %}<li class="breadcrumb-item"><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>{% endif %}
-        <li class="breadcrumb-item active" aria-current="page">{% if place %}Editar{% else %}Novo lugar{% endif %}</li>
+        <li class="breadcrumb-item active" aria-current="page">{% if place %}{% translate "Editar" %}{% else %}{% translate "Novo lugar" %}{% endif %}</li>
       </ol>
     </nav>
     <h1>{{ title }}</h1>
-    <p class="page-header-subtitle">{% if place %}Atualize as informações do seu lugar.{% else %}Compartilhe um lugar especial com a comunidade. Ele fica visível após aprovação.{% endif %}</p>
+    <p class="page-header-subtitle">{% if place %}{% translate "Atualize as informações do seu lugar." %}{% else %}{% translate "Compartilhe um lugar especial com a comunidade. Ele fica visível após aprovação." %}{% endif %}</p>
   </div>
 </header>
 
@@ -35,7 +35,7 @@
           <div class="d-flex align-items-start">
             <i class="bi bi-exclamation-circle-fill me-2" aria-hidden="true"></i>
             <div>
-              <strong>Erro no formulário</strong>
+              <strong>{% translate "Erro no formulário" %}</strong>
               <div class="mt-1">{{ form.non_field_errors }}</div>
             </div>
           </div>
@@ -44,12 +44,12 @@
 
         <div class="card-body p-5">
           <h2 class="h5 fw-bold mb-4 text-uppercase">
-            <i class="bi bi-info-circle me-2"></i>Informações Básicas
+            <i class="bi bi-info-circle me-2"></i>{% translate "Informações Básicas" %}
           </h2>
 
           <div class="mb-5">
             <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold text-uppercase small mb-2">
-              Nome do Lugar <span class="text-danger">*</span>
+              {% translate "Nome do Lugar" %} <span class="text-danger">*</span>
             </label>
             {{ form.name }}
             {% if form.name.errors %}
@@ -57,12 +57,12 @@
               <i class="bi bi-exclamation-circle me-1"></i>{{ form.name.errors.0 }}
             </div>
             {% endif %}
-            <div class="form-text mt-2">Ex: Praia de Maricá, Restaurante do João, etc.</div>
+            <div class="form-text mt-2">{% translate "Ex: Praia de Maricá, Restaurante do João, etc." %}</div>
           </div>
 
           <div class="mb-5">
             <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold text-uppercase small mb-2">
-              Descrição <span class="text-danger">*</span>
+              {% translate "Descrição" %} <span class="text-danger">*</span>
             </label>
             {{ form.description }}
             {% if form.description.errors %}
@@ -70,12 +70,12 @@
               <i class="bi bi-exclamation-circle me-1"></i>{{ form.description.errors.0 }}
             </div>
             {% endif %}
-            <div class="form-text mt-2">Conte o que torna este lugar especial e único</div>
+            <div class="form-text mt-2">{% translate "Conte o que torna este lugar especial e único" %}</div>
           </div>
 
           <div class="mb-5">
             <label for="{{ form.address.id_for_label }}" class="form-label fw-semibold text-uppercase small mb-2">
-              Endereço <span class="text-danger">*</span>
+              {% translate "Endereço" %} <span class="text-danger">*</span>
             </label>
             {{ form.address }}
             {{ form.latitude }}
@@ -86,13 +86,13 @@
             </div>
             {% endif %}
             <div class="form-text mt-2">
-              <i class="bi bi-pin-map me-1" aria-hidden="true"></i>Comece a digitar e selecione o endereço da lista para capturar a localização automaticamente
+              <i class="bi bi-pin-map me-1" aria-hidden="true"></i>{% translate "Comece a digitar e selecione o endereço da lista para capturar a localização automaticamente" %}
             </div>
           </div>
 
           <div class="mb-0">
             <label class="form-label fw-semibold text-uppercase small mb-3">
-              Categorias <span class="text-danger">*</span>
+              {% translate "Categorias" %} <span class="text-danger">*</span>
             </label>
             <div class="border rounded p-4 bg-white" style="max-height: 280px; overflow-y: auto;">
               <div class="row g-3">
@@ -113,7 +113,7 @@
               <i class="bi bi-exclamation-circle me-1"></i>{{ form.categories.errors.0 }}
             </div>
             {% endif %}
-            <div class="form-text mt-2">Selecione todas as categorias que se aplicam ao lugar</div>
+            <div class="form-text mt-2">{% translate "Selecione todas as categorias que se aplicam ao lugar" %}</div>
           </div>
         </div>
 
@@ -122,9 +122,9 @@
         <div class="card-body p-5">
           <div class="mb-4">
             <h2 class="h5 fw-bold text-uppercase mb-2">
-              <i class="bi bi-camera me-2"></i>Fotos do Lugar
+              <i class="bi bi-camera me-2"></i>{% translate "Fotos do Lugar" %}
             </h2>
-            <p class="text-muted">Adicione até 3 fotos. A primeira imagem será destacada automaticamente.</p>
+            <p class="text-muted">{% translate "Adicione até 3 fotos. A primeira imagem será destacada automaticamente." %}</p>
           </div>
 
           {{ formset.management_form }}
@@ -140,7 +140,7 @@
           <div class="mb-4">
             <button type="button" id="add-image-btn" class="btn btn-outline-dark w-100 py-3 rounded">
               <i class="bi bi-plus-circle me-2"></i>
-              <span>Adicionar Fotos</span>
+              <span>{% translate "Adicionar Fotos" %}</span>
             </button>
           </div>
 
@@ -164,14 +164,14 @@
           <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
             <a href="{% if place %}{% url 'explore:place_detail' place.pk %}{% else %}{% url 'explore:explore' %}{% endif %}"
                class="btn btn-link text-muted">
-              Cancelar
+              {% translate "Cancelar" %}
             </a>
 
             <div class="d-flex gap-2">
               {% if place %}
               <button type="button" class="btn btn-danger"
                       data-bs-toggle="modal" data-bs-target="#deleteModal">
-                Excluir
+                {% translate "Excluir" %}
               </button>
               {% endif %}
 
@@ -188,12 +188,12 @@
       <div class="d-flex align-items-start">
         <i class="bi bi-info-circle-fill me-3 fs-5" aria-hidden="true"></i>
         <div>
-          <h5 class="alert-heading">Dicas para um cadastro de qualidade</h5>
+          <h5 class="alert-heading">{% translate "Dicas para um cadastro de qualidade" %}</h5>
           <ul class="mb-0 small">
-            <li>Escreva uma descrição detalhada e atrativa</li>
-            <li>Adicione fotos de alta qualidade e bem iluminadas</li>
-            <li>A primeira foto será a imagem de destaque</li>
-            <li>Selecione as categorias que melhor representam o lugar</li>
+            <li>{% translate "Escreva uma descrição detalhada e atrativa" %}</li>
+            <li>{% translate "Adicione fotos de alta qualidade e bem iluminadas" %}</li>
+            <li>{% translate "A primeira foto será a imagem de destaque" %}</li>
+            <li>{% translate "Selecione as categorias que melhor representam o lugar" %}</li>
           </ul>
         </div>
       </div>
@@ -208,23 +208,23 @@
     <div class="modal-content">
       <div class="modal-header border-0">
         <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>{% translate "Confirmar Exclusão" %}
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Fechar' %}"></button>
       </div>
       <div class="modal-body">
-        <p class="mb-3">Você está prestes a excluir permanentemente <strong>{{ place.name }}</strong>.</p>
+        <p class="mb-3">{% blocktranslate with name=place.name %}Você está prestes a excluir permanentemente <strong>{{ name }}</strong>.{% endblocktranslate %}</p>
         <div class="alert alert-danger border-0 mb-0">
           <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          <strong>Atenção:</strong> Esta ação não pode ser desfeita. Todos os dados, imagens e avaliações associados a este lugar serão removidos permanentemente.
+          <strong>{% translate "Atenção:" %}</strong> {% translate "Esta ação não pode ser desfeita. Todos os dados, imagens e avaliações associados a este lugar serão removidos permanentemente." %}
         </div>
       </div>
       <div class="modal-footer border-0">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "Cancelar" %}</button>
         <form method="post" action="{% url 'explore:place_delete' place.pk %}" style="display: inline;">
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">
-            <i class="bi bi-trash me-2"></i>Deletar Permanentemente
+            <i class="bi bi-trash me-2"></i>{% translate "Deletar Permanentemente" %}
           </button>
         </form>
       </div>

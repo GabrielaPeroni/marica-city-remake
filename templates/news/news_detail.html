@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static event_dates %}
 
 {% block title %}{{ news_item.title }} - MaricaCity{% endblock %}
 
@@ -8,18 +8,18 @@
 
 <header class="page-header">
   <div class="container">
-    <nav aria-label="Trilha de navegação">
+    <nav aria-label="{% translate 'Trilha de navegação' %}">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">Notícias & Eventos</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">{% translate "Agenda" %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">{{ news_item.category.label }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ news_item.title|truncatechars:50 }}</li>
       </ol>
     </nav>
     <h1>{{ news_item.title }}</h1>
     <p class="page-header-subtitle">
-      {% if news_item.is_external %}{{ news_item.source_name }}{% else %}Por {{ news_item.author.username }}{% endif %}
-      · {{ news_item.publish_date|date:"d/m/Y" }}
-      {% if news_item.is_featured %}· <i class="bi bi-star-fill" aria-hidden="true"></i> Destaque{% endif %}
+      {% if news_item.is_external %}{{ news_item.source_name }}{% else %}{% blocktranslate with author=news_item.author.username %}Por {{ author }}{% endblocktranslate %}{% endif %}
+      · {{ news_item.publish_date|date:"SHORT_DATE_FORMAT" }}
+      {% if news_item.is_featured %}· <i class="bi bi-star-fill" aria-hidden="true"></i> {% translate "Destaque" %}{% endif %}
     </p>
   </div>
 </header>
@@ -29,12 +29,30 @@
     <div class="col-lg-8">
       <article>
         {% if news_item.is_event %}
-        <div class="alert alert-success border-0" role="note">
-          <strong><i class="bi bi-calendar-event me-2" aria-hidden="true"></i>Informações do evento</strong>
-          <p class="mb-0 mt-2">
-            {{ news_item.event_date|date:"d/m/Y - H:i" }}{% if news_item.event_end_date %} até {{ news_item.event_end_date|date:"d/m/Y - H:i" }}{% endif %}
-            {% if news_item.event_location %}<br><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ news_item.event_location }}{% endif %}
-          </p>
+        <div class="event-info" role="note">
+          <ul class="event-info-facts">
+            <li><i class="bi bi-calendar3" aria-hidden="true"></i><span class="event-card-when">{{ news_item|event_when }}</span></li>
+            {% if news_item.event_location %}
+            <li><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ news_item.event_location }}</li>
+            {% endif %}
+            {% if news_item.is_ongoing_event %}
+            <li><span class="event-status-inline">{% translate "Acontecendo agora" %}</span></li>
+            {% elif news_item.is_past_event %}
+            <li class="text-muted">{% translate "Este evento já terminou." %}</li>
+            {% endif %}
+          </ul>
+          {% if not news_item.is_past_event %}
+          <div class="event-info-actions">
+            {% if news_item.maps_url %}
+            <a class="btn btn-dark" href="{{ news_item.maps_url }}" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>{% translate "Como chegar" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
+            </a>
+            {% endif %}
+            <a class="btn btn-outline-dark" href="{{ news_item.calendar_url }}" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-calendar-plus me-1" aria-hidden="true"></i>{% translate "Adicionar ao calendário" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
+            </a>
+          </div>
+          {% endif %}
         </div>
         {% endif %}
 
@@ -49,9 +67,9 @@
 
         {% if news_item.is_external %}
         <div class="source-callout">
-          <p class="mb-3">Esta matéria foi publicada por <strong>{{ news_item.source_name|default:"um veículo externo" }}</strong>. O MaricaCity reúne a manchete e leva você até a fonte.</p>
+          <p class="mb-3">{% blocktranslate trimmed with source=news_item.source_name %}Esta matéria foi publicada por <strong>{{ source }}</strong>. O MaricaCity reúne a manchete e leva você até a fonte.{% endblocktranslate %}</p>
           <a class="btn btn-dark" href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">
-            Ler no site original <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span>
+            {% translate "Ler no site original" %} <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">({% translate "abre em nova aba" %})</span>
           </a>
         </div>
         {% else %}
@@ -60,7 +78,7 @@
         </div>
         {% if news_item.source_url %}
         <p class="small text-muted mt-3">
-          Fonte: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name|default:"site original" }}<span class="visually-hidden"> (abre em nova aba)</span></a>
+          {% translate "Fonte" %}: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span></a>
         </p>
         {% endif %}
         {% endif %}
@@ -69,11 +87,11 @@
 
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
           <span class="text-muted small">
-            <i class="bi bi-eye me-1" aria-hidden="true"></i>{{ news_item.view_count }} visualizaç{{ news_item.view_count|pluralize:"ão,ões" }}
-            {% if not news_item.is_external %}· Atualizado em {{ news_item.updated_at|date:"d/m/Y - H:i" }}{% endif %}
+            <i class="bi bi-eye me-1" aria-hidden="true"></i>{% blocktranslate trimmed count counter=news_item.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}
+            {% if not news_item.is_external %}· {% blocktranslate with date=news_item.updated_at|date:"SHORT_DATETIME_FORMAT" %}Atualizado em {{ date }}{% endblocktranslate %}{% endif %}
           </span>
           <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark btn-sm">
-            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Todas as notícias
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{% translate "Voltar à agenda" %}
           </a>
         </div>
       </article>
@@ -83,8 +101,8 @@
   {% if related_news %}
   <section class="mt-5">
     <div class="section-heading">
-      <h2>Mais em {{ news_item.category.label }}</h2>
-      <a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">Ver todas</a>
+      <h2>{% blocktranslate with category=news_item.category.label %}Mais em {{ category }}{% endblocktranslate %}</h2>
+      <a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">{% translate "Ver todas" %}</a>
     </div>
     <div class="row g-4">
       {% for item in related_news %}

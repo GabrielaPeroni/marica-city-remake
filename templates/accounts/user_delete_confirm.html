@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -22,7 +22,7 @@
         <div class="card shadow-lg">
           <div class="card-header bg-danger text-white">
             <h4 class="mb-0">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>{% translate "Confirmar Exclusão" %}
             </h4>
           </div>
           <div class="card-body p-4">
@@ -33,32 +33,32 @@
               <h5 class="mb-1">{{ user_to_delete.username }}</h5>
               <p class="text-muted mb-0">{{ user_to_delete.email }}</p>
               <span class="badge {% if user_to_delete.is_staff %}bg-primary{% else %}bg-secondary{% endif %} mt-2">
-                {% if user_to_delete.is_staff %}Staff{% else %}Regular{% endif %}
+                {% if user_to_delete.is_staff %}{% translate "Equipe" %}{% else %}{% translate "Comum" %}{% endif %}
               </span>
             </div>
 
             <div class="alert alert-warning" role="alert">
               <i class="bi bi-exclamation-triangle me-2"></i>
-              <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+              <strong>{% translate "Atenção!" %}</strong> {% translate "Esta ação não pode ser desfeita." %}
             </div>
 
-            <p class="mb-3">Você está prestes a excluir permanentemente este usuário. Isso irá:</p>
+            <p class="mb-3">{% translate "Você está prestes a excluir permanentemente este usuário. Isso irá:" %}</p>
             <ul class="mb-4">
-              <li>Remover o usuário do sistema</li>
-              <li>Excluir todos os lugares criados por este usuário</li>
-              <li>Excluir todas as avaliações feitas por este usuário</li>
-              <li>Remover todas as interações e favoritos</li>
+              <li>{% translate "Remover o usuário do sistema" %}</li>
+              <li>{% translate "Excluir todos os lugares criados por este usuário" %}</li>
+              <li>{% translate "Excluir todas as avaliações feitas por este usuário" %}</li>
+              <li>{% translate "Remover todas as interações e favoritos" %}</li>
             </ul>
 
-            <p class="text-danger fw-bold">Tem certeza que deseja continuar?</p>
+            <p class="text-danger fw-bold">{% translate "Tem certeza que deseja continuar?" %}</p>
 
             <form method="post" class="d-flex gap-2">
               {% csrf_token %}
               <a href="{% url 'accounts:user_management' %}" class="btn btn-secondary flex-fill">
-                <i class="bi bi-x-circle me-1"></i>Cancelar
+                <i class="bi bi-x-circle me-1"></i>{% translate "Cancelar" %}
               </a>
               <button type="submit" class="btn btn-danger flex-fill">
-                <i class="bi bi-trash me-1"></i>Sim, Excluir Usuário
+                <i class="bi bi-trash me-1"></i>{% translate "Sim, Excluir Usuário" %}
               </button>
             </form>
           </div>

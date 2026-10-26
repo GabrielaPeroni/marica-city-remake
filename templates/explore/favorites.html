@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Meus Favoritos - MaricaCity{% endblock %}
+{% block title %}{% translate "Meus favoritos" %} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
@@ -14,10 +14,10 @@
   <div class="container">
     <div class="page-header-row">
       <div>
-        <h1>Meus Favoritos</h1>
-        <p class="page-header-subtitle">{{ favorites_count }} lugar{{ favorites_count|pluralize:"es" }} salvo{{ favorites_count|pluralize }}.</p>
+        <h1>{% translate "Meus favoritos" %}</h1>
+        <p class="page-header-subtitle">{% blocktranslate trimmed count counter=favorites_count %}{{ counter }} lugar salvo.{% plural %}{{ counter }} lugares salvos.{% endblocktranslate %}</p>
       </div>
-      <a href="{% url 'explore:explore' %}" class="btn btn-light"><i class="bi bi-compass me-1" aria-hidden="true"></i>Explorar mais lugares</a>
+      <a href="{% url 'explore:explore' %}" class="btn btn-light"><i class="bi bi-compass me-1" aria-hidden="true"></i>{% translate "Explorar mais lugares" %}</a>
     </div>
   </div>
 </header>
@@ -48,15 +48,15 @@
           </div>
           {% endif %}
           <p class="text-muted small mb-3">
-            Salvo em {{ favorite.created_at|date:"d M, Y" }}
+            {% blocktranslate with date=favorite.created_at|date:"DATE_FORMAT" %}Salvo em {{ date }}{% endblocktranslate %}
           </p>
           <div class="d-flex gap-2">
-            <a href="{% url 'explore:place_detail' favorite.place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">Ver Detalhes →</a>
+            <a href="{% url 'explore:place_detail' favorite.place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">{% translate "Ver detalhes" %} →</a>
             <button class="btn btn-outline-danger btn-sm favorite-btn"
                     data-place-id="{{ favorite.place.pk }}"
                     data-favorited="true"
                     data-remove-mode="true"
-                    title="Remover dos favoritos">
+                    title="{% translate 'Remover dos favoritos' %}">
               <i class="bi bi-heart-fill"></i>
             </button>
           </div>
@@ -72,14 +72,14 @@
       <i class="bi bi-heart"></i>
     </div>
     {% if not is_authenticated %}
-    <p class="lead text-muted mb-2">Seus favoritos são salvos no seu navegador.</p>
-    <p class="text-muted mb-4">Favoritos são armazenados localmente e disponíveis apenas neste dispositivo.</p>
+    <p class="lead text-muted mb-2">{% translate "Seus favoritos são salvos no seu navegador." %}</p>
+    <p class="text-muted mb-4">{% translate "Favoritos são armazenados localmente e disponíveis apenas neste dispositivo." %}</p>
     {% else %}
-    <p class="lead text-muted mb-2">Você ainda não tem favoritos.</p>
-    <p class="text-muted mb-4">Explore lugares incríveis e salve seus favoritos!</p>
+    <p class="lead text-muted mb-2">{% translate "Você ainda não tem favoritos." %}</p>
+    <p class="text-muted mb-4">{% translate "Explore lugares incríveis e salve seus favoritos!" %}</p>
     {% endif %}
     <a href="{% url 'explore:explore' %}" class="btn btn-dark btn-lg text-uppercase">
-      <i class="bi bi-compass me-2"></i>Explorar Lugares
+      <i class="bi bi-compass me-2"></i>{% translate "Explorar lugares" %}
     </a>
   </div>
   {% endif %}
@@ -90,6 +90,10 @@
 <!-- Favorites UI carrega de base.html por favorites-ui.js -->
 {% if not is_authenticated %}
 <script>
+  const favoritesText = {
+    details: '{% filter escapejs %}{% translate "Ver detalhes" %}{% endfilter %}',
+    remove: '{% filter escapejs %}{% translate "Remover dos favoritos" %}{% endfilter %}',
+  };
   document.addEventListener('DOMContentLoaded', async function() {
     const favoritePlaceIds = favoritesService.getFavorites();
     const emptyState = document.getElementById('emptyFavoritesState');
@@ -136,12 +140,12 @@
                         : ''
                       }
                       <div class="d-flex gap-2">
-                        <a href="${place.url}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">Ver Detalhes →</a>
+                        <a href="${place.url}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">${favoritesText.details} →</a>
                         <button class="btn btn-outline-danger btn-sm favorite-btn"
                                 data-place-id="${place.id}"
                                 data-favorited="true"
                                 data-remove-mode="true"
-                                title="Remover dos favoritos">
+                                title="${favoritesText.remove}">
                           <i class="bi bi-heart-fill"></i>
                         </button>
                       </div>

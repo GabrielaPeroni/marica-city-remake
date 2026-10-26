@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 
 <div class="admin-sidebar" id="adminSidebar">
   <!-- Sidebar Header -->
@@ -7,13 +7,13 @@
       <i class="bi bi-grid"></i>
     </div>
     <div class="sidebar-title">
-      <h2>DASHBOARD</h2>
-      <span class="sidebar-subtitle">Admin Panel</span>
+      <h2>{% translate "DASHBOARD" %}</h2>
+      <span class="sidebar-subtitle">{% translate "Admin Panel" %}</span>
     </div>
   </div>
 
   <!-- Botão de Colapso Desktop -->
-  <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Recolher barra lateral">
+  <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="{% translate 'Recolher barra lateral' %}">
     <i class="bi bi-chevron-left"></i>
   </button>
 
@@ -21,12 +21,12 @@
   <nav class="sidebar-nav">
     <a href="{% url 'core:admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
       <i class="bi bi-speedometer2"></i>
-      <span>Painel</span>
+      <span>{% translate "Painel" %}</span>
     </a>
 
     <a href="{% url 'explore:backlog' %}" class="nav-item {% if 'backlog' in request.path or 'approval' in request.path %}active{% endif %}">
       <i class="bi bi-geo-alt"></i>
-      <span>Lugares</span>
+      <span>{% translate "Lugares" %}</span>
       {% if pending_places > 0 %}
         <span class="nav-badge">{{ pending_places }}</span>
       {% endif %}
@@ -34,12 +34,12 @@
 
     <a href="{% url 'accounts:user_management' %}" class="nav-item {% if 'usuarios' in request.path %}active{% endif %}">
       <i class="bi bi-people"></i>
-      <span>Usuários</span>
+      <span>{% translate "Usuários" %}</span>
     </a>
 
     <a href="{% url 'core:admin_news_list' %}" class="nav-item {% if 'noticias' in request.path %}active{% endif %}">
       <i class="bi bi-newspaper"></i>
-      <span>Notícias</span>
+      <span>{% translate "Notícias" %}</span>
       {% if draft_news > 0 %}
         <span class="nav-badge">{{ draft_news }}</span>
       {% endif %}
@@ -47,7 +47,7 @@
 
     <a href="{% url 'core:admin_event_triage' %}" class="nav-item {% if 'eventos' in request.path %}active{% endif %}">
       <i class="bi bi-calendar-check"></i>
-      <span>Triagem de eventos</span>
+      <span>{% translate "Triagem de eventos" %}</span>
       {% if pending_events > 0 %}
         <span class="nav-badge">{{ pending_events }}</span>
       {% endif %}
@@ -63,7 +63,7 @@
 
     <a href="{% url 'core:landing' %}" class="nav-item">
       <i class="bi bi-arrow-left-circle"></i>
-      <span>Voltar ao Site</span>
+      <span>{% translate "Voltar ao Site" %}</span>
     </a>
   </div>
 </div>

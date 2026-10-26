@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from django_ratelimit.decorators import ratelimit
 
@@ -175,7 +176,7 @@ def place_create_view(request):
 
     # Verificar se o usuário pode criar lugares
     if not request.user.can_create_places:
-        messages.error(request, "Você não tem permissão para criar lugares.")
+        messages.error(request, _("Você não tem permissão para criar lugares."))
         return redirect("explore:explore")
 
     if request.method == "POST":
@@ -213,7 +214,10 @@ def place_create_view(request):
 
             messages.success(
                 request,
-                f'Lugar "{place.name}" criado com sucesso! Ele será revisado por um administrador antes de aparecer no site.',
+                _(
+                    'Lugar "%(name)s" criado com sucesso! Ele será revisado por um administrador antes de aparecer no site.'
+                )
+                % {"name": place.name},
             )
             return redirect("explore:place_detail", pk=place.pk)
     else:
@@ -223,8 +227,8 @@ def place_create_view(request):
     context = {
         "form": form,
         "formset": formset,
-        "title": "Adicionar Novo Lugar",
-        "submit_text": "Enviar para Aprovação",
+        "title": _("Adicionar Novo Lugar"),
+        "submit_text": _("Enviar para Aprovação"),
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
     }
     return render(request, "explore/place_form.html", context)
@@ -240,7 +244,7 @@ def place_update_view(request, pk):
 
     # Verificar permissões
     if not (request.user.can_moderate or place.created_by == request.user):
-        messages.error(request, "Você não tem permissão para editar este lugar.")
+        messages.error(request, _("Você não tem permissão para editar este lugar."))
         return redirect("explore:place_detail", pk=place.pk)
 
     if request.method == "POST":
@@ -270,7 +274,9 @@ def place_update_view(request, pk):
                     )
 
             messages.success(
-                request, f'Lugar "{updated_place.name}" atualizado com sucesso!'
+                request,
+                _('Lugar "%(name)s" atualizado com sucesso!')
+                % {"name": updated_place.name},
             )
             return redirect("explore:place_detail", pk=updated_place.pk)
     else:
@@ -281,8 +287,8 @@ def place_update_view(request, pk):
         "form": form,
         "formset": formset,
         "place": place,
-        "title": f"Editar {place.name}",
-        "submit_text": "Salvar Alterações",
+        "title": _("Editar %(name)s") % {"name": place.name},
+        "submit_text": _("Salvar Alterações"),
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
     }
     return render(request, "explore/place_form.html", context)
@@ -296,13 +302,17 @@ def place_delete_view(request, pk):
 
     # Verificar permissões
     if not (request.user.can_moderate or place.created_by == request.user):
-        messages.error(request, "Você não tem permissão para excluir este lugar.")
+        messages.error(request, _("Você não tem permissão para excluir este lugar."))
         return redirect("explore:place_detail", pk=place.pk)
 
     if request.method == "POST":
         place_name = place.name
         place.delete()
-        messages.success(request, f'Lugar "{place_name}" foi excluído com sucesso.')
+        messages.success(
+            request,
+            _('Lugar "%(place_name)s" foi excluído com sucesso.')
+            % {"place_name": place_name},
+        )
         return redirect("explore:explore")
 
     # If not POST, redirect back
@@ -318,7 +328,7 @@ def approval_queue_view(request):
 
     # Verificar se o usuário é administrador
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("explore:explore")
 
     # Redirecionar para a visualização unificada no modo de fila
@@ -331,7 +341,7 @@ def approve_place_view(request, pk):
 
     # Verificar se o usuário é administrador
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para realizar esta ação.")
+        messages.error(request, _("Você não tem permissão para realizar esta ação."))
         return redirect("explore:explore")
 
     place = get_object_or_404(Place, pk=pk)
@@ -347,7 +357,7 @@ def approve_place_view(request, pk):
 
         messages.success(
             request,
-            f'Lugar "{place.name}" foi aprovado com sucesso!',
+            _('Lugar "%(name)s" foi aprovado com sucesso!') % {"name": place.name},
         )
         return redirect(reverse("explore:backlog") + "?view=queue")
 
@@ -361,7 +371,7 @@ def reject_place_view(request, pk):
 
     # Verificar se o usuário é administrador
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para realizar esta ação.")
+        messages.error(request, _("Você não tem permissão para realizar esta ação."))
         return redirect("explore:explore")
 
     place = get_object_or_404(Place, pk=pk)
@@ -371,13 +381,17 @@ def reject_place_view(request, pk):
         custom_comments = request.POST.get("comments", "")
 
         if not reason:
-            messages.error(request, "Por favor, selecione um motivo para a rejeição.")
+            messages.error(
+                request, _("Por favor, selecione um motivo para a rejeição.")
+            )
             return redirect("explore:reject_place", pk=pk)
 
         # Use custom comments if "Outros" is selected, otherwise use the reason
         if reason == "Outros":
             if not custom_comments:
-                messages.error(request, "Por favor, especifique o motivo da rejeição.")
+                messages.error(
+                    request, _("Por favor, especifique o motivo da rejeição.")
+                )
                 return redirect("explore:reject_place", pk=pk)
             comments = custom_comments
         else:
@@ -393,7 +407,7 @@ def reject_place_view(request, pk):
 
         messages.success(
             request,
-            f'Lugar "{place.name}" foi removido.',
+            _('Lugar "%(name)s" foi removido.') % {"name": place.name},
         )
         return redirect(reverse("explore:backlog") + "?view=queue")
 
@@ -407,7 +421,7 @@ def backlog_view(request):
 
     # Verificar se o usuário é administrador
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("explore:explore")
 
     # Obter parâmetro de visualização (queue ou history)
@@ -485,7 +499,7 @@ def review_create_view(request, place_pk):
     existing_review = PlaceReview.objects.filter(place=place, user=request.user).first()
     if existing_review:
         messages.warning(
-            request, "Você já avaliou este lugar. Edite sua avaliação existente."
+            request, _("Você já avaliou este lugar. Edite sua avaliação existente.")
         )
         return redirect("explore:place_detail", pk=place.pk)
 
@@ -496,7 +510,7 @@ def review_create_view(request, place_pk):
             review.place = place
             review.user = request.user
             review.save()
-            messages.success(request, "Avaliação enviada com sucesso!")
+            messages.success(request, _("Avaliação enviada com sucesso!"))
             return redirect("explore:place_detail", pk=place.pk)
     else:
         form = PlaceReviewForm()
@@ -512,14 +526,14 @@ def review_edit_view(request, pk):
 
     # Verificar permissões: proprietário ou moderador pode editar
     if review.user != request.user and not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para editar esta avaliação.")
+        messages.error(request, _("Você não tem permissão para editar esta avaliação."))
         return redirect("explore:place_detail", pk=review.place.pk)
 
     if request.method == "POST":
         form = PlaceReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-            messages.success(request, "Avaliação atualizada com sucesso!")
+            messages.success(request, _("Avaliação atualizada com sucesso!"))
             return redirect("explore:place_detail", pk=review.place.pk)
     else:
         form = PlaceReviewForm(instance=review)
@@ -535,13 +549,15 @@ def review_delete_view(request, pk):
 
     # Verificar permissões: proprietário ou moderador pode excluir
     if review.user != request.user and not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para excluir esta avaliação.")
+        messages.error(
+            request, _("Você não tem permissão para excluir esta avaliação.")
+        )
         return redirect("explore:place_detail", pk=review.place.pk)
 
     place_pk = review.place.pk
     if request.method == "POST":
         review.delete()
-        messages.success(request, "Avaliação excluída com sucesso!")
+        messages.success(request, _("Avaliação excluída com sucesso!"))
         return redirect("explore:place_detail", pk=place_pk)
 
     context = {"review": review}
@@ -571,12 +587,12 @@ def toggle_favorite_view(request, pk):
             # Remover favorito
             favorite.delete()
             is_favorited = False
-            message = "Lugar removido dos favoritos"
+            message = _("Lugar removido dos favoritos")
         else:
             # Adicionar favorito
             Favorite.objects.create(user=request.user, place=place)
             is_favorited = True
-            message = "Lugar adicionado aos favoritos"
+            message = _("Lugar adicionado aos favoritos")
 
         # Obter contagem total de favoritos para este lugar
         favorites_count = place.favorited_by.count()
@@ -595,7 +611,7 @@ def toggle_favorite_view(request, pk):
         return JsonResponse(
             {
                 "success": True,
-                "message": "Favorito atualizado",
+                "message": _("Favorito atualizado"),
             }
         )
 
@@ -677,7 +693,8 @@ def sync_favorites_view(request):
                 "success": True,
                 "favorites": all_favorites,
                 "added": len(new_favorites),
-                "message": f"{len(new_favorites)} favoritos sincronizados",
+                "message": _("%(value)s favoritos sincronizados")
+                % {"value": len(new_favorites)},
             }
         )
 

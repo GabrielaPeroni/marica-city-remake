@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Explorar Lugares - MaricaCity{% endblock %}
+{% block title %}{% translate "Explorar lugares" %} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
@@ -14,17 +14,17 @@
   <div class="container">
     <div class="page-header-row">
       <div>
-        <h1>{% if request.GET.q %}Resultados para "{{ request.GET.q }}"{% else %}Explorar Lugares{% endif %}</h1>
-        <p class="page-header-subtitle">{{ all_places|length }} lugar{{ all_places|length|pluralize:"es" }} para conhecer em Maricá.</p>
+        <h1>{% if request.GET.q %}{% blocktranslate with query=request.GET.q %}Resultados para "{{ query }}"{% endblocktranslate %}{% else %}{% translate "Explorar lugares" %}{% endif %}</h1>
+        <p class="page-header-subtitle">{% blocktranslate trimmed count counter=all_places|length %}{{ counter }} lugar para conhecer em Maricá.{% plural %}{{ counter }} lugares para conhecer em Maricá.{% endblocktranslate %}</p>
       </div>
       <form method="get" action="{% url 'explore:explore' %}" class="page-header-search" role="search">
         <div class="input-group">
           <span class="input-group-text bg-white"><i class="bi bi-search" aria-hidden="true"></i></span>
-          <input type="search" name="q" class="form-control" placeholder="Buscar lugares..." value="{{ request.GET.q }}" aria-label="Buscar lugares">
+          <input type="search" name="q" class="form-control" placeholder="{% translate 'Buscar lugares...' %}" value="{{ request.GET.q }}" aria-label="{% translate 'Buscar lugares' %}">
           {% if request.GET.q %}
-          <a href="{% url 'explore:explore' %}" class="btn btn-light" aria-label="Limpar busca"><i class="bi bi-x-lg" aria-hidden="true"></i></a>
+          <a href="{% url 'explore:explore' %}" class="btn btn-light" aria-label="{% translate 'Limpar busca' %}"><i class="bi bi-x-lg" aria-hidden="true"></i></a>
           {% endif %}
-          <button class="btn btn-dark" type="submit">Buscar</button>
+          <button class="btn btn-dark" type="submit">{% translate "Buscar" %}</button>
         </div>
       </form>
     </div>
@@ -36,10 +36,10 @@
     <div class="col-md-3 col-lg-2">
       <div class="sidebar-sticky">
         <div class="mb-4">
-          <h2 class="fw-bold mb-3" style="font-size: 0.875rem; color: var(--ink-muted);">Categorias</h2>
+          <h2 class="fw-bold mb-3" style="font-size: 0.875rem; color: var(--ink-muted);">{% translate "Categorias" %}</h2>
           <div class="list-group list-group-flush border-0">
             <a href="{% url 'explore:explore' %}" class="list-group-item list-group-item-action border-0 px-0 py-2 mb-2 pb-3 all-categories-link {% if not request.resolver_match.url_name == 'category_detail' %}active{% endif %}" style="background: transparent; border-bottom: 1px solid var(--line) !important;">
-              <i class="bi bi-grid-3x3-gap me-2"></i><span style="font-size: 0.875rem; font-weight: 600;">Todas as Categorias</span>
+              <i class="bi bi-grid-3x3-gap me-2"></i><span style="font-size: 0.875rem; font-weight: 600;">{% translate "Todas as categorias" %}</span>
             </a>
             {% if categories %}
               {% for category in categories %}
@@ -56,9 +56,9 @@
     <div class="col-md-9 col-lg-10">
       {% if user.is_authenticated and user.can_create_places %}
       <div class="d-flex justify-content-end mb-3">
-        <a href="{% url 'explore:place_create' %}" class="btn btn-dark d-flex align-items-center gap-2" title="Adicionar Novo Lugar">
+        <a href="{% url 'explore:place_create' %}" class="btn btn-dark d-flex align-items-center gap-2" title="{% translate 'Adicionar novo lugar' %}">
           <i class="bi bi-plus-circle" aria-hidden="true"></i>
-          <span>Adicionar Lugar</span>
+          <span>{% translate "Adicionar lugar" %}</span>
         </a>
       </div>
       {% endif %}
@@ -80,13 +80,13 @@
               {% endif %}
               {% if place.is_pending %}
               <span class="badge bg-primary position-absolute top-0 start-0 m-2" style="font-size: 0.7rem; z-index: 10;">
-                <i class="bi bi-clock-history me-1"></i>Aguardando Aprovação
+                <i class="bi bi-clock-history me-1"></i>{% translate "Aguardando aprovação" %}
               </span>
               {% endif %}
               <button class="btn btn-light btn-sm rounded-circle position-absolute favorite-btn-overlay favorite-btn"
                       data-place-id="{{ place.pk }}"
-                      title="Adicionar aos favoritos"
-                      aria-label="Adicionar aos favoritos">
+                      title="{% translate 'Adicionar aos favoritos' %}"
+                      aria-label="{% translate 'Adicionar aos favoritos' %}">
                 <i class="bi bi-bookmark"></i>
               </button>
             </div>
@@ -110,12 +110,12 @@
     {% else %}
     <div class="text-center py-5">
       {% if request.GET.q %}
-      <p class="lead text-muted mb-3">Nenhum resultado para "{{ request.GET.q }}".</p>
-      <a href="{% url 'explore:explore' %}" class="btn btn-dark">Limpar busca</a>
+      <p class="lead text-muted mb-3">{% blocktranslate with query=request.GET.q %}Nenhum resultado para "{{ query }}".{% endblocktranslate %}</p>
+      <a href="{% url 'explore:explore' %}" class="btn btn-dark">{% translate "Limpar busca" %}</a>
       {% else %}
-      <p class="lead text-muted">Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!</p>
+      <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!" %}</p>
       {% if user.is_authenticated and user.can_create_places %}
-      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">Adicionar um lugar</a>
+      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Adicionar um lugar" %}</a>
       {% endif %}
       {% endif %}
     </div>

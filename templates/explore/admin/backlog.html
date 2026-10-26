@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Histórico de Lugares - MaricaCity{% endblock %}
+{% block title %}{% translate "Histórico de lugares" %} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -30,9 +30,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="admin-title">
         {% if view_mode == 'queue' %}
-        <i class="bi bi-hourglass-split me-2"></i>Fila de Aprovação
+        <i class="bi bi-hourglass-split me-2"></i>{% translate "Fila de Aprovação" %}
         {% else %}
-        <i class="bi bi-archive me-2"></i>Histórico de Lugares
+        <i class="bi bi-archive me-2"></i>{% translate "Histórico de Lugares" %}
         {% endif %}
       </h1>
     </div>
@@ -45,7 +45,7 @@
               <i class="bi bi-geo-alt"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Total</div>
+              <div class="stat-label-enhanced">{% translate "Total" %}</div>
               <div class="stat-value-enhanced">{{ total_count }}</div>
             </div>
           </div>
@@ -58,7 +58,7 @@
               <i class="bi bi-check-circle"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Aprovados</div>
+              <div class="stat-label-enhanced">{% translate "Aprovados" %}</div>
               <div class="stat-value-enhanced">{{ approved_count }}</div>
             </div>
           </div>
@@ -71,7 +71,7 @@
               <i class="bi bi-hourglass-split"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Pendentes</div>
+              <div class="stat-label-enhanced">{% translate "Pendentes" %}</div>
               <div class="stat-value-enhanced">{{ pending_count }}</div>
             </div>
           </div>
@@ -84,7 +84,7 @@
               <i class="bi bi-x-circle"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Rejeitados</div>
+              <div class="stat-label-enhanced">{% translate "Rejeitados" %}</div>
               <div class="stat-value-enhanced">{{ rejected_count }}</div>
             </div>
           </div>
@@ -99,10 +99,10 @@
         <div class="card-body p-0">
           <div class="list-group list-group-flush">
             <a href="{% url 'explore:backlog' %}?view=queue" class="list-group-item list-group-item-action {% if view_mode == 'queue' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-hourglass-split me-2"></i>Fila de Aprovação
+              <i class="bi bi-hourglass-split me-2"></i>{% translate "Fila de Aprovação" %}
             </a>
             <a href="{% url 'explore:backlog' %}?view=history" class="list-group-item list-group-item-action {% if view_mode == 'history' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-archive me-2"></i>Histórico Completo
+              <i class="bi bi-archive me-2"></i>{% translate "Histórico Completo" %}
             </a>
           </div>
         </div>
@@ -117,19 +117,19 @@
       <form method="get" class="row g-3">
         <input type="hidden" name="view" value="history">
         <div class="col-md-4">
-          <label for="status" class="form-label fw-bold text-uppercase small">Filtrar por Status</label>
+          <label for="status" class="form-label fw-bold text-uppercase small">{% translate "Filtrar por Status" %}</label>
           <select id="status" name="status" class="form-select" onchange="this.form.submit()">
-            <option value="all" {% if status_filter == "all" %}selected{% endif %}>Todos</option>
-            <option value="approved" {% if status_filter == "approved" %}selected{% endif %}>Aprovados</option>
-            <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>Pendentes</option>
-            <option value="rejected" {% if status_filter == "rejected" %}selected{% endif %}>Rejeitados</option>
+            <option value="all" {% if status_filter == "all" %}selected{% endif %}>{% translate "Todos" %}</option>
+            <option value="approved" {% if status_filter == "approved" %}selected{% endif %}>{% translate "Aprovados" %}</option>
+            <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>{% translate "Pendentes" %}</option>
+            <option value="rejected" {% if status_filter == "rejected" %}selected{% endif %}>{% translate "Rejeitados" %}</option>
           </select>
         </div>
 
         <div class="col-md-4">
-          <label for="category" class="form-label fw-bold text-uppercase small">Filtrar por Categoria</label>
+          <label for="category" class="form-label fw-bold text-uppercase small">{% translate "Filtrar por Categoria" %}</label>
           <select id="category" name="category" class="form-select" onchange="this.form.submit()">
-            <option value="all" {% if category_filter == "all" %}selected{% endif %}>Todas</option>
+            <option value="all" {% if category_filter == "all" %}selected{% endif %}>{% translate "Todas" %}</option>
             {% for cat in categories %}
             <option value="{{ cat.slug }}" {% if category_filter == cat.slug %}selected{% endif %}>
               {{ cat.name }}
@@ -139,12 +139,12 @@
         </div>
 
         <div class="col-md-4">
-          <label for="sort" class="form-label fw-bold text-uppercase small">Ordenar por</label>
+          <label for="sort" class="form-label fw-bold text-uppercase small">{% translate "Ordenar por" %}</label>
           <select id="sort" name="sort" class="form-select" onchange="this.form.submit()">
-            <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>Mais Recentes</option>
-            <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>Mais Antigos</option>
-            <option value="name" {% if current_sort == "name" %}selected{% endif %}>Nome (A-Z)</option>
-            <option value="-name" {% if current_sort == "-name" %}selected{% endif %}>Nome (Z-A)</option>
+            <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>{% translate "Mais Recentes" %}</option>
+            <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>{% translate "Mais Antigos" %}</option>
+            <option value="name" {% if current_sort == "name" %}selected{% endif %}>{% translate "Nome (A-Z)" %}</option>
+            <option value="-name" {% if current_sort == "-name" %}selected{% endif %}>{% translate "Nome (Z-A)" %}</option>
           </select>
         </div>
       </form>
@@ -159,12 +159,12 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Lugar</th>
-              <th>Categorias</th>
-              <th>Status</th>
-              <th>Criado por</th>
-              <th>Data</th>
-              <th>Ações</th>
+              <th>{% translate "Lugar" %}</th>
+              <th>{% translate "Categorias" %}</th>
+              <th>{% translate "Status" %}</th>
+              <th>{% translate "Criado por" %}</th>
+              <th>{% translate "Data" %}</th>
+              <th>{% translate "Ações" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -197,24 +197,24 @@
               </td>
               <td>
                 {% if place.is_approved and place.is_active %}
-                <span class="badge bg-success">Aprovado</span>
+                <span class="badge bg-success">{% translate "Aprovado" %}</span>
                 {% elif not place.is_active %}
-                <span class="badge bg-danger">Rejeitado</span>
+                <span class="badge bg-danger">{% translate "Rejeitado" %}</span>
                 {% else %}
-                <span class="badge bg-warning">Pendente</span>
+                <span class="badge bg-warning">{% translate "Pendente" %}</span>
                 {% endif %}
               </td>
               <td>{{ place.created_by.username }}</td>
-              <td>{{ place.created_at|date:"d/m/Y H:i" }}</td>
+              <td>{{ place.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
               <td onclick="event.stopPropagation();">
                 <div class="btn-group btn-group-sm">
                   <a href="{% url 'explore:place_edit' place.pk %}" class="btn btn-outline-primary"
-                     title="Editar">
+                     title="{% translate 'Editar' %}">
                     <i class="bi bi-pencil"></i>
                   </a>
                   {% if not place.is_approved and place.is_active %}
                   <a href="{% url 'explore:approve_place' place.pk %}" class="btn btn-outline-success"
-                     title="Aprovar" onclick="event.preventDefault(); this.nextElementSibling.submit();">
+                     title="{% translate 'Aprovar' %}" onclick="event.preventDefault(); this.nextElementSibling.submit();">
                     <i class="bi bi-check-circle"></i>
                   </a>
                   <form method="post" action="{% url 'explore:approve_place' place.pk %}" style="display: none;">
@@ -222,7 +222,7 @@
                   </form>
                   {% endif %}
                   <button type="button" class="btn btn-outline-danger"
-                     title="Remover"
+                     title="{% translate 'Remover' %}"
                      onclick="openRemoveModal({{ place.pk }}, '{{ place.name|escapejs }}')">
                     <i class="bi bi-x-circle"></i>
                   </button>
@@ -240,17 +240,17 @@
     <div class="card-body text-center py-5">
       {% if view_mode == 'queue' %}
       <div class="display-1 mb-4">✅</div>
-      <h2 class="h4 fw-bold mb-2">Nenhum lugar pendente</h2>
-      <p class="text-muted mb-4">Não há lugares aguardando aprovação no momento.</p>
+      <h2 class="h4 fw-bold mb-2">{% translate "Nenhum lugar pendente" %}</h2>
+      <p class="text-muted mb-4">{% translate "Não há lugares aguardando aprovação no momento." %}</p>
       <a href="{% url 'explore:explore' %}" class="btn btn-dark text-uppercase">
-        <i class="bi bi-compass me-2"></i>Explorar Lugares
+        <i class="bi bi-compass me-2"></i>{% translate "Explorar Lugares" %}
       </a>
       {% else %}
       <div class="display-1 mb-4">📋</div>
-      <h2 class="h4 fw-bold mb-2">Nenhum lugar encontrado</h2>
-      <p class="text-muted mb-4">Não há lugares que correspondam aos filtros selecionados.</p>
+      <h2 class="h4 fw-bold mb-2">{% translate "Nenhum lugar encontrado" %}</h2>
+      <p class="text-muted mb-4">{% translate "Não há lugares que correspondam aos filtros selecionados." %}</p>
       <a href="{% url 'explore:backlog' %}?view=history" class="btn btn-dark text-uppercase">
-        <i class="bi bi-arrow-clockwise me-2"></i>Limpar Filtros
+        <i class="bi bi-arrow-clockwise me-2"></i>{% translate "Limpar Filtros" %}
       </a>
       {% endif %}
     </div>
