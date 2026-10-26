@@ -229,15 +229,16 @@ def admin_news_create_view(request):
             news.save()
             messages.success(
                 request,
-                _('Notícia "%(title)s" criada com sucesso!') % {"title": news.title},
+                _('Evento "%(title)s" criado com sucesso!') % {"title": news.title},
             )
             return redirect("core:admin_news_list")
     else:
-        form = NewsForm()
+        event = NewsCategory.objects.filter(name=NewsCategory.EVENT).first()
+        form = NewsForm(initial={"category": event})
 
     context = {
         "form": form,
-        "title": _("Criar Nova Notícia/Evento"),
+        "title": _("Criar novo evento"),
         "submit_text": _("Criar"),
     }
     return render(request, "core/admin/news_form.html", context)
@@ -258,8 +259,7 @@ def admin_news_edit_view(request, pk):
             form.save()
             messages.success(
                 request,
-                _('Notícia "%(title)s" atualizada com sucesso!')
-                % {"title": news.title},
+                _('Evento "%(title)s" atualizado com sucesso!') % {"title": news.title},
             )
             return redirect("core:admin_news_list")
     else:
@@ -288,7 +288,7 @@ def admin_news_delete_view(request, pk):
         news.delete()
         messages.success(
             request,
-            _('Notícia "%(news_title)s" excluída com sucesso.')
+            _('Evento "%(news_title)s" excluído com sucesso.')
             % {"news_title": news_title},
         )
         return redirect("core:admin_news_list")

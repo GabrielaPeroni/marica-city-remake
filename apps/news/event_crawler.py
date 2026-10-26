@@ -3,6 +3,7 @@
 import html
 import json
 import re
+import unicodedata
 import urllib.request
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
@@ -14,13 +15,14 @@ from django.core.files.base import ContentFile
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from .importer import USER_AGENT, _fold, fetch_feed
 from .models import EventCandidate, News, NewsCategory
 
 PREFEITURA_API = "https://www.marica.rj.gov.br/wp-json/wp/v2/posts"
 # Cultura, Turismo, Esportes, Cultura e Utopias, MARÉ (Companhia de Cultura e Turismo)
 PREFEITURA_CATEGORIES = "3329,3345,3326,8185,9175"
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
+MAX_FEED_BYTES = 5 * 1024 * 1024
+USER_AGENT = "MaricaCity-EventCrawler/1.0"
 SUMMARY_MAX = 700
 
 MONTHS = {
@@ -181,7 +183,7 @@ def fetch_prefeitura_posts(days=21, per_page=50):
             "_embed": "wp:featuredmedia",
         }
     )
-    return parse_prefeitura_posts(fetch_feed(f"{PREFEITURA_API}?{query}"))
+    return parse_prefeitura_posts(fetch_json(f"{PREFEITURA_API}?{query}"))
 
 
 def _year_for(month, day, reference):
@@ -384,6 +386,19 @@ def store_candidates(
         )
         created += 1
     return created
+
+
+def _fold(text):
+    normalized = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in normalized if not unicodedata.combining(c)).casefold()
+
+
+def fetch_json(url, timeout=20):
+    if urlparse(url).scheme != "https":
+        raise ValueError("A consulta de eventos precisa usar https.")
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+        return response.read(MAX_FEED_BYTES)
 
 
 def fetch_image(url):

@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <h4 class="mt-4 mb-3">{% translate "Tem certeza que deseja excluir esta notícia?" %}</h4>
+        <h4 class="mt-4 mb-3">{% translate "Tem certeza que deseja excluir este evento?" %}</h4>
 
         <!-- News Preview -->
         <div class="card mb-4 bg-light">
@@ -85,7 +85,7 @@
           {% csrf_token %}
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-danger">
-              <i class="bi bi-trash me-1"></i>{% translate "Sim, Excluir Notícia" %}
+              <i class="bi bi-trash me-1"></i>{% translate "Sim, excluir evento" %}
             </button>
             <a href="{% url 'core:admin_news_list' %}" class="btn btn-outline-secondary">
               <i class="bi bi-x-circle me-1"></i>{% translate "Cancelar" %}

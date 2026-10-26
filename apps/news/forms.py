@@ -30,7 +30,7 @@ class NewsForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": _l("Digite o título da notícia/evento"),
+                    "placeholder": _l("Digite o título do evento"),
                 }
             ),
             "content": forms.Textarea(
@@ -112,7 +112,7 @@ class NewsForm(forms.ModelForm):
 
         # Add help text for featured checkbox
         self.fields["is_featured"].help_text = (
-            "Marque para destacar esta notícia na página inicial"
+            "Marque para destacar este evento na página inicial"
         )
 
     def clean(self):

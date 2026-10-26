@@ -61,6 +61,9 @@ class NewsQuerySet(models.QuerySet):
     def published(self):
         return self.filter(status=News.PUBLISHED, publish_date__lte=timezone.now())
 
+    def events(self):
+        return self.filter(category__name=NewsCategory.EVENT)
+
     def upcoming_events(self):
         """Eventos que ainda não terminaram, do mais próximo ao mais distante"""
         now = timezone.now()

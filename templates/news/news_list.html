@@ -20,37 +20,9 @@
   </div>
 </header>
 
-<div class="section-tabs">
-  <div class="container section-tabs-inner">
-    <ul class="nav" aria-label="{% translate 'Filtrar por categoria' %}">
-      <li class="nav-item">
-        <a class="nav-link {% if current_category == 'all' %}active{% endif %}" {% if current_category == 'all' %}aria-current="true"{% endif %} href="?sort={{ current_sort }}">{% translate "Agenda" %}</a>
-      </li>
-      {% for category in categories %}
-      {% if category.published_count or current_category == category.name %}
-      <li class="nav-item">
-        <a class="nav-link {% if current_category == category.name %}active{% endif %}" {% if current_category == category.name %}aria-current="true"{% endif %} href="?category={{ category.name|urlencode }}&sort={{ current_sort }}">{{ category.label }}</a>
-      </li>
-      {% endif %}
-      {% endfor %}
-    </ul>
-    <form method="get" class="d-flex align-items-center gap-2 py-2">
-      <input type="hidden" name="category" value="{{ current_category }}">
-      <label for="sortFilter" class="small text-muted mb-0">{% translate "Ordenar" %}</label>
-      <select class="form-select w-auto" id="sortFilter" name="sort" onchange="this.form.submit()">
-        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>{% translate "Mais recentes" %}</option>
-        <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>{% translate "Mais antigas" %}</option>
-        <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>{% translate "Mais vistas" %}</option>
-      </select>
-      <noscript><button class="btn btn-sm btn-dark">{% translate "Aplicar" %}</button></noscript>
-    </form>
-  </div>
-</div>
-
 <div class="bg-light">
   <div class="container py-4 py-md-5">
 
-    {% if current_category == 'all' or current_category == 'Evento' %}
     <section class="mb-5" aria-labelledby="agendaHeading">
       <div class="section-heading">
         <h2 id="agendaHeading">{% translate "Próximos eventos" %}</h2>
@@ -70,69 +42,39 @@
       </div>
       {% endif %}
     </section>
-    {% endif %}
 
-    <section>
-      {% if news_items %}
-
-      {% if own_items %}
+    {% if news_items %}
+    <section aria-labelledby="pastHeading">
       <div class="section-heading">
-        <h2>{% if current_category == 'Evento' %}{% translate "Eventos anteriores" %}{% elif active_category %}{{ active_category.label }}{% elif current_sort == 'popular' %}{% translate "Mais vistas" %}{% elif current_sort == 'oldest' %}{% translate "Mais antigas" %}{% else %}{% translate "Avisos e eventos anteriores" %}{% endif %}</h2>
+        <h2 id="pastHeading">{% translate "Eventos anteriores" %}</h2>
       </div>
-      <div class="row g-4 mb-5">
-        {% for item in own_items %}
+      <div class="row g-4">
+        {% for event in news_items %}
         <div class="col-md-6 col-lg-4">
-          {% include 'includes/news_card.html' with item=item %}
+          {% include 'includes/event_card.html' with event=event %}
         </div>
         {% endfor %}
       </div>
-      {% endif %}
-
-      {% if press_items %}
-      <div class="section-heading">
-        <h2>{% translate "Na imprensa" %}</h2>
-        <span class="small text-muted">{% translate "Os links abrem o site de cada veículo" %}</span>
-      </div>
-      <ul class="press-list">
-        {% for item in press_items %}
-        <li>
-          <a href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer">
-            <span class="press-list-title">{{ item|tr:"title" }}</span>
-            <span class="press-list-meta">
-              {{ item.source_name }} · {{ item.publish_date|date:"SHORT_DATE_FORMAT" }}
-              <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">({% translate "abre em nova aba" %})</span>
-            </span>
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-      {% endif %}
 
       {% if news_items.has_other_pages %}
       <nav class="mt-5" aria-label="{% translate 'Paginação' %}">
         <ul class="pagination justify-content-center mb-0">
           {% if news_items.has_previous %}
-          <li class="page-item"><a class="page-link" href="?category={{ current_category|urlencode }}&sort={{ current_sort }}&page={{ news_items.previous_page_number }}">{% translate "Anterior" %}</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ news_items.previous_page_number }}">{% translate "Anterior" %}</a></li>
           {% else %}
           <li class="page-item disabled"><span class="page-link">{% translate "Anterior" %}</span></li>
           {% endif %}
           <li class="page-item disabled"><span class="page-link">{% blocktranslate with number=news_items.number total=news_items.paginator.num_pages %}Página {{ number }} de {{ total }}{% endblocktranslate %}</span></li>
           {% if news_items.has_next %}
-          <li class="page-item"><a class="page-link" href="?category={{ current_category|urlencode }}&sort={{ current_sort }}&page={{ news_items.next_page_number }}">{% translate "Próxima" %}</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ news_items.next_page_number }}">{% translate "Próxima" %}</a></li>
           {% else %}
           <li class="page-item disabled"><span class="page-link">{% translate "Próxima" %}</span></li>
           {% endif %}
         </ul>
       </nav>
       {% endif %}
-      {% elif not agenda %}
-      <div class="text-center py-5">
-        <i class="bi bi-inbox fs-1 text-muted mb-3 d-block" aria-hidden="true"></i>
-        <p class="h5">{% translate "Nenhuma publicação nesta categoria" %}</p>
-        <a href="{% url 'news:news_list' %}" class="btn btn-dark mt-2">{% translate "Ver tudo" %}</a>
-      </div>
-      {% endif %}
     </section>
+    {% endif %}
 
   </div>
 </div>

@@ -157,10 +157,10 @@
         <div class="card admin-card">
           <div class="card-body">
             <h5 class="card-title">
-              <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar Notícias" %}
+              <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar eventos" %}
             </h5>
             <p class="card-text text-muted">
-              {% translate "Criar, editar e publicar notícias e eventos." %}
+              {% translate "Criar, editar e publicar eventos da agenda." %}
               {% if draft_news > 0 %}
                 <span class="badge bg-warning ms-1">{% blocktranslate trimmed count counter=draft_news %}{{ counter }} rascunho{% plural %}{{ counter }} rascunhos{% endblocktranslate %}</span>
               {% endif %}

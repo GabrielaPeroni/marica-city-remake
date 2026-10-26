@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 22:49-0300\n"
+"POT-Creation-Date: 2026-10-25 22:57-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -267,8 +267,8 @@ msgid "Painel de Administração"
 msgstr "Panel de Administración"
 
 #: templates/base.html:55
-msgid "Guia colaborativo dos melhores lugares, notícias e eventos de Maricá."
-msgstr "Guía colaborativa de los mejores lugares, noticias y eventos de Maricá."
+msgid "Guia colaborativo dos melhores lugares e eventos de Maricá."
+msgstr "Guía colaborativa de los mejores lugares y eventos de Maricá."
 
 #: templates/base.html:57
 msgid "Rodapé: descobrir"
@@ -553,8 +553,8 @@ msgid "Voltar"
 msgstr "Volver"
 
 #: templates/core/admin/news_delete_confirm.html:46
-msgid "Tem certeza que deseja excluir esta notícia?"
-msgstr "¿Estás seguro de que deseas eliminar esta noticia?"
+msgid "Tem certeza que deseja excluir este evento?"
+msgstr "¿Estás seguro de que deseas eliminar este evento?"
 
 #: templates/core/admin/news_delete_confirm.html:65 templates/core/admin/news_list.html:186
 msgid "Publicado"
@@ -568,7 +568,7 @@ msgstr "Borrador"
 msgid "Arquivado"
 msgstr "Archivado"
 
-#: templates/core/admin/news_delete_confirm.html:75 templates/news/news_detail.html:93
+#: templates/core/admin/news_delete_confirm.html:75 templates/news/news_detail.html:82
 #, python-format
 msgid "%(counter)s visualização"
 msgid_plural "%(counter)s visualizações"
@@ -576,8 +576,8 @@ msgstr[0] "%(counter)s visualización"
 msgstr[1] "%(counter)s visualizaciones"
 
 #: templates/core/admin/news_delete_confirm.html:88
-msgid "Sim, Excluir Notícia"
-msgstr "Sí, Eliminar Noticia"
+msgid "Sim, excluir evento"
+msgstr "Sí, eliminar evento"
 
 #: templates/core/admin/news_form.html:73 templates/explore/place_form.html:47
 msgid "Informações Básicas"
@@ -600,12 +600,12 @@ msgid "Configurações de Publicação"
 msgstr "Configuraciones de Publicación"
 
 #: templates/core/admin/news_list.html:30 templates/core/admin_dashboard.html:160
-msgid "Gerenciar Notícias"
-msgstr "Administrar Noticias"
+msgid "Gerenciar eventos"
+msgstr "Administrar eventos"
 
 #: templates/core/admin/news_list.html:33
-msgid "Criar Notícia"
-msgstr "Crear Noticia"
+msgid "Criar evento"
+msgstr "Crear evento"
 
 #: templates/core/admin/news_list.html:46 templates/explore/admin/backlog.html:48
 msgid "Total"
@@ -658,7 +658,7 @@ msgstr "Fecha"
 msgid "Visualizações"
 msgstr "Visualizaciones"
 
-#: templates/core/admin/news_list.html:176 templates/news/news_detail.html:22
+#: templates/core/admin/news_list.html:176 templates/news/news_detail.html:20
 msgid "Destaque"
 msgstr "Destacado"
 
@@ -677,12 +677,12 @@ msgid "Excluir"
 msgstr "Eliminar"
 
 #: templates/core/admin/news_list.html:222
-msgid "Nenhuma notícia encontrada."
-msgstr "Sin noticias encontradas."
+msgid "Nenhum evento encontrado."
+msgstr "No se encontraron eventos."
 
 #: templates/core/admin/news_list.html:224
-msgid "Criar Primeira Notícia"
-msgstr "Crear Primera Noticia"
+msgid "Criar primeiro evento"
+msgstr "Crear primer evento"
 
 #: templates/core/admin_dashboard.html:29
 msgid "Painel Administrativo"
@@ -738,8 +738,8 @@ msgstr[0] "%(counter)s pendiente"
 msgstr[1] "%(counter)s pendientes"
 
 #: templates/core/admin_dashboard.html:163
-msgid "Criar, editar e publicar notícias e eventos."
-msgstr "Crear, editar y publicar noticias y eventos."
+msgid "Criar, editar e publicar eventos da agenda."
+msgstr "Crear, editar y publicar eventos del calendario."
 
 #: templates/core/admin_dashboard.html:165
 #, python-format
@@ -909,7 +909,7 @@ msgstr "Próximos eventos en Maricá"
 msgid "Eventos recentes em Maricá"
 msgstr "Eventos recientes en Maricá"
 
-#: templates/core/landing.html:267
+#: templates/core/landing.html:267 templates/news/news_detail.html:97
 msgid "Ver agenda completa"
 msgstr "Ver agenda completa"
 
@@ -1250,7 +1250,7 @@ msgstr "Siguiente imagen"
 msgid "Ir para imagem %(number)s"
 msgstr "Ir a imagen %(number)s"
 
-#: templates/explore/place_detail.html:134 templates/news/news_detail.html:80
+#: templates/explore/place_detail.html:134 templates/news/news_detail.html:70
 msgid "Traduzido automaticamente do português."
 msgstr "Traducido automáticamente del portugués."
 
@@ -1258,7 +1258,7 @@ msgstr "Traducido automáticamente del portugués."
 msgid "Localização"
 msgstr "Localización"
 
-#: templates/explore/place_detail.html:148 templates/news/news_detail.html:48
+#: templates/explore/place_detail.html:148 templates/news/news_detail.html:46
 msgid "Como chegar"
 msgstr "Cómo llegar"
 
@@ -1536,16 +1536,16 @@ msgstr "Lugares"
 msgid "Usuários"
 msgstr "Usuarios"
 
-#: templates/includes/admin_sidebar.html:42
-msgid "Notícias"
-msgstr "Noticias"
+#: templates/includes/admin_sidebar.html:42 templates/includes/navbar.html:20
+msgid "Eventos"
+msgstr "Eventos"
 
 #: templates/includes/admin_topbar.html:11
 #, python-format
 msgid "Bem-vindo, %(admin_name)s"
 msgstr "Bienvenido, %(admin_name)s"
 
-#: templates/includes/event_card.html:15 templates/news/news_detail.html:39
+#: templates/includes/event_card.html:15 templates/news/news_detail.html:37
 msgid "Acontecendo agora"
 msgstr "En curso"
 
@@ -1568,20 +1568,6 @@ msgstr "Abrir menú"
 #: templates/includes/navbar.html:14
 msgid "Início"
 msgstr "Inicio"
-
-#: templates/includes/navbar.html:20
-msgid "Eventos"
-msgstr "Eventos"
-
-#: templates/includes/news_card.html:16
-msgid "encerrado"
-msgstr "finalizado"
-
-#: templates/includes/news_card.html:28 templates/news/news_detail.html:48
-#: templates/news/news_detail.html:52 templates/news/news_detail.html:72
-#: templates/news/news_detail.html:84 templates/news/news_list.html:103
-msgid "abre em nova aba"
-msgstr "abre en nueva pestaña"
 
 #: templates/includes/remove_place_modal.html:7
 #: templates/includes/remove_place_modal.html:47
@@ -1644,57 +1630,39 @@ msgstr ""
 msgid "Por favor, especifique o motivo da remoção."
 msgstr "Por favor, especifica el motivo de eliminación."
 
-#: templates/news/news_detail.html:13 templates/news/news_list.html:27
+#: templates/news/news_detail.html:13
 msgid "Agenda"
 msgstr "Agenda"
 
-#: templates/news/news_detail.html:20
-#, python-format
-msgid "Por %(author)s"
-msgstr "Por %(author)s"
-
-#: templates/news/news_detail.html:41
+#: templates/news/news_detail.html:39
 msgid "Este evento já terminou."
 msgstr "Este evento ya terminó."
 
-#: templates/news/news_detail.html:52
+#: templates/news/news_detail.html:46 templates/news/news_detail.html:50
+#: templates/news/news_detail.html:74
+msgid "abre em nova aba"
+msgstr "abre en nueva pestaña"
+
+#: templates/news/news_detail.html:50
 msgid "Adicionar ao calendário"
 msgstr "Agregar al calendario"
 
-#: templates/news/news_detail.html:70
-#, python-format
-msgid ""
-"Esta matéria foi publicada por <strong>%(source)s</strong>. O MaricaCity reúne a "
-"manchete e leva você até a fonte."
-msgstr ""
-"Este artículo fue publicado por <strong>%(source)s</strong>. MaricaCity reúne la "
-"noticia y te lleva a la fuente."
-
-#: templates/news/news_detail.html:72
-msgid "Ler no site original"
-msgstr "Leer en el sitio original"
-
-#: templates/news/news_detail.html:84
+#: templates/news/news_detail.html:74
 msgid "Fonte"
 msgstr "Fuente"
 
-#: templates/news/news_detail.html:94
+#: templates/news/news_detail.html:83
 #, python-format
 msgid "Atualizado em %(date)s"
 msgstr "Actualizado el %(date)s"
 
-#: templates/news/news_detail.html:97
+#: templates/news/news_detail.html:86
 msgid "Voltar à agenda"
 msgstr "Volver a la agenda"
 
-#: templates/news/news_detail.html:107
-#, python-format
-msgid "Mais em %(category)s"
-msgstr "Más en %(category)s"
-
-#: templates/news/news_detail.html:108
-msgid "Ver todas"
-msgstr "Ver todas"
+#: templates/news/news_detail.html:96
+msgid "Mais eventos"
+msgstr "Más eventos"
 
 #: templates/news/news_list.html:13
 msgid "Agenda de Maricá"
@@ -1715,78 +1683,34 @@ msgstr[1] ""
 msgid "Festivais, shows, feiras e tradições da cidade."
 msgstr "Festivales, conciertos, ferias y tradiciones de la ciudad."
 
-#: templates/news/news_list.html:25
-msgid "Filtrar por categoria"
-msgstr "Filtrar por categoría"
-
-#: templates/news/news_list.html:39
-msgid "Ordenar"
-msgstr "Ordenar"
-
-#: templates/news/news_list.html:41
-msgid "Mais recentes"
-msgstr "Más recientes"
-
-#: templates/news/news_list.html:42 templates/news/news_list.html:80
-msgid "Mais antigas"
-msgstr "Más antiguas"
-
-#: templates/news/news_list.html:43 templates/news/news_list.html:80
-msgid "Mais vistas"
-msgstr "Más vistas"
-
-#: templates/news/news_list.html:45
-msgid "Aplicar"
-msgstr "Aplicar"
-
-#: templates/news/news_list.html:56
+#: templates/news/news_list.html:28
 msgid "Próximos eventos"
 msgstr "Próximos eventos"
 
-#: templates/news/news_list.html:69
+#: templates/news/news_list.html:41
 msgid "Nenhum evento programado no momento. Volte em breve."
 msgstr "No hay eventos programados en este momento. Vuelva pronto."
 
-#: templates/news/news_list.html:80
+#: templates/news/news_list.html:49
 msgid "Eventos anteriores"
 msgstr "Eventos anteriores"
 
-#: templates/news/news_list.html:80
-msgid "Avisos e eventos anteriores"
-msgstr "Avisos y eventos anteriores"
-
-#: templates/news/news_list.html:93
-msgid "Na imprensa"
-msgstr "En la prensa"
-
-#: templates/news/news_list.html:94
-msgid "Os links abrem o site de cada veículo"
-msgstr "Los enlaces abren el sitio de cada medio"
-
-#: templates/news/news_list.html:112
+#: templates/news/news_list.html:60
 msgid "Paginação"
 msgstr "Paginación"
 
-#: templates/news/news_list.html:115 templates/news/news_list.html:117
+#: templates/news/news_list.html:63 templates/news/news_list.html:65
 msgid "Anterior"
 msgstr "Anterior"
 
-#: templates/news/news_list.html:119
+#: templates/news/news_list.html:67
 #, python-format
 msgid "Página %(number)s de %(total)s"
 msgstr "Página %(number)s de %(total)s"
 
-#: templates/news/news_list.html:121 templates/news/news_list.html:123
+#: templates/news/news_list.html:69 templates/news/news_list.html:71
 msgid "Próxima"
 msgstr "Siguiente"
-
-#: templates/news/news_list.html:131
-msgid "Nenhuma publicação nesta categoria"
-msgstr "No hay publicaciones en esta categoría"
-
-#: templates/news/news_list.html:132
-msgid "Ver tudo"
-msgstr "Ver todo"
 
 #: apps/accounts/views.py:25
 msgid "Cadastro realizado com sucesso! Bem-vindo ao MaricaCity."
@@ -1818,7 +1742,7 @@ msgid "Você saiu com sucesso."
 msgstr "Has salido con éxito."
 
 #: apps/accounts/views.py:117 apps/core/views.py:92 apps/core/views.py:166
-#: apps/core/views.py:221 apps/core/views.py:250 apps/core/views.py:281
+#: apps/core/views.py:221 apps/core/views.py:251 apps/core/views.py:281
 #: apps/core/views.py:330 apps/core/views.py:339 apps/core/views.py:370
 #: apps/explore/views.py:331 apps/explore/views.py:424
 msgid "Você não tem permissão para acessar esta página."
@@ -1870,21 +1794,21 @@ msgstr "Usuario %(username)s eliminado con éxito."
 
 #: apps/core/views.py:232
 #, python-format
-msgid "Notícia \"%(title)s\" criada com sucesso!"
-msgstr "¡Noticia \"%(title)s\" creada con éxito!"
-
-#: apps/core/views.py:240
-msgid "Criar Nova Notícia/Evento"
-msgstr "Crear Nueva Noticia/Evento"
+msgid "Evento \"%(title)s\" criado com sucesso!"
+msgstr "¡Evento \"%(title)s\" creado con éxito!"
 
 #: apps/core/views.py:241
+msgid "Criar novo evento"
+msgstr "Crear nuevo evento"
+
+#: apps/core/views.py:242
 msgid "Criar"
 msgstr "Crear"
 
-#: apps/core/views.py:261
+#: apps/core/views.py:262
 #, python-format
-msgid "Notícia \"%(title)s\" atualizada com sucesso!"
-msgstr "¡Noticia \"%(title)s\" actualizada con éxito!"
+msgid "Evento \"%(title)s\" atualizado com sucesso!"
+msgstr "¡Evento \"%(title)s\" actualizado con éxito!"
 
 #: apps/core/views.py:271
 #, python-format
@@ -1897,8 +1821,8 @@ msgstr "Guardar Cambios"
 
 #: apps/core/views.py:291
 #, python-format
-msgid "Notícia \"%(news_title)s\" excluída com sucesso."
-msgstr "Noticia \"%(news_title)s\" eliminada con éxito."
+msgid "Evento \"%(news_title)s\" excluído com sucesso."
+msgstr "Evento \"%(news_title)s\" eliminado con éxito."
 
 #: apps/core/views.py:346
 #, python-format

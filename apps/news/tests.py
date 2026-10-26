@@ -1,16 +1,14 @@
 from datetime import datetime, timedelta
 from datetime import timezone as dt_timezone
-from io import StringIO
 from pathlib import Path
 
 from django.contrib import admin
-from django.core.management import call_command
-from django.test import Client, RequestFactory, TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import User
-from apps.news import event_crawler, importer
+from apps.news import event_crawler
 from apps.news.forms import NewsForm
 from apps.news.models import EventCandidate, News, NewsCategory
 
@@ -231,171 +229,161 @@ class NewsFormEventDateValidationTests(TestCase):
         self.assertIn("event_end_date", form.errors)
 
 
-class NewsListViewTests(TestCase):
-    """Test suite for news list view"""
+class EventsListViewTests(TestCase):
+    """The public page lists published events only"""
 
     def setUp(self):
-        """Set up test data"""
-        self.client = Client()
         self.url = reverse("news:news_list")
-        self.user = User.objects.create_user(
-            username="testauthor", password="testpass123"
+        self.user = User.objects.create_user(username="testauthor")
+        self.news_cat, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
+        self.event_cat, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        now = timezone.now()
+        self.upcoming = self._make("Upcoming Event", now + timedelta(days=3))
+        self.past = self._make("Past Event", now - timedelta(days=10))
+        self.older_past = self._make("Older Past Event", now - timedelta(days=60))
+        self.draft = self._make(
+            "Draft Event", now + timedelta(days=3), status=News.DRAFT
         )
-        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-
-        # Create published news
-        self.published_news = News.objects.create(
-            title="Published News",
-            content="Published content",
+        self.headline = News.objects.create(
+            title="Press Headline",
+            content="c",
             author=self.user,
-            category=self.category,
-            publish_date=timezone.now(),
+            category=self.news_cat,
             status=News.PUBLISHED,
+            publish_date=now,
+            source_name="Jornal X",
+            source_url="https://example.com/x",
         )
 
-        # Create draft news (should not appear)
-        self.draft_news = News.objects.create(
-            title="Draft News",
-            content="Draft content",
+    def _make(self, title, when, status=News.PUBLISHED):
+        return News.objects.create(
+            title=title,
+            content="c",
             author=self.user,
-            category=self.category,
-            publish_date=timezone.now(),
-            status=News.DRAFT,
+            category=self.event_cat,
+            status=status,
+            publish_date=timezone.now() - timedelta(days=90),
+            event_date=when,
+            event_location="Orla",
         )
 
-    def test_news_list_page_loads(self):
-        """Test that news list page loads successfully"""
+    def test_page_loads(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "news/news_list.html")
 
-    def test_news_list_shows_published_only(self):
-        """Test that only published news are shown"""
+    def test_lists_only_published_events(self):
         response = self.client.get(self.url)
-        self.assertContains(response, "Published News")
-        self.assertNotContains(response, "Draft News")
+        self.assertContains(response, "Upcoming Event")
+        self.assertContains(response, "Past Event")
+        self.assertNotContains(response, "Draft Event")
+        self.assertNotContains(response, "Press Headline")
 
-    def test_news_list_filters_by_category(self):
-        """Test the category query param filters the news list"""
-        event_category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
-        News.objects.create(
-            title="Event Item",
-            content="Content",
-            author=self.user,
-            category=event_category,
-            publish_date=timezone.now(),
-            status=News.PUBLISHED,
-        )
-        response = self.client.get(self.url + f"?category={NewsCategory.NEWS}")
-        titles = {n.title for n in response.context["news_items"]}
-        self.assertEqual(titles, {"Published News"})
-
-    def test_news_list_ordered_by_date(self):
-        """Test that news are ordered by publish date (newest first)"""
-        # Create older news
-        older_news = News.objects.create(
-            title="Older News",
-            content="Content",
-            author=self.user,
-            category=self.category,
-            publish_date=timezone.now() - timezone.timedelta(days=5),
-            status=News.PUBLISHED,
-        )
-
+    def test_past_events_section_is_paginated_newest_first(self):
         response = self.client.get(self.url)
-        news_items = list(response.context["news_items"])
+        self.assertEqual(response.context["agenda"], [self.upcoming])
+        self.assertEqual(
+            list(response.context["news_items"]), [self.past, self.older_past]
+        )
+        self.assertContains(response, "Eventos anteriores")
+        self.assertNotContains(response, "Na imprensa")
 
-        # Newest should be first
-        self.assertEqual(news_items[0].title, "Published News")
-        self.assertEqual(news_items[1].title, "Older News")
+    def test_past_events_paginate_by_twelve(self):
+        for i in range(12):
+            self._make(f"Extra {i}", timezone.now() - timedelta(days=100 + i))
+        first = self.client.get(self.url)
+        self.assertEqual(len(first.context["news_items"]), 12)
+        second = self.client.get(self.url + "?page=2")
+        self.assertEqual(len(second.context["news_items"]), 2)
+        self.assertEqual(second.context["agenda"], [])
 
 
-class NewsDetailViewTests(TestCase):
-    """Test suite for news detail view"""
+class EventDetailViewTests(TestCase):
+    """Only events have a public detail page"""
 
     def setUp(self):
-        """Set up test data"""
-        self.client = Client()
         self.user = User.objects.create_user(username="testauthor")
-        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-
-        self.news = News.objects.create(
-            title="Test News Article",
-            slug="test-news-article",
-            content="This is the full content of the news article",
-            excerpt="This is a short excerpt",
-            author=self.user,
-            category=self.category,
-            publish_date=timezone.now(),
-            status=News.PUBLISHED,
+        self.news_cat, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
+        self.event_cat, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        now = timezone.now()
+        self.event = self._make("Test Event", "test-event", now - timedelta(days=5))
+        self.next_event = self._make(
+            "Next Event", "next-event", now + timedelta(days=5)
         )
-        self.url = reverse("news:news_detail", kwargs={"slug": self.news.slug})
+        self.url = reverse("news:news_detail", kwargs={"slug": self.event.slug})
 
-    def test_news_detail_page_loads(self):
-        """Test that news detail page loads successfully"""
+    def _make(self, title, slug, when):
+        return News.objects.create(
+            title=title,
+            slug=slug,
+            content="Full content of the event",
+            author=self.user,
+            category=self.event_cat,
+            publish_date=timezone.now() - timedelta(days=30),
+            status=News.PUBLISHED,
+            event_date=when,
+            event_location="Orla",
+        )
+
+    def test_detail_page_loads(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "news/news_detail.html")
+        self.assertContains(response, "Full content of the event")
 
-    def test_news_detail_shows_content(self):
-        """Test that news detail page shows full content"""
-        response = self.client.get(self.url)
-        self.assertContains(response, "Test News Article")
-        self.assertContains(response, "This is the full content")
-
-    def test_news_detail_shows_author(self):
-        """Test that news detail page shows author"""
-        response = self.client.get(self.url)
-        self.assertContains(response, "testauthor")
-
-    def test_news_detail_increments_view_count(self):
-        """Test that viewing news increments view count"""
-        initial_count = self.news.view_count
+    def test_detail_increments_view_count(self):
         self.client.get(self.url)
+        self.event.refresh_from_db()
+        self.assertEqual(self.event.view_count, 1)
 
-        # Refresh from database
-        self.news.refresh_from_db()
-        self.assertEqual(self.news.view_count, initial_count + 1)
+    def test_related_events_prefer_upcoming(self):
+        response = self.client.get(self.url)
+        self.assertEqual(list(response.context["related_news"]), [self.next_event])
 
-    def test_news_detail_404_for_invalid_slug(self):
-        """Test that invalid slug returns 404"""
-        response = self.client.get(
-            reverse("news:news_detail", kwargs={"slug": "non-existent"})
-        )
-        self.assertEqual(response.status_code, 404)
-
-
-class NewsFeaturedTests(TestCase):
-    """Test suite for featured news functionality"""
-
-    def setUp(self):
-        """Set up test data"""
-        self.client = Client()
-        self.user = User.objects.create_user(username="testauthor")
-        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-
-    def test_featured_news_appears_in_context(self):
-        """Test that featured news are available in context"""
-        # Create featured news
-        featured_news = News.objects.create(
-            title="Featured News",
-            content="Content",
+    def test_non_event_detail_is_404(self):
+        article = News.objects.create(
+            title="General Article",
+            slug="general-article",
+            content="c",
             author=self.user,
-            category=self.category,
+            category=self.news_cat,
             publish_date=timezone.now(),
             status=News.PUBLISHED,
-            is_featured=True,
+        )
+        url = reverse("news:news_detail", kwargs={"slug": article.slug})
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_draft_event_is_404(self):
+        self.event.status = News.DRAFT
+        self.event.save()
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+
+    def test_unknown_slug_is_404(self):
+        url = reverse("news:news_detail", kwargs={"slug": "non-existent"})
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+
+class LegacyNewsRedirectTests(TestCase):
+    def test_urls_live_under_eventos(self):
+        self.assertEqual(reverse("news:news_list"), "/eventos/")
+        self.assertEqual(
+            reverse("news:news_detail", kwargs={"slug": "x"}), "/eventos/x/"
         )
 
-        response = self.client.get(reverse("news:news_list"))
+    def test_news_list_redirects_permanently(self):
+        response = self.client.get("/news/")
+        self.assertRedirects(
+            response, "/eventos/", status_code=301, fetch_redirect_response=False
+        )
 
-        # Featured items should be in context
-        self.assertIn("featured_items", response.context)
-        featured_items = list(response.context["featured_items"])
-
-        # Should contain our featured news
-        self.assertEqual(len(featured_items), 1)
-        self.assertEqual(featured_items[0].title, "Featured News")
+    def test_news_detail_redirects_permanently(self):
+        response = self.client.get("/news/some-event/")
+        self.assertRedirects(
+            response,
+            "/eventos/some-event/",
+            status_code=301,
+            fetch_redirect_response=False,
+        )
 
 
 class NewsEventPropertyTests(TestCase):
@@ -609,179 +597,6 @@ class NewsAdminTests(TestCase):
         self.assertEqual(news.author, self.staff_user)
 
 
-class NewsListSortingTests(TestCase):
-    """Tests for news list sorting options and upcoming events"""
-
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username="author", password="pass123")
-        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-        self.event_category, _ = NewsCategory.objects.get_or_create(
-            name=NewsCategory.EVENT
-        )
-        self.url = reverse("news:news_list")
-
-        self.older = News.objects.create(
-            title="Older News",
-            content="Content",
-            author=self.user,
-            category=self.category,
-            status=News.PUBLISHED,
-            publish_date=timezone.now() - timezone.timedelta(days=3),
-            view_count=1,
-        )
-        self.newer = News.objects.create(
-            title="Newer News",
-            content="Content",
-            author=self.user,
-            category=self.category,
-            status=News.PUBLISHED,
-            publish_date=timezone.now(),
-            view_count=10,
-        )
-
-    def test_sort_oldest_orders_ascending_by_date(self):
-        """Test 'oldest' sort orders publish_date ascending"""
-        response = self.client.get(self.url + "?sort=oldest")
-        items = list(response.context["news_items"])
-        self.assertEqual(items[0], self.older)
-        self.assertEqual(items[1], self.newer)
-
-    def test_sort_popular_orders_by_view_count(self):
-        """Test 'popular' sort orders by view_count descending"""
-        response = self.client.get(self.url + "?sort=popular")
-        items = list(response.context["news_items"])
-        self.assertEqual(items[0], self.newer)
-
-    def test_upcoming_events_appear_in_context(self):
-        """Test upcoming events are surfaced separately in context"""
-        upcoming = News.objects.create(
-            title="Upcoming Event",
-            content="Content",
-            author=self.user,
-            category=self.event_category,
-            status=News.PUBLISHED,
-            publish_date=timezone.now(),
-            event_date=timezone.now() + timezone.timedelta(days=2),
-        )
-        response = self.client.get(self.url)
-        upcoming_events = list(response.context["upcoming_events"])
-        self.assertIn(upcoming, upcoming_events)
-
-
-class NewsImporterTests(TestCase):
-    """Importer reads a saved feed; no network access"""
-
-    FEED = Path(__file__).parent / "testdata" / "feed_sample.xml"
-    NOW = datetime(2026, 10, 10, 12, 0, tzinfo=dt_timezone.utc)
-
-    def _import(self, **kwargs):
-        items = importer.parse_feed(self.FEED.read_bytes())
-        options = {"days": 30, "limit": 40, "now": self.NOW}
-        options.update(kwargs)
-        return importer.import_items(items, **options)
-
-    def test_parse_strips_source_suffix_and_skips_invalid_items(self):
-        items = importer.parse_feed(self.FEED.read_bytes())
-        urls = {item.source_url for item in items}
-        self.assertNotIn("http://example.com/insecure", urls)
-        self.assertNotIn("https://example.com/nodate", urls)
-        first = next(i for i in items if i.source_url == "https://example.com/a")
-        self.assertEqual(first.title, "Maricá inaugura nova ciclovia na orla")
-        self.assertEqual(first.source_name, "Jornal A")
-
-    def test_import_keeps_only_recent_relevant_items(self):
-        self.assertEqual(self._import(), 2)
-        imported = News.objects.exclude(source_url="")
-        self.assertEqual(
-            set(imported.values_list("source_url", flat=True)),
-            {"https://example.com/a", "https://example.com/b"},
-        )
-        item = imported.get(source_url="https://example.com/a")
-        self.assertEqual(item.status, News.PUBLISHED)
-        self.assertEqual(
-            item.publish_date, datetime(2026, 10, 8, 14, 0, tzinfo=dt_timezone.utc)
-        )
-        self.assertTrue(item.is_external)
-        self.assertFalse(item.author.is_active)
-
-    def test_import_is_idempotent(self):
-        self._import()
-        self.assertEqual(self._import(), 0)
-        self.assertEqual(News.objects.exclude(source_url="").count(), 2)
-
-    def test_import_respects_limit(self):
-        self.assertEqual(self._import(limit=1), 1)
-
-    def test_purge_removes_only_imported_items(self):
-        author = User.objects.create_user(username="editor", password="pass123")
-        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-        News.objects.create(
-            title="Manual", content="c", category=category, author=author
-        )
-        self._import()
-        self.assertEqual(importer.purge_imported(), 2)
-        self.assertEqual(News.objects.count(), 1)
-
-    def test_command_imports_from_file_and_purges(self):
-        out = StringIO()
-        call_command("fetch_news", file=str(self.FEED), days=36500, stdout=out)
-        self.assertIn("importada", out.getvalue())
-        self.assertTrue(News.objects.exclude(source_url="").exists())
-        call_command("fetch_news", purge=True, stdout=out)
-        self.assertFalse(News.objects.exclude(source_url="").exists())
-
-    def test_fetch_feed_rejects_non_https(self):
-        with self.assertRaises(ValueError):
-            importer.fetch_feed("http://example.com/feed")
-
-    def test_build_feed_url_uses_setting_override(self):
-        with self.settings(
-            NEWS_FEED_URL="https://proxy.example/feed?q={query}&d={days}"
-        ):
-            url = importer.build_feed_url("Maricá RJ", 7)
-        self.assertEqual(url, "https://proxy.example/feed?q=Maric%C3%A1+RJ&d=7")
-
-
-class NewsListLayoutTests(TestCase):
-    """Own content is listed before imported headlines; empty tabs are hidden"""
-
-    def setUp(self):
-        self.author = User.objects.create_user(username="editor2", password="pass123")
-        self.category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
-        News.objects.create(
-            title="Matéria própria antiga",
-            content="c",
-            category=self.category,
-            author=self.author,
-            status=News.PUBLISHED,
-            publish_date=timezone.now() - timezone.timedelta(days=90),
-        )
-        News.objects.create(
-            title="Manchete externa recente",
-            content="c",
-            category=self.category,
-            author=self.author,
-            status=News.PUBLISHED,
-            publish_date=timezone.now() - timezone.timedelta(days=1),
-            source_name="Jornal X",
-            source_url="https://example.com/x",
-        )
-
-    def test_own_items_come_before_press_items(self):
-        response = self.client.get(reverse("news:news_list"))
-        titles = [n.title for n in response.context["news_items"]]
-        self.assertEqual(titles, ["Matéria própria antiga", "Manchete externa recente"])
-        self.assertEqual(len(response.context["own_items"]), 1)
-        self.assertEqual(len(response.context["press_items"]), 1)
-        self.assertContains(response, "Na imprensa")
-
-    def test_empty_category_tab_is_hidden(self):
-        NewsCategory.objects.get_or_create(name=NewsCategory.ANNOUNCEMENT)
-        response = self.client.get(reverse("news:news_list"))
-        self.assertNotContains(response, "?category=Anuncios")
-
-
 class AgendaTests(TestCase):
     """The events page leads with upcoming and ongoing events"""
 
@@ -904,16 +719,6 @@ class EventCrawlerTests(TestCase):
         self.assertEqual(candidate.status, EventCandidate.APPROVED)
         self.assertEqual(candidate.news, news)
         news.featured_image.delete(save=False)
-
-    def test_purge_keeps_crawled_events(self):
-        self._store()
-        event_crawler.approve(
-            EventCandidate.objects.get(source_id="102"),
-            self.moderator,
-            image_fetcher=lambda url: None,
-        )
-        importer.purge_imported()
-        self.assertTrue(News.objects.filter(source_url__contains="pedalada").exists())
 
 
 class EventTriageViewTests(TestCase):

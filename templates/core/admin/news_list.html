@@ -27,10 +27,10 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="admin-title">
-        <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar Notícias" %}
+        <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar eventos" %}
       </h1>
       <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i>{% translate "Criar Notícia" %}
+        <i class="bi bi-plus-circle me-1"></i>{% translate "Criar evento" %}
       </a>
     </div>
 
@@ -219,9 +219,9 @@
         {% else %}
         <div class="text-center py-5">
           <i class="bi bi-inbox" style="font-size: 4rem; color: var(--text-muted);"></i>
-          <p class="text-muted mt-3">{% translate "Nenhuma notícia encontrada." %}</p>
+          <p class="text-muted mt-3">{% translate "Nenhum evento encontrado." %}</p>
           <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>{% translate "Criar Primeira Notícia" %}
+            <i class="bi bi-plus-circle me-1"></i>{% translate "Criar primeiro evento" %}
           </a>
         </div>
         {% endif %}

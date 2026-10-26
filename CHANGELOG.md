@@ -44,6 +44,22 @@ translate_content` translates only new or changed items (it tracks a hash of
 - Related events on an event page use the event card, and news cards write
   event dates in the active language.
 - `LANGUAGE_CODE` is now `pt-br`; dates use each locale's formats.
+- The public site is now about tourism and events only. The events page
+  (`/eventos/`) lists published events: upcoming ones first, then a paginated
+  "Eventos anteriores" section. Category tabs, sorting and the press list are
+  gone, and event pages show other events as related content. Non-event items
+  return 404 on the public site.
+- The public pages moved from `/news/` to `/eventos/`; the old URLs redirect
+  permanently.
+- The staff area calls the content "Eventos" and the create form defaults to
+  the Evento category.
+
+### Removed
+
+- The general-news importer: the `fetch_news` command, `apps/news/importer.py`,
+  its tests and sample feed, the `NEWS_FEED_URL` setting and the scheduler job.
+  The event crawler now has its own HTTPS fetch helper.
+- The news card template and the "Na imprensa" press list.
 
 ### Fixed
 

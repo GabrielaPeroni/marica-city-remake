@@ -149,7 +149,7 @@ de cada evento anunciado. Eventos futuros entram na **Triagem de eventos**
 agenda ou descarta. Nada é publicado sem revisão. A busca é idempotente.
 
 > **Estado atual: desligado.** O projeto está em modo demonstração com conteúdo
-> estático: a agenda e as notícias foram importadas uma vez (out/2026) e o
+> estático: a agenda foi importada uma vez (out/2026) e o
 > agendador não roda. Todo o código continua no repositório. Para religar:
 >
 > 1. `docker compose --profile scheduler up -d` (ou rode `run_scheduler` como
@@ -163,14 +163,14 @@ agenda ou descarta. Nada é publicado sem revisão. A busca é idempotente.
 > ou o botão “Buscar agora” na triagem.
 
 `uv run python manage.py run_scheduler` mantém um processo que roda
-`crawl_events` e `fetch_news` a cada 6 horas (`--interval`, em horas; `--once`
+`crawl_events` a cada 6 horas (`--interval`, em horas; `--once`
 roda uma vez e sai). No `docker-compose.yml` ele é o serviço `scheduler`; fora
 do Docker, rode-o como um serviço do sistema ou troque por um cron que chame
 `run_scheduler --once`.
 
 ## Tradução automática do conteúdo (`translate_content`)
 
-O conteúdo cadastrado (descrições de lugares, categorias, eventos, notícias e
+O conteúdo cadastrado (descrições de lugares, categorias, eventos e
 avaliações) é traduzido para inglês e espanhol por um LLM local via
 [Ollama](https://ollama.com). As traduções ficam no campo `translations` de cada
 registro e são servidas sem chamar o modelo, então o site não depende do Ollama
@@ -182,17 +182,3 @@ em produção.
 - `OLLAMA_URL` aponta para o servidor (padrão `http://localhost:11434`). Se ele
   não responder, o comando avisa e sai sem erro.
 - Correções manuais: Django admin → o registro → "Traduções automáticas".
-
-## Importador de notícias (`fetch_news`)
-
-`uv run python manage.py fetch_news` lê um feed RSS e grava as manchetes dos
-últimos 30 dias como notícias externas (título, veículo, data e link para a
-matéria original; o texto não é copiado). É idempotente, então pode rodar em
-agenda. `--purge` remove tudo que foi importado.
-
-- **Origem do feed:** Google News por padrão. Defina `NEWS_FEED_URL` para
-  apontar para outro feed, por exemplo um Cloudflare Worker que faça proxy e
-  cache do RSS; a URL pode conter `{query}` e `{days}`. Só `https` é aceito.
-- **Agendamento com Cloudflare:** um Cron Trigger não executa comandos Django
-  diretamente. As opções são um cron no host que rode o comando, ou um Worker
-  agendado que mantenha o feed em cache e sirva de `NEWS_FEED_URL`.

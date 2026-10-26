@@ -39,7 +39,7 @@
 
     <a href="{% url 'core:admin_news_list' %}" class="nav-item {% if 'noticias' in request.path %}active{% endif %}">
       <i class="bi bi-newspaper"></i>
-      <span>{% translate "Notícias" %}</span>
+      <span>{% translate "Eventos" %}</span>
       {% if draft_news > 0 %}
         <span class="nav-badge">{{ draft_news }}</span>
       {% endif %}
