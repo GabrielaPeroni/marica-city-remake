@@ -141,7 +141,7 @@
             </div>
             {% endif %}
           </a>
-          <div class="card-body">
+          <div class="card-body d-flex flex-column">
             <h5 class="card-title fw-bold text-uppercase">{{ place.name }}</h5>
 
             {% if place.average_rating %}
@@ -164,7 +164,7 @@
             </div>
             {% endif %}
 
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 mt-auto">
               <a href="{% url 'explore:place_detail' place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">{% translate "Ver detalhes" %} →</a>
               <button class="btn btn-outline-danger btn-sm favorite-btn"
                       data-place-id="{{ place.pk }}"
