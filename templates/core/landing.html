@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}MaricaCity - {% translate "Descubra o Turismo Local" %}{% endblock %}
 
@@ -154,12 +154,12 @@
             </div>
             {% endif %}
 
-            <p class="card-text text-muted small">{{ place.description|truncatewords:15 }}</p>
+            <p class="card-text text-muted small">{{ place|tr:"description"|truncatewords:15 }}</p>
 
             {% if place.categories.exists %}
             <div class="d-flex flex-wrap gap-2 mb-3">
               {% for category in place.categories.all|slice:":2" %}
-              <span class="badge bg-light text-dark small">{{ category.icon }} {{ category.name }}</span>
+              <span class="badge bg-light text-dark small">{{ category.icon }} {{ category|tr:"name" }}</span>
               {% endfor %}
             </div>
             {% endif %}
@@ -292,7 +292,7 @@
             <a href="{% url 'explore:category_detail' category.slug %}" class="text-decoration-none">
               <div class="card border-2 h-100 text-center p-4 card-hover">
                 <div class="display-3 mb-3">{{ category.icon|default:"📍" }}</div>
-                <h5 class="card-title fw-bold text-uppercase text-dark">{{ category.name }}</h5>
+                <h5 class="card-title fw-bold text-uppercase text-dark">{{ category|tr:"name" }}</h5>
                 <p class="card-text text-muted small">{% blocktranslate trimmed count counter=category.active_places_count %}{{ counter }} lugar{% plural %}{{ counter }} lugares{% endblocktranslate %}</p>
               </div>
             </a>

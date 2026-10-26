@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load i18n static event_dates %}
+{% load i18n static event_dates content_i18n %}
 
-{% block title %}{{ news_item.title }} - MaricaCity{% endblock %}
+{% block title %}{{ news_item|tr:"title" }} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
@@ -12,10 +12,10 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">{% translate "Agenda" %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}?category={{ news_item.category.name|urlencode }}">{{ news_item.category.label }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ news_item.title|truncatechars:50 }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ news_item|tr:"title"|truncatechars:50 }}</li>
       </ol>
     </nav>
-    <h1>{{ news_item.title }}</h1>
+    <h1>{{ news_item|tr:"title" }}</h1>
     <p class="page-header-subtitle">
       {% if news_item.is_external %}{{ news_item.source_name }}{% else %}{% blocktranslate with author=news_item.author.username %}Por {{ author }}{% endblocktranslate %}{% endif %}
       · {{ news_item.publish_date|date:"SHORT_DATE_FORMAT" }}
@@ -74,8 +74,11 @@
         </div>
         {% else %}
         <div class="content-body fs-6 lh-lg">
-          {{ news_item.content|linebreaks }}
+          {{ news_item|tr:"content"|linebreaks }}
         </div>
+        {% if news_item|machine_translated %}
+        <p class="machine-note"><i class="bi bi-translate me-1" aria-hidden="true"></i>{% translate "Traduzido automaticamente do português." %}</p>
+        {% endif %}
         {% if news_item.source_url %}
         <p class="small text-muted mt-3">
           {% translate "Fonte" %}: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span></a>

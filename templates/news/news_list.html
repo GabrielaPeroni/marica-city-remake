@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}{% translate "Agenda de eventos" %} - MaricaCity{% endblock %}
 
@@ -97,7 +97,7 @@
         {% for item in press_items %}
         <li>
           <a href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer">
-            <span class="press-list-title">{{ item.title }}</span>
+            <span class="press-list-title">{{ item|tr:"title" }}</span>
             <span class="press-list-meta">
               {{ item.source_name }} · {{ item.publish_date|date:"SHORT_DATE_FORMAT" }}
               <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">({% translate "abre em nova aba" %})</span>

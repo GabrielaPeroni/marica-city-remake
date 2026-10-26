@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Content is translated too. Place descriptions, category names, event and
+  news texts, and reviews are machine-translated into English and Spanish by a
+  local LLM (Ollama, `qwen2.5:14b` by default) and stored in a `translations`
+  JSON field. Staff can edit it in the Django admin. Pages show the version for
+  the visitor's language, fall back to Portuguese when no translation exists,
+  and mark translated text as "Traduzido automaticamente". `manage.py
+translate_content` translates only new or changed items (it tracks a hash of
+  the source text). It skips quietly when Ollama is unreachable, and it is part
+  of `run_scheduler`. Settings: `OLLAMA_URL` and `OLLAMA_MODEL`.
 - The interface is available in Portuguese, English and Spanish. A language
   switcher sits in the bottom-right corner of every page and remembers the
   choice (`LocaleMiddleware` + `set_language`, with unchanged URLs). Templates,

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
-{% block title %}{{ category.name }} - MaricaCity{% endblock %}
+{% block title %}{{ category|tr:"name" }} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
@@ -15,13 +15,13 @@
     <nav aria-label="{% translate 'Trilha de navegação' %}">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category|tr:"name" }}</li>
       </ol>
     </nav>
     <div class="page-header-row">
       <div>
-        <h1>{% if category.icon %}<span class="me-2" aria-hidden="true">{{ category.icon }}</span>{% endif %}{{ category.name }}</h1>
-        <p class="page-header-subtitle">{% if category.description %}{{ category.description }}{% else %}{% blocktranslate trimmed count counter=places|length %}{{ counter }} lugar nesta categoria.{% plural %}{{ counter }} lugares nesta categoria.{% endblocktranslate %}{% endif %}</p>
+        <h1>{% if category.icon %}<span class="me-2" aria-hidden="true">{{ category.icon }}</span>{% endif %}{{ category|tr:"name" }}</h1>
+        <p class="page-header-subtitle">{% if category.description %}{{ category|tr:"description" }}{% else %}{% blocktranslate trimmed count counter=places|length %}{{ counter }} lugar nesta categoria.{% plural %}{{ counter }} lugares nesta categoria.{% endblocktranslate %}{% endif %}</p>
       </div>
       <form method="get" action="" class="page-header-search" role="search">
         <div class="input-group">
@@ -50,7 +50,7 @@
             {% for cat in all_categories %}
             <a href="{% url 'explore:category_detail' cat.slug %}"
                class="list-group-item list-group-item-action {% if cat.id == category.id %}active{% endif %} border-0 px-0 py-2" style="background: transparent;">
-              <span style="font-size: 0.875rem;">{{ cat.name }}</span>
+              <span style="font-size: 0.875rem;">{{ cat|tr:"name" }}</span>
             </a>
             {% endfor %}
           </div>
@@ -85,7 +85,7 @@
               {% if place.categories.exists %}
                 {% with place.categories.first as first_category %}
                 <p class="text-muted mb-1" style="font-size: 0.75rem; font-weight: 500;">
-                  {{ first_category.name }}
+                  {{ first_category|tr:"name" }}
                 </p>
                 {% endwith %}
               {% endif %}

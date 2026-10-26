@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}{% translate "Explorar lugares" %} - MaricaCity{% endblock %}
 
@@ -44,7 +44,7 @@
             {% if categories %}
               {% for category in categories %}
               <a href="{% url 'explore:category_detail' category.slug %}" class="list-group-item list-group-item-action border-0 px-0 py-2" style="background: transparent;">
-                <span style="font-size: 0.875rem;">{{ category.name }}</span>
+                <span style="font-size: 0.875rem;">{{ category|tr:"name" }}</span>
               </a>
               {% endfor %}
             {% endif %}
@@ -94,7 +94,7 @@
               {% if place.categories.exists %}
                 {% with place.categories.first as first_category %}
                 <p class="text-muted mb-1" style="font-size: 0.75rem; font-weight: 500;">
-                  {{ first_category.name }}
+                  {{ first_category|tr:"name" }}
                 </p>
                 {% endwith %}
               {% endif %}

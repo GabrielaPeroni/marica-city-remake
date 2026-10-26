@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %} - {{ place.name }}{% endblock %}
 
@@ -33,7 +33,7 @@
             <h3 class="h5 mb-1">{{ place.name }}</h3>
             <p class="text-muted small mb-0">
               {% for category in place.categories.all %}
-                <span class="badge bg-secondary me-1">{{ category.name }}</span>
+                <span class="badge bg-secondary me-1">{{ category|tr:"name" }}</span>
               {% endfor %}
             </p>
           </div>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static content_i18n %}
 
 {% block title %}{% translate "Meus favoritos" %} - MaricaCity{% endblock %}
 
@@ -37,12 +37,12 @@
         {% endif %}
         <div class="card-body">
           <h5 class="card-title fw-bold text-uppercase">{{ favorite.place.name }}</h5>
-          <p class="card-text text-muted">{{ favorite.place.description|truncatewords:25 }}</p>
+          <p class="card-text text-muted">{{ favorite.place|tr:"description"|truncatewords:25 }}</p>
           {% if favorite.place.categories.exists %}
           <div class="d-flex flex-wrap gap-2 mb-3">
             {% for cat in favorite.place.categories.all|slice:":3" %}
             <span class="badge rounded-pill bg-light text-dark">
-              {% if cat.icon %}{{ cat.icon }}{% endif %} {{ cat.name }}
+              {% if cat.icon %}{{ cat.icon }}{% endif %} {{ cat|tr:"name" }}
             </span>
             {% endfor %}
           </div>

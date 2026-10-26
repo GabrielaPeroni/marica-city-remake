@@ -1,10 +1,12 @@
 from django.contrib import admin
 
+from apps.core.admin_mixins import TranslationsAdminMixin
+
 from .models import Category, Favorite, Place, PlaceApproval, PlaceImage, PlaceReview
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(TranslationsAdminMixin, admin.ModelAdmin):
     list_display = (
         "name",
         "slug",
@@ -40,7 +42,7 @@ class PlaceImageInline(admin.TabularInline):
 
 
 @admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
+class PlaceAdmin(TranslationsAdminMixin, admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change:  # Se estiver criando novo objeto
             obj.created_by = request.user
@@ -160,7 +162,7 @@ class PlaceApprovalAdmin(admin.ModelAdmin):
 
 
 @admin.register(PlaceReview)
-class PlaceReviewAdmin(admin.ModelAdmin):
+class PlaceReviewAdmin(TranslationsAdminMixin, admin.ModelAdmin):
     """Administração de Avaliações de Lugares - acesso CRUD completo para administradores"""
 
     list_display = ("place", "user", "rating", "created_at", "get_comment_preview")

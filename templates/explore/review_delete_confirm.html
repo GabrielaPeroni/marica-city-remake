@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n content_i18n %}
 {% block title %}{% translate "Excluir avaliação" %} - {{ review.place.name }}{% endblock %}
 
 {% block content %}
@@ -78,7 +78,7 @@
               </span>
               <span class="text-muted small">{% blocktranslate with user=review.user.username %}por {{ user }}{% endblocktranslate %}</span>
             </div>
-            <p class="mb-0 small">{{ review.comment|truncatewords:30 }}</p>
+            <p class="mb-0 small">{{ review|tr:"comment"|truncatewords:30 }}</p>
           </div>
 
           <p class="text-danger small mb-4">

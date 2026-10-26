@@ -149,6 +149,10 @@ LOGOUT_REDIRECT_URL = "core:landing"
 GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY", default="")
 
+# Tradução automática de conteúdo (manage.py translate_content)
+OLLAMA_URL = config("OLLAMA_URL", default="http://localhost:11434")
+OLLAMA_MODEL = config("OLLAMA_MODEL", default="qwen2.5:14b")
+
 # Feed usado por `manage.py fetch_news`; vazio usa o Google News RSS.
 NEWS_FEED_URL = config("NEWS_FEED_URL", default="")
 

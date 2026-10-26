@@ -7,7 +7,7 @@ from django.db import close_old_connections
 
 logger = logging.getLogger(__name__)
 
-JOBS = ["crawl_events", "fetch_news"]
+JOBS = ["crawl_events", "fetch_news", "translate_content"]
 
 
 class Command(BaseCommand):

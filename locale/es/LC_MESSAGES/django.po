@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 22:11-0300\n"
+"POT-Creation-Date: 2026-10-25 22:23-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -119,7 +119,7 @@ msgid "Atenção!"
 msgstr "¡Atención!"
 
 #: templates/accounts/user_delete_confirm.html:42
-#: templates/core/admin/news_delete_confirm.html:42 templates/explore/place_detail.html:323
+#: templates/core/admin/news_delete_confirm.html:42 templates/explore/place_detail.html:326
 #: templates/explore/review_delete_confirm.html:86
 msgid "Esta ação não pode ser desfeita."
 msgstr "Esta acción no puede deshacerse."
@@ -150,8 +150,8 @@ msgstr "¿Estás seguro de que deseas continuar?"
 
 #: templates/accounts/user_delete_confirm.html:58
 #: templates/core/admin/news_delete_confirm.html:91 templates/core/admin/news_form.html:207
-#: templates/explore/place_detail.html:297 templates/explore/place_detail.html:298
-#: templates/explore/place_detail.html:329 templates/explore/place_form.html:167
+#: templates/explore/place_detail.html:300 templates/explore/place_detail.html:301
+#: templates/explore/place_detail.html:332 templates/explore/place_form.html:167
 #: templates/explore/place_form.html:223 templates/explore/review_delete_confirm.html:98
 #: templates/explore/review_form.html:88 templates/includes/remove_place_modal.html:45
 msgid "Cancelar"
@@ -256,8 +256,8 @@ msgstr "No se encontraron usuarios"
 msgid "Pular para o conteúdo"
 msgstr "Saltar al contenido"
 
-#: templates/base.html:31 templates/explore/place_detail.html:255
-#: templates/explore/place_detail.html:315 templates/explore/place_form.html:213
+#: templates/base.html:31 templates/explore/place_detail.html:258
+#: templates/explore/place_detail.html:318 templates/explore/place_form.html:213
 #: templates/includes/remove_place_modal.html:9
 msgid "Fechar"
 msgstr "Cerrar"
@@ -438,7 +438,7 @@ msgstr "Borrador"
 msgid "Arquivado"
 msgstr "Archivado"
 
-#: templates/core/admin/news_delete_confirm.html:75 templates/news/news_detail.html:90
+#: templates/core/admin/news_delete_confirm.html:75 templates/news/news_detail.html:93
 #, python-format
 msgid "%(counter)s visualização"
 msgid_plural "%(counter)s visualizações"
@@ -515,7 +515,7 @@ msgstr "Buscar por título..."
 msgid "Título"
 msgstr "Título"
 
-#: templates/core/admin/news_list.html:158 templates/explore/place_detail.html:181
+#: templates/core/admin/news_list.html:158 templates/explore/place_detail.html:184
 msgid "Autor"
 msgstr "Autor"
 
@@ -537,11 +537,11 @@ msgid "Visualizar"
 msgstr "Ver"
 
 #: templates/core/admin/news_list.html:205 templates/explore/admin/backlog.html:212
-#: templates/explore/place_detail.html:203 templates/explore/place_form.html:19
+#: templates/explore/place_detail.html:206 templates/explore/place_form.html:19
 msgid "Editar"
 msgstr "Editar"
 
-#: templates/core/admin/news_list.html:209 templates/explore/place_detail.html:208
+#: templates/core/admin/news_list.html:209 templates/explore/place_detail.html:211
 #: templates/explore/place_form.html:174
 msgid "Excluir"
 msgstr "Eliminar"
@@ -575,7 +575,7 @@ msgstr "Nuevos Usuarios"
 msgid "Solicitações"
 msgstr "Solicitudes"
 
-#: templates/core/admin_dashboard.html:103 templates/explore/place_detail.html:168
+#: templates/core/admin_dashboard.html:103 templates/explore/place_detail.html:171
 msgid "Avaliações"
 msgstr "Reseñas"
 
@@ -720,7 +720,7 @@ msgstr "En alta ahora"
 msgid "Destinos populares este mês"
 msgstr "Destinos populares este mes"
 
-#: templates/core/landing.html:149 templates/explore/place_detail.html:185
+#: templates/core/landing.html:149 templates/explore/place_detail.html:188
 #, python-format
 msgid "Nota %(rating)s de 5"
 msgstr "Nota %(rating)s de 5"
@@ -1108,82 +1108,86 @@ msgstr "Siguiente imagen"
 msgid "Ir para imagem %(number)s"
 msgstr "Ir a imagen %(number)s"
 
-#: templates/explore/place_detail.html:127
+#: templates/explore/place_detail.html:124 templates/news/news_detail.html:80
+msgid "Traduzido automaticamente do português."
+msgstr "Traducido automáticamente del portugués."
+
+#: templates/explore/place_detail.html:130
 msgid "Localização"
 msgstr "Localización"
 
-#: templates/explore/place_detail.html:135 templates/news/news_detail.html:48
+#: templates/explore/place_detail.html:138 templates/news/news_detail.html:48
 msgid "Como chegar"
 msgstr "Cómo llegar"
 
-#: templates/explore/place_detail.html:135
+#: templates/explore/place_detail.html:138
 msgid "abre o Google Maps em nova aba"
 msgstr "abre Google Maps en nueva pestaña"
 
-#: templates/explore/place_detail.html:154
+#: templates/explore/place_detail.html:157
 msgid "Sobre este lugar"
 msgstr "Sobre este lugar"
 
-#: templates/explore/place_detail.html:157
+#: templates/explore/place_detail.html:160
 #, python-format
 msgid "Criado por <strong>%(author)s</strong>"
 msgstr "Creado por <strong>%(author)s</strong>"
 
-#: templates/explore/place_detail.html:224
+#: templates/explore/place_detail.html:227
 msgid "Editar minha avaliação"
 msgstr "Editar mi reseña"
 
-#: templates/explore/place_detail.html:224 templates/explore/place_detail.html:254
+#: templates/explore/place_detail.html:227 templates/explore/place_detail.html:257
 #: templates/explore/review_form.html:4 templates/explore/review_form.html:22
 msgid "Escrever avaliação"
 msgstr "Escribir reseña"
 
-#: templates/explore/place_detail.html:231
+#: templates/explore/place_detail.html:234
 msgid "Ainda não há avaliações para este lugar."
 msgstr "Aún no hay reseñas para este lugar."
 
-#: templates/explore/place_detail.html:234
+#: templates/explore/place_detail.html:237
 msgid "Seja o primeiro a avaliar"
 msgstr "Sé el primero en reseñar"
 
-#: templates/explore/place_detail.html:238
+#: templates/explore/place_detail.html:241
 msgid "Entre para avaliar"
 msgstr "Inicia sesión para reseñar"
 
-#: templates/explore/place_detail.html:263
+#: templates/explore/place_detail.html:266
 msgid "Avaliação"
 msgstr "Calificación"
 
-#: templates/explore/place_detail.html:286
+#: templates/explore/place_detail.html:289
 msgid "Clique nas estrelas para avaliar"
 msgstr "Haz clic en las estrellas para calificar"
 
-#: templates/explore/place_detail.html:290
+#: templates/explore/place_detail.html:293
 msgid "Comentário"
 msgstr "Comentario"
 
-#: templates/explore/place_detail.html:291
+#: templates/explore/place_detail.html:294
 msgid "Compartilhe sua experiência neste lugar..."
 msgstr "Comparta su experiencia en este lugar..."
 
-#: templates/explore/place_detail.html:292
+#: templates/explore/place_detail.html:295
 msgid "Máximo 1000 caracteres"
 msgstr "Máximo 1000 caracteres"
 
-#: templates/explore/place_detail.html:300 templates/explore/place_detail.html:301
+#: templates/explore/place_detail.html:303 templates/explore/place_detail.html:304
 #: templates/explore/review_form.html:84
 msgid "Enviar avaliação"
 msgstr "Enviar reseña"
 
-#: templates/explore/place_detail.html:313
+#: templates/explore/place_detail.html:316
 msgid "Confirmar exclusão"
 msgstr "Confirmar eliminación"
 
-#: templates/explore/place_detail.html:320
+#: templates/explore/place_detail.html:323
 msgid "Tem certeza que deseja excluir sua avaliação?"
 msgstr "¿Está seguro de que desea eliminar su reseña?"
 
-#: templates/explore/place_detail.html:332
+#: templates/explore/place_detail.html:335
 msgid "Sim, excluir avaliação"
 msgstr "Sí, eliminar reseña"
 
@@ -1429,7 +1433,7 @@ msgstr "finalizado"
 
 #: templates/includes/news_card.html:28 templates/news/news_detail.html:48
 #: templates/news/news_detail.html:52 templates/news/news_detail.html:72
-#: templates/news/news_detail.html:81 templates/news/news_list.html:103
+#: templates/news/news_detail.html:84 templates/news/news_list.html:103
 msgid "abre em nova aba"
 msgstr "abre en nueva pestaña"
 
@@ -1524,25 +1528,25 @@ msgstr ""
 msgid "Ler no site original"
 msgstr "Leer en el sitio original"
 
-#: templates/news/news_detail.html:81
+#: templates/news/news_detail.html:84
 msgid "Fonte"
 msgstr "Fuente"
 
-#: templates/news/news_detail.html:91
+#: templates/news/news_detail.html:94
 #, python-format
 msgid "Atualizado em %(date)s"
 msgstr "Actualizado el %(date)s"
 
-#: templates/news/news_detail.html:94
+#: templates/news/news_detail.html:97
 msgid "Voltar à agenda"
 msgstr "Volver a la agenda"
 
-#: templates/news/news_detail.html:104
+#: templates/news/news_detail.html:107
 #, python-format
 msgid "Mais em %(category)s"
 msgstr "Más en %(category)s"
 
-#: templates/news/news_detail.html:105
+#: templates/news/news_detail.html:108
 msgid "Ver todas"
 msgstr "Ver todas"
 

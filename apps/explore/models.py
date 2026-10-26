@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _l
 
 
 class Category(models.Model):
+    TRANSLATABLE_FIELDS = ("name", "description")
+
     name = models.CharField(
         max_length=100, unique=True, help_text=_l("Nome da categoria")
     )
@@ -33,6 +35,12 @@ class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    translations = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_l("Traduções automáticas (en, es); editáveis pela equipe"),
+    )
+
     class Meta:
         ordering = ["display_order", "name"]
         verbose_name = "Categoria"
@@ -52,6 +60,8 @@ class Category(models.Model):
 
 
 class Place(models.Model):
+    TRANSLATABLE_FIELDS = ("description",)
+
     name = models.CharField(max_length=200, help_text=_l("Nome do lugar"))
 
     description = models.TextField(help_text=_l("Descrição detalhada do lugar"))
@@ -101,6 +111,12 @@ class Place(models.Model):
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    translations = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_l("Traduções automáticas (en, es); editáveis pela equipe"),
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -262,6 +278,14 @@ class PlaceApproval(models.Model):
 
 class PlaceReview(models.Model):
     """Avaliações e classificações de usuários para lugares"""
+
+    TRANSLATABLE_FIELDS = ("comment",)
+
+    translations = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_l("Traduções automáticas (en, es); editáveis pela equipe"),
+    )
 
     class Meta:
         ordering = ["-created_at"]

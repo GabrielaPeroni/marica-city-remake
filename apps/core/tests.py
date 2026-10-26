@@ -480,3 +480,63 @@ class LanguageSwitcherTests(TestCase):
         response = self.client.get(reverse("javascript-catalog"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Remove from favorites")
+
+
+class ContentTranslationTests(TestCase):
+    """Conteúdo traduzido por LLM aparece no idioma escolhido, com fallback"""
+
+    def setUp(self):
+        from apps.core.content_translation import translate_object
+
+        self.translate_object = translate_object
+        self.category = Category.objects.create(
+            name="Praias", slug="praias", description="As melhores praias"
+        )
+
+    def _fake(self, prompt):
+        lang = "es" if "Spanish" in prompt else "en"
+        return {
+            "en": {"name": "Beaches", "description": "The best beaches"},
+            "es": {"name": "Playas", "description": "Las mejores playas"},
+        }[lang]
+
+    def test_translations_are_stored_per_language(self):
+        data = self.translate_object(self.category, ask=self._fake)
+        self.category.refresh_from_db()
+        self.assertEqual(self.category.translations["en"]["name"], "Beaches")
+        self.assertEqual(data["es"]["description"], "Las mejores playas")
+
+    def test_pages_show_translation_and_fall_back_to_portuguese(self):
+        self.translate_object(self.category, ask=self._fake)
+        response = self.client.get(reverse("core:landing"))
+        self.assertContains(response, "Praias")
+        self.client.post(reverse("set_language"), {"language": "en", "next": "/"})
+        response = self.client.get(reverse("core:landing"))
+        self.assertContains(response, "Beaches")
+        Category.objects.create(name="Lagoas", slug="lagoas")
+        self.assertContains(self.client.get(reverse("core:landing")), "Lagoas")
+
+    def test_editing_the_source_marks_translation_stale(self):
+        from apps.core.content_translation import needs_translation
+
+        self.translate_object(self.category, ask=self._fake)
+        self.category.refresh_from_db()
+        self.assertFalse(needs_translation(self.category))
+        self.category.description = "Outra descrição"
+        self.assertTrue(needs_translation(self.category))
+
+    def test_command_stops_quietly_without_ollama(self):
+        from io import StringIO
+        from unittest import mock
+        from urllib.error import URLError
+
+        from django.core.management import call_command
+
+        err = StringIO()
+        with mock.patch(
+            "apps.core.content_translation._ollama",
+            autospec=True,
+            side_effect=URLError("down"),
+        ):
+            call_command("translate_content", stdout=StringIO(), stderr=err)
+        self.assertIn("Ollama", err.getvalue())

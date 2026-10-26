@@ -678,3 +678,9 @@ html {
   outline: 3px solid var(--brand-red);
   outline-offset: 2px;
 }
+
+/* Shown under machine-translated place and event text */
+.machine-note {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}

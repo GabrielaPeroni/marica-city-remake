@@ -74,6 +74,8 @@ class NewsQuerySet(models.QuerySet):
 class News(models.Model):
     """Notícias e eventos para a cidade de Maricá"""
 
+    TRANSLATABLE_FIELDS = ("title", "excerpt", "content")
+
     DRAFT = "Em Progresso"
     PUBLISHED = "Publicado"
     ARCHIVED = "Arquivado"
@@ -177,6 +179,12 @@ class News(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = NewsQuerySet.as_manager()
+
+    translations = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_l("Traduções automáticas (en, es); editáveis pela equipe"),
+    )
 
     class Meta:
         ordering = ["-publish_date", "-created_at"]
