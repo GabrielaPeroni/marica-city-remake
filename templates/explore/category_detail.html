@@ -118,9 +118,9 @@
       <a href="{% url 'explore:category_detail' category.slug %}" class="btn btn-dark">{% translate "Limpar busca" %}</a>
       {% else %}
       <p class="lead text-muted mb-2">{% translate "Nenhum lugar disponível nesta categoria ainda." %}</p>
-      <p class="text-muted">{% translate "Seja o primeiro a adicionar um lugar!" %}</p>
+      <p class="text-muted">{% translate "Seja o primeiro a cadastrar um lugar!" %}</p>
       {% if user.is_authenticated and user.can_create_places %}
-      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Adicionar lugar" %}</a>
+      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Cadastrar lugar" %}</a>
       {% endif %}
       {% endif %}
     </div>

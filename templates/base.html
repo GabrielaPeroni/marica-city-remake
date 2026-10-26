@@ -41,11 +41,6 @@
 
     {% include 'includes/language_switcher.html' %}
 
-    {% if user.is_authenticated and user.can_moderate %}
-    <a href="{% url 'core:admin_dashboard' %}" class="floating-admin-btn" aria-label="{% translate 'Painel de Administração' %}" title="{% translate 'Painel de Administração' %}">
-      <i class="bi bi-gear-fill"></i>
-    </a>
-    {% endif %}
 
     <footer class="site-footer mt-auto">
       <div class="container">
@@ -68,7 +63,7 @@
             <ul>
               {% if user.is_authenticated %}
               <li><a href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
-              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">{% translate "Adicionar um lugar" %}</a></li>{% endif %}
+              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">{% translate "Cadastrar lugar" %}</a></li>{% endif %}
               {% else %}
               <li><a href="{% url 'accounts:register' %}">{% translate "Criar conta" %}</a></li>
               {% endif %}

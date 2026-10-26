@@ -41,6 +41,12 @@
                 </div>
               </div>
               <div class="dropdown-divider my-2"></div>
+              {% if user.can_moderate %}
+              <a class="dropdown-item user-menu-item" href="{% url 'core:admin_dashboard' %}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                <span>{% translate "Painel de administração" %}</span>
+              </a>
+              {% endif %}
               <a class="dropdown-item user-menu-item" href="{% url 'explore:favorites' %}">
                 <i class="bi bi-heart-fill text-danger me-2"></i>
                 <span>{% translate "Meus favoritos" %}</span>
@@ -48,7 +54,7 @@
               {% if user.can_create_places %}
               <a class="dropdown-item user-menu-item" href="{% url 'explore:place_create' %}">
                 <i class="bi bi-plus-circle-fill text-success me-2"></i>
-                <span>{% translate "Adicionar lugar" %}</span>
+                <span>{% translate "Cadastrar lugar" %}</span>
               </a>
               {% endif %}
               <div class="dropdown-divider my-2"></div>

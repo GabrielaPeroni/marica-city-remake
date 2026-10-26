@@ -58,12 +58,14 @@ class Command(BaseCommand):
 
         created = 0
         for entry in entries:
+            image = entry.get("image")
             place = Place.objects.filter(name=entry["name"]).first()
             if place is not None:
                 self.stdout.write(f"Already exists: {place.name}")
+                if options["with_images"] and image and not place.images.exists():
+                    self._attach_image(place, image)
                 continue
 
-            image = entry.get("image")
             lat, lng = entry.get("latitude"), entry.get("longitude")
             place = Place.objects.create(
                 name=entry["name"],

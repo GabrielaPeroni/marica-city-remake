@@ -227,7 +227,7 @@ def place_create_view(request):
     context = {
         "form": form,
         "formset": formset,
-        "title": _("Adicionar Novo Lugar"),
+        "title": _("Cadastrar lugar"),
         "submit_text": _("Enviar para Aprovação"),
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
     }

@@ -400,7 +400,7 @@ class PlaceCreateViewTests(TestCase):
         response = self.client.get(reverse("explore:place_create"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "explore/place_form.html")
-        self.assertContains(response, "Adicionar Novo Lugar")
+        self.assertContains(response, "Cadastrar lugar")
 
     def test_admin_user_can_access_place_create_form(self):
         """Test admin users can access place creation form"""

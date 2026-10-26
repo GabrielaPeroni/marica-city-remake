@@ -46,6 +46,12 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Staff reach the admin dashboard from the account menu ("Painel de
+  administração", above "Meus favoritos") instead of a floating gear button.
+- "Adicionar lugar" is now "Cadastrar lugar" everywhere (EN "Submit a place",
+  ES "Registrar lugar").
+- `seed_demo_places --with-images` also attaches photos to demo places that
+  already exist but have none.
 - Related events on an event page use the event card, and news cards write
   event dates in the active language.
 - `LANGUAGE_CODE` is now `pt-br`; dates use each locale's formats.

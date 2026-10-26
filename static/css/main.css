@@ -380,68 +380,6 @@ img:hover {
   line-height: 1.6 !important;
 }
 
-/* Floating Admin Button */
-.floating-admin-btn {
-  position: fixed;
-  bottom: 76px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--dark-900) 0%, var(--dark-700) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
-  text-decoration: none;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all var(--transition-normal);
-  z-index: 1000;
-}
-
-.floating-admin-btn:hover {
-  opacity: 1;
-  transform: scale(1.05) translateY(-2px);
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.4),
-    0 4px 8px rgba(0, 0, 0, 0.3);
-  color: white;
-}
-
-.floating-admin-btn:active {
-  transform: scale(0.98);
-}
-
-.floating-admin-btn i {
-  animation: slowSpin 8s linear infinite;
-}
-
-.floating-admin-btn:hover i {
-  animation: slowSpin 2s linear infinite;
-}
-
-@keyframes slowSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .floating-admin-btn {
-    width: 48px;
-    height: 48px;
-    bottom: 16px;
-    right: 16px;
-    font-size: 20px;
-  }
-}
-
 /* User Dashboard Menu */
 .user-dashboard-menu {
   min-width: 280px;

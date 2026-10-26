@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 22:57-0300\n"
+"POT-Creation-Date: 2026-10-25 23:20-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -35,13 +35,13 @@ msgstr "Intente uno de estos caminos:"
 msgid "Página inicial"
 msgstr "Página de inicio"
 
-#: templates/404.html:20 templates/base.html:60 templates/core/about.html:152
+#: templates/404.html:20 templates/base.html:55 templates/core/about.html:152
 #: templates/explore/explore.html:4 templates/explore/explore.html:17
 #: templates/explore/favorites.html:82 templates/news/news_list.html:17
 msgid "Explorar lugares"
 msgstr "Explorar lugares"
 
-#: templates/404.html:21 templates/base.html:61 templates/news/news_list.html:4
+#: templates/404.html:21 templates/base.html:56 templates/news/news_list.html:4
 msgid "Agenda de eventos"
 msgstr "Agenda de eventos"
 
@@ -262,52 +262,52 @@ msgstr "Saltar al contenido"
 msgid "Fechar"
 msgstr "Cerrar"
 
-#: templates/base.html:45
-msgid "Painel de Administração"
-msgstr "Panel de Administración"
-
-#: templates/base.html:55
+#: templates/base.html:50
 msgid "Guia colaborativo dos melhores lugares e eventos de Maricá."
 msgstr "Guía colaborativa de los mejores lugares y eventos de Maricá."
 
-#: templates/base.html:57
+#: templates/base.html:52
 msgid "Rodapé: descobrir"
 msgstr "Pie de página: descubrir"
 
-#: templates/base.html:58
+#: templates/base.html:53
 msgid "Descobrir"
 msgstr "Descubrir"
 
-#: templates/base.html:62 templates/core/about.html:58
+#: templates/base.html:57 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Planifica tu visita"
 
-#: templates/base.html:63 templates/core/about.html:4
+#: templates/base.html:58 templates/core/about.html:4
 msgid "Sobre o projeto"
 msgstr "Acerca del proyecto"
 
-#: templates/base.html:66
+#: templates/base.html:61
 msgid "Rodapé: participar"
 msgstr "Pie de página: participar"
 
-#: templates/base.html:67
+#: templates/base.html:62
 msgid "Participar"
 msgstr "Participar"
 
-#: templates/base.html:70 templates/explore/favorites.html:4
-#: templates/explore/favorites.html:17 templates/includes/navbar.html:46
+#: templates/base.html:65 templates/explore/favorites.html:4
+#: templates/explore/favorites.html:17 templates/includes/navbar.html:52
 msgid "Meus favoritos"
 msgstr "Mis favoritos"
 
-#: templates/base.html:71 templates/explore/explore.html:128
-msgid "Adicionar um lugar"
-msgstr "Agregar un lugar"
+#: apps/explore/views.py:230 templates/base.html:66 templates/core/landing.html:96
+#: templates/core/landing.html:254 templates/explore/category_detail.html:123
+#: templates/explore/explore.html:59 templates/explore/explore.html:61
+#: templates/explore/explore.html:128 templates/includes/admin_navbar.html:47
+#: templates/includes/navbar.html:57
+msgid "Cadastrar lugar"
+msgstr "Registrar lugar"
 
-#: templates/base.html:73 templates/core/about.html:158
+#: templates/base.html:68 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Crear cuenta"
 
-#: templates/base.html:78
+#: templates/base.html:73
 msgid "Todos os direitos reservados."
 msgstr "Todos los derechos reservados."
 
@@ -826,10 +826,6 @@ msgstr ""
 "Contribuye con la comunidad y ayuda a otros a descubrir Maricá. Añade lugares "
 "especiales y cuénta tu historia."
 
-#: templates/core/landing.html:96 templates/includes/admin_navbar.html:47
-msgid "Adicionar Lugar"
-msgstr "Añadir Lugar"
-
 #: templates/core/landing.html:109
 msgid "Slide anterior"
 msgstr "Slide anterior"
@@ -896,10 +892,6 @@ msgstr "Saber más"
 #: templates/core/landing.html:251
 msgid "Nenhum lugar disponível ainda. Volte em breve!"
 msgstr "No hay lugares disponibles aún. ¡Vuelve pronto!"
-
-#: templates/core/landing.html:254
-msgid "Adicione um lugar"
-msgstr "Añadir un lugar"
 
 #: templates/core/landing.html:266
 msgid "Próximos eventos em Maricá"
@@ -1149,13 +1141,8 @@ msgid "Nenhum lugar disponível nesta categoria ainda."
 msgstr "No hay lugares disponibles en esta categoría aún."
 
 #: templates/explore/category_detail.html:121
-msgid "Seja o primeiro a adicionar um lugar!"
-msgstr "¡Sé el primero en agregar un lugar!"
-
-#: templates/explore/category_detail.html:123 templates/explore/explore.html:61
-#: templates/includes/navbar.html:51
-msgid "Adicionar lugar"
-msgstr "Agregar lugar"
+msgid "Seja o primeiro a cadastrar um lugar!"
+msgstr "¡Sé el primero en registrar un lugar!"
 
 #: templates/explore/explore.html:17
 #, python-format
@@ -1169,17 +1156,13 @@ msgid_plural "%(counter)s lugares para conhecer em Maricá."
 msgstr[0] "%(counter)s lugar para conocer en Maricá."
 msgstr[1] "%(counter)s lugares para conocer en Maricá."
 
-#: templates/explore/explore.html:59
-msgid "Adicionar novo lugar"
-msgstr "Agregar nuevo lugar"
-
 #: templates/explore/explore.html:83
 msgid "Aguardando aprovação"
 msgstr "A la espera de aprobación"
 
 #: templates/explore/explore.html:126
-msgid "Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!"
-msgstr "No hay lugares disponibles aún. Sé el primero en agregar uno!"
+msgid "Nenhum lugar disponível ainda. Seja o primeiro a cadastrar um!"
+msgstr "Aún no hay lugares disponibles. ¡Sé el primero en registrar uno!"
 
 #: templates/explore/favorites.html:18
 #, python-format
@@ -1443,7 +1426,7 @@ msgid "Sobre"
 msgstr "Acerca de"
 
 #: templates/explore/review_delete_confirm.html:25 templates/includes/admin_navbar.html:53
-#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:57
+#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:63
 msgid "Sair"
 msgstr "Salir"
 
@@ -1568,6 +1551,10 @@ msgstr "Abrir menú"
 #: templates/includes/navbar.html:14
 msgid "Início"
 msgstr "Inicio"
+
+#: templates/includes/navbar.html:47
+msgid "Painel de administração"
+msgstr "Panel de administración"
 
 #: templates/includes/remove_place_modal.html:7
 #: templates/includes/remove_place_modal.html:47
@@ -1860,10 +1847,6 @@ msgid ""
 msgstr ""
 "Lugar \"%(name)s\" creado con éxito! Será revisado por un administrador antes de "
 "aparecer en el sitio web."
-
-#: apps/explore/views.py:230
-msgid "Adicionar Novo Lugar"
-msgstr "Agregar Nuevo Lugar"
 
 #: apps/explore/views.py:231
 msgid "Enviar para Aprovação"

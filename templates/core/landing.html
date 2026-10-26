@@ -93,7 +93,7 @@
                   <h2 class="hero-heading">{% translate "Compartilhe Seus Lugares Favoritos" %}</h2>
                   <p class="hero-text">{% translate "Contribua com a comunidade e ajude outros a descobrirem Maricá. Adicione lugares especiais e conte sua história." %}</p>
                   <a href="{% url 'explore:place_create' %}" class="hero-cta-btn">
-                    {% translate "Adicionar Lugar" %} <i class="bi bi-arrow-right"></i>
+                    {% translate "Cadastrar lugar" %} <i class="bi bi-arrow-right"></i>
                   </a>
                 </div>
               </div>
@@ -251,7 +251,7 @@
       <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Volte em breve!" %}</p>
       {% if user.is_authenticated and user.can_create_places %}
       <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">
-        {% translate "Adicione um lugar" %}
+        {% translate "Cadastrar lugar" %}
       </a>
       {% endif %}
     </div>

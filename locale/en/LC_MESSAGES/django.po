@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 22:57-0300\n"
+"POT-Creation-Date: 2026-10-25 23:20-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -35,13 +35,13 @@ msgstr "Try one of these paths:"
 msgid "Página inicial"
 msgstr "Home"
 
-#: templates/404.html:20 templates/base.html:60 templates/core/about.html:152
+#: templates/404.html:20 templates/base.html:55 templates/core/about.html:152
 #: templates/explore/explore.html:4 templates/explore/explore.html:17
 #: templates/explore/favorites.html:82 templates/news/news_list.html:17
 msgid "Explorar lugares"
 msgstr "Explore places"
 
-#: templates/404.html:21 templates/base.html:61 templates/news/news_list.html:4
+#: templates/404.html:21 templates/base.html:56 templates/news/news_list.html:4
 msgid "Agenda de eventos"
 msgstr "Events agenda"
 
@@ -262,52 +262,52 @@ msgstr "Skip to content"
 msgid "Fechar"
 msgstr "Close"
 
-#: templates/base.html:45
-msgid "Painel de Administração"
-msgstr "Admin Panel"
-
-#: templates/base.html:55
+#: templates/base.html:50
 msgid "Guia colaborativo dos melhores lugares e eventos de Maricá."
 msgstr "Collaborative guide to the best places and events in Maricá."
 
-#: templates/base.html:57
+#: templates/base.html:52
 msgid "Rodapé: descobrir"
 msgstr "Footer: discover"
 
-#: templates/base.html:58
+#: templates/base.html:53
 msgid "Descobrir"
 msgstr "Discover"
 
-#: templates/base.html:62 templates/core/about.html:58
+#: templates/base.html:57 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Plan your visit"
 
-#: templates/base.html:63 templates/core/about.html:4
+#: templates/base.html:58 templates/core/about.html:4
 msgid "Sobre o projeto"
 msgstr "About the project"
 
-#: templates/base.html:66
+#: templates/base.html:61
 msgid "Rodapé: participar"
 msgstr "Footer: participate"
 
-#: templates/base.html:67
+#: templates/base.html:62
 msgid "Participar"
 msgstr "Participate"
 
-#: templates/base.html:70 templates/explore/favorites.html:4
-#: templates/explore/favorites.html:17 templates/includes/navbar.html:46
+#: templates/base.html:65 templates/explore/favorites.html:4
+#: templates/explore/favorites.html:17 templates/includes/navbar.html:52
 msgid "Meus favoritos"
 msgstr "My favorites"
 
-#: templates/base.html:71 templates/explore/explore.html:128
-msgid "Adicionar um lugar"
-msgstr "Add a place"
+#: apps/explore/views.py:230 templates/base.html:66 templates/core/landing.html:96
+#: templates/core/landing.html:254 templates/explore/category_detail.html:123
+#: templates/explore/explore.html:59 templates/explore/explore.html:61
+#: templates/explore/explore.html:128 templates/includes/admin_navbar.html:47
+#: templates/includes/navbar.html:57
+msgid "Cadastrar lugar"
+msgstr "Submit a place"
 
-#: templates/base.html:73 templates/core/about.html:158
+#: templates/base.html:68 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Create account"
 
-#: templates/base.html:78
+#: templates/base.html:73
 msgid "Todos os direitos reservados."
 msgstr "All rights reserved."
 
@@ -820,10 +820,6 @@ msgstr ""
 "Contribute to the community and help others discover Maricá. Add special places and "
 "share your story."
 
-#: templates/core/landing.html:96 templates/includes/admin_navbar.html:47
-msgid "Adicionar Lugar"
-msgstr "Add Place"
-
 #: templates/core/landing.html:109
 msgid "Slide anterior"
 msgstr "Previous slide"
@@ -890,10 +886,6 @@ msgstr "Learn more"
 #: templates/core/landing.html:251
 msgid "Nenhum lugar disponível ainda. Volte em breve!"
 msgstr "No places available yet. Check back soon!"
-
-#: templates/core/landing.html:254
-msgid "Adicione um lugar"
-msgstr "Add a place"
 
 #: templates/core/landing.html:266
 msgid "Próximos eventos em Maricá"
@@ -1143,13 +1135,8 @@ msgid "Nenhum lugar disponível nesta categoria ainda."
 msgstr "No places available in this category yet."
 
 #: templates/explore/category_detail.html:121
-msgid "Seja o primeiro a adicionar um lugar!"
-msgstr "Be the first to add a place!"
-
-#: templates/explore/category_detail.html:123 templates/explore/explore.html:61
-#: templates/includes/navbar.html:51
-msgid "Adicionar lugar"
-msgstr "Add place"
+msgid "Seja o primeiro a cadastrar um lugar!"
+msgstr "Be the first to submit a place!"
 
 #: templates/explore/explore.html:17
 #, python-format
@@ -1163,17 +1150,13 @@ msgid_plural "%(counter)s lugares para conhecer em Maricá."
 msgstr[0] "%(counter)s place to discover in Maricá."
 msgstr[1] "%(counter)s places to discover in Maricá."
 
-#: templates/explore/explore.html:59
-msgid "Adicionar novo lugar"
-msgstr "Add new place"
-
 #: templates/explore/explore.html:83
 msgid "Aguardando aprovação"
 msgstr "Pending approval"
 
 #: templates/explore/explore.html:126
-msgid "Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!"
-msgstr "No places available yet. Be the first to add one!"
+msgid "Nenhum lugar disponível ainda. Seja o primeiro a cadastrar um!"
+msgstr "No places available yet. Be the first to submit one!"
 
 #: templates/explore/favorites.html:18
 #, python-format
@@ -1437,7 +1420,7 @@ msgid "Sobre"
 msgstr "About"
 
 #: templates/explore/review_delete_confirm.html:25 templates/includes/admin_navbar.html:53
-#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:57
+#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:63
 msgid "Sair"
 msgstr "Sign out"
 
@@ -1562,6 +1545,10 @@ msgstr "Open menu"
 #: templates/includes/navbar.html:14
 msgid "Início"
 msgstr "Home"
+
+#: templates/includes/navbar.html:47
+msgid "Painel de administração"
+msgstr "Admin dashboard"
 
 #: templates/includes/remove_place_modal.html:7
 #: templates/includes/remove_place_modal.html:47
@@ -1850,10 +1837,6 @@ msgid ""
 msgstr ""
 "Place \"%(name)s\" created successfully! It will be reviewed by an administrator "
 "before appearing on the site."
-
-#: apps/explore/views.py:230
-msgid "Adicionar Novo Lugar"
-msgstr "Add New Place"
 
 #: apps/explore/views.py:231
 msgid "Enviar para Aprovação"

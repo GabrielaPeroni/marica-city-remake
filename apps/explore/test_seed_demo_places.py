@@ -114,6 +114,22 @@ class SeedDemoPlacesTests(TestCase):
                     )
                 )
 
+    def test_with_images_backfills_existing_places_once(self):
+        seed()
+        with (
+            tempfile.TemporaryDirectory() as media,
+            override_settings(MEDIA_ROOT=media),
+        ):
+            with mock.patch(
+                "urllib.request.urlopen",
+                autospec=True,
+                return_value=FakeResponse(TINY_GIF),
+            ) as urlopen:
+                seed("--with-images")
+                seed("--with-images")
+            with_image = [e for e in self.entries if e["image"]]
+            self.assertEqual(urlopen.call_count, len(with_image))
+
     def test_non_image_response_is_skipped(self):
         with (
             tempfile.TemporaryDirectory() as media,

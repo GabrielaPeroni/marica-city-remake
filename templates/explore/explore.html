@@ -56,9 +56,9 @@
     <div class="col-md-9 col-lg-10">
       {% if user.is_authenticated and user.can_create_places %}
       <div class="d-flex justify-content-end mb-3">
-        <a href="{% url 'explore:place_create' %}" class="btn btn-dark d-flex align-items-center gap-2" title="{% translate 'Adicionar novo lugar' %}">
+        <a href="{% url 'explore:place_create' %}" class="btn btn-dark d-flex align-items-center gap-2" title="{% translate 'Cadastrar lugar' %}">
           <i class="bi bi-plus-circle" aria-hidden="true"></i>
-          <span>{% translate "Adicionar lugar" %}</span>
+          <span>{% translate "Cadastrar lugar" %}</span>
         </a>
       </div>
       {% endif %}
@@ -123,9 +123,9 @@
       <p class="lead text-muted mb-3">{% blocktranslate with query=request.GET.q %}Nenhum resultado para "{{ query }}".{% endblocktranslate %}</p>
       <a href="{% url 'explore:explore' %}" class="btn btn-dark">{% translate "Limpar busca" %}</a>
       {% else %}
-      <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Seja o primeiro a adicionar um!" %}</p>
+      <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Seja o primeiro a cadastrar um!" %}</p>
       {% if user.is_authenticated and user.can_create_places %}
-      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Adicionar um lugar" %}</a>
+      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Cadastrar lugar" %}</a>
       {% endif %}
       {% endif %}
     </div>
