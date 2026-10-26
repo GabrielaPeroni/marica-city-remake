@@ -140,6 +140,20 @@ means changing the infra in front of the app (DNS + proxy settings, or a
 (`deploy/mock-cloudflare/Caddyfile`) are not part of that path and are never
 used in prod.
 
+## Agenda automática (`crawl_events`) e agendador
+
+`uv run python manage.py crawl_events` consulta a API do portal da Prefeitura
+(categorias de Cultura, Turismo, Esportes e MARÉ) e extrai data, horário e local
+de cada evento anunciado. Eventos futuros entram na **Triagem de eventos**
+(`/painel-admin/eventos/triagem/`), onde a equipe confere os dados e publica na
+agenda ou descarta. Nada é publicado sem revisão. A busca é idempotente.
+
+`uv run python manage.py run_scheduler` mantém um processo que roda
+`crawl_events` e `fetch_news` a cada 6 horas (`--interval`, em horas; `--once`
+roda uma vez e sai). No `docker-compose.yml` ele é o serviço `scheduler`; fora
+do Docker, rode-o como um serviço do sistema ou troque por um cron que chame
+`run_scheduler --once`.
+
 ## Importador de notícias (`fetch_news`)
 
 `uv run python manage.py fetch_news` lê um feed RSS e grava as manchetes dos

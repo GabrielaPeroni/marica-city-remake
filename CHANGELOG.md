@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Event crawler with an admin triage queue. `manage.py crawl_events` reads the
+  Prefeitura's culture, tourism, sports and MARÉ posts and pulls out each
+  announced event's date range, start time, venue and a confidence score.
+  Each upcoming event becomes an `EventCandidate`. On "Painel admin → Triagem
+  de eventos", staff review and edit the extracted fields, then publish the
+  candidate or discard it. Publishing turns it into a regular Evento, with the
+  post's photo and a "Fonte" link. The queue flags candidates that match an
+  existing event or another candidate on the same day and venue.
+- `manage.py run_scheduler` runs `crawl_events` and `fetch_news` every 6 hours.
+  It runs as the `scheduler` service in `docker-compose.yml`.
+
 - `manage.py fetch_news`: imports recent Maricá headlines from an RSS feed (Google
   News by default, overridable with `NEWS_FEED_URL`) as external news items that
   link to the original article; `--purge` removes everything it imported.
@@ -25,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `fetch_news --purge` no longer deletes events that came from the crawler.
 - Events come first: the landing page shows "Próximos eventos em Maricá" instead
   of the latest headlines, and the news page is now "Agenda de Maricá", leading
   with upcoming and ongoing events (date-first event cards) before announcements,

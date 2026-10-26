@@ -31,6 +31,7 @@ def news_list_view(request):
         news_items = news_items.annotate(
             is_press=Case(
                 When(source_url="", then=Value(0)),
+                When(category__name=NewsCategory.EVENT, then=Value(0)),
                 default=Value(1),
                 output_field=IntegerField(),
             )

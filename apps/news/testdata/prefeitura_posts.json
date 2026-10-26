@@ -1,0 +1,47 @@
+[
+  {
+    "id": 101,
+    "date_gmt": "2026-10-20T13:00:00",
+    "link": "https://www.marica.rj.gov.br/noticia/festival-na-orla/",
+    "title": {
+      "rendered": "Maric&aacute; ter&aacute; festival de m&uacute;sica na orla"
+    },
+    "content": {
+      "rendered": "<p>A Prefeitura de Maric&aacute; promove, de 30 de outubro a 8 de novembro, o Festival de Teste, na Orla do Parque Nanci, das 16h &agrave;s 22h.</p><p>A entrada &eacute; gratuita.</p>"
+    },
+    "_embedded": {
+      "wp:featuredmedia": [
+        {
+          "source_url": "https://www.marica.rj.gov.br/wp-content/uploads/2026/10/festival.jpg"
+        }
+      ]
+    }
+  },
+  {
+    "id": 102,
+    "date_gmt": "2026-10-19T13:00:00",
+    "link": "https://www.marica.rj.gov.br/noticia/pedalada/",
+    "title": { "rendered": "Maric&aacute; ter&aacute; pedalada noturna no dia 27/10" },
+    "content": {
+      "rendered": "<p>A Prefeitura de Maric&aacute; realiza, no dia 27/10 (ter&ccedil;a-feira), uma pedalada. A concentra&ccedil;&atilde;o acontece a partir das 18h, na Pra&ccedil;a Orlando de Barros Pimentel, no Centro.</p>"
+    }
+  },
+  {
+    "id": 103,
+    "date_gmt": "2026-10-18T20:00:00",
+    "link": "https://www.marica.rj.gov.br/noticia/feira-encerrada/",
+    "title": {
+      "rendered": "Feira de artesanato re&uacute;ne p&uacute;blico no Centro"
+    },
+    "content": {
+      "rendered": "<p>A Prefeitura de Maric&aacute; realizou, neste domingo (18/10), a feira de artesanato na Pra&ccedil;a Central.</p>"
+    }
+  },
+  {
+    "id": 104,
+    "date_gmt": "2026-10-18T20:00:00",
+    "link": "http://insecure.example/post/",
+    "title": { "rendered": "Ignorado" },
+    "content": { "rendered": "<p>sem https</p>" }
+  }
+]

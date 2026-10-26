@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import News, NewsCategory
+from .models import EventCandidate, News, NewsCategory
 
 
 @admin.register(NewsCategory)
@@ -79,3 +79,11 @@ class NewsAdmin(admin.ModelAdmin):
         if not change:
             obj.author = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(EventCandidate)
+class EventCandidateAdmin(admin.ModelAdmin):
+    list_display = ["title", "event_date", "event_location", "score", "status"]
+    list_filter = ["status", "source"]
+    search_fields = ["title", "summary"]
+    readonly_fields = ["source", "source_id", "source_url", "news", "reviewed_by"]

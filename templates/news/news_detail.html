@@ -58,6 +58,11 @@
         <div class="content-body fs-6 lh-lg">
           {{ news_item.content|linebreaks }}
         </div>
+        {% if news_item.source_url %}
+        <p class="small text-muted mt-3">
+          Fonte: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name|default:"site original" }}<span class="visually-hidden"> (abre em nova aba)</span></a>
+        </p>
+        {% endif %}
         {% endif %}
 
         <hr class="my-4">

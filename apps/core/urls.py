@@ -24,4 +24,19 @@ urlpatterns = [
         views.admin_news_delete_view,
         name="admin_news_delete",
     ),
+    path(
+        "painel-admin/eventos/triagem/",
+        views.admin_event_triage_view,
+        name="admin_event_triage",
+    ),
+    path(
+        "painel-admin/eventos/triagem/<int:pk>/",
+        views.admin_event_triage_action_view,
+        name="admin_event_triage_action",
+    ),
+    path(
+        "painel-admin/eventos/buscar/",
+        views.admin_event_crawl_view,
+        name="admin_event_crawl",
+    ),
 ]

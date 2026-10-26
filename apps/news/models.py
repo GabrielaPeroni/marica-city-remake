@@ -222,7 +222,8 @@ class News(models.Model):
 
     @property
     def is_external(self):
-        return bool(self.source_url)
+        """Manchete importada que abre no site original; eventos têm página própria"""
+        return bool(self.source_url) and not self.is_event
 
     @property
     def tone(self):
@@ -258,3 +259,63 @@ class News(models.Model):
         """Incrementar o contador de visualizações"""
         self.view_count += 1
         self.save(update_fields=["view_count"])
+
+
+class EventCandidate(models.Model):
+    """Evento encontrado pelo crawler, aguardando triagem antes de virar um News"""
+
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    STATUS_CHOICES = [
+        (PENDING, "Aguardando triagem"),
+        (APPROVED, "Publicado"),
+        (REJECTED, "Descartado"),
+    ]
+
+    source = models.CharField(max_length=40)
+    source_id = models.CharField(max_length=64)
+    source_name = models.CharField(max_length=120)
+    source_url = models.URLField(max_length=1000)
+    source_published_at = models.DateTimeField()
+
+    title = models.CharField(max_length=200)
+    summary = models.TextField()
+    image_url = models.URLField(max_length=1000, blank=True)
+    event_date = models.DateTimeField(null=True, blank=True)
+    event_end_date = models.DateTimeField(null=True, blank=True)
+    event_location = models.CharField(max_length=200, blank=True)
+
+    score = models.PositiveSmallIntegerField(default=0)
+    signals = models.JSONField(default=list, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    possible_duplicate = models.ForeignKey(
+        "News", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    news = models.OneToOneField(
+        "News",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="candidate",
+    )
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["event_date", "-score"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source", "source_id"], name="unique_candidate_per_source"
+            )
+        ]
+
+    def __str__(self):
+        return self.title

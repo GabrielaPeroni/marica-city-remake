@@ -10,9 +10,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import User
-from apps.news import importer
+from apps.news import event_crawler, importer
 from apps.news.forms import NewsForm
-from apps.news.models import News, NewsCategory
+from apps.news.models import EventCandidate, News, NewsCategory
 
 
 class NewsCategoryModelTests(TestCase):
@@ -828,3 +828,148 @@ class AgendaTests(TestCase):
         self.assertContains(response, "Próximos eventos em Maricá")
         self.assertContains(response, "Show daqui a uma semana")
         self.assertNotContains(response, "Feira encerrada")
+
+
+class EventCrawlerTests(TestCase):
+    """Crawler reads a saved API response; no network access"""
+
+    POSTS = Path(__file__).parent / "testdata" / "prefeitura_posts.json"
+    NOW = datetime(2026, 10, 21, 12, 0, tzinfo=dt_timezone.utc)
+
+    def setUp(self):
+        self.posts = event_crawler.parse_prefeitura_posts(self.POSTS.read_bytes())
+        self.moderator = User.objects.create_user(
+            username="mod", password="pass123", is_staff=True
+        )
+
+    def _store(self):
+        return event_crawler.store_candidates(self.posts, now=self.NOW)
+
+    def test_parse_skips_non_https_and_strips_html(self):
+        self.assertEqual([p.source_id for p in self.posts], ["101", "102", "103"])
+        self.assertEqual(self.posts[0].title, "Maricá terá festival de música na orla")
+        self.assertNotIn("<p>", self.posts[0].text)
+
+    def test_extracts_range_time_and_location(self):
+        found = event_crawler.extract(self.posts[0])
+        local = timezone.localtime(found.start)
+        self.assertEqual((local.day, local.month, local.hour), (30, 10, 16))
+        self.assertEqual(timezone.localtime(found.end).date().isoformat(), "2026-11-08")
+        self.assertEqual(found.location, "Orla do Parque Nanci")
+
+    def test_extracts_numeric_date_and_neighbourhood(self):
+        found = event_crawler.extract(self.posts[1])
+        local = timezone.localtime(found.start)
+        self.assertEqual((local.day, local.month, local.hour), (27, 10, 18))
+        self.assertEqual(found.location, "Praça Orlando de Barros Pimentel, Centro")
+
+    def test_only_upcoming_announcements_become_candidates(self):
+        self.assertEqual(self._store(), 2)
+        self.assertEqual(
+            set(EventCandidate.objects.values_list("source_id", flat=True)),
+            {"101", "102"},
+        )
+
+    def test_store_is_idempotent(self):
+        self._store()
+        self.assertEqual(self._store(), 0)
+
+    def test_flags_possible_duplicate_of_published_event(self):
+        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        existing = News.objects.create(
+            title="Maricá terá festival de música na Orla",
+            content="c",
+            category=category,
+            author=self.moderator,
+            status=News.PUBLISHED,
+            event_date=datetime(2026, 10, 30, 19, 0, tzinfo=dt_timezone.utc),
+            event_location="Orla",
+        )
+        self._store()
+        candidate = EventCandidate.objects.get(source_id="101")
+        self.assertEqual(candidate.possible_duplicate, existing)
+
+    def test_approve_publishes_event_with_image_and_source(self):
+        self._store()
+        candidate = EventCandidate.objects.get(source_id="101")
+        news = event_crawler.approve(
+            candidate, self.moderator, image_fetcher=lambda url: b"fake-image"
+        )
+        self.assertTrue(news.is_event)
+        self.assertEqual(news.status, News.PUBLISHED)
+        self.assertEqual(news.event_location, "Orla do Parque Nanci")
+        self.assertFalse(news.is_external)
+        self.assertTrue(news.featured_image.name.endswith(".jpg"))
+        candidate.refresh_from_db()
+        self.assertEqual(candidate.status, EventCandidate.APPROVED)
+        self.assertEqual(candidate.news, news)
+        news.featured_image.delete(save=False)
+
+    def test_purge_keeps_crawled_events(self):
+        self._store()
+        event_crawler.approve(
+            EventCandidate.objects.get(source_id="102"),
+            self.moderator,
+            image_fetcher=lambda url: None,
+        )
+        importer.purge_imported()
+        self.assertTrue(News.objects.filter(source_url__contains="pedalada").exists())
+
+
+class EventTriageViewTests(TestCase):
+    def setUp(self):
+        self.moderator = User.objects.create_user(
+            username="mod", password="pass123", is_staff=True
+        )
+        self.candidate = EventCandidate.objects.create(
+            source="prefeitura",
+            source_id="1",
+            source_name="Prefeitura de Maricá",
+            source_url="https://www.marica.rj.gov.br/noticia/x/",
+            source_published_at=timezone.now(),
+            title="Show na praça",
+            summary="Descrição do show.",
+            event_date=timezone.now() + timedelta(days=5),
+        )
+        self.url = reverse("core:admin_event_triage_action", args=[self.candidate.pk])
+
+    def _post(self, **extra):
+        data = {
+            "c1-title": "Show na praça",
+            "c1-summary": "Descrição do show.",
+            "c1-event_date": (timezone.now() + timedelta(days=5)).strftime(
+                "%Y-%m-%dT%H:%M"
+            ),
+            "c1-event_end_date": "",
+            "c1-event_location": "Praça Central",
+            "action": "approve",
+        }
+        data.update(extra)
+        return self.client.post(self.url, data)
+
+    def test_regular_user_cannot_triage(self):
+        User.objects.create_user(username="visitor", password="pass123")
+        self.client.login(username="visitor", password="pass123")
+        self._post()
+        self.candidate.refresh_from_db()
+        self.assertEqual(self.candidate.status, EventCandidate.PENDING)
+
+    def test_approve_requires_location(self):
+        self.client.login(username="mod", password="pass123")
+        response = self._post(**{"c1-event_location": ""})
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(News.objects.exists())
+
+    def test_approve_publishes_on_agenda(self):
+        self.client.login(username="mod", password="pass123")
+        self._post()
+        news = News.objects.get()
+        self.assertEqual(news.event_location, "Praça Central")
+        response = self.client.get(reverse("news:news_list"))
+        self.assertIn(news, response.context["agenda"])
+
+    def test_reject(self):
+        self.client.login(username="mod", password="pass123")
+        self._post(action="reject")
+        self.candidate.refresh_from_db()
+        self.assertEqual(self.candidate.status, EventCandidate.REJECTED)

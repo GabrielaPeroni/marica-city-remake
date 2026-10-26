@@ -21,12 +21,15 @@ def admin_stats(request):
     """
     if request.user.is_authenticated and request.user.can_moderate:
         from apps.explore.models import Place
-        from apps.news.models import News
+        from apps.news.models import EventCandidate, News
 
         return {
             "pending_places": Place.objects.filter(
                 is_approved=False, is_active=True
             ).count(),
             "draft_news": News.objects.filter(status=News.DRAFT).count(),
+            "pending_events": EventCandidate.objects.filter(
+                status=EventCandidate.PENDING
+            ).count(),
         }
-    return {"pending_places": 0, "draft_news": 0}
+    return {"pending_places": 0, "draft_news": 0, "pending_events": 0}

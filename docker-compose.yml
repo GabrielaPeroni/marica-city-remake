@@ -19,6 +19,24 @@ services:
       redis:
         condition: service_started
 
+  # Importadores em segundo plano (eventos da Prefeitura e manchetes) a cada 6h
+  scheduler:
+    build: .
+    command: python manage.py run_scheduler --interval 6
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: maricacity
+      DB_USER: maricacity
+      DB_PASSWORD: maricacity
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: postgres:15
     environment:
