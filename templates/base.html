@@ -1,4 +1,4 @@
-{% load i18n static %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+{% load i18n static content_i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
@@ -45,20 +45,32 @@
     <footer class="site-footer mt-auto">
       <div class="container">
         <div class="row g-4">
-          <div class="col-md-6">
+          <div class="col-lg-4">
             <a class="site-footer-brand" href="{% url 'core:landing' %}">MaricaCity</a>
-            <p class="mt-2 mb-0">{% translate "Guia colaborativo dos melhores lugares e eventos de Maricá." %}</p>
+            <p class="mt-2 mb-3">{% translate "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da cidade, em português, inglês e espanhol." %}</p>
+            <a class="site-footer-github" href="https://github.com/GabrielaPeroni/marica-city-remake" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-github me-1" aria-hidden="true"></i>{% translate "Código no GitHub" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
+            </a>
           </div>
-          <nav class="col-6 col-md-3" aria-label="{% translate 'Rodapé: descobrir' %}">
-            <h2>{% translate "Descobrir" %}</h2>
+          <nav class="col-6 col-md-4 col-lg-3" aria-label="{% translate 'Rodapé: explorar' %}">
+            <h2>{% translate "Explorar" %}</h2>
             <ul>
-              <li><a href="{% url 'explore:explore' %}">{% translate "Explorar lugares" %}</a></li>
+              {% for category in footer_categories %}
+              <li><a href="{% url 'explore:category_detail' category.slug %}">{{ category|tr:"name" }}</a></li>
+              {% endfor %}
+              <li><a href="{% url 'explore:explore' %}">{% translate "Todos os lugares" %}</a></li>
+            </ul>
+          </nav>
+          <nav class="col-6 col-md-4 col-lg-3" aria-label="{% translate 'Rodapé: visite' %}">
+            <h2>{% translate "Visite" %}</h2>
+            <ul>
               <li><a href="{% url 'news:news_list' %}">{% translate "Agenda de eventos" %}</a></li>
               <li><a href="{% url 'core:about' %}#visite">{% translate "Planeje sua visita" %}</a></li>
+              <li><a href="{% url 'core:about' %}#emergencyHeading">{% translate "Telefones de emergência" %}</a></li>
               <li><a href="{% url 'core:about' %}">{% translate "Sobre o projeto" %}</a></li>
             </ul>
           </nav>
-          <nav class="col-6 col-md-3" aria-label="{% translate 'Rodapé: participar' %}">
+          <nav class="col-6 col-md-4 col-lg-2" aria-label="{% translate 'Rodapé: participar' %}">
             <h2>{% translate "Participar" %}</h2>
             <ul>
               {% if user.is_authenticated %}
@@ -66,11 +78,15 @@
               {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">{% translate "Cadastrar lugar" %}</a></li>{% endif %}
               {% else %}
               <li><a href="{% url 'accounts:register' %}">{% translate "Criar conta" %}</a></li>
+              <li><a href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
               {% endif %}
             </ul>
           </nav>
         </div>
-        <div class="site-footer-bottom">&copy; {% now "Y" %} MaricaCity. {% translate "Todos os direitos reservados." %}</div>
+        <div class="site-footer-bottom">
+          <span>&copy; {% now "Y" %} MaricaCity</span>
+          <span>{% translate "Código sob licença MIT · Fotos: Wikimedia Commons e colaboradores" %}</span>
+        </div>
       </div>
     </footer>
 

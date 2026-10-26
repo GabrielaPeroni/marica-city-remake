@@ -14,6 +14,17 @@ def google_oauth(request):
     }
 
 
+def footer_categories(request):
+    """Categorias ativas para os links do rodapé (avaliadas só se usadas)."""
+    from apps.explore.models import Category
+
+    return {
+        "footer_categories": Category.objects.filter(is_active=True).order_by(
+            "display_order"
+        )[:6]
+    }
+
+
 def admin_stats(request):
     """
     Adicionar estatísticas de administração ao contexto para badges da sidebar.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 23:20-0300\n"
+"POT-Creation-Date: 2026-10-25 23:30-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -35,13 +35,13 @@ msgstr "Intente uno de estos caminos:"
 msgid "Página inicial"
 msgstr "Página de inicio"
 
-#: templates/404.html:20 templates/base.html:55 templates/core/about.html:152
-#: templates/explore/explore.html:4 templates/explore/explore.html:17
-#: templates/explore/favorites.html:82 templates/news/news_list.html:17
+#: templates/404.html:20 templates/core/about.html:152 templates/explore/explore.html:4
+#: templates/explore/explore.html:17 templates/explore/favorites.html:82
+#: templates/news/news_list.html:17
 msgid "Explorar lugares"
 msgstr "Explorar lugares"
 
-#: templates/404.html:21 templates/base.html:56 templates/news/news_list.html:4
+#: templates/404.html:21 templates/base.html:67 templates/news/news_list.html:4
 msgid "Agenda de eventos"
 msgstr "Agenda de eventos"
 
@@ -263,39 +263,71 @@ msgid "Fechar"
 msgstr "Cerrar"
 
 #: templates/base.html:50
-msgid "Guia colaborativo dos melhores lugares e eventos de Maricá."
-msgstr "Guía colaborativa de los mejores lugares y eventos de Maricá."
+msgid ""
+"Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da "
+"cidade, em português, inglês e espanhol."
+msgstr ""
+"Guía turística de Maricá: playas, lagunas, senderos, cultura y la agenda de eventos "
+"de la ciudad, en portugués, inglés y español."
 
 #: templates/base.html:52
-msgid "Rodapé: descobrir"
-msgstr "Pie de página: descubrir"
+msgid "Código no GitHub"
+msgstr "Código en GitHub"
 
-#: templates/base.html:53
-msgid "Descobrir"
-msgstr "Descubrir"
+#: templates/base.html:52 templates/news/news_detail.html:46
+#: templates/news/news_detail.html:50 templates/news/news_detail.html:74
+msgid "abre em nova aba"
+msgstr "abre en nueva pestaña"
 
-#: templates/base.html:57 templates/core/about.html:58
+#: templates/base.html:55
+msgid "Rodapé: explorar"
+msgstr "Pie de página: explorar"
+
+#: templates/base.html:56 templates/explore/category_detail.html:17
+#: templates/explore/place_detail.html:25 templates/explore/place_form.html:17
+#: templates/explore/review_delete_confirm.html:15 templates/explore/review_form.html:17
+#: templates/includes/navbar.html:17
+msgid "Explorar"
+msgstr "Explorar"
+
+#: templates/base.html:61
+msgid "Todos os lugares"
+msgstr "Todos los lugares"
+
+#: templates/base.html:64
+msgid "Rodapé: visite"
+msgstr "Pie de página: visitar"
+
+#: templates/base.html:65
+msgid "Visite"
+msgstr "Visitar"
+
+#: templates/base.html:68 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Planifica tu visita"
 
-#: templates/base.html:58 templates/core/about.html:4
+#: templates/base.html:69 templates/core/about.html:138
+msgid "Telefones de emergência"
+msgstr "Teléfonos de emergencia"
+
+#: templates/base.html:70 templates/core/about.html:4
 msgid "Sobre o projeto"
 msgstr "Acerca del proyecto"
 
-#: templates/base.html:61
+#: templates/base.html:73
 msgid "Rodapé: participar"
 msgstr "Pie de página: participar"
 
-#: templates/base.html:62
+#: templates/base.html:74
 msgid "Participar"
 msgstr "Participar"
 
-#: templates/base.html:65 templates/explore/favorites.html:4
+#: templates/base.html:77 templates/base.html:81 templates/explore/favorites.html:4
 #: templates/explore/favorites.html:17 templates/includes/navbar.html:52
 msgid "Meus favoritos"
 msgstr "Mis favoritos"
 
-#: apps/explore/views.py:230 templates/base.html:66 templates/core/landing.html:96
+#: apps/explore/views.py:230 templates/base.html:78 templates/core/landing.html:96
 #: templates/core/landing.html:254 templates/explore/category_detail.html:123
 #: templates/explore/explore.html:59 templates/explore/explore.html:61
 #: templates/explore/explore.html:128 templates/includes/admin_navbar.html:47
@@ -303,13 +335,13 @@ msgstr "Mis favoritos"
 msgid "Cadastrar lugar"
 msgstr "Registrar lugar"
 
-#: templates/base.html:68 templates/core/about.html:158
+#: templates/base.html:80 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Crear cuenta"
 
-#: templates/base.html:73
-msgid "Todos os direitos reservados."
-msgstr "Todos los derechos reservados."
+#: templates/base.html:88
+msgid "Código sob licença MIT · Fotos: Wikimedia Commons e colaboradores"
+msgstr "Código bajo licencia MIT · Fotos: Wikimedia Commons y colaboradores"
 
 #: templates/core/about.html:11
 msgid "Sobre o MaricaCity"
@@ -452,10 +484,6 @@ msgstr ""
 #: templates/core/about.html:130
 msgid "Explore os lugares"
 msgstr "Explora los lugares"
-
-#: templates/core/about.html:138
-msgid "Telefones de emergência"
-msgstr "Teléfonos de emergencia"
 
 #: templates/core/about.html:140
 msgid "Polícia Militar"
@@ -1093,12 +1121,6 @@ msgstr "Limpiar Filtros"
 msgid "Trilha de navegação"
 msgstr "Ruta de navegación"
 
-#: templates/explore/category_detail.html:17 templates/explore/place_detail.html:25
-#: templates/explore/place_form.html:17 templates/explore/review_delete_confirm.html:15
-#: templates/explore/review_form.html:17 templates/includes/navbar.html:17
-msgid "Explorar"
-msgstr "Explorar"
-
 #: templates/explore/category_detail.html:24
 #, python-format
 msgid "%(counter)s lugar nesta categoria."
@@ -1624,11 +1646,6 @@ msgstr "Agenda"
 #: templates/news/news_detail.html:39
 msgid "Este evento já terminou."
 msgstr "Este evento ya terminó."
-
-#: templates/news/news_detail.html:46 templates/news/news_detail.html:50
-#: templates/news/news_detail.html:74
-msgid "abre em nova aba"
-msgstr "abre en nueva pestaña"
 
 #: templates/news/news_detail.html:50
 msgid "Adicionar ao calendário"

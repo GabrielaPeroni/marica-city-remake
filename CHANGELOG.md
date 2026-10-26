@@ -46,6 +46,10 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- New footer: a short description of the guide, a GitHub link, direct links to
+  each category, a "Visite" column (agenda, planning, emergency numbers) and
+  the real licensing (MIT code, Wikimedia Commons photos) instead of "Todos os
+  direitos reservados".
 - The landing carousel's second and third slides use real photos of Maricá
   (Praia de Ponta Negra with Lagoa de Guarapina, and Praia de Jaconé from the
   Ponta Negra coast; Wilfredor, Wikimedia Commons, CC0) instead of repeating the
