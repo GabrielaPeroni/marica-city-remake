@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 
@@ -7,7 +8,10 @@ app_name = "core"
 urlpatterns = [
     path("", views.landing_view, name="landing"),
     path("sobre/", views.about_view, name="about"),
-    path("planeje-sua-visita/", views.visit_view, name="visit"),
+    path(
+        "planeje-sua-visita/",
+        RedirectView.as_view(url="/sobre/#visite", permanent=True),
+    ),
     path("painel-admin/", views.admin_dashboard_view, name="admin_dashboard"),
     path("painel-admin/noticias/", views.admin_news_list_view, name="admin_news_list"),
     path(

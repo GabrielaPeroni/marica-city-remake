@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-25 22:34-0300\n"
+"POT-Creation-Date: 2026-10-25 22:49-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -35,7 +35,7 @@ msgstr "Intente uno de estos caminos:"
 msgid "Página inicial"
 msgstr "Página de inicio"
 
-#: templates/404.html:20 templates/base.html:60 templates/core/about.html:59
+#: templates/404.html:20 templates/base.html:60 templates/core/about.html:152
 #: templates/explore/explore.html:4 templates/explore/explore.html:17
 #: templates/explore/favorites.html:82 templates/news/news_list.html:17
 msgid "Explorar lugares"
@@ -215,7 +215,7 @@ msgstr "Nombre, correo electrónico, nombre de usuario..."
 msgid "Filtrar"
 msgstr "Filtrar"
 
-#: templates/accounts/user_management.html:74 templates/includes/navbar.html:42
+#: templates/accounts/user_management.html:74 templates/includes/navbar.html:39
 msgid "Usuário"
 msgstr "Usuario"
 
@@ -278,8 +278,7 @@ msgstr "Pie de página: descubrir"
 msgid "Descobrir"
 msgstr "Descubrir"
 
-#: templates/base.html:62 templates/core/visit.html:4 templates/core/visit.html:11
-#: templates/includes/navbar.html:23
+#: templates/base.html:62 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Planifica tu visita"
 
@@ -296,7 +295,7 @@ msgid "Participar"
 msgstr "Participar"
 
 #: templates/base.html:70 templates/explore/favorites.html:4
-#: templates/explore/favorites.html:17 templates/includes/navbar.html:49
+#: templates/explore/favorites.html:17 templates/includes/navbar.html:46
 msgid "Meus favoritos"
 msgstr "Mis favoritos"
 
@@ -304,7 +303,7 @@ msgstr "Mis favoritos"
 msgid "Adicionar um lugar"
 msgstr "Agregar un lugar"
 
-#: templates/base.html:73 templates/core/about.html:65
+#: templates/base.html:73 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Crear cuenta"
 
@@ -356,7 +355,133 @@ msgstr ""
 "Crea una cuenta gratuita para guardar favoritos, calificar y compartir tus lugares "
 "favoritos."
 
-#: templates/core/about.html:62
+#: templates/core/about.html:59
+msgid "O essencial para aproveitar Maricá: como chegar, como circular e o que levar em conta."
+msgstr ""
+"Lo esencial para disfrutar de Maricá: cómo llegar, cómo moverse y lo que tener en "
+"cuenta."
+
+#: templates/core/about.html:65
+msgctxt "visit page heading"
+msgid "Como chegar"
+msgstr "Cómo llegar"
+
+#: templates/core/about.html:66
+msgid ""
+"Maricá fica a cerca de 60 km do centro do Rio de Janeiro. De carro, o caminho mais "
+"comum é pela Ponte Rio–Niterói e pela RJ-106 (Rodovia Amaral Peixoto); conte de uma "
+"hora a uma hora e meia, dependendo do trânsito."
+msgstr ""
+"Maricá está a unos 60 km del centro de Río de Janeiro. En coche, el camino más común "
+"es por la Ponte Rio–Niterói y por la RJ-106 (Rodovia Amaral Peixoto); el viaje dura "
+"entre una y una hora y media, dependiendo del tráfico."
+
+#: templates/core/about.html:71
+msgid ""
+"Há linhas de ônibus intermunicipais saindo do Rio e de Niterói. Confira horários com "
+"as empresas antes de sair."
+msgstr ""
+"Existen líneas de autobús intermunicipales que salen de Río y de Niterói. Consulte "
+"los horarios con las empresas antes de salir."
+
+#: templates/core/about.html:83
+msgid "Como circular"
+msgstr "Cómo moverse"
+
+#: templates/core/about.html:84
+msgid ""
+"Os ônibus municipais vermelhos, os \"Vermelhinhos\", são gratuitos para todos, "
+"moradores e visitantes. Eles ligam o Centro às praias, lagoas e bairros."
+msgstr ""
+"Los autobuses municipales rojos, los \"Vermelhinhos\", son gratuitos para todos, "
+"residentes y visitantes. Conectan el Centro con las playas, lagunas y barrios."
+
+#: templates/core/about.html:88
+msgid ""
+"As distâncias entre as regiões são grandes, então para visitar vários lugares no "
+"mesmo dia vale planejar o roteiro com antecedência."
+msgstr ""
+"Las distancias entre las regiones son grandes, por lo que para visitar varios lugares"
+" en el mismo día es recomendable planificar el itinerario con antelación."
+
+#: templates/core/about.html:100
+msgid "Quando ir"
+msgstr "Cuándo ir"
+
+#: templates/core/about.html:101
+msgid ""
+"O clima é tropical: verões quentes e com chuvas de fim de tarde, invernos amenos e "
+"mais secos. O verão é a época das praias; o inverno é ótimo para trilhas."
+msgstr ""
+"El clima es tropical: veranos calurosos con lluvias al final de la tarde, inviernos "
+"suaves y más secos. El verano es la época de las playas; el invierno es ideal para "
+"senderismo."
+
+#: templates/core/about.html:106
+msgid ""
+"A cidade tem agenda cultural o ano todo, com festas tradicionais, shows e festivais "
+"gratuitos."
+msgstr ""
+"La ciudad tiene una agenda cultural todo el año, con fiestas tradicionales, "
+"conciertos y festivales gratuitos."
+
+#: templates/core/about.html:110
+msgid "Veja a agenda"
+msgstr "Ver la agenda"
+
+#: templates/core/about.html:120
+msgid "Praias, lagoas e trilhas"
+msgstr "Playas, lagunas y senderos"
+
+#: templates/core/about.html:121
+msgid ""
+"As praias de mar aberto, como Itaipuaçu, Ponta Negra e Jaconé, costumam ter ondas "
+"fortes e correntes: prefira nadar perto dos postos de guarda-vidas. Para águas "
+"calmas, caiaque e stand-up paddle, procure as lagoas."
+msgstr ""
+"Las playas de mar abierto, como Itaipuaçu, Ponta Negra y Jaconé, suelen tener olas "
+"fuertes y corrientes: prefiera nadar cerca de los puestos de guardavidas. Para aguas "
+"tranquilas, kayak y stand-up paddle, busque las lagunas."
+
+#: templates/core/about.html:127
+msgid "Em trilhas, saia cedo, leve água e protetor solar e avise alguém do seu trajeto."
+msgstr ""
+"En senderos, salga temprano, lleve agua y protector solar y avise a alguien de su "
+"ruta."
+
+#: templates/core/about.html:130
+msgid "Explore os lugares"
+msgstr "Explora los lugares"
+
+#: templates/core/about.html:138
+msgid "Telefones de emergência"
+msgstr "Teléfonos de emergencia"
+
+#: templates/core/about.html:140
+msgid "Polícia Militar"
+msgstr "Policía Militar"
+
+#: templates/core/about.html:141
+msgid "SAMU (ambulância)"
+msgstr "SAMU (ambulancia)"
+
+#: templates/core/about.html:142
+msgid "Corpo de Bombeiros e salvamento"
+msgstr "Cuerpo de Bomberos y salvamento"
+
+#: templates/core/about.html:143
+msgid "Defesa Civil"
+msgstr "Defensa Civil"
+
+#: templates/core/about.html:147
+msgid ""
+"Informações gerais para visitantes. Horários, linhas e condições podem mudar; "
+"confirme antes de sair."
+msgstr ""
+"Información general para visitantes. Horarios, líneas y condiciones pueden cambiar; "
+"confirme antes de salir."
+
+#: templates/core/about.html:155
 msgid "Ver agenda de eventos"
 msgstr "Ver agenda de eventos"
 
@@ -843,132 +968,6 @@ msgstr "Cargando mapa interactivo..."
 msgid "Clique nos marcadores para ver detalhes de cada lugar"
 msgstr "Haz clic en los marcadores para ver los detalles de cada lugar"
 
-#: templates/core/visit.html:12
-msgid "O essencial para aproveitar Maricá: como chegar, como circular e o que levar em conta."
-msgstr ""
-"Lo esencial para disfrutar de Maricá: cómo llegar, cómo moverse y lo que tener en "
-"cuenta."
-
-#: templates/core/visit.html:23
-msgctxt "visit page heading"
-msgid "Como chegar"
-msgstr "Cómo llegar"
-
-#: templates/core/visit.html:24
-msgid ""
-"Maricá fica a cerca de 60 km do centro do Rio de Janeiro. De carro, o caminho mais "
-"comum é pela Ponte Rio–Niterói e pela RJ-106 (Rodovia Amaral Peixoto); conte de uma "
-"hora a uma hora e meia, dependendo do trânsito."
-msgstr ""
-"Maricá está a unos 60 km del centro de Río de Janeiro. En coche, el camino más común "
-"es por la Ponte Rio–Niterói y por la RJ-106 (Rodovia Amaral Peixoto); el viaje dura "
-"entre una y una hora y media, dependiendo del tráfico."
-
-#: templates/core/visit.html:29
-msgid ""
-"Há linhas de ônibus intermunicipais saindo do Rio e de Niterói. Confira horários com "
-"as empresas antes de sair."
-msgstr ""
-"Existen líneas de autobús intermunicipales que salen de Río y de Niterói. Consulte "
-"los horarios con las empresas antes de salir."
-
-#: templates/core/visit.html:41
-msgid "Como circular"
-msgstr "Cómo moverse"
-
-#: templates/core/visit.html:42
-msgid ""
-"Os ônibus municipais vermelhos, os \"Vermelhinhos\", são gratuitos para todos, "
-"moradores e visitantes. Eles ligam o Centro às praias, lagoas e bairros."
-msgstr ""
-"Los autobuses municipales rojos, los \"Vermelhinhos\", son gratuitos para todos, "
-"residentes y visitantes. Conectan el Centro con las playas, lagunas y barrios."
-
-#: templates/core/visit.html:46
-msgid ""
-"As distâncias entre as regiões são grandes, então para visitar vários lugares no "
-"mesmo dia vale planejar o roteiro com antecedência."
-msgstr ""
-"Las distancias entre las regiones son grandes, por lo que para visitar varios lugares"
-" en el mismo día es recomendable planificar el itinerario con antelación."
-
-#: templates/core/visit.html:58
-msgid "Quando ir"
-msgstr "Cuándo ir"
-
-#: templates/core/visit.html:59
-msgid ""
-"O clima é tropical: verões quentes e com chuvas de fim de tarde, invernos amenos e "
-"mais secos. O verão é a época das praias; o inverno é ótimo para trilhas."
-msgstr ""
-"El clima es tropical: veranos calurosos con lluvias al final de la tarde, inviernos "
-"suaves y más secos. El verano es la época de las playas; el invierno es ideal para "
-"senderismo."
-
-#: templates/core/visit.html:64
-msgid ""
-"A cidade tem agenda cultural o ano todo, com festas tradicionais, shows e festivais "
-"gratuitos."
-msgstr ""
-"La ciudad tiene una agenda cultural todo el año, con fiestas tradicionales, "
-"conciertos y festivales gratuitos."
-
-#: templates/core/visit.html:68
-msgid "Veja a agenda"
-msgstr "Ver la agenda"
-
-#: templates/core/visit.html:78
-msgid "Praias, lagoas e trilhas"
-msgstr "Playas, lagunas y senderos"
-
-#: templates/core/visit.html:79
-msgid ""
-"As praias de mar aberto, como Itaipuaçu, Ponta Negra e Jaconé, costumam ter ondas "
-"fortes e correntes: prefira nadar perto dos postos de guarda-vidas. Para águas "
-"calmas, caiaque e stand-up paddle, procure as lagoas."
-msgstr ""
-"Las playas de mar abierto, como Itaipuaçu, Ponta Negra y Jaconé, suelen tener olas "
-"fuertes y corrientes: prefiera nadar cerca de los puestos de guardavidas. Para aguas "
-"tranquilas, kayak y stand-up paddle, busque las lagunas."
-
-#: templates/core/visit.html:85
-msgid "Em trilhas, saia cedo, leve água e protetor solar e avise alguém do seu trajeto."
-msgstr ""
-"En senderos, salga temprano, lleve agua y protector solar y avise a alguien de su "
-"ruta."
-
-#: templates/core/visit.html:88
-msgid "Explore os lugares"
-msgstr "Explora los lugares"
-
-#: templates/core/visit.html:96
-msgid "Telefones de emergência"
-msgstr "Teléfonos de emergencia"
-
-#: templates/core/visit.html:98
-msgid "Polícia Militar"
-msgstr "Policía Militar"
-
-#: templates/core/visit.html:99
-msgid "SAMU (ambulância)"
-msgstr "SAMU (ambulancia)"
-
-#: templates/core/visit.html:100
-msgid "Corpo de Bombeiros e salvamento"
-msgstr "Cuerpo de Bomberos y salvamento"
-
-#: templates/core/visit.html:101
-msgid "Defesa Civil"
-msgstr "Defensa Civil"
-
-#: templates/core/visit.html:105
-msgid ""
-"Informações gerais para visitantes. Horários, linhas e condições podem mudar; "
-"confirme antes de sair."
-msgstr ""
-"Información general para visitantes. Horarios, líneas y condiciones pueden cambiar; "
-"confirme antes de salir."
-
 #: templates/explore/admin/approval_queue.html:4
 msgid "Fila de aprovação"
 msgstr "Fila de aprobación"
@@ -1154,7 +1153,7 @@ msgid "Seja o primeiro a adicionar um lugar!"
 msgstr "¡Sé el primero en agregar un lugar!"
 
 #: templates/explore/category_detail.html:123 templates/explore/explore.html:61
-#: templates/includes/navbar.html:54
+#: templates/includes/navbar.html:51
 msgid "Adicionar lugar"
 msgstr "Agregar lugar"
 
@@ -1439,12 +1438,12 @@ msgstr "Eliminar Permanentemente"
 msgid "Excluir avaliação"
 msgstr "Eliminar reseña"
 
-#: templates/explore/review_delete_confirm.html:18 templates/includes/navbar.html:26
+#: templates/explore/review_delete_confirm.html:18 templates/includes/navbar.html:23
 msgid "Sobre"
 msgstr "Acerca de"
 
 #: templates/explore/review_delete_confirm.html:25 templates/includes/admin_navbar.html:53
-#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:60
+#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:57
 msgid "Sair"
 msgstr "Salir"
 
@@ -1818,9 +1817,9 @@ msgstr "Método no permitido"
 msgid "Você saiu com sucesso."
 msgstr "Has salido con éxito."
 
-#: apps/accounts/views.py:117 apps/core/views.py:96 apps/core/views.py:170
-#: apps/core/views.py:225 apps/core/views.py:254 apps/core/views.py:285
-#: apps/core/views.py:334 apps/core/views.py:343 apps/core/views.py:374
+#: apps/accounts/views.py:117 apps/core/views.py:92 apps/core/views.py:166
+#: apps/core/views.py:221 apps/core/views.py:250 apps/core/views.py:281
+#: apps/core/views.py:330 apps/core/views.py:339 apps/core/views.py:370
 #: apps/explore/views.py:331 apps/explore/views.py:424
 msgid "Você não tem permissão para acessar esta página."
 msgstr "No tienes permiso para acceder a esta página."
@@ -1869,58 +1868,58 @@ msgstr "No puedes eliminar tu propia cuenta."
 msgid "Usuário %(username)s excluído com sucesso."
 msgstr "Usuario %(username)s eliminado con éxito."
 
-#: apps/core/views.py:236
+#: apps/core/views.py:232
 #, python-format
 msgid "Notícia \"%(title)s\" criada com sucesso!"
 msgstr "¡Noticia \"%(title)s\" creada con éxito!"
 
-#: apps/core/views.py:244
+#: apps/core/views.py:240
 msgid "Criar Nova Notícia/Evento"
 msgstr "Crear Nueva Noticia/Evento"
 
-#: apps/core/views.py:245
+#: apps/core/views.py:241
 msgid "Criar"
 msgstr "Crear"
 
-#: apps/core/views.py:265
+#: apps/core/views.py:261
 #, python-format
 msgid "Notícia \"%(title)s\" atualizada com sucesso!"
 msgstr "¡Noticia \"%(title)s\" actualizada con éxito!"
 
-#: apps/core/views.py:275
+#: apps/core/views.py:271
 #, python-format
 msgid "Editar: %(title)s"
 msgstr "Editar: %(title)s"
 
-#: apps/core/views.py:276 apps/explore/views.py:291
+#: apps/core/views.py:272 apps/explore/views.py:291
 msgid "Salvar Alterações"
 msgstr "Guardar Cambios"
 
-#: apps/core/views.py:295
+#: apps/core/views.py:291
 #, python-format
 msgid "Notícia \"%(news_title)s\" excluída com sucesso."
 msgstr "Noticia \"%(news_title)s\" eliminada con éxito."
 
-#: apps/core/views.py:350
+#: apps/core/views.py:346
 #, python-format
 msgid "\"%(title)s\" foi descartado."
 msgstr "\"%(title)s\" fue descartado."
 
-#: apps/core/views.py:357
+#: apps/core/views.py:353
 #, python-format
 msgid "Revise os campos de \"%(title)s\"."
 msgstr "Revise los campos de \"%(title)s\"."
 
-#: apps/core/views.py:365
+#: apps/core/views.py:361
 #, python-format
 msgid "\"%(title)s\" publicado na agenda."
 msgstr "\"%(title)s\" publicado en la agenda."
 
-#: apps/core/views.py:380
+#: apps/core/views.py:376
 msgid "Não foi possível consultar a Prefeitura agora."
 msgstr "No fue posible consultar el sitio de la Prefeitura ahora."
 
-#: apps/core/views.py:384
+#: apps/core/views.py:380
 #, python-format
 msgid "%(created)s evento(s) novo(s) para triagem."
 msgstr "%(created)s evento(s) nuevo(s) para revisar."

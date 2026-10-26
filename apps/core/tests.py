@@ -567,9 +567,15 @@ class AdminNewsFilterTests(TestCase):
 
 
 class VisitPageTests(TestCase):
-    def test_visit_page_is_linked_and_lists_emergency_numbers(self):
+    def test_visit_info_lives_on_the_about_page(self):
         landing = self.client.get(reverse("core:landing"))
-        self.assertContains(landing, reverse("core:visit"))
-        response = self.client.get(reverse("core:visit"))
+        self.assertContains(landing, reverse("core:about") + "#visite")
+        self.assertRedirects(
+            self.client.get("/planeje-sua-visita/"),
+            "/sobre/#visite",
+            status_code=301,
+            fetch_redirect_response=False,
+        )
+        response = self.client.get(reverse("core:about"))
         self.assertContains(response, "Vermelhinhos")
         self.assertContains(response, "<strong>192</strong>", html=False)

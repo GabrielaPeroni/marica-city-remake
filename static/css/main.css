@@ -716,3 +716,16 @@ html {
   color: var(--brand-red);
   font-weight: 600;
 }
+
+/* "ou" label over the divider takes the colour of the box it sits in */
+.or-label {
+  background: var(--bs-body-bg);
+}
+
+.dropdown-menu .or-label {
+  background: var(--bs-dropdown-bg);
+}
+
+.card .or-label {
+  background: var(--bs-card-bg);
+}
