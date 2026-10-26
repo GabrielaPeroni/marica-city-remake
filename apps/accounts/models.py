@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _l
 
 
 class User(AbstractUser):
@@ -21,19 +22,22 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    bio = models.TextField(blank=True, null=True, help_text="Biografia do usuário")
+    bio = models.TextField(blank=True, null=True, help_text=_l("Biografia do usuário"))
 
     # Informações de contato
     contact_phone = models.CharField(
-        max_length=20, blank=True, null=True, help_text="Número de telefone de contato"
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text=_l("Número de telefone de contato"),
     )
     contact_email = models.EmailField(
         blank=True,
         null=True,
-        help_text="E-mail de contato público (diferente do e-mail de login)",
+        help_text=_l("E-mail de contato público (diferente do e-mail de login)"),
     )
     contact_website = models.URLField(
-        blank=True, null=True, help_text="Website ou URL de rede social"
+        blank=True, null=True, help_text=_l("Website ou URL de rede social")
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

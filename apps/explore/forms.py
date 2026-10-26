@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
+from django.utils.translation import gettext_lazy as _l
 
 from .models import Category, Place, PlaceImage, PlaceReview
 
@@ -19,20 +20,20 @@ class PlaceForm(forms.ModelForm):
             "name": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Nome do lugar",
+                    "placeholder": _l("Nome do lugar"),
                 }
             ),
             "description": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Descreva o lugar em detalhes...",
+                    "placeholder": _l("Descreva o lugar em detalhes..."),
                     "rows": 6,
                 }
             ),
             "address": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Comece a digitar o endereço...",
+                    "placeholder": _l("Comece a digitar o endereço..."),
                     "rows": 3,
                 }
             ),
@@ -74,7 +75,7 @@ class PlaceImageForm(forms.ModelForm):
             "caption": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Descrição da imagem (opcional)",
+                    "placeholder": _l("Descrição da imagem (opcional)"),
                 }
             ),
             "is_primary": forms.CheckboxInput(attrs={"class": "form-check-input"}),
@@ -120,7 +121,7 @@ class PlaceReviewForm(forms.ModelForm):
             "comment": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Compartilhe sua experiência neste lugar...",
+                    "placeholder": _l("Compartilhe sua experiência neste lugar..."),
                     "rows": 4,
                     "maxlength": "1000",
                 }

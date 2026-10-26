@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Gerenciar clique no botão adicionar imagem
   addImageBtn.addEventListener('click', function () {
     if (imageCount >= MAX_IMAGES) {
-      alert(`Você pode adicionar no máximo ${MAX_IMAGES} imagens.`);
+      alert(
+        interpolate(gettext('Você pode adicionar no máximo %s imagens.'), [MAX_IMAGES])
+      );
       return;
     }
 
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (targetFormIndex === -1) {
-      alert('Não há mais espaço para novas imagens.');
+      alert(gettext('Não há mais espaço para novas imagens.'));
       return;
     }
 
@@ -89,7 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
         </button>
         ${
           formIndex === 0
-            ? '<span class="badge bg-primary position-absolute top-0 start-0 m-2">Principal</span>'
+            ? `<span class="badge bg-primary position-absolute top-0 start-0 m-2">${gettext(
+                'Principal'
+              )}</span>`
             : ''
         }
       </div>

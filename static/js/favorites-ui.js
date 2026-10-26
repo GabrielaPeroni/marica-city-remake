@@ -16,15 +16,15 @@ function updateFavoriteButton(button, isFavorited) {
     icon.classList.remove('bi-heart');
     icon.classList.add('bi-heart-fill');
     button.classList.add('favorited');
-    button.setAttribute('title', 'Remover dos favoritos');
-    button.setAttribute('aria-label', 'Remover dos favoritos');
+    button.setAttribute('title', gettext('Remover dos favoritos'));
+    button.setAttribute('aria-label', gettext('Remover dos favoritos'));
   } else {
     // Estado não favoritado
     icon.classList.remove('bi-heart-fill');
     icon.classList.add('bi-heart');
     button.classList.remove('favorited');
-    button.setAttribute('title', 'Adicionar aos favoritos');
-    button.setAttribute('aria-label', 'Adicionar aos favoritos');
+    button.setAttribute('title', gettext('Adicionar aos favoritos'));
+    button.setAttribute('aria-label', gettext('Adicionar aos favoritos'));
   }
 
   button.dataset.favorited = isFavorited;
@@ -156,7 +156,7 @@ async function handleFavoriteClick(e) {
     }
   } catch (error) {
     console.error('Erro ao alternar favorito:', error);
-    alert('Erro ao atualizar favorito. Tente novamente.');
+    alert(gettext('Erro ao atualizar favorito. Tente novamente.'));
   } finally {
     button.disabled = false;
   }

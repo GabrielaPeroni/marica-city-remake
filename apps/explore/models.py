@@ -1,27 +1,32 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _l
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True, help_text="Nome da categoria")
-
-    slug = models.SlugField(
-        max_length=100, unique=True, help_text="Identificador amigável para URL"
+    name = models.CharField(
+        max_length=100, unique=True, help_text=_l("Nome da categoria")
     )
 
-    description = models.TextField(blank=True, help_text="Descrição da categoria")
+    slug = models.SlugField(
+        max_length=100, unique=True, help_text=_l("Identificador amigável para URL")
+    )
+
+    description = models.TextField(blank=True, help_text=_l("Descrição da categoria"))
 
     icon = models.CharField(
-        max_length=50, blank=True, help_text="Classe do ícone ou emoji para a categoria"
+        max_length=50,
+        blank=True,
+        help_text=_l("Classe do ícone ou emoji para a categoria"),
     )
 
     is_active = models.BooleanField(
-        default=True, help_text="Se a categoria está atualmente ativa"
+        default=True, help_text=_l("Se a categoria está atualmente ativa")
     )
 
     display_order = models.IntegerField(
         default=0,
-        help_text="Ordem em que a categoria aparece (números menores primeiro)",
+        help_text=_l("Ordem em que a categoria aparece (números menores primeiro)"),
     )
 
     # Timestamps
@@ -47,11 +52,11 @@ class Category(models.Model):
 
 
 class Place(models.Model):
-    name = models.CharField(max_length=200, help_text="Nome do lugar")
+    name = models.CharField(max_length=200, help_text=_l("Nome do lugar"))
 
-    description = models.TextField(help_text="Descrição detalhada do lugar")
+    description = models.TextField(help_text=_l("Descrição detalhada do lugar"))
 
-    address = models.TextField(help_text="Endereço completo do lugar")
+    address = models.TextField(help_text=_l("Endereço completo do lugar"))
 
     # Coordenadas de localização
     latitude = models.DecimalField(
@@ -59,14 +64,14 @@ class Place(models.Model):
         decimal_places=6,
         null=True,
         blank=True,
-        help_text="Coordenada de latitude",
+        help_text=_l("Coordenada de latitude"),
     )
     longitude = models.DecimalField(
         max_digits=9,
         decimal_places=6,
         null=True,
         blank=True,
-        help_text="Coordenada de longitude",
+        help_text=_l("Coordenada de longitude"),
     )
 
     # Relacionamentos
@@ -74,23 +79,23 @@ class Place(models.Model):
         Category,
         related_name="places",
         blank=True,
-        help_text="Categorias às quais este lugar pertence",
+        help_text=_l("Categorias às quais este lugar pertence"),
     )
 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="places",
-        help_text="Usuário que criou este lugar",
+        help_text=_l("Usuário que criou este lugar"),
     )
 
     # Campos de status
     is_approved = models.BooleanField(
-        default=False, help_text="Se o lugar foi aprovado pelo administrador"
+        default=False, help_text=_l("Se o lugar foi aprovado pelo administrador")
     )
 
     is_active = models.BooleanField(
-        default=True, help_text="Se o lugar está atualmente ativo"
+        default=True, help_text=_l("Se o lugar está atualmente ativo")
     )
 
     # Timestamps
@@ -148,28 +153,30 @@ class PlaceImage(models.Model):
         Place,
         on_delete=models.CASCADE,
         related_name="images",
-        help_text="Lugar ao qual esta imagem pertence",
+        help_text=_l("Lugar ao qual esta imagem pertence"),
     )
 
     image = models.ImageField(
-        upload_to="places/images/%Y/%m/", help_text="Imagem do lugar"
+        upload_to="places/images/%Y/%m/", help_text=_l("Imagem do lugar")
     )
 
     caption = models.CharField(
-        max_length=200, blank=True, help_text="Legenda ou descrição da imagem"
+        max_length=200, blank=True, help_text=_l("Legenda ou descrição da imagem")
     )
 
     is_primary = models.BooleanField(
-        default=False, help_text="Se esta é a imagem principal/primária do lugar"
+        default=False, help_text=_l("Se esta é a imagem principal/primária do lugar")
     )
 
     display_order = models.IntegerField(
         default=0,
-        help_text="Ordem em que a imagem aparece na galeria (números menores primeiro)",
+        help_text=_l(
+            "Ordem em que a imagem aparece na galeria (números menores primeiro)"
+        ),
     )
 
     uploaded_at = models.DateTimeField(
-        auto_now_add=True, help_text="Quando a imagem foi carregada"
+        auto_now_add=True, help_text=_l("Quando a imagem foi carregada")
     )
 
     class Meta:
@@ -227,7 +234,7 @@ class PlaceApproval(models.Model):
         Place,
         on_delete=models.CASCADE,
         related_name="approval_history",
-        help_text="Lugar sendo revisado",
+        help_text=_l("Lugar sendo revisado"),
     )
 
     reviewer = models.ForeignKey(
@@ -235,21 +242,21 @@ class PlaceApproval(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name="place_reviews",
-        help_text="Usuário administrador que revisou o lugar",
+        help_text=_l("Usuário administrador que revisou o lugar"),
     )
 
     action = models.CharField(
         max_length=20,
         choices=ActionType.choices,
-        help_text="Ação realizada pelo revisor",
+        help_text=_l("Ação realizada pelo revisor"),
     )
 
     comments = models.TextField(
-        blank=True, help_text="Comentários ou feedback do revisor"
+        blank=True, help_text=_l("Comentários ou feedback do revisor")
     )
 
     reviewed_at = models.DateTimeField(
-        auto_now_add=True, help_text="Quando a revisão foi realizada"
+        auto_now_add=True, help_text=_l("Quando a revisão foi realizada")
     )
 
 
@@ -277,14 +284,14 @@ class PlaceReview(models.Model):
         Place,
         on_delete=models.CASCADE,
         related_name="reviews",
-        help_text="Lugar sendo avaliado",
+        help_text=_l("Lugar sendo avaliado"),
     )
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="place_reviews_written",
-        help_text="Usuário que escreveu a avaliação",
+        help_text=_l("Usuário que escreveu a avaliação"),
     )
 
     rating = models.IntegerField(
@@ -295,11 +302,11 @@ class PlaceReview(models.Model):
             (4, "4 Estrelas"),
             (5, "5 Estrelas"),
         ],
-        help_text="Avaliação de 1 a 5 estrelas",
+        help_text=_l("Avaliação de 1 a 5 estrelas"),
     )
 
     comment = models.TextField(
-        help_text="Comentário/feedback da avaliação",
+        help_text=_l("Comentário/feedback da avaliação"),
         max_length=1000,
     )
 
@@ -316,14 +323,14 @@ class Favorite(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="favorites",
-        help_text="Usuário que favoritou o lugar",
+        help_text=_l("Usuário que favoritou o lugar"),
     )
 
     place = models.ForeignKey(
         Place,
         on_delete=models.CASCADE,
         related_name="favorited_by",
-        help_text="Lugar que foi favoritado",
+        help_text=_l("Lugar que foi favoritado"),
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

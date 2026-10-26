@@ -1,7 +1,12 @@
+from datetime import timedelta
+from datetime import timezone as dt_timezone
+from urllib.parse import urlencode
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _l
 
 
 class NewsCategory(models.Model):
@@ -12,15 +17,15 @@ class NewsCategory(models.Model):
     ANNOUNCEMENT = "Anuncios"
 
     CATEGORY_CHOICES = [
-        (NEWS, "Noticias"),
-        (EVENT, "Eventos"),
-        (ANNOUNCEMENT, "Anuncios"),
+        (NEWS, _l("Noticias")),
+        (EVENT, _l("Eventos")),
+        (ANNOUNCEMENT, _l("Anuncios")),
     ]
 
     name = models.CharField(max_length=50, choices=CATEGORY_CHOICES, unique=True)
     description = models.TextField(blank=True)
     icon = models.CharField(
-        max_length=50, blank=True, help_text="Classe de ícone ou emoji"
+        max_length=50, blank=True, help_text=_l("Classe de ícone ou emoji")
     )
 
     class Meta:
@@ -40,8 +45,8 @@ class NewsCategory(models.Model):
 
     @property
     def label(self):
-        return {"event": "Eventos", "announcement": "Anúncios"}.get(
-            self.kind, "Notícias"
+        return {"event": _l("Eventos"), "announcement": _l("Anúncios")}.get(
+            self.kind, _l("Notícias")
         )
 
     @property
@@ -74,21 +79,23 @@ class News(models.Model):
     ARCHIVED = "Arquivado"
 
     STATUS_CHOICES = [
-        (DRAFT, "Em Progresso"),
-        (PUBLISHED, "Publicado"),
-        (ARCHIVED, "Arquivado"),
+        (DRAFT, _l("Em Progresso")),
+        (PUBLISHED, _l("Publicado")),
+        (ARCHIVED, _l("Arquivado")),
     ]
 
     # Campos básicos
-    title = models.CharField(max_length=200, help_text="Titulo da noticia ou evento")
-    slug = models.SlugField(
-        max_length=250, unique=True, blank=True, help_text="URL-friendly identifier"
+    title = models.CharField(
+        max_length=200, help_text=_l("Titulo da noticia ou evento")
     )
-    content = models.TextField(help_text="Full content of the news or event")
+    slug = models.SlugField(
+        max_length=250, unique=True, blank=True, help_text=_l("URL-friendly identifier")
+    )
+    content = models.TextField(help_text=_l("Full content of the news or event"))
     excerpt = models.TextField(
         max_length=300,
         blank=True,
-        help_text="Short summary for listings (max 300 chars)",
+        help_text=_l("Short summary for listings (max 300 chars)"),
     )
 
     # Categorização
@@ -96,7 +103,7 @@ class News(models.Model):
         NewsCategory,
         on_delete=models.PROTECT,
         related_name="news_items",
-        help_text="Type of content (news, event, announcement)",
+        help_text=_l("Type of content (news, event, announcement)"),
     )
 
     # Imagens
@@ -104,27 +111,27 @@ class News(models.Model):
         upload_to="news/%Y/%m/",
         blank=True,
         null=True,
-        help_text="Main image for the news/event",
+        help_text=_l("Main image for the news/event"),
     )
     image_caption = models.CharField(
-        max_length=200, blank=True, help_text="Caption for featured image"
+        max_length=200, blank=True, help_text=_l("Caption for featured image")
     )
 
     # Campos específicos de eventos
     event_date = models.DateTimeField(
         null=True,
         blank=True,
-        help_text="Date and time of event (for events only)",
+        help_text=_l("Date and time of event (for events only)"),
     )
     event_location = models.CharField(
         max_length=200,
         blank=True,
-        help_text="Location of event (for events only)",
+        help_text=_l("Location of event (for events only)"),
     )
     event_end_date = models.DateTimeField(
         null=True,
         blank=True,
-        help_text="End date and time of event (optional)",
+        help_text=_l("End date and time of event (optional)"),
     )
 
     # Gerenciamento de publicação
@@ -132,11 +139,11 @@ class News(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default=DRAFT,
-        help_text="Publication status",
+        help_text=_l("Publication status"),
     )
     publish_date = models.DateTimeField(
         default=timezone.now,
-        help_text="Date when this should be published",
+        help_text=_l("Date when this should be published"),
     )
 
     # Autor e metadados
@@ -144,23 +151,25 @@ class News(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="news_items",
-        help_text="User who created this news/event",
+        help_text=_l("User who created this news/event"),
     )
     is_featured = models.BooleanField(
         default=False,
-        help_text="Show in featured/highlighted sections",
+        help_text=_l("Show in featured/highlighted sections"),
     )
     view_count = models.PositiveIntegerField(
         default=0,
-        help_text="Number of times this has been viewed",
+        help_text=_l("Number of times this has been viewed"),
     )
 
     # Origem externa (itens importados de outros veículos)
     source_name = models.CharField(
-        max_length=120, blank=True, help_text="Veículo que publicou a matéria original"
+        max_length=120,
+        blank=True,
+        help_text=_l("Veículo que publicou a matéria original"),
     )
     source_url = models.URLField(
-        max_length=1000, blank=True, help_text="Link para a matéria original"
+        max_length=1000, blank=True, help_text=_l("Link para a matéria original")
     )
 
     # Datas e horários
@@ -255,6 +264,34 @@ class News(models.Model):
             return False
         return (self.event_end_date or self.event_date) <= timezone.now()
 
+    @property
+    def maps_url(self):
+        if not self.event_location:
+            return ""
+        return "https://www.google.com/maps/search/?" + urlencode(
+            {"api": 1, "query": f"{self.event_location}, Maricá - RJ"}
+        )
+
+    @property
+    def calendar_url(self):
+        """Link "adicionar ao Google Agenda" com início, fim e local"""
+        if not self.event_date:
+            return ""
+        start = self.event_date.astimezone(dt_timezone.utc)
+        end = (self.event_end_date or self.event_date + timedelta(hours=2)).astimezone(
+            dt_timezone.utc
+        )
+        stamp = "%Y%m%dT%H%M%SZ"
+        return "https://calendar.google.com/calendar/render?" + urlencode(
+            {
+                "action": "TEMPLATE",
+                "text": self.title,
+                "dates": f"{start.strftime(stamp)}/{end.strftime(stamp)}",
+                "location": self.event_location,
+                "details": self.excerpt,
+            }
+        )
+
     def increment_view_count(self):
         """Incrementar o contador de visualizações"""
         self.view_count += 1
@@ -268,9 +305,9 @@ class EventCandidate(models.Model):
     APPROVED = "approved"
     REJECTED = "rejected"
     STATUS_CHOICES = [
-        (PENDING, "Aguardando triagem"),
-        (APPROVED, "Publicado"),
-        (REJECTED, "Descartado"),
+        (PENDING, _l("Aguardando triagem")),
+        (APPROVED, _l("Publicado")),
+        (REJECTED, _l("Descartado")),
     ]
 
     source = models.CharField(max_length=40)

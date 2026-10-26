@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.translation import gettext_lazy as _l
 
 from .models import User
 
@@ -10,7 +11,7 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.EmailInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Endereço de e-mail",
+                "placeholder": _l("Endereço de e-mail"),
             }
         ),
     )
@@ -22,7 +23,7 @@ class UserRegistrationForm(UserCreationForm):
             "username": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Nome de usuário",
+                    "placeholder": _l("Nome de usuário"),
                 }
             ),
         }
@@ -34,13 +35,13 @@ class UserRegistrationForm(UserCreationForm):
         self.fields["password1"].widget.attrs.update(
             {
                 "class": "form-control",
-                "placeholder": "Senha",
+                "placeholder": _l("Senha"),
             }
         )
         self.fields["password2"].widget.attrs.update(
             {
                 "class": "form-control",
-                "placeholder": "Confirmar senha",
+                "placeholder": _l("Confirmar senha"),
             }
         )
 
@@ -50,7 +51,7 @@ class UserLoginForm(AuthenticationForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Nome de usuário",
+                "placeholder": _l("Nome de usuário"),
             }
         )
     )
@@ -59,7 +60,7 @@ class UserLoginForm(AuthenticationForm):
         widget=forms.PasswordInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Senha",
+                "placeholder": _l("Senha"),
             }
         )
     )

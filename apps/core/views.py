@@ -8,6 +8,7 @@ from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST
 
 from apps.accounts.models import User
@@ -78,7 +79,7 @@ def calculate_percentage_change(current, previous):
 def admin_dashboard_view(request):
     """Dashboard de administração centralizado"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     # Períodos de tempo
@@ -152,7 +153,7 @@ def admin_dashboard_view(request):
 def admin_news_list_view(request):
     """Listar todas as notícias com filtragem e ordenação"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     # Obter parâmetros de filtro
@@ -202,7 +203,7 @@ def admin_news_list_view(request):
 def admin_news_create_view(request):
     """Criar uma nova notícia/evento"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     if request.method == "POST":
@@ -211,15 +212,18 @@ def admin_news_create_view(request):
             news = form.save(commit=False)
             news.author = request.user
             news.save()
-            messages.success(request, f'Notícia "{news.title}" criada com sucesso!')
+            messages.success(
+                request,
+                _('Notícia "%(title)s" criada com sucesso!') % {"title": news.title},
+            )
             return redirect("core:admin_news_list")
     else:
         form = NewsForm()
 
     context = {
         "form": form,
-        "title": "Criar Nova Notícia/Evento",
-        "submit_text": "Criar",
+        "title": _("Criar Nova Notícia/Evento"),
+        "submit_text": _("Criar"),
     }
     return render(request, "core/admin/news_form.html", context)
 
@@ -228,7 +232,7 @@ def admin_news_create_view(request):
 def admin_news_edit_view(request, pk):
     """Editar uma notícia/evento existente"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     news = get_object_or_404(News, pk=pk)
@@ -237,7 +241,11 @@ def admin_news_edit_view(request, pk):
         form = NewsForm(request.POST, request.FILES, instance=news)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Notícia "{news.title}" atualizada com sucesso!')
+            messages.success(
+                request,
+                _('Notícia "%(title)s" atualizada com sucesso!')
+                % {"title": news.title},
+            )
             return redirect("core:admin_news_list")
     else:
         form = NewsForm(instance=news)
@@ -245,8 +253,8 @@ def admin_news_edit_view(request, pk):
     context = {
         "form": form,
         "news": news,
-        "title": f"Editar: {news.title}",
-        "submit_text": "Salvar Alterações",
+        "title": _("Editar: %(title)s") % {"title": news.title},
+        "submit_text": _("Salvar Alterações"),
     }
     return render(request, "core/admin/news_form.html", context)
 
@@ -255,7 +263,7 @@ def admin_news_edit_view(request, pk):
 def admin_news_delete_view(request, pk):
     """Excluir uma notícia/evento"""
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     news = get_object_or_404(News, pk=pk)
@@ -263,7 +271,11 @@ def admin_news_delete_view(request, pk):
     if request.method == "POST":
         news_title = news.title
         news.delete()
-        messages.success(request, f'Notícia "{news_title}" excluída com sucesso.')
+        messages.success(
+            request,
+            _('Notícia "%(news_title)s" excluída com sucesso.')
+            % {"news_title": news_title},
+        )
         return redirect("core:admin_news_list")
 
     context = {"news": news}
@@ -300,7 +312,7 @@ def _triage_context(bound_form=None):
 @login_required
 def admin_event_triage_view(request):
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
     return render(request, "core/admin/event_triage.html", _triage_context())
 
@@ -309,24 +321,30 @@ def admin_event_triage_view(request):
 @require_POST
 def admin_event_triage_action_view(request, pk):
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
     candidate = get_object_or_404(EventCandidate, pk=pk, status=EventCandidate.PENDING)
     if request.POST.get("action") == "reject":
         event_crawler.reject(candidate, request.user)
-        messages.info(request, f'"{candidate.title}" foi descartado.')
+        messages.info(
+            request, _('"%(title)s" foi descartado.') % {"title": candidate.title}
+        )
         return redirect("core:admin_event_triage")
 
     form = EventCandidateForm(request.POST, instance=candidate, prefix=f"c{pk}")
     if not form.is_valid():
-        messages.error(request, f'Revise os campos de "{candidate.title}".')
+        messages.error(
+            request, _('Revise os campos de "%(title)s".') % {"title": candidate.title}
+        )
         return render(
             request, "core/admin/event_triage.html", _triage_context(form), status=400
         )
 
     news = event_crawler.approve(form.save(), request.user)
-    messages.success(request, f'"{news.title}" publicado na agenda.')
+    messages.success(
+        request, _('"%(title)s" publicado na agenda.') % {"title": news.title}
+    )
     return redirect("core:admin_event_triage")
 
 
@@ -334,13 +352,16 @@ def admin_event_triage_action_view(request, pk):
 @require_POST
 def admin_event_crawl_view(request):
     if not request.user.can_moderate:
-        messages.error(request, "Você não tem permissão para acessar esta página.")
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
     try:
         created = event_crawler.store_candidates(event_crawler.fetch_prefeitura_posts())
     except Exception:
         logger.exception("Busca manual de eventos falhou")
-        messages.error(request, "Não foi possível consultar a Prefeitura agora.")
+        messages.error(request, _("Não foi possível consultar a Prefeitura agora."))
     else:
-        messages.success(request, f"{created} evento(s) novo(s) para triagem.")
+        messages.success(
+            request,
+            _("%(created)s evento(s) novo(s) para triagem.") % {"created": created},
+        )
     return redirect("core:admin_event_triage")

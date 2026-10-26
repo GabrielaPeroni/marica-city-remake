@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -61,7 +61,7 @@
         <i class="bi bi-newspaper me-2"></i>{{ title }}
       </h1>
       <a href="{% url 'core:admin_news_list' %}" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-1"></i>Voltar
+        <i class="bi bi-arrow-left me-1"></i>{% translate "Voltar" %}
       </a>
     </div>
 
@@ -70,7 +70,7 @@
 
       <!-- Informações Básicas -->
       <div class="form-section">
-        <h5><i class="bi bi-info-circle me-2"></i>Informações Básicas</h5>
+        <h5><i class="bi bi-info-circle me-2"></i>{% translate "Informações Básicas" %}</h5>
 
         <div class="mb-3">
           {{ form.title.label_tag }}
@@ -109,11 +109,11 @@
 
       <!-- Imagem -->
       <div class="form-section">
-        <h5><i class="bi bi-image me-2"></i>Imagem Destacada</h5>
+        <h5><i class="bi bi-image me-2"></i>{% translate "Imagem Destacada" %}</h5>
 
         {% if news.featured_image %}
         <div class="mb-3">
-          <img src="{{ news.featured_image.url }}" alt="Imagem atual" class="image-preview">
+          <img src="{{ news.featured_image.url }}" alt="{% translate 'Imagem atual' %}" class="image-preview">
         </div>
         {% endif %}
 
@@ -136,7 +136,7 @@
 
       <!-- Campos de Evento (mostrados apenas se categoria Evento) -->
       <div class="form-section event-fields" id="event-fields">
-        <h5><i class="bi bi-calendar-event me-2"></i>Informações do Evento</h5>
+        <h5><i class="bi bi-calendar-event me-2"></i>{% translate "Informações do Evento" %}</h5>
 
         <div class="mb-3">
           {{ form.event_date.label_tag }}
@@ -167,7 +167,7 @@
 
       <!-- Configurações de Publicação -->
       <div class="form-section">
-        <h5><i class="bi bi-gear me-2"></i>Configurações de Publicação</h5>
+        <h5><i class="bi bi-gear me-2"></i>{% translate "Configurações de Publicação" %}</h5>
 
         <div class="mb-3">
           {{ form.status.label_tag }}
@@ -204,7 +204,7 @@
           <i class="bi bi-check-circle me-1"></i>{{ submit_text }}
         </button>
         <a href="{% url 'core:admin_news_list' %}" class="btn btn-outline-secondary">
-          <i class="bi bi-x-circle me-1"></i>Cancelar
+          <i class="bi bi-x-circle me-1"></i>{% translate "Cancelar" %}
         </a>
       </div>
     </form>

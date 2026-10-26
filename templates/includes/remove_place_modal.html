@@ -1,50 +1,50 @@
-<!-- Remove Place Modal -->
+{% load i18n %}<!-- Remove Place Modal -->
 <div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header border-0">
         <h5 class="modal-title fw-bold" id="removeModalLabel">
-          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Remover Lugar
+          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>{% translate "Remover lugar" %}
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Fechar' %}"></button>
       </div>
       <form method="post" id="removeForm">
         {% csrf_token %}
         <div class="modal-body">
-          <p class="mb-3">Você está prestes a remover <strong id="placeName"></strong>.</p>
+          <p class="mb-3">{% blocktranslate %}Você está prestes a remover <strong id="placeName"></strong>.{% endblocktranslate %}</p>
 
           <div class="mb-3">
             <label for="removeReason" class="form-label fw-bold">
-              Motivo da Remoção <span class="text-danger">*</span>
+              {% translate "Motivo da remoção" %} <span class="text-danger">*</span>
             </label>
             <select id="removeReason" name="reason" required class="form-select">
-              <option value="">Selecione um motivo</option>
-              <option value="Informações incompletas">Informações incompletas</option>
-              <option value="Conteúdo inadequado">Conteúdo inadequado</option>
-              <option value="Localização incorreta">Localização incorreta</option>
-              <option value="Duplicado">Duplicado</option>
-              <option value="Não é um lugar turístico">Não é um lugar turístico</option>
-              <option value="Outros">Outros</option>
+              <option value="">{% translate "Selecione um motivo" %}</option>
+              <option value="Informações incompletas">{% translate "Informações incompletas" %}</option>
+              <option value="Conteúdo inadequado">{% translate "Conteúdo inadequado" %}</option>
+              <option value="Localização incorreta">{% translate "Localização incorreta" %}</option>
+              <option value="Duplicado">{% translate "Duplicado" %}</option>
+              <option value="Não é um lugar turístico">{% translate "Não é um lugar turístico" %}</option>
+              <option value="Outros">{% translate "Outros" %}</option>
             </select>
           </div>
 
           <div class="mb-3" id="customReasonField" style="display: none;">
             <label for="removeComments" class="form-label fw-bold">
-              Especifique o Motivo <span class="text-danger">*</span>
+              {% translate "Especifique o motivo" %} <span class="text-danger">*</span>
             </label>
             <textarea id="removeComments" name="comments" rows="4" class="form-control"
-                      placeholder="Explique por que este lugar está sendo removido..."></textarea>
+                      placeholder="{% translate 'Explique por que este lugar está sendo removido...' %}"></textarea>
           </div>
 
           <div class="alert alert-danger border-0 mb-0">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>Atenção:</strong> Este lugar será marcado como inativo e não aparecerá no site.
+            {% blocktranslate trimmed %}<strong>Atenção:</strong> Este lugar será marcado como inativo e não aparecerá no site.{% endblocktranslate %}
           </div>
         </div>
         <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "Cancelar" %}</button>
           <button type="submit" class="btn btn-danger">
-            <i class="bi bi-trash me-2"></i>Deletar Permanentemente
+            <i class="bi bi-trash me-2"></i>{% translate "Remover lugar" %}
           </button>
         </div>
       </form>
@@ -78,7 +78,7 @@
     removeForm.addEventListener('submit', function(e) {
       if (removeReason.value === 'Outros' && !removeComments.value.trim()) {
         e.preventDefault();
-        alert('Por favor, especifique o motivo da remoção.');
+        alert('{% filter escapejs %}{% translate "Por favor, especifique o motivo da remoção." %}{% endfilter %}');
         removeComments.focus();
         return;
       }

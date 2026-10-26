@@ -19,8 +19,8 @@ function resetReviewForm() {
 
   if (form) form.reset();
   if (reviewIdField) reviewIdField.value = '';
-  if (modalLabel) modalLabel.textContent = 'Escrever Avaliação';
-  if (submitButtonText) submitButtonText.textContent = 'Enviar Avaliação';
+  if (modalLabel) modalLabel.textContent = gettext('Escrever avaliação');
+  if (submitButtonText) submitButtonText.textContent = gettext('Enviar avaliação');
 }
 
 /**
@@ -39,8 +39,8 @@ function editReview(reviewId, rating, comment) {
   const commentField = document.getElementById('reviewComment');
 
   if (reviewIdField) reviewIdField.value = reviewId;
-  if (modalLabel) modalLabel.textContent = 'Editar Avaliação';
-  if (submitButtonText) submitButtonText.textContent = 'Atualizar Avaliação';
+  if (modalLabel) modalLabel.textContent = gettext('Editar avaliação');
+  if (submitButtonText) submitButtonText.textContent = gettext('Atualizar avaliação');
   if (ratingInput) ratingInput.checked = true;
   if (commentField) commentField.value = comment;
 }
@@ -56,7 +56,7 @@ function submitReview() {
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
 
   if (!csrfToken) {
-    alert('Erro: CSRF token não encontrado.');
+    alert(gettext('Erro: CSRF token não encontrado.'));
     return;
   }
 
@@ -86,12 +86,12 @@ function submitReview() {
         if (modal) modal.hide();
         location.reload();
       } else {
-        alert('Erro ao enviar avaliação. Por favor, tente novamente.');
+        alert(gettext('Erro ao enviar avaliação. Por favor, tente novamente.'));
       }
     })
     .catch(error => {
       console.error('Erro ao enviar avaliação:', error);
-      alert('Erro ao enviar avaliação. Por favor, tente novamente.');
+      alert(gettext('Erro ao enviar avaliação. Por favor, tente novamente.'));
     });
 }
 
@@ -113,7 +113,7 @@ function confirmDeleteReview() {
   const deleteForm = document.getElementById('deleteReviewForm');
 
   if (!csrfToken || !deleteForm || !deleteReviewId) {
-    alert('Erro ao excluir avaliação.');
+    alert(gettext('Erro ao excluir avaliação.'));
     return;
   }
 
@@ -134,12 +134,12 @@ function confirmDeleteReview() {
         if (modal) modal.hide();
         location.reload();
       } else {
-        alert('Erro ao excluir avaliação. Por favor, tente novamente.');
+        alert(gettext('Erro ao excluir avaliação. Por favor, tente novamente.'));
       }
     })
     .catch(error => {
       console.error('Erro ao excluir avaliação:', error);
-      alert('Erro ao excluir avaliação. Por favor, tente novamente.');
+      alert(gettext('Erro ao excluir avaliação. Por favor, tente novamente.'));
     });
 }
 

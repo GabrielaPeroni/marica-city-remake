@@ -39,9 +39,11 @@ function showLoginSuccessToast(username) {
   toastEl.innerHTML = `
     <div class="d-flex">
       <div class="toast-body">
-        Bem-vindo de volta, ${username}!
+        ${interpolate(gettext('Bem-vindo de volta, %s!'), [username])}
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="${gettext(
+        'Fechar'
+      )}"></button>
     </div>
   `;
 

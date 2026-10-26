@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 
 <div class="admin-topbar">
   <!-- Botão de Menu Mobile -->
@@ -8,7 +8,7 @@
 
   <!-- Mensagem de Boas-vindas -->
   <div class="topbar-welcome">
-    <h1>Bem-vindo, {% if request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %}</h1>
+    <h1>{% firstof request.user.first_name request.user.username as admin_name %}{% blocktranslate %}Bem-vindo, {{ admin_name }}{% endblocktranslate %}</h1>
   </div>
 
   <!-- Ações da Barra Superior -->
@@ -16,7 +16,7 @@
     <!-- Caixa de Pesquisa -->
     <div class="search-box d-none d-md-flex">
       <i class="bi bi-search"></i>
-      <input type="text" placeholder="Pesquisar" id="topbarSearch" aria-label="Pesquisar">
+      <input type="text" placeholder="{% translate 'Pesquisar' %}" id="topbarSearch" aria-label="{% translate 'Pesquisar' %}">
     </div>
 
     <!-- Menu do Usuário -->
@@ -36,7 +36,7 @@
       </div>
       <div class="dropdown-divider"></div>
       <a href="{% url 'accounts:logout' %}" class="dropdown-item text-danger">
-        <i class="bi bi-box-arrow-left me-2"></i>Sair
+        <i class="bi bi-box-arrow-left me-2"></i>{% translate "Sair" %}
       </a>
     </div>
   </div>

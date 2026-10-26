@@ -443,3 +443,40 @@ class LandingLoginPromptTests(TestCase):
     def test_no_prompt_without_next(self):
         response = self.client.get(reverse("core:landing"))
         self.assertNotContains(response, "crie uma conta gratuita")
+
+
+class LanguageSwitcherTests(TestCase):
+    """Interface in pt-br by default, switchable to English and Spanish"""
+
+    def test_switcher_is_on_every_page(self):
+        for url in (reverse("core:landing"), reverse("news:news_list")):
+            response = self.client.get(url)
+            self.assertContains(response, 'class="lang-switcher"')
+            self.assertContains(response, 'value="es"')
+
+    def test_default_language_is_portuguese(self):
+        response = self.client.get(reverse("core:landing"))
+        self.assertContains(response, '<html lang="pt-br">')
+        self.assertContains(response, "Explorar")
+
+    def test_switching_to_english_translates_the_interface(self):
+        self.client.post(
+            reverse("set_language"), {"language": "en", "next": "/"}, follow=True
+        )
+        response = self.client.get(reverse("news:news_list"))
+        self.assertContains(response, '<html lang="en">')
+        self.assertContains(response, "Upcoming events")
+        self.assertNotContains(response, "Próximos eventos")
+
+    def test_switching_to_spanish(self):
+        self.client.post(reverse("set_language"), {"language": "es", "next": "/"})
+        response = self.client.get(reverse("news:news_list"))
+        self.assertContains(response, '<html lang="es">')
+        self.assertContains(response, "Próximos eventos")  # mesma grafia em espanhol
+        self.assertContains(response, "Explorar lugares")
+
+    def test_javascript_catalog_is_served(self):
+        self.client.post(reverse("set_language"), {"language": "en", "next": "/"})
+        response = self.client.get(reverse("javascript-catalog"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Remove from favorites")

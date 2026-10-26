@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Cadastro - MaricaCity{% endblock %}
+{% block title %}{% translate "Cadastro" %} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
 <header class="page-header">
   <div class="container">
-    <h1>Crie sua conta</h1>
-    <p class="page-header-subtitle">Salve favoritos, avalie e compartilhe os seus lugares de Maricá.</p>
+    <h1>{% translate "Crie sua conta" %}</h1>
+    <p class="page-header-subtitle">{% translate "Salve favoritos, avalie e compartilhe os seus lugares de Maricá." %}</p>
   </div>
 </header>
 
@@ -22,7 +22,7 @@
 
           <div class="mb-3">
             <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
-              Nome de usuário
+              {% translate "Nome de usuário" %}
             </label>
             {{ form.username }}
             {% if form.username.errors %}
@@ -32,7 +32,7 @@
 
           <div class="mb-3">
             <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
-              Endereço de e-mail
+              {% translate "Endereço de e-mail" %}
             </label>
             {{ form.email }}
             {% if form.email.errors %}
@@ -42,7 +42,7 @@
 
           <div class="mb-3">
             <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">
-              Senha
+              {% translate "Senha" %}
             </label>
             {{ form.password1 }}
             {% if form.password1.errors %}
@@ -52,7 +52,7 @@
 
           <div class="mb-3">
             <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">
-              Confirmar senha
+              {% translate "Confirmar senha" %}
             </label>
             {{ form.password2 }}
             {% if form.password2.errors %}
@@ -67,13 +67,13 @@
           {% endif %}
 
           <div class="d-grid mb-4">
-            <button type="submit" class="btn btn-dark btn-lg">Cadastrar</button>
+            <button type="submit" class="btn btn-dark btn-lg">{% translate "Cadastrar" %}</button>
           </div>
         </form>
 
         <div class="position-relative my-4">
           <hr class="text-muted">
-          <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">ou</span>
+          <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">{% translate "ou" %}</span>
         </div>
 
         <div class="text-center">

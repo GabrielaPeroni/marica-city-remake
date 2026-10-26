@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The interface is available in Portuguese, English and Spanish. A language
+  switcher sits in the bottom-right corner of every page and remembers the
+  choice (`LocaleMiddleware` + `set_language`, with unchanged URLs). Templates,
+  view messages, forms, model choices and the JavaScript strings (through
+  `/jsi18n/`) are all translatable. Catalogs live in `locale/`.
+- `scripts/i18n.py` handles `extract`, `translate` and `compile` without GNU
+  gettext. It reads templates with Django's own `templatize`, drafts missing
+  entries with a local LLM through Ollama (`qwen2.5:14b` by default), and
+  writes the `.mo` files. The drafts were reviewed by hand.
+- Event pages have "Como chegar" (Google Maps directions) and "Adicionar ao
+  calendário" (Google Calendar) actions. Event dates are written naturally in
+  each language ("26 a 27 de outubro", "October 26–27", "26 al 27 de octubre").
+
+### Changed
+
+- `LANGUAGE_CODE` is now `pt-br`; dates use each locale's formats.
+
 ### Security
 
 - Pillow 13.0.0, virtualenv 21.14, filelock 4.2, certifi 2026.10.23 and black

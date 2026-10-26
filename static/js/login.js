@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // Desabilitar formulário durante o envio
       submitButton.disabled = true;
       submitButton.innerHTML =
-        '<span class="spinner-border spinner-border-sm me-2"></span>Entrando...';
+        '<span class="spinner-border spinner-border-sm me-2"></span>' +
+        gettext('Entrando...');
 
       // Remover mensagens de erro existentes
       const existingError = form.querySelector('.alert-danger');
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (data.success) {
           // Sucesso - fechar dropdown e recarregar página para mostrar estado logado
-          submitButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>Sucesso!';
+          submitButton.innerHTML =
+            '<i class="bi bi-check-circle me-2"></i>' + gettext('Sucesso!');
           submitButton.classList.remove('btn-dark');
           submitButton.classList.add('btn-success');
 
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           // Armazenar flag para mostrar toast de sucesso após reload
           sessionStorage.setItem('loginSuccess', 'true');
-          sessionStorage.setItem('loginUsername', data.username || 'usuário');
+          sessionStorage.setItem('loginUsername', data.username || gettext('usuário'));
 
           // Recarregar página após breve atraso
           setTimeout(() => {
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }, 500);
         } else {
           // Erro - mostrar mensagem de erro no formulário
-          showErrorInForm(form, data.error || 'Erro ao fazer login.');
+          showErrorInForm(form, data.error || gettext('Erro ao fazer login.'));
 
           // Reabilitar formulário
           submitButton.disabled = false;
@@ -83,7 +85,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       } catch (error) {
         console.error('Erro de login:', error);
-        showErrorInForm(form, 'Erro ao conectar com o servidor. Tente novamente.');
+        showErrorInForm(
+          form,
+          gettext('Erro ao conectar com o servidor. Tente novamente.')
+        );
 
         // Reabilitar formulário
         submitButton.disabled = false;

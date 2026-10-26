@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Fila de Aprovação - MaricaCity{% endblock %}
+{% block title %}{% translate "Fila de aprovação" %} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -30,7 +30,7 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="admin-title">
-      <i class="bi bi-hourglass-split me-2"></i>Fila de Aprovação
+      <i class="bi bi-hourglass-split me-2"></i>{% translate "Fila de Aprovação" %}
     </h1>
   </div>
 
@@ -41,11 +41,11 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Lugar</th>
-              <th>Categorias</th>
-              <th>Criado por</th>
-              <th>Data</th>
-              <th>Ações</th>
+              <th>{% translate "Lugar" %}</th>
+              <th>{% translate "Categorias" %}</th>
+              <th>{% translate "Criado por" %}</th>
+              <th>{% translate "Data" %}</th>
+              <th>{% translate "Ações" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -77,18 +77,18 @@
                 {% endif %}
               </td>
               <td>{{ place.created_by.username }}</td>
-              <td>{{ place.created_at|date:"d/m/Y H:i" }}</td>
+              <td>{{ place.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
               <td onclick="event.stopPropagation();">
                 <div class="btn-group btn-group-sm">
                   <a href="{% url 'explore:approve_place' place.pk %}" class="btn btn-outline-success"
-                     title="Aprovar" onclick="event.preventDefault(); this.nextElementSibling.submit();">
+                     title="{% translate 'Aprovar' %}" onclick="event.preventDefault(); this.nextElementSibling.submit();">
                     <i class="bi bi-check-circle"></i>
                   </a>
                   <form method="post" action="{% url 'explore:approve_place' place.pk %}" style="display: none;">
                     {% csrf_token %}
                   </form>
                   <button type="button" class="btn btn-outline-danger"
-                     title="Rejeitar"
+                     title="{% translate 'Rejeitar' %}"
                      onclick="openRemoveModal({{ place.pk }}, '{{ place.name|escapejs }}')">
                     <i class="bi bi-x-circle"></i>
                   </button>
@@ -105,10 +105,10 @@
   <div class="card border-2 shadow-sm">
     <div class="card-body text-center py-5">
       <div class="display-1 mb-4">✅</div>
-      <h2 class="h4 fw-bold mb-2">Nenhum lugar pendente</h2>
-      <p class="text-muted mb-4">Não há lugares aguardando aprovação no momento.</p>
+      <h2 class="h4 fw-bold mb-2">{% translate "Nenhum lugar pendente" %}</h2>
+      <p class="text-muted mb-4">{% translate "Não há lugares aguardando aprovação no momento." %}</p>
       <a href="{% url 'explore:explore' %}" class="btn btn-dark text-uppercase">
-        <i class="bi bi-compass me-2"></i>Explorar Lugares
+        <i class="bi bi-compass me-2"></i>{% translate "Explorar Lugares" %}
       </a>
     </div>
   </div>

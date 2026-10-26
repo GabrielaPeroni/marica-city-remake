@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -27,10 +27,10 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="admin-title">
-        <i class="bi bi-newspaper me-2"></i>Gerenciar Notícias
+        <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar Notícias" %}
       </h1>
       <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i>Criar Notícia
+        <i class="bi bi-plus-circle me-1"></i>{% translate "Criar Notícia" %}
       </a>
     </div>
 
@@ -43,7 +43,7 @@
               <i class="bi bi-file-earmark-text"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Total</div>
+              <div class="stat-label-enhanced">{% translate "Total" %}</div>
               <div class="stat-value-enhanced">{{ total_count }}</div>
             </div>
           </div>
@@ -56,7 +56,7 @@
               <i class="bi bi-check-circle"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Publicadas</div>
+              <div class="stat-label-enhanced">{% translate "Publicadas" %}</div>
               <div class="stat-value-enhanced">{{ published_count }}</div>
             </div>
           </div>
@@ -69,7 +69,7 @@
               <i class="bi bi-pencil-square"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Rascunhos</div>
+              <div class="stat-label-enhanced">{% translate "Rascunhos" %}</div>
               <div class="stat-value-enhanced">{{ draft_count }}</div>
             </div>
           </div>
@@ -82,7 +82,7 @@
               <i class="bi bi-archive"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">Arquivadas</div>
+              <div class="stat-label-enhanced">{% translate "Arquivadas" %}</div>
               <div class="stat-value-enhanced">{{ archived_count }}</div>
             </div>
           </div>
@@ -96,16 +96,16 @@
         <div class="card-body p-0">
           <div class="list-group list-group-flush">
             <a href="{% url 'core:admin_news_list' %}" class="list-group-item list-group-item-action {% if status_filter == 'all' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-list-ul me-2"></i>Todas
+              <i class="bi bi-list-ul me-2"></i>{% translate "Todas" %}
             </a>
             <a href="{% url 'core:admin_news_list' %}?status=published" class="list-group-item list-group-item-action {% if status_filter == 'published' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-check-circle me-2"></i>Publicadas
+              <i class="bi bi-check-circle me-2"></i>{% translate "Publicadas" %}
             </a>
             <a href="{% url 'core:admin_news_list' %}?status=draft" class="list-group-item list-group-item-action {% if status_filter == 'draft' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-pencil-square me-2"></i>Rascunhos
+              <i class="bi bi-pencil-square me-2"></i>{% translate "Rascunhos" %}
             </a>
             <a href="{% url 'core:admin_news_list' %}?status=archived" class="list-group-item list-group-item-action {% if status_filter == 'archived' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-archive me-2"></i>Arquivadas
+              <i class="bi bi-archive me-2"></i>{% translate "Arquivadas" %}
             </a>
           </div>
         </div>
@@ -119,9 +119,9 @@
       <div class="card-body">
         <form method="get" class="row g-3">
           <div class="col-md-6">
-            <label for="category" class="form-label">Categoria</label>
+            <label for="category" class="form-label">{% translate "Categoria" %}</label>
             <select name="category" id="category" class="form-select" onchange="this.form.submit()">
-              <option value="all" {% if category_filter == 'all' %}selected{% endif %}>Todas</option>
+              <option value="all" {% if category_filter == 'all' %}selected{% endif %}>{% translate "Todas" %}</option>
               {% for cat in categories %}
               <option value="{{ cat.name }}" {% if category_filter == cat.name %}selected{% endif %}>
                 {{ cat.get_name_display }}
@@ -130,10 +130,10 @@
             </select>
           </div>
           <div class="col-md-6">
-            <label for="search" class="form-label">Buscar</label>
+            <label for="search" class="form-label">{% translate "Buscar" %}</label>
             <div class="input-group">
               <input type="text" name="q" id="search" class="form-control"
-                     placeholder="Buscar por título..." value="{{ search_query }}">
+                     placeholder="{% translate 'Buscar por título...' %}" value="{{ search_query }}">
               <button class="btn btn-outline-secondary" type="submit">
                 <i class="bi bi-search"></i>
               </button>
@@ -152,13 +152,13 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>Título</th>
-                <th>Categoria</th>
-                <th>Status</th>
-                <th>Autor</th>
-                <th>Data</th>
-                <th>Visualizações</th>
-                <th>Ações</th>
+                <th>{% translate "Título" %}</th>
+                <th>{% translate "Categoria" %}</th>
+                <th>{% translate "Status" %}</th>
+                <th>{% translate "Autor" %}</th>
+                <th>{% translate "Data" %}</th>
+                <th>{% translate "Visualizações" %}</th>
+                <th>{% translate "Ações" %}</th>
               </tr>
             </thead>
             <tbody>
@@ -173,7 +173,7 @@
                     <div>
                       <strong>{{ news.title }}</strong>
                       {% if news.is_featured %}
-                      <span class="badge bg-warning ms-2">Destaque</span>
+                      <span class="badge bg-warning ms-2">{% translate "Destaque" %}</span>
                       {% endif %}
                     </div>
                   </div>
@@ -183,30 +183,30 @@
                 </td>
                 <td>
                   {% if news.status == 'published' %}
-                  <span class="badge bg-success">Publicado</span>
+                  <span class="badge bg-success">{% translate "Publicado" %}</span>
                   {% elif news.status == 'draft' %}
-                  <span class="badge bg-warning">Rascunho</span>
+                  <span class="badge bg-warning">{% translate "Rascunho" %}</span>
                   {% else %}
-                  <span class="badge bg-secondary">Arquivado</span>
+                  <span class="badge bg-secondary">{% translate "Arquivado" %}</span>
                   {% endif %}
                 </td>
                 <td>{{ news.author.username }}</td>
-                <td>{{ news.created_at|date:"d/m/Y H:i" }}</td>
+                <td>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                 <td>
                   <i class="bi bi-eye me-1"></i>{{ news.view_count }}
                 </td>
                 <td>
                   <div class="btn-group btn-group-sm">
                     <a href="{% url 'news:news_detail' news.slug %}" class="btn btn-outline-secondary"
-                       title="Visualizar" target="_blank">
+                       title="{% translate 'Visualizar' %}" target="_blank">
                       <i class="bi bi-eye"></i>
                     </a>
                     <a href="{% url 'core:admin_news_edit' news.pk %}" class="btn btn-outline-primary"
-                       title="Editar">
+                       title="{% translate 'Editar' %}">
                       <i class="bi bi-pencil"></i>
                     </a>
                     <a href="{% url 'core:admin_news_delete' news.pk %}" class="btn btn-outline-danger"
-                       title="Excluir">
+                       title="{% translate 'Excluir' %}">
                       <i class="bi bi-trash"></i>
                     </a>
                   </div>
@@ -219,9 +219,9 @@
         {% else %}
         <div class="text-center py-5">
           <i class="bi bi-inbox" style="font-size: 4rem; color: var(--text-muted);"></i>
-          <p class="text-muted mt-3">Nenhuma notícia encontrada.</p>
+          <p class="text-muted mt-3">{% translate "Nenhuma notícia encontrada." %}</p>
           <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>Criar Primeira Notícia
+            <i class="bi bi-plus-circle me-1"></i>{% translate "Criar Primeira Notícia" %}
           </a>
         </div>
         {% endif %}

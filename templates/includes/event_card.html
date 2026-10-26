@@ -1,4 +1,4 @@
-{% load i18n %}{% language 'pt-br' %}
+{% load i18n event_dates %}
 <a class="event-card {% if lead %}event-card--lead{% endif %}" href="{% url 'news:news_detail' event.slug %}">
   <div class="event-card-media {% if not event.featured_image %}event-card-media--placeholder{% endif %}">
     {% if event.featured_image %}
@@ -12,7 +12,7 @@
       <span>{{ event.event_date|date:"b" }}</span>
     </div>
     {% if event.is_ongoing_event %}
-    <span class="event-status">Acontecendo agora</span>
+    <span class="event-status">{% translate "Acontecendo agora" %}</span>
     {% endif %}
   </div>
   <div class="event-card-body">
@@ -20,11 +20,7 @@
     <ul class="event-card-facts">
       <li>
         <i class="bi bi-calendar3" aria-hidden="true"></i>
-        <span class="event-card-when">{% filter lower %}{% if event.event_end_date and event.event_end_date|date:"Ymd" != event.event_date|date:"Ymd" %}
-        {{ event.event_date|date:"j \d\e F" }} a {{ event.event_end_date|date:"j \d\e F" }}
-        {% else %}
-        {{ event.event_date|date:"l, j \d\e F" }}{% if event.event_date|time:"H:i" != "00:00" %}, {{ event.event_date|time:"H\hi" }}{% endif %}
-        {% endif %}{% endfilter %}</span>
+        <span class="event-card-when">{{ event|event_when }}</span>
       </li>
       {% if event.event_location %}
       <li><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ event.event_location }}</li>
@@ -32,8 +28,7 @@
     </ul>
     {% if lead and event.excerpt %}
     <p class="event-card-excerpt">{{ event.excerpt }}</p>
-    <span class="event-card-cta">Ver detalhes <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+    <span class="event-card-cta">{% translate "Ver detalhes" %} <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
     {% endif %}
   </div>
 </a>
-{% endlanguage %}

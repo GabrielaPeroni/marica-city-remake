@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Triagem de eventos - MaricaCity{% endblock %}
+{% block title %}{% translate "Triagem de eventos" %} - MaricaCity{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -27,12 +27,12 @@
       <div class="container-fluid px-4 py-4">
         <div class="d-flex flex-wrap gap-3 justify-content-between align-items-start mb-4">
           <div>
-            <h1 class="admin-title mb-1"><i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Triagem de eventos</h1>
-            <p class="text-muted mb-0">Eventos encontrados automaticamente no portal da Prefeitura. Confira os dados e publique na agenda.</p>
+            <h1 class="admin-title mb-1"><i class="bi bi-calendar-check me-2" aria-hidden="true"></i>{% translate "Triagem de eventos" %}</h1>
+            <p class="text-muted mb-0">{% translate "Eventos encontrados automaticamente no portal da Prefeitura. Confira os dados e publique na agenda." %}</p>
           </div>
           <form method="post" action="{% url 'core:admin_event_crawl' %}">
             {% csrf_token %}
-            <button class="btn btn-outline-dark"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Buscar agora</button>
+            <button class="btn btn-outline-dark"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% translate "Buscar agora" %}</button>
           </form>
         </div>
 
@@ -49,25 +49,25 @@
             <div class="col-lg-9">
               <div class="card-body">
                 <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
-                  <span class="badge triage-score {% if candidate.score >= 80 %}is-high{% elif candidate.score >= 50 %}is-mid{% else %}is-low{% endif %}">Confiança {{ candidate.score }}%</span>
+                  <span class="badge triage-score {% if candidate.score >= 80 %}is-high{% elif candidate.score >= 50 %}is-mid{% else %}is-low{% endif %}">{% blocktranslate with score=candidate.score %}Confiança {{ score }}%{% endblocktranslate %}</span>
                   {% for signal in candidate.signals %}<span class="badge text-bg-light">{{ signal }}</span>{% endfor %}
                   <a href="{{ candidate.source_url }}" target="_blank" rel="noopener noreferrer" class="small ms-auto">
-                    {{ candidate.source_name }} · {{ candidate.source_published_at|date:"d/m/Y" }} <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                    {{ candidate.source_name }} · {{ candidate.source_published_at|date:"SHORT_DATE_FORMAT" }} <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                   </a>
                 </div>
 
                 {% if candidate.possible_duplicate %}
                 <div class="alert alert-warning py-2 small">
-                  <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>Parecido com
-                  <a href="{% url 'news:news_detail' candidate.possible_duplicate.slug %}" target="_blank">{{ candidate.possible_duplicate.title }}</a>, já publicado.
+                  <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>{% translate "Parecido com" %}
+                  <a href="{% url 'news:news_detail' candidate.possible_duplicate.slug %}" target="_blank">{{ candidate.possible_duplicate.title }}</a>{% translate ", já publicado." %}
                 </div>
                 {% endif %}
 
                 {% if siblings %}
                 <div class="alert alert-info py-2 small">
-                  <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>Mesmo dia e local que:
+                  <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>{% translate "Mesmo dia e local que:" %}
                   {% for other in siblings %}<a href="#candidate-{{ other.pk }}">{{ other.title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %}.
-                  Publique um e descarte os outros.
+                  {% translate "Publique um e descarte os outros." %}
                 </div>
                 {% endif %}
 
@@ -84,8 +84,8 @@
                   </div>
                   {% for error in form.non_field_errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                   <div class="d-flex gap-2 justify-content-end mt-3">
-                    <button name="action" value="reject" formnovalidate class="btn btn-outline-secondary">Descartar</button>
-                    <button name="action" value="approve" class="btn btn-danger"><i class="bi bi-check-lg me-1" aria-hidden="true"></i>Publicar na agenda</button>
+                    <button name="action" value="reject" formnovalidate class="btn btn-outline-secondary">{% translate "Descartar" %}</button>
+                    <button name="action" value="approve" class="btn btn-danger"><i class="bi bi-check-lg me-1" aria-hidden="true"></i>{% translate "Publicar na agenda" %}</button>
                   </div>
                 </form>
               </div>
@@ -95,19 +95,19 @@
         {% empty %}
         <div class="card"><div class="card-body text-center text-muted py-5">
           <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
-          Nada para revisar. O crawler roda a cada 6 horas; use “Buscar agora” para consultar já.
+          {% translate "Nada para revisar. O crawler roda a cada 6 horas; use “Buscar agora” para consultar já." %}
         </div></div>
         {% endfor %}
 
         {% if recent %}
-        <h2 class="h5 mt-5 mb-3">Revisados recentemente</h2>
+        <h2 class="h5 mt-5 mb-3">{% translate "Revisados recentemente" %}</h2>
         <ul class="list-group">
           {% for item in recent %}
           <li class="list-group-item d-flex flex-wrap gap-2 justify-content-between">
             <span>
               {% if item.news %}<a href="{% url 'news:news_detail' item.news.slug %}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
             </span>
-            <span class="small text-muted">{{ item.get_status_display }} por {{ item.reviewed_by.username|default:"—" }} · {{ item.reviewed_at|date:"d/m H:i" }}</span>
+            <span class="small text-muted">{% blocktranslate with status=item.get_status_display user=item.reviewed_by.username|default:"—" %}{{ status }} por {{ user }}{% endblocktranslate %} · {{ item.reviewed_at|date:"SHORT_DATETIME_FORMAT" }}</span>
           </li>
           {% endfor %}
         </ul>

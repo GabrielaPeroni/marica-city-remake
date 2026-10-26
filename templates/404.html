@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Página não encontrada - MaricaCity{% endblock %}
+{% block title %}{% translate "Página não encontrada" %} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
 <header class="page-header">
   <div class="container">
-    <h1>Página não encontrada</h1>
-    <p class="page-header-subtitle">O endereço pode ter mudado ou o conteúdo foi removido.</p>
+    <h1>{% translate "Página não encontrada" %}</h1>
+    <p class="page-header-subtitle">{% translate "O endereço pode ter mudado ou o conteúdo foi removido." %}</p>
   </div>
 </header>
 
 <div class="container py-5">
-  <p class="mb-4">Tente um destes caminhos:</p>
+  <p class="mb-4">{% translate "Tente um destes caminhos:" %}</p>
   <div class="d-flex flex-wrap gap-2">
-    <a href="{% url 'core:landing' %}" class="btn btn-dark">Página inicial</a>
-    <a href="{% url 'explore:explore' %}" class="btn btn-outline-dark">Explorar lugares</a>
-    <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark">Notícias e eventos</a>
+    <a href="{% url 'core:landing' %}" class="btn btn-dark">{% translate "Página inicial" %}</a>
+    <a href="{% url 'explore:explore' %}" class="btn btn-outline-dark">{% translate "Explorar lugares" %}</a>
+    <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark">{% translate "Agenda de eventos" %}</a>
   </div>
 </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
+{% load i18n %}{% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
 <a class="news-card"
    {% if item.is_external %}href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'news:news_detail' item.slug %}"{% endif %}>
   {% if item.featured_image %}
@@ -12,19 +12,19 @@
   </div>
   {% endif %}
   <div class="news-card-body">
-    <span class="news-kind kind-{{ item.category.kind }}">{{ item.category.label }}{% if item.is_past_event %} · encerrado{% endif %}</span>
+    <span class="news-kind kind-{{ item.category.kind }}">{{ item.category.label }}{% if item.is_past_event %} · {% translate "encerrado" %}{% endif %}</span>
     <h3 class="news-card-title">{{ item.title }}</h3>
     {% if not item.is_external and item.excerpt %}
     <p class="news-card-excerpt">{{ item.excerpt }}</p>
     {% endif %}
     <div class="news-card-meta">
       {% if item.is_event and item.event_date %}
-      <span><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{{ item.event_date|date:"d/m/Y · H:i" }}</span>
+      <span><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{{ item.event_date|date:"SHORT_DATETIME_FORMAT" }}</span>
       {% else %}
-      <span><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ item.publish_date|date:"d/m/Y" }}</span>
+      <span><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ item.publish_date|date:"SHORT_DATE_FORMAT" }}</span>
       {% endif %}
       {% if item.is_external %}
-      <span>{{ item.source_name }} <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span></span>
+      <span>{{ item.source_name }} <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">({% translate "abre em nova aba" %})</span></span>
       {% endif %}
     </div>
   </div>

@@ -1,0 +1,162 @@
+# Spanish translations for MaricaCity.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the MaricaCity project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: MaricaCity VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-10-25 22:11-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: static/js/components/address_autocomplete.js:30
+msgid "Comece a digitar o endereço..."
+msgstr "Comience a escribir la dirección..."
+
+#: static/js/components/user_management.js:18
+msgid ""
+"Tem certeza que deseja alterar o tipo deste usuário?\n"
+"\n"
+"Isso pode modificar as permissões do usuário no sistema."
+msgstr ""
+"¿Está seguro de que desea cambiar el tipo de este usuario?\n"
+"\n"
+"Esto puede modificar los permisos del usuario en el sistema."
+
+#: static/js/components/user_management.js:58
+msgid "Erro ao atualizar tipo de usuário"
+msgstr "Error al actualizar el tipo de usuario"
+
+#: static/js/components/user_management.js:65 static/js/components/user_management.js:121
+msgid "Erro ao processar solicitação"
+msgstr "Error al procesar la solicitud"
+
+#: static/js/components/user_management.js:83
+msgid "Tem certeza que deseja desativar este usuário?"
+msgstr "¿Está seguro de que desea desactivar este usuario?"
+
+#: static/js/components/user_management.js:84
+msgid "Tem certeza que deseja ativar este usuário?"
+msgstr "¿Está seguro de que desea activar este usuario?"
+
+#: static/js/components/user_management.js:105
+msgid "Ativo"
+msgstr "Activo"
+
+#: static/js/components/user_management.js:110
+msgid "Inativo"
+msgstr "Inactivo"
+
+#: static/js/components/user_management.js:116
+msgid "Erro ao alterar status"
+msgstr "Error al cambiar el estado"
+
+#: static/js/favorites-ui.js:19 static/js/favorites-ui.js:20
+msgid "Remover dos favoritos"
+msgstr "Quitar de favoritos"
+
+#: static/js/favorites-ui.js:26 static/js/favorites-ui.js:27
+msgid "Adicionar aos favoritos"
+msgstr "Agregar a favoritos"
+
+#: static/js/favorites-ui.js:159
+msgid "Erro ao atualizar favorito. Tente novamente."
+msgstr "Error al actualizar favorito. Intente nuevamente."
+
+#: static/js/google_auth.js:31 static/js/login.js:70
+msgid "usuário"
+msgstr "usuario"
+
+#: static/js/google_auth.js:35
+msgid "Falha ao autenticar com Google. Por favor, tente novamente."
+msgstr "Fallo al autenticar con Google. Por favor, inténtelo nuevamente."
+
+#: static/js/google_auth.js:40
+msgid "Erro ao conectar com o servidor. Por favor, tente novamente."
+msgstr "Error al conectar con el servidor. Por favor, inténtelo nuevamente."
+
+#: static/js/landing.js:23
+msgid "Slide anterior"
+msgstr "Diapositiva anterior"
+
+#: static/js/landing.js:24
+msgid "Próximo slide"
+msgstr "Siguiente diapositiva"
+
+#: static/js/landing.js:25
+msgid "Ir para o slide {{index}}"
+msgstr "Ir a la diapositiva {{index}}"
+
+#: static/js/landing.js:48
+msgid "Retomar apresentação"
+msgstr "Reanudar presentación"
+
+#: static/js/landing.js:48
+msgid "Pausar apresentação"
+msgstr "Pausar presentación"
+
+#: static/js/login.js:28
+msgid "Entrando..."
+msgstr "Entrando..."
+
+#: static/js/login.js:52
+msgid "Sucesso!"
+msgstr "¡Éxito!"
+
+#: static/js/login.js:78
+msgid "Erro ao fazer login."
+msgstr "Error al iniciar sesión."
+
+#: static/js/login.js:86
+msgid "Erro ao conectar com o servidor. Tente novamente."
+msgstr "Error al conectar con el servidor. Inténtelo nuevamente."
+
+#: static/js/place_detail.js:22
+msgid "Escrever avaliação"
+msgstr "Escribir reseña"
+
+#: static/js/place_detail.js:23
+msgid "Enviar avaliação"
+msgstr "Enviar reseña"
+
+#: static/js/place_detail.js:42
+msgid "Editar avaliação"
+msgstr "Editar reseña"
+
+#: static/js/place_detail.js:43
+msgid "Atualizar avaliação"
+msgstr "Actualizar reseña"
+
+#: static/js/place_detail.js:59
+msgid "Erro: CSRF token não encontrado."
+msgstr "Error: Token CSRF no encontrado."
+
+#: static/js/place_detail.js:89 static/js/place_detail.js:94
+msgid "Erro ao enviar avaliação. Por favor, tente novamente."
+msgstr "Error al enviar reseña. Por favor, inténtelo nuevamente."
+
+#: static/js/place_detail.js:116
+msgid "Erro ao excluir avaliação."
+msgstr "Error al eliminar reseña."
+
+#: static/js/place_detail.js:137 static/js/place_detail.js:142
+msgid "Erro ao excluir avaliação. Por favor, tente novamente."
+msgstr "Error al eliminar reseña. Por favor, inténtelo nuevamente."
+
+#: static/js/place_form.js:51
+msgid "Não há mais espaço para novas imagens."
+msgstr "No hay más espacio para nuevas imágenes."
+
+#: static/js/place_form.js:94
+msgid "Principal"
+msgstr "Principal"

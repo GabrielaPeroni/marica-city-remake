@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load i18n static %}
 
 {% block title %}{{ place.name }} - MaricaCity{% endblock %}
 
@@ -20,9 +20,9 @@
 
 <header class="page-header">
   <div class="container">
-    <nav aria-label="Trilha de navegação">
+    <nav aria-label="{% translate 'Trilha de navegação' %}">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">Explorar</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
         {% with place.categories.first as first_category %}
         {% if first_category %}
         <li class="breadcrumb-item"><a href="{% url 'explore:category_detail' first_category.slug %}">{{ first_category.name }}</a></li>
@@ -38,7 +38,7 @@
       </div>
       {% if can_edit %}
       <a href="{% url 'explore:place_edit' place.pk %}" class="btn btn-light">
-        <i class="bi bi-pencil-fill me-2" aria-hidden="true"></i>Editar Este Lugar
+        <i class="bi bi-pencil-fill me-2" aria-hidden="true"></i>{% translate "Editar este lugar" %}
       </a>
       {% endif %}
     </div>
@@ -52,10 +52,10 @@
       <i class="bi bi-exclamation-triangle-fill me-3 fs-3"></i>
       <div class="flex-grow-1">
         <h4 class="alert-heading mb-2">
-          <span class="badge bg-danger me-2">MODO PREVIEW</span>
-          Lugar Aguardando Aprovação
+          <span class="badge bg-danger me-2">{% translate "Pré-visualização" %}</span>
+          {% translate "Lugar aguardando aprovação" %}
         </h4>
-        <p class="mb-0">Este lugar ainda não foi aprovado e não está visível publicamente. Somente você e os moderadores podem visualizá-lo.</p>
+        <p class="mb-0">{% translate "Este lugar ainda não foi aprovado e não está visível publicamente. Somente você e os moderadores podem visualizá-lo." %}</p>
       </div>
     </div>
   </div>
@@ -74,17 +74,17 @@
 
             {% if place.gallery_images.count > 1 %}
             <!-- Setas de Navegação -->
-            <button class="place-carousel-btn place-carousel-prev" type="button" aria-label="Imagem anterior">
+            <button class="place-carousel-btn place-carousel-prev" type="button" aria-label="{% translate 'Imagem anterior' %}">
               <i class="bi bi-chevron-left"></i>
             </button>
-            <button class="place-carousel-btn place-carousel-next" type="button" aria-label="Próxima imagem">
+            <button class="place-carousel-btn place-carousel-next" type="button" aria-label="{% translate 'Próxima imagem' %}">
               <i class="bi bi-chevron-right"></i>
             </button>
 
             <!-- Pontos de Paginação -->
             <div class="place-carousel-pagination">
               {% for image in place.gallery_images %}
-              <button class="place-carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Ir para imagem {{ forloop.counter }}"></button>
+              <button class="place-carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="{% blocktranslate with number=forloop.counter %}Ir para imagem {{ number }}{% endblocktranslate %}"></button>
               {% endfor %}
             </div>
             {% endif %}
@@ -93,8 +93,8 @@
             <button class="btn btn-light rounded-circle position-absolute favorite-heart-icon favorite-btn"
                     id="favoriteBtn"
                     data-place-id="{{ place.pk }}"
-                    title="Adicionar aos favoritos"
-                    aria-label="Adicionar aos favoritos">
+                    title="{% translate 'Adicionar aos favoritos' %}"
+                    aria-label="{% translate 'Adicionar aos favoritos' %}">
               <i class="bi bi-heart fs-4"></i>
             </button>
           </div>
@@ -124,7 +124,7 @@
 
       <!-- Seção de Localização -->
       <div class="mb-4">
-        <h2 class="fs-5 fw-bold text-uppercase mb-3">Localização</h2>
+        <h2 class="fs-5 fw-bold text-uppercase mb-3">{% translate "Localização" %}</h2>
         <p class="text-muted mb-3">
           <i class="bi bi-geo-alt-fill me-2"></i>{{ place.address }}
         </p>
@@ -132,7 +132,7 @@
         {% if place.latitude and place.longitude %}
         <p>
           <a class="btn btn-outline-dark btn-sm" href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>Como chegar<span class="visually-hidden"> (abre o Google Maps em nova aba)</span>
+            <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>{% translate "Como chegar" %}<span class="visually-hidden"> ({% translate "abre o Google Maps em nova aba" %})</span>
           </a>
         </p>
         {% endif %}
@@ -151,11 +151,11 @@
       <!-- Caixa de Informações de Contato -->
       <div class="card border-0 shadow-sm mb-3">
         <div class="card-body p-3">
-          <h2 class="text-uppercase mb-3" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">Sobre este lugar</h2>
+          <h2 class="text-uppercase mb-3" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">{% translate "Sobre este lugar" %}</h2>
 
           <div class="mb-2">
-            <p class="mb-1" style="font-size: 0.8rem;">Criado por <strong>{{ place.created_by.username }}</strong></p>
-            <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ place.created_at|date:"d M, Y" }}</p>
+            <p class="mb-1" style="font-size: 0.8rem;">{% blocktranslate with author=place.created_by.username %}Criado por <strong>{{ author }}</strong>{% endblocktranslate %}</p>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ place.created_at|date:"DATE_FORMAT" }}</p>
           </div>
 
         </div>
@@ -165,7 +165,7 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body p-3">
           <h2 class="text-uppercase mb-3" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">
-            Avaliações
+            {% translate "Avaliações" %}
             {% if reviews %}<span class="text-muted">({{ reviews.count }})</span>{% endif %}
           </h2>
 
@@ -178,16 +178,16 @@
                     <div class="d-flex align-items-center gap-2 mb-1">
                       <span class="fw-bold" style="font-size: 0.85rem;">{{ review.user.username }}</span>
                       {% if review.user == place.created_by %}
-                        <span class="badge bg-info text-white" style="font-size: 0.65rem;">Autor</span>
+                        <span class="badge bg-info text-white" style="font-size: 0.65rem;">{% translate "Autor" %}</span>
                       {% endif %}
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                      <span class="text-warning" style="font-size: 0.85rem;" role="img" aria-label="Nota {{ review.rating }} de 5">
+                      <span class="text-warning" style="font-size: 0.85rem;" role="img" aria-label="{% blocktranslate with rating=review.rating %}Nota {{ rating }} de 5{% endblocktranslate %}">
                         {% for i in "12345" %}
                           {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
                         {% endfor %}
                       </span>
-                      <span class="text-muted" style="font-size: 0.7rem;">{{ review.created_at|date:"d M, Y" }}</span>
+                      <span class="text-muted" style="font-size: 0.7rem;">{{ review.created_at|date:"DATE_FORMAT" }}</span>
                     </div>
                   </div>
 
@@ -200,12 +200,12 @@
                       <li>
                         <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#reviewModal"
                                 onclick="editReview({{ review.pk }}, {{ review.rating }}, `{{ review.comment|escapejs }}`)">
-                          <i class="bi bi-pencil me-2"></i>Editar
+                          <i class="bi bi-pencil me-2"></i>{% translate "Editar" %}
                         </button>
                       </li>
                       <li>
                         <button class="dropdown-item text-danger" type="button" onclick="deleteReview({{ review.pk }})">
-                          <i class="bi bi-trash me-2"></i>Excluir
+                          <i class="bi bi-trash me-2"></i>{% translate "Excluir" %}
                         </button>
                       </li>
                     </ul>
@@ -221,21 +221,21 @@
             {% if user.is_authenticated %}
             <div class="mt-3">
               <button type="button" class="btn btn-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#reviewModal" onclick="resetReviewForm()" style="font-size: 0.75rem; padding: 0.5rem;">
-                <i class="bi bi-star me-1"></i>{% if user_review %}Editar Minha Avaliação{% else %}Escrever Avaliação{% endif %}
+                <i class="bi bi-star me-1"></i>{% if user_review %}{% translate "Editar minha avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %}
               </button>
             </div>
             {% endif %}
           {% else %}
             <div class="text-center py-4">
               <i class="bi bi-chat-left-text text-muted mb-3" style="font-size: 3rem;"></i>
-              <p class="text-muted mb-3" style="font-size: 0.8rem;">Ainda não há avaliações para<br>este lugar.</p>
+              <p class="text-muted mb-3" style="font-size: 0.8rem;">{% translate "Ainda não há avaliações para este lugar." %}</p>
               {% if user.is_authenticated %}
                 <button type="button" class="btn btn-dark btn-sm w-100" data-bs-toggle="modal" data-bs-target="#reviewModal" onclick="resetReviewForm()" style="font-size: 0.75rem; padding: 0.5rem;">
-                  <i class="bi bi-star me-1"></i>Seja o Primeiro a Avaliar
+                  <i class="bi bi-star me-1"></i>{% translate "Seja o primeiro a avaliar" %}
                 </button>
               {% else %}
                 <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-dark btn-sm w-100" style="font-size: 0.75rem; padding: 0.5rem;">
-                  <i class="bi bi-star me-1"></i>Faça Login para Avaliar
+                  <i class="bi bi-star me-1"></i>{% translate "Entre para avaliar" %}
                 </a>
               {% endif %}
             </div>
@@ -251,8 +251,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title fw-bold text-uppercase" id="reviewModalLabel">Escrever Avaliação</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <h5 class="modal-title fw-bold text-uppercase" id="reviewModalLabel">{% translate "Escrever avaliação" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Fechar' %}"></button>
       </div>
       <div class="modal-body">
         <form id="reviewForm" method="post" data-create-url="{% url 'explore:review_create' place.pk %}" data-edit-url-template="{% url 'explore:review_edit' 0 %}" data-delete-url-template="{% url 'explore:review_delete' 0 %}">
@@ -260,7 +260,7 @@
           <input type="hidden" id="reviewId" name="review_id" value="">
 
           <div class="mb-4">
-            <label class="form-label fw-bold">Avaliação</label>
+            <label class="form-label fw-bold">{% translate "Avaliação" %}</label>
             <div class="star-rating-container d-flex gap-2">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="rating" id="rating1" value="1" required>
@@ -283,22 +283,22 @@
                 <label class="form-check-label star-label" for="rating5">★</label>
               </div>
             </div>
-            <small class="form-text text-muted" id="rating-help">Clique nas estrelas para avaliar</small>
+            <small class="form-text text-muted" id="rating-help">{% translate "Clique nas estrelas para avaliar" %}</small>
           </div>
 
           <div class="mb-4">
-            <label for="reviewComment" class="form-label fw-bold">Comentário</label>
-            <textarea class="form-control" id="reviewComment" name="comment" rows="4" maxlength="1000" placeholder="Compartilhe sua experiência neste lugar..." required></textarea>
-            <small class="form-text text-muted">Máximo 1000 caracteres</small>
+            <label for="reviewComment" class="form-label fw-bold">{% translate "Comentário" %}</label>
+            <textarea class="form-control" id="reviewComment" name="comment" rows="4" maxlength="1000" placeholder="{% translate 'Compartilhe sua experiência neste lugar...' %}" required></textarea>
+            <small class="form-text text-muted">{% translate "Máximo 1000 caracteres" %}</small>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Cancelar">
-          <i class="bi bi-x-circle me-2"></i>Cancelar
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="{% translate 'Cancelar' %}">
+          <i class="bi bi-x-circle me-2"></i>{% translate "Cancelar" %}
         </button>
-        <button type="button" class="btn btn-primary" onclick="submitReview()" aria-label="Enviar avaliação">
-          <i class="bi bi-check-circle me-2"></i><span id="submitButtonText">Enviar Avaliação</span>
+        <button type="button" class="btn btn-primary" onclick="submitReview()" aria-label="{% translate 'Enviar avaliação' %}">
+          <i class="bi bi-check-circle me-2"></i><span id="submitButtonText">{% translate "Enviar avaliação" %}</span>
         </button>
       </div>
     </div>
@@ -310,26 +310,26 @@
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title fw-bold" id="deleteReviewModalLabel">
-          <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão
+          <i class="bi bi-exclamation-triangle me-2"></i>{% translate "Confirmar exclusão" %}
         </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{% translate 'Fechar' %}"></button>
       </div>
       <div class="modal-body">
         {% csrf_token %}
         <form id="deleteReviewForm" data-delete-url-template="{% url 'explore:review_delete' 0 %}">
-          <p class="mb-3">Tem certeza que deseja excluir sua avaliação?</p>
+          <p class="mb-3">{% translate "Tem certeza que deseja excluir sua avaliação?" %}</p>
           <p class="text-danger small mb-0">
             <i class="bi bi-info-circle me-1"></i>
-            Esta ação não pode ser desfeita.
+            {% translate "Esta ação não pode ser desfeita." %}
           </p>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x-circle me-2"></i>Cancelar
+          <i class="bi bi-x-circle me-2"></i>{% translate "Cancelar" %}
         </button>
         <button type="button" class="btn btn-danger" onclick="confirmDeleteReview()">
-          <i class="bi bi-trash me-2"></i>Sim, Excluir Avaliação
+          <i class="bi bi-trash me-2"></i>{% translate "Sim, excluir avaliação" %}
         </button>
       </div>
     </div>

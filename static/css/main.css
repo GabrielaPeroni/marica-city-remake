@@ -383,7 +383,7 @@ img:hover {
 /* Floating Admin Button */
 .floating-admin-btn {
   position: fixed;
-  bottom: 24px;
+  bottom: 76px;
   right: 24px;
   width: 56px;
   height: 56px;
@@ -634,4 +634,47 @@ html {
   .container {
     max-width: 1840px;
   }
+}
+
+/* Language switcher: fixed in the bottom-right corner on every page */
+.lang-switcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.3rem 0.35rem 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(43, 40, 38, 0.18);
+  color: var(--ink-muted);
+}
+
+.lang-switcher button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+}
+
+.lang-switcher button:hover {
+  color: var(--ink);
+  background: var(--surface-alt);
+}
+
+.lang-switcher button.is-active {
+  background: var(--brand-red);
+  color: #fff;
+}
+
+.lang-switcher button:focus-visible {
+  outline: 3px solid var(--brand-red);
+  outline-offset: 2px;
 }

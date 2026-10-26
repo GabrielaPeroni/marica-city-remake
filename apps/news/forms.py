@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _l
 
 from .models import EventCandidate, News, NewsCategory
 
@@ -29,21 +30,21 @@ class NewsForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Digite o título da notícia/evento",
+                    "placeholder": _l("Digite o título da notícia/evento"),
                 }
             ),
             "content": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 10,
-                    "placeholder": "Conteúdo completo...",
+                    "placeholder": _l("Conteúdo completo..."),
                 }
             ),
             "excerpt": forms.Textarea(
                 attrs={
                     "class": "form-control",
                     "rows": 3,
-                    "placeholder": "Resumo curto (até 300 caracteres)",
+                    "placeholder": _l("Resumo curto (até 300 caracteres)"),
                     "maxlength": 300,
                 }
             ),
@@ -54,7 +55,7 @@ class NewsForm(forms.ModelForm):
             "image_caption": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Legenda da imagem (opcional)",
+                    "placeholder": _l("Legenda da imagem (opcional)"),
                 }
             ),
             "event_date": forms.DateTimeInput(
@@ -67,7 +68,7 @@ class NewsForm(forms.ModelForm):
             "event_location": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Local do evento (opcional)",
+                    "placeholder": _l("Local do evento (opcional)"),
                 }
             ),
             "event_end_date": forms.DateTimeInput(
@@ -81,7 +82,7 @@ class NewsForm(forms.ModelForm):
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
         labels = {
-            "title": "Título",
+            "title": _l("Título"),
             "category": "Categoria",
             "excerpt": "Resumo",
             "content": "Conteúdo",
@@ -125,24 +126,26 @@ class NewsForm(forms.ModelForm):
         if category and category.name == NewsCategory.EVENT:
             if not event_date:
                 self.add_error(
-                    "event_date", "Data do evento é obrigatória para eventos."
+                    "event_date", _l("Data do evento é obrigatória para eventos.")
                 )
             if not event_location:
                 self.add_error(
-                    "event_location", "Local do evento é obrigatório para eventos."
+                    "event_location", _l("Local do evento é obrigatório para eventos.")
                 )
 
         # Event end date must not be before its start date
         if event_date and event_end_date and event_end_date < event_date:
             self.add_error(
                 "event_end_date",
-                "A data final do evento não pode ser anterior à data de início.",
+                _l("A data final do evento não pode ser anterior à data de início."),
             )
 
         # Validate excerpt length
         excerpt = cleaned_data.get("excerpt")
         if excerpt and len(excerpt) > 300:
-            self.add_error("excerpt", "O resumo não pode ter mais de 300 caracteres.")
+            self.add_error(
+                "excerpt", _l("O resumo não pode ter mais de 300 caracteres.")
+            )
 
         return cleaned_data
 
@@ -167,12 +170,12 @@ class EventCandidateForm(forms.ModelForm):
             "event_location": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Ex.: Praça Orlando de Barros Pimentel, Centro",
+                    "placeholder": _l("Ex.: Praça Orlando de Barros Pimentel, Centro"),
                 }
             ),
         }
         labels = {
-            "title": "Título",
+            "title": _l("Título"),
             "summary": "Descrição",
             "event_date": "Início",
             "event_end_date": "Término (opcional)",
@@ -188,5 +191,5 @@ class EventCandidateForm(forms.ModelForm):
         cleaned = super().clean()
         start, end = cleaned.get("event_date"), cleaned.get("event_end_date")
         if start and end and end <= start:
-            self.add_error("event_end_date", "O término deve ser depois do início.")
+            self.add_error("event_end_date", _l("O término deve ser depois do início."))
         return cleaned

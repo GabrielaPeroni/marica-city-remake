@@ -326,3 +326,52 @@
   text-align: center;
   color: var(--ink-muted);
 }
+
+/* Event detail: when/where box with directions and calendar actions */
+.event-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--brand-red);
+}
+
+.event-info-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 1.05rem;
+}
+
+.event-info-facts li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.event-info-facts .bi {
+  color: var(--brand-red);
+}
+
+.event-info-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.event-status-inline {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
