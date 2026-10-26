@@ -48,19 +48,33 @@ def landing_view(request):
 
     categories = Category.objects.filter(is_active=True).order_by("display_order")[:8]
 
-    upcoming_events = (
-        News.objects.published().upcoming_events().select_related("category")[:4]
+    events = News.objects.published().select_related("category")
+    upcoming_events = list(events.upcoming_events()[:4])
+    # Sem eventos futuros (ex.: site estático), mostra os mais recentes
+    recent_events = (
+        []
+        if upcoming_events
+        else list(
+            events.filter(category__name=NewsCategory.EVENT)
+            .exclude(event_date=None)
+            .order_by("-event_date")[:4]
+        )
     )
 
     context = {
         "featured_places": featured_places,
         "trending_places": trending_places,
         "upcoming_events": upcoming_events,
+        "recent_events": recent_events,
         "categories": categories,
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
         "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
     }
     return render(request, "core/landing.html", context)
+
+
+def visit_view(request):
+    return render(request, "core/visit.html")
 
 
 def about_view(request):
@@ -167,8 +181,13 @@ def admin_news_list_view(request):
     )
 
     # Aplicar filtros
+    statuses = {
+        "published": News.PUBLISHED,
+        "draft": News.DRAFT,
+        "archived": News.ARCHIVED,
+    }
     if status_filter != "all":
-        news_list = news_list.filter(status=status_filter)
+        news_list = news_list.filter(status=statuses.get(status_filter, status_filter))
 
     if category_filter != "all":
         news_list = news_list.filter(category__name=category_filter)

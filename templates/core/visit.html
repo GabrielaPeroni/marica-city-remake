@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% translate "Planeje sua visita" %} - MaricaCity{% endblock %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+<header class="page-header">
+  <div class="container">
+    <h1>{% translate "Planeje sua visita" %}</h1>
+    <p class="page-header-subtitle">{% translate "O essencial para aproveitar Maricá: como chegar, como circular e o que levar em conta." %}</p>
+  </div>
+</header>
+
+<div class="bg-light">
+  <div class="container py-4 py-md-5">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <section class="card h-100 rounded-3 visit-card">
+          <div class="card-body p-4">
+            <i class="bi bi-signpost-split fs-2" aria-hidden="true"></i>
+            <h2 class="h5 fw-bold mt-3">{% translate "Como chegar" context "visit page heading" %}</h2>
+            <p>{% blocktranslate trimmed %}
+              Maricá fica a cerca de 60 km do centro do Rio de Janeiro. De carro, o caminho
+              mais comum é pela Ponte Rio–Niterói e pela RJ-106 (Rodovia Amaral Peixoto);
+              conte de uma hora a uma hora e meia, dependendo do trânsito.
+            {% endblocktranslate %}</p>
+            <p class="mb-0">{% blocktranslate trimmed %}
+              Há linhas de ônibus intermunicipais saindo do Rio e de Niterói. Confira horários
+              com as empresas antes de sair.
+            {% endblocktranslate %}</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-lg-6">
+        <section class="card h-100 rounded-3 visit-card">
+          <div class="card-body p-4">
+            <i class="bi bi-bus-front fs-2" aria-hidden="true"></i>
+            <h2 class="h5 fw-bold mt-3">{% translate "Como circular" %}</h2>
+            <p>{% blocktranslate trimmed %}
+              Os ônibus municipais vermelhos, os "Vermelhinhos", são gratuitos para todos,
+              moradores e visitantes. Eles ligam o Centro às praias, lagoas e bairros.
+            {% endblocktranslate %}</p>
+            <p class="mb-0">{% blocktranslate trimmed %}
+              As distâncias entre as regiões são grandes, então para visitar vários lugares
+              no mesmo dia vale planejar o roteiro com antecedência.
+            {% endblocktranslate %}</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-lg-6">
+        <section class="card h-100 rounded-3 visit-card">
+          <div class="card-body p-4">
+            <i class="bi bi-sun fs-2" aria-hidden="true"></i>
+            <h2 class="h5 fw-bold mt-3">{% translate "Quando ir" %}</h2>
+            <p>{% blocktranslate trimmed %}
+              O clima é tropical: verões quentes e com chuvas de fim de tarde, invernos amenos
+              e mais secos. O verão é a época das praias; o inverno é ótimo para trilhas.
+            {% endblocktranslate %}</p>
+            <p class="mb-0">
+              {% blocktranslate trimmed %}
+              A cidade tem agenda cultural o ano todo, com festas tradicionais, shows e
+              festivais gratuitos.
+              {% endblocktranslate %}
+              <a href="{% url 'news:news_list' %}">{% translate "Veja a agenda" %}</a>.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-lg-6">
+        <section class="card h-100 rounded-3 visit-card">
+          <div class="card-body p-4">
+            <i class="bi bi-water fs-2" aria-hidden="true"></i>
+            <h2 class="h5 fw-bold mt-3">{% translate "Praias, lagoas e trilhas" %}</h2>
+            <p>{% blocktranslate trimmed %}
+              As praias de mar aberto, como Itaipuaçu, Ponta Negra e Jaconé, costumam ter ondas
+              fortes e correntes: prefira nadar perto dos postos de guarda-vidas. Para águas
+              calmas, caiaque e stand-up paddle, procure as lagoas.
+            {% endblocktranslate %}</p>
+            <p class="mb-0">
+              {% blocktranslate trimmed %}
+              Em trilhas, saia cedo, leve água e protetor solar e avise alguém do seu trajeto.
+              {% endblocktranslate %}
+              <a href="{% url 'explore:explore' %}">{% translate "Explore os lugares" %}</a>.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="emergency-strip mt-4" aria-labelledby="emergencyHeading">
+      <h2 id="emergencyHeading" class="h6 fw-bold mb-3"><i class="bi bi-telephone me-2" aria-hidden="true"></i>{% translate "Telefones de emergência" %}</h2>
+      <ul>
+        <li><strong>190</strong> {% translate "Polícia Militar" %}</li>
+        <li><strong>192</strong> {% translate "SAMU (ambulância)" %}</li>
+        <li><strong>193</strong> {% translate "Corpo de Bombeiros e salvamento" %}</li>
+        <li><strong>199</strong> {% translate "Defesa Civil" %}</li>
+      </ul>
+    </section>
+
+    <p class="small text-muted mt-3 mb-0">{% translate "Informações gerais para visitantes. Horários, linhas e condições podem mudar; confirme antes de sair." %}</p>
+  </div>
+</div>
+{% endblock %}

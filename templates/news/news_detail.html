@@ -110,7 +110,11 @@
     <div class="row g-4">
       {% for item in related_news %}
       <div class="col-md-4">
+        {% if item.is_event %}
+        {% include 'includes/event_card.html' with event=item %}
+        {% else %}
         {% include 'includes/news_card.html' with item=item %}
+        {% endif %}
       </div>
       {% endfor %}
     </div>

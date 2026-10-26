@@ -540,3 +540,36 @@ class ContentTranslationTests(TestCase):
         ):
             call_command("translate_content", stdout=StringIO(), stderr=err)
         self.assertIn("Ollama", err.getvalue())
+
+
+class AdminNewsFilterTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="editor", password="pass123", is_staff=True
+        )
+        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.NEWS)
+        for title, status in (("Pub", News.PUBLISHED), ("Rasc", News.DRAFT)):
+            News.objects.create(
+                title=title,
+                content="c",
+                category=category,
+                author=self.staff,
+                status=status,
+            )
+        self.client.login(username="editor", password="pass123")
+
+    def test_status_tabs_filter_the_list(self):
+        url = reverse("core:admin_news_list")
+        published = self.client.get(url + "?status=published").context["news_list"]
+        drafts = self.client.get(url + "?status=draft").context["news_list"]
+        self.assertEqual([n.title for n in published], ["Pub"])
+        self.assertEqual([n.title for n in drafts], ["Rasc"])
+
+
+class VisitPageTests(TestCase):
+    def test_visit_page_is_linked_and_lists_emergency_numbers(self):
+        landing = self.client.get(reverse("core:landing"))
+        self.assertContains(landing, reverse("core:visit"))
+        response = self.client.get(reverse("core:visit"))
+        self.assertContains(response, "Vermelhinhos")
+        self.assertContains(response, "<strong>192</strong>", html=False)

@@ -259,15 +259,15 @@
   {% endif %}
 </section>
 
-{% if upcoming_events %}
+{% if upcoming_events or recent_events %}
 <section id="eventsSection" class="bg-light py-5">
   <div class="container">
     <div class="section-heading">
-      <h2>{% translate "Próximos eventos em Maricá" %}</h2>
+      <h2>{% if upcoming_events %}{% translate "Próximos eventos em Maricá" %}{% else %}{% translate "Eventos recentes em Maricá" %}{% endif %}</h2>
       <a href="{% url 'news:news_list' %}">{% translate "Ver agenda completa" %} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
     </div>
     <div class="row g-4">
-      {% for event in upcoming_events %}
+      {% for event in upcoming_events|default:recent_events %}
       <div class="col-md-6 col-lg-3">
         {% include 'includes/event_card.html' with event=event %}
       </div>
