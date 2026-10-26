@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import timezone as dt_timezone
 from io import StringIO
 from pathlib import Path
@@ -780,3 +780,51 @@ class NewsListLayoutTests(TestCase):
         NewsCategory.objects.get_or_create(name=NewsCategory.ANNOUNCEMENT)
         response = self.client.get(reverse("news:news_list"))
         self.assertNotContains(response, "?category=Anuncios")
+
+
+class AgendaTests(TestCase):
+    """The events page leads with upcoming and ongoing events"""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="agenda", password="pass123")
+        self.events, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        now = timezone.now()
+        self.ongoing = self._event("Festival em andamento", now - timedelta(days=1))
+        self.ongoing.event_end_date = now + timedelta(days=2)
+        self.ongoing.save()
+        self.later = self._event("Show daqui a uma semana", now + timedelta(days=7))
+        self.past = self._event("Feira encerrada", now - timedelta(days=30))
+
+    def _event(self, title, when):
+        return News.objects.create(
+            title=title,
+            content="c",
+            category=self.events,
+            author=self.author,
+            status=News.PUBLISHED,
+            publish_date=timezone.now() - timedelta(days=40),
+            event_date=when,
+            event_location="Orla",
+        )
+
+    def test_upcoming_events_include_ongoing_in_date_order(self):
+        self.assertEqual(
+            list(News.objects.published().upcoming_events()),
+            [self.ongoing, self.later],
+        )
+
+    def test_ongoing_event_is_not_past(self):
+        self.assertTrue(self.ongoing.is_ongoing_event)
+        self.assertFalse(self.ongoing.is_past_event)
+
+    def test_agenda_leads_and_is_not_repeated_below(self):
+        response = self.client.get(reverse("news:news_list"))
+        self.assertEqual(response.context["agenda"], [self.ongoing, self.later])
+        self.assertEqual(list(response.context["news_items"]), [self.past])
+        self.assertContains(response, "Acontecendo agora")
+
+    def test_landing_shows_only_upcoming_events(self):
+        response = self.client.get(reverse("core:landing"))
+        self.assertContains(response, "Próximos eventos em Maricá")
+        self.assertContains(response, "Show daqui a uma semana")
+        self.assertNotContains(response, "Feira encerrada")

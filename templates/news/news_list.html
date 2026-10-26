@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Notícias & Eventos - MaricaCity{% endblock %}
+{% block title %}Agenda de eventos - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
@@ -10,8 +10,8 @@
   <div class="container">
     <div class="page-header-row">
       <div>
-        <h1>Notícias & Eventos</h1>
-        <p class="page-header-subtitle">O que está acontecendo em Maricá: {{ total_count }} publicaç{{ total_count|pluralize:"ão,ões" }}.</p>
+        <h1>Agenda de Maricá</h1>
+        <p class="page-header-subtitle">{% if upcoming_count %}{{ upcoming_count }} evento{{ upcoming_count|pluralize }} programado{{ upcoming_count|pluralize }}: festivais, shows, feiras e tradições da cidade.{% else %}Festivais, shows, feiras e tradições da cidade.{% endif %}</p>
       </div>
       <a href="{% url 'explore:explore' %}" class="btn btn-light">
         <i class="bi bi-compass me-1" aria-hidden="true"></i>Explorar lugares
@@ -24,7 +24,7 @@
   <div class="container section-tabs-inner">
     <ul class="nav" aria-label="Filtrar por categoria">
       <li class="nav-item">
-        <a class="nav-link {% if current_category == 'all' %}active{% endif %}" {% if current_category == 'all' %}aria-current="true"{% endif %} href="?sort={{ current_sort }}">Tudo</a>
+        <a class="nav-link {% if current_category == 'all' %}active{% endif %}" {% if current_category == 'all' %}aria-current="true"{% endif %} href="?sort={{ current_sort }}">Agenda</a>
       </li>
       {% for category in categories %}
       {% if category.published_count or current_category == category.name %}
@@ -50,36 +50,25 @@
 <div class="bg-light">
   <div class="container py-4 py-md-5">
 
-    {% if lead_item %}
-    <section class="mb-5" aria-label="Destaque">
-      {% include 'includes/news_card.html' with item=lead_item lead=True %}
-    </section>
-    {% endif %}
-
-    {% if upcoming_events %}
-    <section class="mb-5">
+    {% if current_category == 'all' or current_category == 'Evento' %}
+    <section class="mb-5" aria-labelledby="agendaHeading">
       <div class="section-heading">
-        <h2>Próximos eventos</h2>
-        <a href="?category=Evento">Ver todos os eventos</a>
+        <h2 id="agendaHeading">Próximos eventos</h2>
       </div>
-      <div class="row g-3">
-        {% for event in upcoming_events %}
-        <div class="col-md-4">
-          <a class="event-chip" href="{% url 'news:news_detail' event.slug %}">
-            <div class="event-chip-date">
-              <strong>{{ event.event_date|date:"d" }}</strong>
-              <span>{{ event.event_date|date:"M" }}</span>
-            </div>
-            <div>
-              <p class="event-chip-title">{{ event.title }}</p>
-              {% if event.event_location %}
-              <small class="text-muted"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ event.event_location }}</small>
-              {% endif %}
-            </div>
-          </a>
+      {% if agenda %}
+      <div class="row g-4">
+        {% for event in agenda %}
+        <div class="{% if forloop.first %}col-12{% else %}col-md-6 col-lg-4{% endif %}">
+          {% include 'includes/event_card.html' with event=event lead=forloop.first %}
         </div>
         {% endfor %}
       </div>
+      {% elif not news_items.has_previous %}
+      <div class="agenda-empty">
+        <i class="bi bi-calendar-x fs-2 d-block mb-2" aria-hidden="true"></i>
+        Nenhum evento programado no momento. Volte em breve.
+      </div>
+      {% endif %}
     </section>
     {% endif %}
 
@@ -88,7 +77,7 @@
 
       {% if own_items %}
       <div class="section-heading">
-        <h2>{% if active_category %}{{ active_category.label }}{% elif current_sort == 'popular' %}Mais vistas{% elif current_sort == 'oldest' %}Mais antigas{% else %}Do MaricaCity{% endif %}</h2>
+        <h2>{% if current_category == 'Evento' %}Eventos anteriores{% elif active_category %}{{ active_category.label }}{% elif current_sort == 'popular' %}Mais vistas{% elif current_sort == 'oldest' %}Mais antigas{% else %}Avisos e eventos anteriores{% endif %}</h2>
       </div>
       <div class="row g-4 mb-5">
         {% for item in own_items %}
@@ -136,7 +125,7 @@
         </ul>
       </nav>
       {% endif %}
-      {% else %}
+      {% elif not agenda %}
       <div class="text-center py-5">
         <i class="bi bi-inbox fs-1 text-muted mb-3 d-block" aria-hidden="true"></i>
         <p class="h5">Nenhuma publicação nesta categoria</p>

@@ -1,5 +1,5 @@
 {% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
-<a class="news-card {% if lead %}news-lead{% endif %}"
+<a class="news-card"
    {% if item.is_external %}href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'news:news_detail' item.slug %}"{% endif %}>
   {% if item.featured_image %}
   <div class="news-card-media">
@@ -27,8 +27,5 @@
       <span>{{ item.source_name }} <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i><span class="visually-hidden">(abre em nova aba)</span></span>
       {% endif %}
     </div>
-    {% if lead %}
-    <span class="news-lead-cta">{% if item.is_external %}Ler no site original{% else %}Ler matéria{% endif %} <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-    {% endif %}
   </div>
 </a>

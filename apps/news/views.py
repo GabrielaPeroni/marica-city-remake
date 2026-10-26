@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.core.paginator import Paginator
 from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.shortcuts import get_object_or_404, render
@@ -7,26 +5,24 @@ from django.utils import timezone
 
 from .models import News, NewsCategory
 
-PAGE_SIZE = 13  # 1 destaque + 12 no grid
-LEAD_MAX_AGE_DAYS = 14
+PAGE_SIZE = 12
 
 
 def news_list_view(request):
-    """Exibir lista de todas as notícias e eventos publicados"""
-    # Obter parâmetros de filtro
+    """Agenda de eventos de Maricá, seguida de avisos e manchetes"""
     category_filter = request.GET.get("category", "all")
     sort_by = request.GET.get("sort", "newest")
 
-    # Consulta base - apenas itens publicados com publish_date <= agora
-    news_items = News.objects.filter(
-        status=News.PUBLISHED, publish_date__lte=timezone.now()
-    ).select_related("category", "author")
+    published = News.objects.published().select_related("category", "author")
+    upcoming_events = published.upcoming_events()
+    showing_agenda = category_filter in ("all", NewsCategory.EVENT)
 
-    # Filtrar por categoria se especificado
+    news_items = published
     if category_filter != "all":
         news_items = news_items.filter(category__name=category_filter)
+    if showing_agenda:
+        news_items = news_items.exclude(pk__in=upcoming_events.values("pk"))
 
-    # Ordenar
     if sort_by == "oldest":
         news_items = news_items.order_by("publish_date")
     elif sort_by == "popular":
@@ -40,7 +36,6 @@ def news_list_view(request):
             )
         ).order_by("is_press", "-publish_date")
 
-    # Obter categorias para menu de filtro
     categories = NewsCategory.objects.annotate(
         published_count=Count(
             "news_items",
@@ -51,41 +46,24 @@ def news_list_view(request):
         )
     )
 
-    # Separar eventos futuros
-    upcoming_events = news_items.filter(
-        category__name=NewsCategory.EVENT, event_date__gt=timezone.now()
-    ).order_by("event_date")[:3]
-
-    # Obter itens em destaque
-    featured_items = news_items.filter(is_featured=True)[:3]
-
     page = Paginator(news_items, PAGE_SIZE).get_page(request.GET.get("page"))
-    # Só um destaque recente ocupa o topo; um antigo não deve ficar preso ali.
-    lead_item = None
-    if page.number == 1 and sort_by == "newest" and category_filter == "all":
-        recent = timezone.now() - timedelta(days=LEAD_MAX_AGE_DAYS)
-        lead_item = news_items.filter(
-            is_featured=True, publish_date__gte=recent, source_url=""
-        ).first()
-
-    listed = [item for item in page if item != lead_item]
-    own_items = [item for item in listed if not item.is_external]
-    press_items = [item for item in listed if item.is_external]
-
-    active_category = next((c for c in categories if c.name == category_filter), None)
+    agenda = list(upcoming_events) if showing_agenda and page.number == 1 else []
 
     context = {
         "news_items": page,
-        "lead_item": lead_item,
-        "own_items": own_items,
-        "press_items": press_items,
-        "active_category": active_category,
+        "agenda": agenda,
+        "own_items": [item for item in page if not item.is_external],
+        "press_items": [item for item in page if item.is_external],
+        "active_category": next(
+            (c for c in categories if c.name == category_filter), None
+        ),
         "total_count": page.paginator.count,
         "categories": categories,
         "current_category": category_filter,
         "current_sort": sort_by,
         "upcoming_events": upcoming_events,
-        "featured_items": featured_items,
+        "upcoming_count": upcoming_events.count(),
+        "featured_items": published.filter(is_featured=True)[:3],
     }
 
     return render(request, "news/news_list.html", context)
