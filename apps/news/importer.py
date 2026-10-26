@@ -120,5 +120,8 @@ def import_items(items, *, days, limit, keyword="marica", now=None):
 
 
 def purge_imported():
-    deleted, _ = News.objects.exclude(source_url="").delete()
+    imported = News.objects.exclude(source_url="").exclude(
+        category__name=NewsCategory.EVENT
+    )
+    deleted, _ = imported.delete()
     return deleted

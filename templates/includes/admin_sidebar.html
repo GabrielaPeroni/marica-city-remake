@@ -44,6 +44,14 @@
         <span class="nav-badge">{{ draft_news }}</span>
       {% endif %}
     </a>
+
+    <a href="{% url 'core:admin_event_triage' %}" class="nav-item {% if 'eventos' in request.path %}active{% endif %}">
+      <i class="bi bi-calendar-check"></i>
+      <span>Triagem de eventos</span>
+      {% if pending_events > 0 %}
+        <span class="nav-badge">{{ pending_events }}</span>
+      {% endif %}
+    </a>
   </nav>
 
   <!-- Rodapé da Barra Lateral -->

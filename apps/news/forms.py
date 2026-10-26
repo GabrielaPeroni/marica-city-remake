@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import News, NewsCategory
+from .models import EventCandidate, News, NewsCategory
 
 
 class NewsForm(forms.ModelForm):
@@ -145,3 +145,48 @@ class NewsForm(forms.ModelForm):
             self.add_error("excerpt", "O resumo não pode ter mais de 300 caracteres.")
 
         return cleaned_data
+
+
+class EventCandidateForm(forms.ModelForm):
+    """Revisão dos dados extraídos antes de publicar o evento"""
+
+    class Meta:
+        model = EventCandidate
+        fields = ["title", "summary", "event_date", "event_end_date", "event_location"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "summary": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
+            "event_date": forms.DateTimeInput(
+                attrs={"class": "form-control", "type": "datetime-local"},
+                format="%Y-%m-%dT%H:%M",
+            ),
+            "event_end_date": forms.DateTimeInput(
+                attrs={"class": "form-control", "type": "datetime-local"},
+                format="%Y-%m-%dT%H:%M",
+            ),
+            "event_location": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Ex.: Praça Orlando de Barros Pimentel, Centro",
+                }
+            ),
+        }
+        labels = {
+            "title": "Título",
+            "summary": "Descrição",
+            "event_date": "Início",
+            "event_end_date": "Término (opcional)",
+            "event_location": "Local",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["event_date"].required = True
+        self.fields["event_location"].required = True
+
+    def clean(self):
+        cleaned = super().clean()
+        start, end = cleaned.get("event_date"), cleaned.get("event_end_date")
+        if start and end and end <= start:
+            self.add_error("event_end_date", "O término deve ser depois do início.")
+        return cleaned

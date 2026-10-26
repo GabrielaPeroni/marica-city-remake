@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from django.conf import settings
@@ -5,14 +6,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 from apps.accounts.models import User
 from apps.explore.models import Category, Place, PlaceReview
-from apps.news.forms import NewsForm
-from apps.news.models import News, NewsCategory
+from apps.news import event_crawler
+from apps.news.forms import EventCandidateForm, NewsForm
+from apps.news.models import EventCandidate, News, NewsCategory
+
+logger = logging.getLogger(__name__)
 
 
 @require_GET
@@ -227,8 +231,6 @@ def admin_news_edit_view(request, pk):
         messages.error(request, "Você não tem permissão para acessar esta página.")
         return redirect("core:landing")
 
-    from django.shortcuts import get_object_or_404
-
     news = get_object_or_404(News, pk=pk)
 
     if request.method == "POST":
@@ -256,8 +258,6 @@ def admin_news_delete_view(request, pk):
         messages.error(request, "Você não tem permissão para acessar esta página.")
         return redirect("core:landing")
 
-    from django.shortcuts import get_object_or_404
-
     news = get_object_or_404(News, pk=pk)
 
     if request.method == "POST":
@@ -268,3 +268,79 @@ def admin_news_delete_view(request, pk):
 
     context = {"news": news}
     return render(request, "core/admin/news_delete_confirm.html", context)
+
+
+# Triagem de eventos encontrados pelo crawler
+
+
+def _triage_context(bound_form=None):
+    pending = list(
+        EventCandidate.objects.filter(status=EventCandidate.PENDING).select_related(
+            "possible_duplicate"
+        )
+    )
+    candidates = []
+    for c in pending:
+        if bound_form is not None and bound_form.instance.pk == c.pk:
+            form = bound_form
+        else:
+            form = EventCandidateForm(instance=c, prefix=f"c{c.pk}")
+        siblings = [
+            o for o in pending if o.pk != c.pk and event_crawler.same_event(c, o)
+        ]
+        candidates.append((c, form, siblings))
+    recent = (
+        EventCandidate.objects.exclude(status=EventCandidate.PENDING)
+        .select_related("news", "reviewed_by")
+        .order_by("-reviewed_at")[:10]
+    )
+    return {"candidates": candidates, "recent": recent}
+
+
+@login_required
+def admin_event_triage_view(request):
+    if not request.user.can_moderate:
+        messages.error(request, "Você não tem permissão para acessar esta página.")
+        return redirect("core:landing")
+    return render(request, "core/admin/event_triage.html", _triage_context())
+
+
+@login_required
+@require_POST
+def admin_event_triage_action_view(request, pk):
+    if not request.user.can_moderate:
+        messages.error(request, "Você não tem permissão para acessar esta página.")
+        return redirect("core:landing")
+
+    candidate = get_object_or_404(EventCandidate, pk=pk, status=EventCandidate.PENDING)
+    if request.POST.get("action") == "reject":
+        event_crawler.reject(candidate, request.user)
+        messages.info(request, f'"{candidate.title}" foi descartado.')
+        return redirect("core:admin_event_triage")
+
+    form = EventCandidateForm(request.POST, instance=candidate, prefix=f"c{pk}")
+    if not form.is_valid():
+        messages.error(request, f'Revise os campos de "{candidate.title}".')
+        return render(
+            request, "core/admin/event_triage.html", _triage_context(form), status=400
+        )
+
+    news = event_crawler.approve(form.save(), request.user)
+    messages.success(request, f'"{news.title}" publicado na agenda.')
+    return redirect("core:admin_event_triage")
+
+
+@login_required
+@require_POST
+def admin_event_crawl_view(request):
+    if not request.user.can_moderate:
+        messages.error(request, "Você não tem permissão para acessar esta página.")
+        return redirect("core:landing")
+    try:
+        created = event_crawler.store_candidates(event_crawler.fetch_prefeitura_posts())
+    except Exception:
+        logger.exception("Busca manual de eventos falhou")
+        messages.error(request, "Não foi possível consultar a Prefeitura agora.")
+    else:
+        messages.success(request, f"{created} evento(s) novo(s) para triagem.")
+    return redirect("core:admin_event_triage")

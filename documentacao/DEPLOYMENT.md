@@ -140,6 +140,34 @@ means changing the infra in front of the app (DNS + proxy settings, or a
 (`deploy/mock-cloudflare/Caddyfile`) are not part of that path and are never
 used in prod.
 
+## Agenda automática (`crawl_events`) e agendador
+
+`uv run python manage.py crawl_events` consulta a API do portal da Prefeitura
+(categorias de Cultura, Turismo, Esportes e MARÉ) e extrai data, horário e local
+de cada evento anunciado. Eventos futuros entram na **Triagem de eventos**
+(`/painel-admin/eventos/triagem/`), onde a equipe confere os dados e publica na
+agenda ou descarta. Nada é publicado sem revisão. A busca é idempotente.
+
+> **Estado atual: desligado.** O projeto está em modo demonstração com conteúdo
+> estático: a agenda e as notícias foram importadas uma vez (out/2026) e o
+> agendador não roda. Todo o código continua no repositório. Para religar:
+>
+> 1. `docker compose --profile scheduler up -d` (ou rode `run_scheduler` como
+>    serviço / cron com `--once`);
+> 2. revise os eventos em `/painel-admin/eventos/triagem/` periodicamente;
+> 3. confira se as categorias em `PREFEITURA_CATEGORIES`
+>    (`apps/news/event_crawler.py`) ainda existem no portal
+>    (`/wp-json/wp/v2/categories`), pois os IDs podem mudar.
+>
+> Também dá para buscar só uma vez, sem agendador: `manage.py crawl_events`
+> ou o botão “Buscar agora” na triagem.
+
+`uv run python manage.py run_scheduler` mantém um processo que roda
+`crawl_events` e `fetch_news` a cada 6 horas (`--interval`, em horas; `--once`
+roda uma vez e sai). No `docker-compose.yml` ele é o serviço `scheduler`; fora
+do Docker, rode-o como um serviço do sistema ou troque por um cron que chame
+`run_scheduler --once`.
+
 ## Importador de notícias (`fetch_news`)
 
 `uv run python manage.py fetch_news` lê um feed RSS e grava as manchetes dos
