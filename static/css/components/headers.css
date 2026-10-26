@@ -158,44 +158,6 @@
   min-height: 44px;
 }
 
-/* Tabs that sit directly under a page header */
-.section-tabs {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-
-.section-tabs-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1rem;
-}
-
-.section-tabs .nav {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-.section-tabs .nav-link {
-  color: var(--ink-muted);
-  font-weight: 500;
-  padding: 0.9rem 1rem;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
-  white-space: nowrap;
-}
-
-.section-tabs .nav-link:hover {
-  color: var(--ink);
-}
-
-.section-tabs .nav-link.active {
-  color: var(--brand-red);
-  border-bottom-color: var(--brand-red);
-  font-weight: 600;
-}
-
 .section-heading {
   display: flex;
   align-items: baseline;
