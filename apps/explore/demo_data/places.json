@@ -1,0 +1,273 @@
+[
+  {
+    "name": "Casa de Cultura e Museu Histórico de Maricá",
+    "categories": ["artes-cultura"],
+    "description": "Prédio colonial do século XIX tombado pelo Inepac, que já foi cadeia pública, prefeitura e sede da Câmara Municipal. Restaurado entre 2015 e o início de 2020, hoje abriga a Casa de Cultura e é a sede do Museu Histórico de Maricá, dedicado a preservar e divulgar a história do município. Recebe exposições e é uma das paradas do city tour cultural do centro histórico.",
+    "address": "Praça Orlando de Barros Pimentel, Centro, Maricá - RJ",
+    "latitude": -22.91937,
+    "longitude": -42.81867,
+    "sources": [
+      "https://www.marica.rj.gov.br/wp-content/uploads/2020/02/JOM_ESP_254_27-02-2020.pdf",
+      "https://www.marica.rj.gov.br/wp-content/uploads/2024/01/MUSEU-hISTORICO-DE-MARICA-2.pdf",
+      "https://www.marica.rj.gov.br/wp-content/uploads/2025/08/JOM_1770-18-08-2025.pdf"
+    ],
+    "image": null
+  },
+  {
+    "name": "Cine Henfil",
+    "categories": ["artes-cultura"],
+    "description": "Cinema municipal no Centro de Maricá com 200 lugares, incluindo espaços reservados para cadeirantes, pessoas com mobilidade reduzida e pessoas com obesidade. A entrada é gratuita, com reserva de ingressos pela internet. A programação mistura filmes brasileiros recentes, animações infantis e mostras, e há sessões adaptadas para pessoas com TEA.",
+    "address": "Rua Alferes Gomes, 390, Centro, Maricá - RJ",
+    "latitude": -22.92138,
+    "longitude": -42.81786,
+    "sources": [
+      "https://folhadoleste.com.br/?p=177677",
+      "https://folhadoleste.com.br/cine-henfil-marica-filmes-gratuitos/",
+      "https://www.marica.rj.gov.br/wp-content/uploads/2025/09/JOM_1781-12-09-2025_02.pdf"
+    ],
+    "image": null
+  },
+  {
+    "name": "Igreja Matriz Nossa Senhora do Amparo",
+    "categories": ["artes-cultura"],
+    "description": "Principal símbolo histórico do centro de Maricá, a matriz de Nossa Senhora do Amparo está ligada à origem da cidade, cuja freguesia foi criada em 1755. É uma das poucas construções do município com mais de cem anos. Sua padroeira é celebrada em 15 de agosto, e a escadaria da igreja recebe cerimônias de religiões de matriz africana.",
+    "address": "Rua Álvares de Castro, 239, Centro, Maricá - RJ",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://biblioteca.ibge.gov.br/visualizacao/dtb/riodejaneiro/marica.pdf",
+      "https://www.marica.rj.gov.br/wp-content/uploads/2019/02/JOM_935_25-02-2019.pdf"
+    ],
+    "image": {
+      "commons_title": "File:Igreja Matriz Nossa Senhora do Amparo - Maricá - 20230923140117.jpg",
+      "license": "CC BY-SA 4.0",
+      "author": "Donatas Dabravolskas",
+      "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Igreja_Matriz_Nossa_Senhora_do_Amparo_-_Maric%C3%A1_-_20230923140117.jpg/1920px-Igreja_Matriz_Nossa_Senhora_do_Amparo_-_Maric%C3%A1_-_20230923140117.jpg",
+      "file_page_url": "https://commons.wikimedia.org/wiki/File:Igreja_Matriz_Nossa_Senhora_do_Amparo_-_Maric%C3%A1_-_20230923140117.jpg"
+    }
+  },
+  {
+    "name": "Praia de Itaipuaçu",
+    "categories": ["praias"],
+    "description": "Uma das principais praias de Maricá, com cerca de 15 km de extensão e ciclovia paralela à orla, usada para pedalar e correr. Do Costão de Itaipuaçu parte uma trilha com vista para a Pedra do Elefante. O mar aberto tem correntes de retorno fortes; o Recanto, onde o mar encontra um canal, é a área mais indicada para famílias com crianças.",
+    "address": "Itaipuaçu, Maricá - RJ",
+    "latitude": -22.96235,
+    "longitude": -42.99406,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.quintoandar.com.br/guias/?p=2474590",
+      "https://catracalivre.com.br/viagem-livre/itaipuacu-em-marica-rj-e-o-destino-perfeito-para-o-proximo-feriadao/"
+    ],
+    "image": {
+      "commons_title": "File:Praia de Itaipuaçu.JPG",
+      "license": "CC BY-SA 4.0",
+      "author": "Gustavoolimiranda",
+      "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Praia_de_Itaipua%C3%A7u.JPG/1920px-Praia_de_Itaipua%C3%A7u.JPG",
+      "file_page_url": "https://commons.wikimedia.org/wiki/File:Praia_de_Itaipua%C3%A7u.JPG"
+    }
+  },
+  {
+    "name": "Praia de Ponta Negra",
+    "categories": ["praias"],
+    "description": "Praia de Maricá com fundo de areia, boa para surfistas de todos os níveis e de fácil acesso pela Rodovia Amaral Peixoto, com placas indicando a entrada. Fica perto do Farol de Ponta Negra e da Lagoa de Guarapina, e a região concentra várias pousadas.",
+    "address": "Ponta Negra, Maricá - RJ",
+    "latitude": -22.9535,
+    "longitude": -42.6953,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.mondo.surf/surf-spot/praia-de-ponta-negra/guide/12690",
+      "https://www.quintoandar.com.br/guias/?p=2474590"
+    ],
+    "image": {
+      "commons_title": "File:Praia de Ponta Negra and Lagoa de Guarapina viewed from Farol de Ponta Negra, Maricá, Brazil.jpg",
+      "license": "CC0",
+      "author": "Wilfredor",
+      "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Praia_de_Ponta_Negra_and_Lagoa_de_Guarapina_viewed_from_Farol_de_Ponta_Negra%2C_Maric%C3%A1%2C_Brazil.jpg/1920px-Praia_de_Ponta_Negra_and_Lagoa_de_Guarapina_viewed_from_Farol_de_Ponta_Negra%2C_Maric%C3%A1%2C_Brazil.jpg",
+      "file_page_url": "https://commons.wikimedia.org/wiki/File:Praia_de_Ponta_Negra_and_Lagoa_de_Guarapina_viewed_from_Farol_de_Ponta_Negra,_Maric%C3%A1,_Brazil.jpg"
+    }
+  },
+  {
+    "name": "Praia da Barra de Maricá",
+    "categories": ["praias"],
+    "description": "Uma das principais praias do município, entre o mar aberto e o sistema de lagoas protegido pela APA de Maricá. O bairro da Barra tem pousadas e restaurantes à beira da lagoa.",
+    "address": "Barra de Maricá, Maricá - RJ",
+    "latitude": -22.95909,
+    "longitude": -42.81999,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.quintoandar.com.br/guias/?p=2474590",
+      "https://www.inea.rj.gov.br/wp-content/uploads/2023/07/Deb4854.pdf"
+    ],
+    "image": null
+  },
+  {
+    "name": "Parque Estadual da Serra da Tiririca",
+    "categories": ["natureza-parques"],
+    "description": "Unidade de conservação de Mata Atlântica dividida entre Niterói e Maricá, com 3.493 hectares, incluindo um trecho marinho. O ponto mais alto é o Morro do Elefante, com 412 metros. Tem trilhas como a do Alto Mourão e a das Andorinhas, e os horários e regras de visitação devem ser confirmados com o Inea.",
+    "address": "Itaipuaçu, Maricá - RJ (parque compartilhado com Niterói)",
+    "latitude": -22.93277,
+    "longitude": -42.98417,
+    "sources": [
+      "https://en.wikipedia.org/wiki/Serra_da_Tiririca_State_Park",
+      "https://www.tupi.fm/?p=1951730",
+      "https://periodicos.uff.br/uso_publico/article/download/28677/16637"
+    ],
+    "image": {
+      "commons_title": "File:PE da Serra da Tiririca - Felipe Chermont(001).jpg",
+      "license": "CC BY-SA 4.0",
+      "author": "Felipe Chermont",
+      "thumb_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5b/PE_da_Serra_da_Tiririca_-_Felipe_Chermont%28001%29.jpg/1920px-PE_da_Serra_da_Tiririca_-_Felipe_Chermont%28001%29.jpg",
+      "file_page_url": "https://commons.wikimedia.org/wiki/File:PE_da_Serra_da_Tiririca_-_Felipe_Chermont(001).jpg"
+    }
+  },
+  {
+    "name": "Cachoeira do Espraiado",
+    "categories": ["natureza-parques"],
+    "description": "Cachoeira em área preservada de Mata Atlântica no Espraiado, tornada patrimônio cultural, turístico e paisagístico do estado do Rio de Janeiro pela Lei 10.998 de 2025. Em 2022 a prefeitura informou a reabertura da cachoeira e da Gruta da Sacristia para visitação e banho, com mergulho e escalada proibidos por causa do fundo de pedras irregulares. O Espraiado também recebe o circuito rural Espraiado de Portas Abertas.",
+    "address": "Espraiado, Maricá - RJ",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.marica.rj.gov.br/wp-content/uploads/2022/06/JOM_1323_22_06_2022.pdf",
+      "https://www.buser.com.br/destinos/pontos-turisticos/rj/marica/cachoeira-do-espraiado",
+      "https://www.turismo.rj.gov.br/cidades/marica/"
+    ],
+    "image": null
+  },
+  {
+    "name": "APA de Maricá",
+    "categories": ["natureza-parques"],
+    "description": "Área de Proteção Ambiental criada em 1984 para proteger a restinga e o sistema lagunar de Maricá, que inclui as lagoas de Maricá, da Barra, do Padre, de Guarapina e de Jaconé, além da Lagoa Brava e da Ilha Cardosa. É a APA mais antiga sob administração estadual e hoje é gerida pelo Inea.",
+    "address": "Restinga e lagoas de Maricá, Maricá - RJ",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.inea.rj.gov.br/wp-content/uploads/2023/07/Deb4854.pdf",
+      "https://periodicos.uff.br/uso_publico/article/download/59447/35180/213175"
+    ],
+    "image": null
+  },
+  {
+    "name": "Restaurante João & João",
+    "categories": ["restaurantes"],
+    "description": "Restaurante de churrasco e comida brasileira no Centro de Maricá. Há também uma unidade no bairro de Cordeirinho.",
+    "address": "Rua Athaíde Parreiras, 127, Centro, Maricá - RJ",
+    "latitude": -22.91676,
+    "longitude": -42.81822,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.tripadvisor.com.br/Restaurants-g1747466-zfp10602-Marica_State_of_Rio_de_Janeiro.html"
+    ],
+    "image": null
+  },
+  {
+    "name": "Restaurante Costela Fogo de Chão",
+    "categories": ["restaurantes"],
+    "description": "Rancho de comida brasileira e churrasco no Espraiado, na zona rural de Maricá. Participa do circuito Espraiado de Portas Abertas, que reúne restaurantes, sítios e atrações culturais da região.",
+    "address": "Rua José Thomaz, 67, Espraiado, Maricá - RJ",
+    "latitude": -22.88235,
+    "longitude": -42.70133,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://folhadoleste.com.br/espraiado-de-portas-abertas-recebe-mais-uma-edicao/",
+      "https://www.tripadvisor.com.br/Restaurants-g1747466-zfp10602-Marica_State_of_Rio_de_Janeiro.html"
+    ],
+    "image": null
+  },
+  {
+    "name": "Alexandre Restaurante",
+    "categories": ["restaurantes"],
+    "description": "Restaurante de frutos do mar com ambiente rústico em Araçatiba, perto da lagoa. Entre os pratos mais lembrados pelos visitantes estão a moqueca individual de peixe, o camarão e os pastéis.",
+    "address": "Rua 82 (Oitenta e Dois), Araçatiba, Maricá - RJ",
+    "latitude": -22.94134,
+    "longitude": -42.82916,
+    "sources": [
+      "https://wanderlog.com/place/details/2833263/alexandre-restaurante",
+      "https://cardapio.menu/restaurants/marica/alexandre-29",
+      "https://www.tripadvisor.com.br/Restaurants-g1747466-zfp10602-Marica_State_of_Rio_de_Janeiro.html"
+    ],
+    "image": null
+  },
+  {
+    "name": "Black Point Beach Club",
+    "categories": ["hoteis-pousadas"],
+    "description": "Pousada à beira-mar em Ponta Negra, com piscina, bar na piscina e restaurante com vista para o mar.",
+    "address": "Rua Cento e Cinquenta e Sete, Lt 2A, Ponta Negra, Maricá - RJ",
+    "latitude": -22.95529,
+    "longitude": -42.70682,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.expedia.com/Rio-de-Janeiro-(and-vicinity)-hotels-Black-Point-Beach-Club.h24431584.Hotel-information",
+      "https://www.dicasdeviagem.com/pousadas-em-marica/"
+    ],
+    "image": null
+  },
+  {
+    "name": "Pousada Tamarindos",
+    "categories": ["hoteis-pousadas"],
+    "description": "Pousada em Araçatiba, perto da lagoa e do Centro de Maricá.",
+    "address": "Rua Álvares de Castro, 1385, Araçatiba, Maricá - RJ",
+    "latitude": -22.92605,
+    "longitude": -42.82743,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.kayak.com/Marica-Hotels-Pousada-Tamarindos-Marica.2760091.ksp"
+    ],
+    "image": null
+  },
+  {
+    "name": "Pousada das Estrelas",
+    "categories": ["hoteis-pousadas"],
+    "description": "Pousada no bairro de Itaipuaçu, perto da praia.",
+    "address": "Rua Dezessete de Novembro, Qd 02, Lt 10, Praia de Itaipuaçu, Maricá - RJ",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://lookup.hotels.com/ho495780928/pousada-das-estrelas-marica-brazil",
+      "https://www.kayak.com/Marica-Hotels-Pousada-Das-Estrelas.694562.ksp"
+    ],
+    "image": null
+  },
+  {
+    "name": "Centro de Comércio Popular (Cecop)",
+    "categories": ["compras"],
+    "description": "Espaço coberto inaugurado pela prefeitura em fevereiro de 2024 como parte da revitalização do Centro, com 114 boxes. Vende comidas, bebidas, souvenires, artesanato, peças de arte, roupas, calçados e acessórios. A Feira da Agricultura Familiar já foi realizada em frente ao local.",
+    "address": "Rua Juvenal José Bitencourt, 37, Centro, Maricá - RJ",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.marica.rj.gov.br/wp-content/uploads/2024/02/JOM_1559_21-02-2024.pdf",
+      "https://folhadoleste.com.br/marica-feira-de-agricultura-familiar-agita-o-centro-popular/",
+      "https://www.correiodamanha.com.br/estado-do-rio/2024/07/145680-marica-promove-feira-de-agricultura-familiar.html"
+    ],
+    "image": null
+  },
+  {
+    "name": "Boulevard Maricá",
+    "categories": ["compras"],
+    "description": "Shopping do Centro de Maricá, inaugurado em 2021, com lojas e serviços e estacionamento que também recebe feiras e eventos da cidade.",
+    "address": "Rua Vereador Luiz Antonio da Cunha, 35, Lote 0A, Centro, Maricá - RJ",
+    "latitude": -22.9156,
+    "longitude": -42.81691,
+    "sources": [
+      "https://www.buser.com.br/destinos/pontos-turisticos/rj/marica/boulevard-marica",
+      "https://sopacultural.com/primeira-feira-nacional-do-podrao-em-marica/"
+    ],
+    "image": null
+  },
+  {
+    "name": "Feirarte",
+    "categories": ["compras", "artes-cultura"],
+    "description": "Feira de artesanato organizada pela Secretaria de Turismo, que reúne artesãos locais em praças da cidade. Faz parte do ArteMar, núcleo que articula as feiras locais de Maricá. Os locais e datas variam, então vale conferir a programação da prefeitura.",
+    "address": "Praças do Centro de Maricá - RJ (locais variam)",
+    "latitude": null,
+    "longitude": null,
+    "sources": [
+      "https://www.turismo.rj.gov.br/cidades/marica/",
+      "https://www.marica.rj.gov.br/wp-content/uploads/2025/05/JOM_1730_09_05_2025.pdf"
+    ],
+    "image": null
+  }
+]

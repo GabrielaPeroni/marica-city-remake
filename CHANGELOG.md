@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `manage.py seed_demo_places` creates 18 real, approved places for the demo
+  (at least three per category) from `apps/explore/demo_data/places.json`, with
+  the sources recorded for each. It is idempotent (matches by name). Photos from
+  Wikimedia Commons (free licences) are only downloaded with `--with-images`,
+  and the credit line is appended to the description.
 - "Planeje sua visita" section on the About page (linked from the footer;
   the old `/planeje-sua-visita/` URL redirects to it) with practical tourist
   information: how to get there from Rio and Niterói, the free municipal
