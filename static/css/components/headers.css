@@ -1,18 +1,12 @@
 /* Site shell: navbar, page header, footer — shared by every internal page */
 
-:root {
-  --brand-red: #c1121f;
-  --brand-red-dark: #9c0303;
-  --brand-gradient: linear-gradient(to right, var(--brand-red), var(--brand-red-dark));
-}
-
 .navbar {
   padding: 1rem 2rem !important;
 }
 
 .site-navbar {
   padding: 0.85rem 0 !important;
-  background: var(--brand-gradient);
+  background: var(--brand-red);
   position: sticky;
   top: 0;
   z-index: 1030;
@@ -34,9 +28,14 @@
 
 .site-navbar a:focus-visible,
 .site-navbar button:focus-visible,
-.page-header a:focus-visible,
 .site-footer a:focus-visible {
   outline: 3px solid #fff;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.page-header a:focus-visible {
+  outline: 3px solid var(--dark-700);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -51,15 +50,16 @@
   top: 1rem;
   z-index: 2000;
   background: #fff;
-  color: #111827;
+  color: var(--ink);
   padding: 0.5rem 1rem;
   border-radius: 6px;
 }
 
-/* Page header: continues the navbar's colour so both read as one band */
+/* Page header: a calm light band under the red navbar */
 .page-header {
-  background: var(--brand-gradient);
-  color: #fff;
+  background: var(--surface);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
   padding: 1.75rem 0 2rem;
 }
 
@@ -76,23 +76,24 @@
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
-  color: #fff;
+  color: var(--dark-900);
 }
 
 .page-header-subtitle {
   margin: 0.35rem 0 0;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--ink-muted);
   font-size: 1rem;
   max-width: 60ch;
 }
 
 .page-header .breadcrumb {
+  align-items: center;
   margin-bottom: 0.6rem;
   font-size: 0.875rem;
 }
 
 .page-header .breadcrumb-item a {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--ink-muted);
   text-decoration: none;
 }
 
@@ -102,7 +103,7 @@
 
 .page-header .breadcrumb-item.active,
 .page-header .breadcrumb-item + .breadcrumb-item::before {
-  color: #fff;
+  color: var(--ink);
 }
 
 .page-header .breadcrumb-item a {
@@ -116,12 +117,33 @@
 
 .page-header-search .form-control,
 .page-header-search .input-group-text,
-.page-header-search .btn {
-  border: 0;
+.page-header-search .btn-light {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
 }
 
-.page-header .btn-light {
+.page-header-search .input-group-text {
+  border-right: 0;
+  color: var(--ink-muted);
+}
+
+.page-header-search .form-control {
+  border-left: 0;
+}
+
+.page-header-row > .btn-light {
   font-weight: 600;
+  color: #fff;
+  background: var(--brand-red);
+  border-color: var(--brand-red);
+}
+
+.page-header-row > .btn-light:hover,
+.page-header-row > .btn-light:focus-visible {
+  color: #fff;
+  background: var(--brand-red-dark);
+  border-color: var(--brand-red-dark);
 }
 
 .page-header .breadcrumb-item a,
@@ -138,8 +160,8 @@
 
 /* Tabs that sit directly under a page header */
 .section-tabs {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 
 .section-tabs-inner {
@@ -156,7 +178,7 @@
 }
 
 .section-tabs .nav-link {
-  color: #4b5563;
+  color: var(--ink-muted);
   font-weight: 500;
   padding: 0.9rem 1rem;
   border-bottom: 3px solid transparent;
@@ -165,7 +187,7 @@
 }
 
 .section-tabs .nav-link:hover {
-  color: #111827;
+  color: var(--ink);
 }
 
 .section-tabs .nav-link.active {
@@ -201,7 +223,7 @@
 
 /* Footer */
 .site-footer {
-  background: #111827;
+  background: var(--dark-900);
   color: rgba(255, 255, 255, 0.75);
   padding: 2.5rem 0 1.5rem;
 }
@@ -272,5 +294,16 @@
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.page-header .breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .site-navbar .navbar-nav {
+    align-items: center;
   }
 }

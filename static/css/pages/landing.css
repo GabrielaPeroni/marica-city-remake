@@ -37,14 +37,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(43, 40, 38, 0.5);
   z-index: 1;
 }
 
 .hero-nav {
   z-index: 10;
   padding: 1rem 0;
-  background: #c1121f;
+  background: var(--brand-red);
   backdrop-filter: blur(10px);
   top: 0 !important;
 }
@@ -109,7 +109,7 @@
 
 .btn-hero:hover {
   background: white;
-  color: #212529;
+  color: var(--ink);
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
@@ -232,7 +232,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(43, 40, 38, 0.42);
   z-index: 1;
 }
 
@@ -246,7 +246,7 @@
 }
 
 .hero-navbar {
-  background: linear-gradient(to right, #c1121f, #9c0303);
+  background: var(--brand-red);
   backdrop-filter: blur(10px);
   padding: 1rem 2rem;
 }
@@ -299,7 +299,7 @@
   font-size: 1rem;
   font-weight: 500;
   color: white;
-  background: #c1121f;
+  background: var(--brand-red);
   border: none;
   border-radius: 0;
   text-decoration: none;
@@ -308,7 +308,7 @@
 }
 
 .hero-cta-btn:hover {
-  background: #9c0303;
+  background: var(--brand-red-dark);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
@@ -393,7 +393,7 @@
 
 /* Trending Cards */
 .trending-card {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--line);
   border-radius: var(--border-radius-md);
   overflow: hidden;
   transition: all var(--transition-normal);
@@ -474,7 +474,7 @@
 
 .category-card {
   background: var(--bg-light);
-  border: 2px solid #dee2e6;
+  border: 2px solid var(--line);
   border-radius: var(--border-radius-md);
   padding: 2.5rem 2rem;
   text-align: center;
@@ -564,7 +564,7 @@ body {
 
 /* Hero Specific Styles */
 .hero-gradient {
-  background: linear-gradient(135deg, #c1121f 0%, #9c0303 100%);
+  background: var(--brand-red);
 }
 
 .hero-nav {
@@ -598,13 +598,13 @@ body {
 }
 
 .login-dropdown .btn-dark {
-  background: #c1121f;
+  background: var(--brand-red);
   border: none;
   padding: 0.5rem 1rem;
 }
 
 .login-dropdown .btn-dark:hover {
-  background: #b60e1a;
+  background: var(--brand-red-dark);
 }
 
 /* Ensure Google Sign-In button has space */
@@ -781,7 +781,7 @@ body {
 
 /* The shared navbar now sits above the hero, so the hero no longer needs the full viewport */
 .hero-section {
-  height: clamp(420px, calc(100vh - 62px), 720px);
+  height: max(420px, calc(100vh - 62px));
 }
 
 #categoriesSection .card-title {
@@ -816,4 +816,36 @@ body {
 .hero-arrow-btn {
   min-width: 44px;
   min-height: 44px;
+}
+
+/* Hero text and controls line up with the navbar's content column */
+.hero-content-container > .container {
+  height: 100%;
+}
+
+@media (min-width: 1400px) {
+  .hero-text-content {
+    padding-left: 0;
+    max-width: 820px;
+  }
+
+  .hero-heading {
+    font-size: clamp(4rem, 3.2vw, 5.5rem);
+  }
+
+  .hero-controls {
+    left: calc(50% - 660px + 0.75rem);
+  }
+}
+
+@media (min-width: 1800px) {
+  .hero-controls {
+    left: calc(50% - 780px + 0.75rem);
+  }
+}
+
+@media (min-width: 2400px) {
+  .hero-controls {
+    left: calc(50% - 920px + 0.75rem);
+  }
 }
