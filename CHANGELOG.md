@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Pillow 13.0.0, virtualenv 21.14, filelock 4.2, certifi 2026.10.23 and black
+  26.10.1 to clear newly published advisories flagged by `pip-audit`. Pillow 13
+  needs Python 3.11, so `requires-python` is now `>=3.11` (CI and the Docker
+  image already used 3.11; 3.10 reached end of life this month).
+
 ### Added
 
 - `manage.py fetch_news`: imports recent Maricá headlines from an RSS feed (Google
