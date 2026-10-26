@@ -43,16 +43,14 @@ def landing_view(request):
 
     categories = Category.objects.filter(is_active=True).order_by("display_order")[:8]
 
-    latest_news = (
-        News.objects.filter(status=News.PUBLISHED, publish_date__lte=timezone.now())
-        .select_related("category")
-        .order_by("-publish_date")[:3]
+    upcoming_events = (
+        News.objects.published().upcoming_events().select_related("category")[:4]
     )
 
     context = {
         "featured_places": featured_places,
         "trending_places": trending_places,
-        "latest_news": latest_news,
+        "upcoming_events": upcoming_events,
         "categories": categories,
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
         "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,

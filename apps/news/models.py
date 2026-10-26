@@ -52,6 +52,20 @@ class NewsCategory(models.Model):
         }.get(self.kind, "bi-newspaper")
 
 
+class NewsQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=News.PUBLISHED, publish_date__lte=timezone.now())
+
+    def upcoming_events(self):
+        """Eventos que ainda não terminaram, do mais próximo ao mais distante"""
+        now = timezone.now()
+        return (
+            self.filter(category__name=NewsCategory.EVENT)
+            .filter(models.Q(event_date__gt=now) | models.Q(event_end_date__gt=now))
+            .order_by("event_date")
+        )
+
+
 class News(models.Model):
     """Notícias e eventos para a cidade de Maricá"""
 
@@ -153,6 +167,8 @@ class News(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    objects = NewsQuerySet.as_manager()
+
     class Meta:
         ordering = ["-publish_date", "-created_at"]
         verbose_name = "News/Event"
@@ -226,11 +242,17 @@ class News(models.Model):
         return self.event_date > timezone.now()
 
     @property
+    def is_ongoing_event(self):
+        if not self.is_event or not self.event_date or not self.event_end_date:
+            return False
+        return self.event_date <= timezone.now() < self.event_end_date
+
+    @property
     def is_past_event(self):
         """Verificar se isto é um evento passado"""
         if not self.is_event or not self.event_date:
             return False
-        return self.event_date <= timezone.now()
+        return (self.event_end_date or self.event_date) <= timezone.now()
 
     def increment_view_count(self):
         """Incrementar o contador de visualizações"""

@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Events come first: the landing page shows "Próximos eventos em Maricá" instead
+  of the latest headlines, and the news page is now "Agenda de Maricá", leading
+  with upcoming and ongoing events (date-first event cards) before announcements,
+  past events and press headlines. The navbar link reads "Eventos".
+- An event with an end date counts as ongoing until it ends, rather than
+  "encerrado" once it starts.
+- `TIME_ZONE` is now `America/Sao_Paulo`, so event times show in local time.
 - Site palette refreshed: a muted version of Maricá's signature
   red for the navbar and primary actions, warm charcoal replacing near-black
   (footer, dark buttons, admin sidebar), and warm off-white surfaces in place
