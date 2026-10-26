@@ -46,6 +46,10 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- The landing carousel's second and third slides use real photos of Maricá
+  (Praia de Ponta Negra with Lagoa de Guarapina, and Praia de Jaconé from the
+  Ponta Negra coast; Wilfredor, Wikimedia Commons, CC0) instead of repeating the
+  first slide's image. The unused solid-colour placeholders are gone.
 - Staff reach the admin dashboard from the account menu ("Painel de
   administração", above "Meus favoritos") instead of a floating gear button.
 - "Adicionar lugar" is now "Cadastrar lugar" everywhere (EN "Submit a place",
