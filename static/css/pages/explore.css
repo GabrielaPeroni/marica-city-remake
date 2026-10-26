@@ -367,3 +367,15 @@
     color: #fff;
   }
 }
+
+.place-card-rating,
+.place-header-rating {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.place-header-rating {
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}

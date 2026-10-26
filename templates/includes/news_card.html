@@ -1,4 +1,4 @@
-{% load i18n content_i18n %}{% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
+{% load i18n content_i18n event_dates %}{% comment %}Card de notícia. Itens importados abrem a matéria original em nova aba.{% endcomment %}
 <a class="news-card"
    {% if item.is_external %}href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer"{% else %}href="{% url 'news:news_detail' item.slug %}"{% endif %}>
   {% if item.featured_image %}
@@ -19,7 +19,7 @@
     {% endif %}
     <div class="news-card-meta">
       {% if item.is_event and item.event_date %}
-      <span><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>{{ item.event_date|date:"SHORT_DATETIME_FORMAT" }}</span>
+      <span><i class="bi bi-calendar-event me-1" aria-hidden="true"></i><span class="event-card-when">{{ item|event_when }}</span></span>
       {% else %}
       <span><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ item.publish_date|date:"SHORT_DATE_FORMAT" }}</span>
       {% endif %}

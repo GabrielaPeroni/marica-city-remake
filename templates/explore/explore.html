@@ -99,6 +99,16 @@
                 {% endwith %}
               {% endif %}
               <h2 class="card-title fw-bold mb-2" style="font-size: 1rem;"><a class="stretched-link text-decoration-none" style="color: var(--ink);" href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></h2>
+              {% with avg=place.average_rating %}{% if avg %}
+              <p class="place-card-rating mb-1">
+                <span class="text-warning" aria-hidden="true">★</span>
+                {% blocktranslate trimmed with rating=avg|floatformat:1 count counter=place.review_count %}
+                {{ rating }} · {{ counter }} avaliação
+                {% plural %}
+                {{ rating }} · {{ counter }} avaliações
+                {% endblocktranslate %}
+              </p>
+              {% endif %}{% endwith %}
               <p class="text-muted mb-0" style="font-size: 0.875rem;">
                 <i class="bi bi-geo-alt"></i> {{ place.address|truncatewords:5 }}
               </p>

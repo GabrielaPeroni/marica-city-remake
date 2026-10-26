@@ -245,6 +245,10 @@
   font-weight: 700;
 }
 
+.event-status.is-past {
+  background: var(--dark-700);
+}
+
 .event-card-body {
   display: flex;
   flex-direction: column;

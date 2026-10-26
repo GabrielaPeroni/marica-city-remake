@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New "Planeje sua visita" page (navbar and footer) with practical tourist
+  information: how to get there from Rio and Niterói, the free municipal
+  "Vermelhinhos" buses, when to go, sea and trail safety, and emergency numbers.
+- Place cards and the place header show the average rating and review count.
+- When no event is upcoming, the landing page lists the most recent events
+  (marked "Encerrado") instead of hiding the section. This keeps the static demo
+  populated after its events have passed.
 - Content is translated too. Place descriptions, category names, event and
   news texts, and reviews are machine-translated into English and Spanish by a
   local LLM (Ollama, `qwen2.5:14b` by default) and stored in a `translations`
@@ -33,7 +40,17 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Related events on an event page use the event card, and news cards write
+  event dates in the active language.
 - `LANGUAGE_CODE` is now `pt-br`; dates use each locale's formats.
+
+### Fixed
+
+- Admin news list: the Publicadas, Rascunhos and Arquivadas tabs compared
+  English keys against Portuguese status values and always came back empty, and
+  every status badge read "Arquivado".
+- Place reviews: the moderator edit/delete menu checked a non-existent
+  `user_type` field; it now uses `can_moderate`.
 
 ### Security
 

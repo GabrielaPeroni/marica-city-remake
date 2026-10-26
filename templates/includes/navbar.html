@@ -20,6 +20,9 @@
           <a class="nav-link {% if ns == 'news' %}active{% endif %}" {% if ns == 'news' %}aria-current="page"{% endif %} href="{% url 'news:news_list' %}">{% translate "Eventos" %}</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link {% if route == 'visit' %}active{% endif %}" {% if route == 'visit' %}aria-current="page"{% endif %} href="{% url 'core:visit' %}">{% translate "Planeje sua visita" %}</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link {% if route == 'about' %}active{% endif %}" {% if route == 'about' %}aria-current="page"{% endif %} href="{% url 'core:about' %}">{% translate "Sobre" %}</a>
         </li>
 

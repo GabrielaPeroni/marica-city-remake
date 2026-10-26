@@ -182,9 +182,9 @@
                   <span class="badge bg-info">{{ news.category.get_name_display }}</span>
                 </td>
                 <td>
-                  {% if news.status == 'published' %}
+                  {% if news.status == news.PUBLISHED %}
                   <span class="badge bg-success">{% translate "Publicado" %}</span>
-                  {% elif news.status == 'draft' %}
+                  {% elif news.status == news.DRAFT %}
                   <span class="badge bg-warning">{% translate "Rascunho" %}</span>
                   {% else %}
                   <span class="badge bg-secondary">{% translate "Arquivado" %}</span>

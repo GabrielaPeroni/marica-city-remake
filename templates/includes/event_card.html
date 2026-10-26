@@ -13,6 +13,8 @@
     </div>
     {% if event.is_ongoing_event %}
     <span class="event-status">{% translate "Acontecendo agora" %}</span>
+    {% elif event.is_past_event %}
+    <span class="event-status is-past">{% translate "Encerrado" %}</span>
     {% endif %}
   </div>
   <div class="event-card-body">

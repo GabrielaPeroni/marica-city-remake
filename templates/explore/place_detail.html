@@ -35,6 +35,16 @@
       <div>
         <h1>{{ place.name }}</h1>
         <p class="page-header-subtitle"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ place.address }}</p>
+        {% with avg=place.average_rating %}{% if avg %}
+        <p class="place-header-rating mb-0">
+          <span class="text-warning" aria-hidden="true">★</span>
+          {% blocktranslate trimmed with rating=avg|floatformat:1 count counter=place.review_count %}
+          {{ rating }} · {{ counter }} avaliação
+          {% plural %}
+          {{ rating }} · {{ counter }} avaliações
+          {% endblocktranslate %}
+        </p>
+        {% endif %}{% endwith %}
       </div>
       {% if can_edit %}
       <a href="{% url 'explore:place_edit' place.pk %}" class="btn btn-light">
@@ -194,7 +204,7 @@
                     </div>
                   </div>
 
-                  {% if user.is_authenticated and review.user == user or user.user_type == "ADMIN" %}
+                  {% if user.is_authenticated and review.user == user or user.can_moderate %}
                   <div class="dropdown">
                     <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
                       <i class="bi bi-three-dots-vertical"></i>
