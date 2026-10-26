@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New "Planeje sua visita" page (navbar and footer) with practical tourist
+- "Planeje sua visita" section on the About page (linked from the footer;
+  the old `/planeje-sua-visita/` URL redirects to it) with practical tourist
   information: how to get there from Rio and Niterói, the free municipal
   "Vermelhinhos" buses, when to go, sea and trail safety, and emergency numbers.
 - Place cards and the place header show the average rating and review count.
@@ -46,6 +47,8 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Fixed
 
+- The "ou" separator in the sign-in dropdown and on the sign-up page used a
+  white background; it now matches the box it sits in.
 - Admin news list: the Publicadas, Rascunhos and Arquivadas tabs compared
   English keys against Portuguese status values and always came back empty, and
   every status badge read "Arquivado".

@@ -73,10 +73,6 @@ def landing_view(request):
     return render(request, "core/landing.html", context)
 
 
-def visit_view(request):
-    return render(request, "core/visit.html")
-
-
 def about_view(request):
     """View da página sobre"""
     return render(request, "core/about.html")
