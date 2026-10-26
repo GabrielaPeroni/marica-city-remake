@@ -24,8 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   candidate or discard it. Publishing turns it into a regular Evento, with the
   post's photo and a "Fonte" link. The queue flags candidates that match an
   existing event or another candidate on the same day and venue.
-- `manage.py run_scheduler` runs `crawl_events` and `fetch_news` every 6 hours.
-  It runs as the `scheduler` service in `docker-compose.yml`.
+- `manage.py run_scheduler` runs `crawl_events` and `fetch_news` every 6 hours,
+  as the opt-in `scheduler` profile in `docker-compose.yml`. It is off by default.
+  The project now runs as a static demo; `DEPLOYMENT.md` explains how to turn
+  it back on.
 
 - `manage.py fetch_news`: imports recent Maricá headlines from an RSS feed (Google
   News by default, overridable with `NEWS_FEED_URL`) as external news items that

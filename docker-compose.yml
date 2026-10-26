@@ -19,9 +19,11 @@ services:
       redis:
         condition: service_started
 
-  # Importadores em segundo plano (eventos da Prefeitura e manchetes) a cada 6h
+  # Importadores em segundo plano (eventos da Prefeitura e manchetes) a cada 6h.
+  # Desligado no modo demonstração; ligue com: docker compose --profile scheduler up
   scheduler:
     build: .
+    profiles: ["scheduler"]
     command: python manage.py run_scheduler --interval 6
     env_file: .env
     environment:
