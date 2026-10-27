@@ -107,10 +107,16 @@ class SeedDemoPlacesTests(TestCase):
                 place = Place.objects.get(name=entry["name"])
                 primary = place.images.get(is_primary=True)
                 self.assertTrue(primary.image.name)
+                image = entry["image"]
+                label = (
+                    f"Imagem ilustrativa ({image['illustrative']})"
+                    if image.get("illustrative")
+                    else "Foto"
+                )
                 self.assertTrue(
                     place.description.endswith(
-                        f"Foto: {entry['image']['author']} / Wikimedia Commons "
-                        f"({entry['image']['license']})."
+                        f"{label}: {image['author']} / Wikimedia Commons "
+                        f"({image['license']})."
                     )
                 )
 

@@ -92,7 +92,11 @@ class Command(BaseCommand):
         except Exception as exc:
             self.stderr.write(f"Image skipped for {place.name}: {exc}")
             return
-        credit = f" Foto: {image['author']} / Wikimedia Commons ({image['license']})."
+        source = f"{image['author']} / Wikimedia Commons ({image['license']})"
+        if image.get("illustrative"):
+            credit = f" Imagem ilustrativa ({image['illustrative']}): {source}."
+        else:
+            credit = f" Foto: {source}."
         extension = Path(image["commons_title"]).suffix.lower() or ".jpg"
         photo = PlaceImage(place=place, caption=place.name, is_primary=True)
         photo.image.save(f"{place.pk}{extension}", ContentFile(data), save=True)
