@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}MaricaCity{% endblock %}</title>
 
+    <script>document.documentElement.classList.add('js');</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/fonts/bootstrap-icons.woff2?7141511ac37f13e1a387fb9fc6646256" as="font" type="font/woff2" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -94,6 +95,30 @@
     </footer>
     {% endblock %}
 
+    <script>
+      // Fade-in das imagens: as que já estão prontas (cache) aparecem sem animação
+      (function () {
+        var sel = '.hero-bg-image, .place-card-img, .place-detail-image, .event-card-media img, img.card-img-top';
+        function watch(img) {
+          if (img.dataset.fadeWatched) return;
+          img.dataset.fadeWatched = '1';
+          var done = function () { img.classList.add('is-loaded'); };
+          if (img.complete && img.naturalWidth) { img.classList.add('no-fade'); done(); }
+          else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+        }
+        document.querySelectorAll(sel).forEach(watch);
+        // Imagens criadas depois por JS (favoritos, carrosséis)
+        new MutationObserver(function (records) {
+          records.forEach(function (r) {
+            r.addedNodes.forEach(function (n) {
+              if (n.nodeType !== 1) return;
+              if (n.matches(sel)) watch(n);
+              n.querySelectorAll(sel).forEach(watch);
+            });
+          });
+        }).observe(document.body, { childList: true, subtree: true });
+      })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/shoelace-autoloader.js"></script>
 

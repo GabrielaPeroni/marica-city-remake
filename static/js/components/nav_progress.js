@@ -36,4 +36,19 @@
 
   window.addEventListener('pageshow', reset);
   window.addEventListener('pagehide', reset);
+
+  // Nesta página: se as imagens ainda estão chegando, a barra continua e termina quando tudo carrega
+  if (document.readyState !== 'complete') {
+    const slow = setTimeout(() => bar.classList.add('is-loading'), 150);
+    window.addEventListener(
+      'load',
+      () => {
+        clearTimeout(slow);
+        if (!bar.classList.contains('is-loading')) return;
+        bar.classList.add('is-done');
+        setTimeout(() => bar.classList.remove('is-loading', 'is-done'), 450);
+      },
+      { once: true }
+    );
+  }
 })();

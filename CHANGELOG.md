@@ -24,7 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     speculation rules prerender a page when the pointer rests on its link
     (Chromium). Visits and event views from prerendered pages are counted only
     when the page is actually shown.
-  - A thin progress bar appears when a page takes more than 120 ms to load.
+  - A thin progress bar appears when a page takes more than 120 ms to load,
+    and keeps running until the new page's images have loaded.
+  - The hero slides show an inline 32 px blurred preview while the photo
+    loads (the first one is preloaded), and photos fade in once they arrive
+    instead of popping in over a gray box.
   - Place lists annotate ratings in one query (landing page: 74 queries to 9).
   - Swiper loads only on the landing page, the unused Shoelace stylesheet is
     gone, the icon font is preloaded, and Google Sign-In loads only when the

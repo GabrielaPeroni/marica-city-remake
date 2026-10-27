@@ -781,12 +781,45 @@ html {
   }
 }
 
-/* Fundo neutro enquanto a imagem carrega, em vez de um buraco que pisca */
+/* Imagens surgem suavemente quando terminam de carregar (as já em cache aparecem direto).
+   Os cards ficam com fundo neutro; o banner mostra uma prévia borrada (landing.css). */
 img.place-card-img,
 img.card-img-top,
-.event-card-media img,
-.hero-bg-image {
+.event-card-media img {
   background-color: var(--surface-alt);
+}
+
+.js
+  :is(
+    .hero-bg-image,
+    .place-card-img,
+    .place-detail-image,
+    .event-card-media img,
+    img.card-img-top
+  ) {
+  transition: opacity 0.35s ease;
+}
+
+.js
+  :is(
+    .hero-bg-image,
+    .place-card-img,
+    .place-detail-image,
+    .event-card-media img,
+    img.card-img-top
+  ):not(.is-loaded) {
+  opacity: 0;
+}
+
+.js
+  :is(
+    .hero-bg-image,
+    .place-card-img,
+    .place-detail-image,
+    .event-card-media img,
+    img.card-img-top
+  ).no-fade {
+  transition: none;
 }
 
 .nav-progress {
@@ -807,4 +840,12 @@ img.card-img-top,
   opacity: 1;
   width: 85%;
   transition: width 4s cubic-bezier(0.1, 0.7, 0.2, 1);
+}
+
+.nav-progress.is-done {
+  width: 100%;
+  opacity: 0;
+  transition:
+    width 0.2s ease-out,
+    opacity 0.25s ease 0.2s;
 }
