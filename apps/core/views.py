@@ -15,7 +15,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from apps.accounts.models import User
 from apps.core.utils import safe_next
-from apps.explore.models import Category, Place, PlaceImage, PlaceReview
+from apps.explore.models import Category, Place, PlaceReview
 from apps.news import event_crawler
 from apps.news.forms import EventCandidateForm, NewsForm
 from apps.news.models import EventCandidate, News, NewsCategory
@@ -39,15 +39,14 @@ def landing_view(request):
         .order_by("-created_at")[:6]
     )
 
-    # "Em alta": seleção aleatória de lugares com foto, renovada a cada visita
+    # Lugares em alta (mais populares nos últimos 7 dias)
+    day_range = timezone.now() - timedelta(days=7)
     trending_places = (
         Place.objects.filter(
-            is_approved=True,
-            is_active=True,
-            pk__in=PlaceImage.objects.values("place"),
+            is_approved=True, is_active=True, created_at__gte=day_range
         )
         .prefetch_related("images", "categories")
-        .order_by("?")[:4]
+        .order_by("-created_at")[:4]
     )
 
     categories = Category.objects.filter(is_active=True).order_by("display_order")[:8]
