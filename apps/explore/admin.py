@@ -56,45 +56,27 @@ class PlaceAdmin(TranslationsAdminMixin, admin.ModelAdmin):
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
 
+    @admin.action(description="Aprovar lugares selecionados")
     def approve_places(self, request, queryset):
-        """Aprovar lugares selecionados"""
-        count = 0
-        for place in queryset:
-            if not place.is_approved:
-                place.is_approved = True
-                place.save()
-                # Criar registro de aprovação
-                PlaceApproval.objects.create(
-                    place=place,
-                    reviewer=request.user,
-                    action="APPROVE",
-                    comments="Aprovado via ação em massa no admin",
-                )
-                count += 1
+        count = PlaceApproval.record(
+            queryset.filter(is_approved=False),
+            request.user,
+            PlaceApproval.ActionType.APPROVE,
+            "Aprovado via ação em massa no admin",
+        )
         self.message_user(request, f"{count} lugar(es) aprovado(s) com sucesso.")
 
-    approve_places.short_description = "Aprovar lugares selecionados"
-
+    @admin.action(description="Revogar aprovação de lugares selecionados")
     def revoke_approval(self, request, queryset):
-        """Revogar aprovação de lugares selecionados"""
-        count = 0
-        for place in queryset:
-            if place.is_approved:
-                place.is_approved = False
-                place.save()
-                # Criar registro de revogação
-                PlaceApproval.objects.create(
-                    place=place,
-                    reviewer=request.user,
-                    action="REJECT",
-                    comments="Aprovação revogada via ação em massa no admin",
-                )
-                count += 1
+        count = PlaceApproval.record(
+            queryset.filter(is_approved=True),
+            request.user,
+            PlaceApproval.ActionType.REJECT,
+            "Aprovação revogada via ação em massa no admin",
+        )
         self.message_user(
             request, f"{count} lugar(es) teve(tiveram) aprovação revogada."
         )
-
-    revoke_approval.short_description = "Revogar aprovação de lugares selecionados"
 
     inlines = [PlaceImageInline]
 
@@ -202,11 +184,9 @@ class PlaceReviewAdmin(TranslationsAdminMixin, admin.ModelAdmin):
         ("Datas e Horários", {"fields": ("created_at", "updated_at")}),
     )
 
+    @admin.display(description="Prévia do Comentário")
     def get_comment_preview(self, obj):
-        """Mostrar os primeiros 50 caracteres do comentário"""
         return obj.comment[:50] + "..." if len(obj.comment) > 50 else obj.comment
-
-    get_comment_preview.short_description = "Prévia do Comentário"
 
 
 @admin.register(Favorite)

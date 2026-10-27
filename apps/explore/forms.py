@@ -49,16 +49,11 @@ class PlaceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Mostrar apenas categorias ativas
-        self.fields["categories"].queryset = Category.objects.filter(
-            is_active=True
-        ).order_by("display_order")
-
-        # Tornar todos os campos obrigatórios
-        self.fields["name"].required = True
-        self.fields["description"].required = True
-        self.fields["address"].required = True
-        self.fields["categories"].required = True
+        categories = self.fields["categories"]
+        categories.queryset = Category.objects.filter(is_active=True).order_by(
+            "display_order"
+        )
+        categories.required = True  # no modelo é opcional (blank=True)
 
 
 class PlaceImageForm(forms.ModelForm):
@@ -94,15 +89,13 @@ class PlaceImageForm(forms.ModelForm):
         }
 
 
-# Criar um formset para lidar com múltiplas imagens
 PlaceImageFormSet = inlineformset_factory(
     Place,
     PlaceImage,
     form=PlaceImageForm,
-    fields=["image", "caption", "is_primary", "display_order"],
-    extra=3,  # Mostrar 3 formulários vazios por padrão
+    extra=3,
     can_delete=True,
-    max_num=10,  # Máximo de 10 imagens por lugar
+    max_num=10,
     validate_max=True,
 )
 
@@ -135,8 +128,3 @@ class PlaceReviewForm(forms.ModelForm):
             "rating": "Selecione de 1 a 5 estrelas",
             "comment": "Descreva sua experiência (máximo 1000 caracteres)",
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["rating"].required = True
-        self.fields["comment"].required = True

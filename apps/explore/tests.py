@@ -159,11 +159,6 @@ class PlaceImageModelTests(TestCase):
         # So we'll just test the property exists
         self.assertIsNone(self.place.primary_image)
 
-    def test_place_gallery_images_property(self):
-        """Test gallery_images property"""
-        images = self.place.gallery_images
-        self.assertEqual(images.count(), 0)
-
     def test_primary_image_uses_prefetch_cache(self):
         """Regression: primary_image used filter().first(), which always
         hits the DB and defeats prefetch_related, causing N+1 in place
@@ -1818,7 +1813,7 @@ class BacklogViewTests(TestCase):
         """Test non-moderators cannot access the backlog"""
         self.client.login(username="regular", password="pass123")
         response = self.client.get(reverse("explore:backlog"))
-        self.assertRedirects(response, reverse("explore:explore"))
+        self.assertRedirects(response, reverse("core:landing"))
 
     def test_backlog_default_history_mode_shows_all(self):
         """Test default (history) mode shows places of any status"""
@@ -1831,7 +1826,7 @@ class BacklogViewTests(TestCase):
     def test_backlog_queue_mode_shows_only_pending(self):
         """Test queue mode shows only pending, active places"""
         self.client.login(username="admin", password="pass123")
-        response = self.client.get(reverse("explore:backlog") + "?view=queue")
+        response = self.client.get(reverse("explore:backlog") + "?status=pending")
         self.assertEqual(response.context["places"].count(), 1)
         self.assertEqual(response.context["places"].first(), self.pending_place)
 
@@ -1873,10 +1868,11 @@ class BacklogViewTests(TestCase):
         """Test backlog exposes counts for each status"""
         self.client.login(username="admin", password="pass123")
         response = self.client.get(reverse("explore:backlog"))
-        self.assertEqual(response.context["total_count"], 3)
-        self.assertEqual(response.context["approved_count"], 1)
-        self.assertEqual(response.context["pending_count"], 1)
-        self.assertEqual(response.context["rejected_count"], 1)
+        counts = {key: n for key, _l, n, *_ in response.context["status_cards"]}
+        self.assertEqual(counts["all"], 3)
+        self.assertEqual(counts["approved"], 1)
+        self.assertEqual(counts["pending"], 1)
+        self.assertEqual(counts["rejected"], 1)
 
 
 class ApprovalWorkflowViewTests(TestCase):
@@ -1902,7 +1898,7 @@ class ApprovalWorkflowViewTests(TestCase):
         """Test approval queue redirects non-moderators"""
         self.client.login(username="regular", password="pass123")
         response = self.client.get(reverse("explore:approval_queue"))
-        self.assertRedirects(response, reverse("explore:explore"))
+        self.assertRedirects(response, reverse("core:landing"))
 
     def test_approval_queue_redirects_moderator_to_backlog_queue_view(self):
         """Regression: approval_queue_view used to concatenate the URL name
@@ -1922,19 +1918,17 @@ class ApprovalWorkflowViewTests(TestCase):
         response = self.client.post(
             reverse("explore:approve_place", kwargs={"pk": self.place.pk})
         )
-        self.assertRedirects(response, reverse("explore:explore"))
+        self.assertRedirects(response, reverse("core:landing"))
         self.place.refresh_from_db()
         self.assertFalse(self.place.is_approved)
 
-    def test_approve_place_get_redirects_to_detail(self):
-        """Test GET request to approve_place redirects to place detail"""
+    def test_approve_place_rejects_get(self):
+        """Aprovar só por POST"""
         self.client.login(username="admin", password="pass123")
         response = self.client.get(
             reverse("explore:approve_place", kwargs={"pk": self.place.pk})
         )
-        self.assertRedirects(
-            response, reverse("explore:place_detail", kwargs={"pk": self.place.pk})
-        )
+        self.assertEqual(response.status_code, 405)
 
     def test_approve_place_post_approves_and_creates_record(self):
         """Test POST request approves the place and logs the approval"""
@@ -1951,7 +1945,7 @@ class ApprovalWorkflowViewTests(TestCase):
         self.assertEqual(approval.comments, "Looks great")
         self.assertRedirects(
             response,
-            reverse("explore:backlog") + "?view=queue",
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
 
@@ -1962,19 +1956,17 @@ class ApprovalWorkflowViewTests(TestCase):
             reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
             data={"reason": "Spam"},
         )
-        self.assertRedirects(response, reverse("explore:explore"))
+        self.assertRedirects(response, reverse("core:landing"))
 
     def test_reject_place_without_reason_shows_error(self):
-        """Test rejecting without a reason redirects back with an error.
-        Note: reject_place's own redirect target (GET) redirects again to
-        the backlog, so we don't follow the chain here."""
+        """Remover sem motivo volta para os pendentes com erro, sem registrar nada"""
         self.client.login(username="admin", password="pass123")
         response = self.client.post(
             reverse("explore:reject_place", kwargs={"pk": self.place.pk}), data={}
         )
         self.assertRedirects(
             response,
-            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
         self.assertEqual(PlaceApproval.objects.filter(place=self.place).count(), 0)
@@ -1988,7 +1980,7 @@ class ApprovalWorkflowViewTests(TestCase):
         )
         self.assertRedirects(
             response,
-            reverse("explore:reject_place", kwargs={"pk": self.place.pk}),
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
         self.assertEqual(PlaceApproval.objects.filter(place=self.place).count(), 0)
@@ -2006,7 +1998,7 @@ class ApprovalWorkflowViewTests(TestCase):
         )
         self.assertRedirects(
             response,
-            reverse("explore:backlog") + "?view=queue",
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
         approval = PlaceApproval.objects.get(place=self.place)
@@ -2023,7 +2015,7 @@ class ApprovalWorkflowViewTests(TestCase):
         )
         self.assertRedirects(
             response,
-            reverse("explore:backlog") + "?view=queue",
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
         approval = PlaceApproval.objects.get(place=self.place)
@@ -2031,13 +2023,13 @@ class ApprovalWorkflowViewTests(TestCase):
         self.place.refresh_from_db()
         self.assertFalse(self.place.is_active)
 
-    def test_reject_place_get_redirects_to_backlog(self):
-        """Test GET request to reject_place redirects to the backlog"""
+    def test_reject_place_rejects_get(self):
+        """Remover só por POST"""
         self.client.login(username="admin", password="pass123")
         response = self.client.get(
             reverse("explore:reject_place", kwargs={"pk": self.place.pk})
         )
-        self.assertRedirects(response, reverse("explore:backlog"))
+        self.assertEqual(response.status_code, 405)
 
 
 class ToggleFavoriteViewTests(TestCase):
@@ -2219,18 +2211,16 @@ class SyncFavoritesViewTests(TestCase):
         self.assertTrue(data["success"])
         self.assertEqual(data["added"], 0)
 
-    def test_sync_returns_500_on_unexpected_error(self):
-        """Test a non-integer favorite ID triggers the generic error handler"""
+    def test_sync_ignores_invalid_ids(self):
+        """IDs que não são números são ignorados em vez de derrubar a sincronização"""
         self.client.login(username="fan", password="pass123")
         response = self.client.post(
             reverse("explore:sync_favorites"),
             data=json.dumps({"favorites": ["not-an-id"]}),
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 500)
-        data = response.json()
-        self.assertFalse(data["success"])
-        self.assertIn("error", data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["added"], 0)
 
     def test_sync_rejects_invalid_json(self):
         """Test malformed JSON body returns a 400 error"""

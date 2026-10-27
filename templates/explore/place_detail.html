@@ -75,15 +75,15 @@
     <div class="place-detail-main">
       <!-- Image Carousel -->
       <div class="mb-3 place-detail-image-container position-relative">
-        {% if place.gallery_images.exists %}
+        {% with gallery=place.images.all %}{% if gallery %}
           <div class="place-carousel">
             <div class="place-carousel-images">
-              {% for image in place.gallery_images %}
+              {% for image in gallery %}
               <img src="{{ image.image|thumb:1600 }}" srcset="{{ image.image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" alt="{{ image.caption|default:place.name }}" class="img-ph place-detail-image place-carousel-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" style="{{ image.image|placeholder }}">
               {% endfor %}
             </div>
 
-            {% if place.gallery_images.count > 1 %}
+            {% if gallery|length > 1 %}
             <!-- Setas de Navegação -->
             <button class="place-carousel-btn place-carousel-prev" type="button" aria-label="{% translate 'Imagem anterior' %}">
               <i class="bi bi-chevron-left"></i>
@@ -94,7 +94,7 @@
 
             <!-- Pontos de Paginação -->
             <div class="place-carousel-pagination">
-              {% for image in place.gallery_images %}
+              {% for image in gallery %}
               <button class="place-carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="{% blocktranslate with number=forloop.counter %}Ir para imagem {{ number }}{% endblocktranslate %}"></button>
               {% endfor %}
             </div>
@@ -113,7 +113,7 @@
           <div class="bg-dark text-white d-flex align-items-center justify-content-center place-detail-placeholder">
             <span class="display-1 fw-bold">{{ place.name|first }}</span>
           </div>
-        {% endif %}
+        {% endif %}{% endwith %}
       </div>
 
       <div class="mb-3">

@@ -74,6 +74,19 @@ class Category(models.Model):
 
 
 class PlaceQuerySet(models.QuerySet):
+    def public(self):
+        return self.filter(is_approved=True, is_active=True)
+
+    def visible_to(self, user):
+        """Públicos para todos; o autor vê os seus e moderadores veem todos."""
+        if user.is_authenticated and user.can_moderate:
+            return self
+        if user.is_authenticated:
+            return self.filter(
+                models.Q(is_approved=True, is_active=True) | models.Q(created_by=user)
+            )
+        return self.public()
+
     def with_ratings(self):
         """Anota média e contagem de avaliações (evita uma consulta por card)."""
         return self.annotate(
@@ -174,9 +187,18 @@ class Place(models.Model):
                 return image
         return None
 
-    @property
-    def gallery_images(self):
-        return self.images.all()
+    def can_edit(self, user):
+        return user.is_authenticated and (user.can_moderate or self.created_by == user)
+
+    def ensure_primary_image(self):
+        """Exatamente uma foto principal: sem nenhuma, a primeira assume; com várias, fica a primeira."""
+        primaries = list(
+            self.images.filter(is_primary=True).values_list("pk", flat=True)
+        )
+        if len(primaries) > 1:
+            self.images.filter(pk__in=primaries[1:]).update(is_primary=False)
+        elif not primaries:
+            self.images.filter(pk=self.images.values("pk")[:1]).update(is_primary=True)
 
     @property
     def average_rating(self):
@@ -255,30 +277,6 @@ class PlaceApproval(models.Model):
         REJECT = "REJECT", "Rejeitado"
         REQUEST_CHANGES = "REQUEST_CHANGES", "Solicitar Alterações"
 
-    class Meta:
-        ordering = ["-reviewed_at"]
-        verbose_name = "Aprovação de Lugar"
-        verbose_name_plural = "Aprovações de Lugares"
-        indexes = [
-            models.Index(fields=["place", "-reviewed_at"]),
-            models.Index(fields=["reviewer", "-reviewed_at"]),
-            models.Index(fields=["action"]),
-        ]
-
-    def __str__(self):
-        return f"{self.place.name} - {self.get_action_display()} by {self.reviewer}"
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        if self.action == self.ActionType.APPROVE:
-            self.place.is_approved = True
-            self.place.save(update_fields=["is_approved", "updated_at"])
-        elif self.action == self.ActionType.REJECT:
-            self.place.is_approved = False
-            self.place.is_active = False
-            self.place.save(update_fields=["is_approved", "is_active", "updated_at"])
-
     place = models.ForeignKey(
         Place,
         on_delete=models.CASCADE,
@@ -308,6 +306,40 @@ class PlaceApproval(models.Model):
         auto_now_add=True, help_text=_l("Quando a revisão foi realizada")
     )
 
+    class Meta:
+        ordering = ["-reviewed_at"]
+        verbose_name = "Aprovação de Lugar"
+        verbose_name_plural = "Aprovações de Lugares"
+        indexes = [
+            models.Index(fields=["place", "-reviewed_at"]),
+            models.Index(fields=["reviewer", "-reviewed_at"]),
+            models.Index(fields=["action"]),
+        ]
+
+    def __str__(self):
+        return f"{self.place.name} - {self.get_action_display()} by {self.reviewer}"
+
+    @classmethod
+    def record(cls, places, reviewer, action, comments=""):
+        """Registra a mesma decisão para cada lugar; devolve quantos foram."""
+        places = list(places)
+        for place in places:
+            cls.objects.create(
+                place=place, reviewer=reviewer, action=action, comments=comments
+            )
+        return len(places)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.action == self.ActionType.APPROVE:
+            self.place.is_approved = True
+            self.place.save(update_fields=["is_approved", "updated_at"])
+        elif self.action == self.ActionType.REJECT:
+            self.place.is_approved = False
+            self.place.is_active = False
+            self.place.save(update_fields=["is_approved", "is_active", "updated_at"])
+
 
 class PlaceReview(models.Model):
     """Avaliações e classificações de usuários para lugares"""
@@ -319,23 +351,6 @@ class PlaceReview(models.Model):
         blank=True,
         help_text=_l("Traduções automáticas (en, es); editáveis pela equipe"),
     )
-
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = "Avaliação de Lugar"
-        verbose_name_plural = "Avaliações de Lugares"
-        unique_together = (
-            "user",
-            "place",
-        )  # Usuário pode avaliar um lugar apenas uma vez
-        indexes = [
-            models.Index(fields=["place", "-created_at"]),
-            models.Index(fields=["user", "-created_at"]),
-            models.Index(fields=["rating"]),
-        ]
-
-    def __str__(self):
-        return f"{self.user.username} - {self.place.name} ({self.rating}★)"
 
     place = models.ForeignKey(
         Place,
@@ -369,6 +384,23 @@ class PlaceReview(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Avaliação de Lugar"
+        verbose_name_plural = "Avaliações de Lugares"
+        unique_together = (
+            "user",
+            "place",
+        )  # Usuário pode avaliar um lugar apenas uma vez
+        indexes = [
+            models.Index(fields=["place", "-created_at"]),
+            models.Index(fields=["user", "-created_at"]),
+            models.Index(fields=["rating"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.place.name} ({self.rating}★)"
 
 
 class Favorite(models.Model):

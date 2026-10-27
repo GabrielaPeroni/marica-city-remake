@@ -20,10 +20,10 @@ def record_visit(request, response, place):
         if VISITOR_COOKIE in request.COOKIES:
             response.delete_cookie(VISITOR_COOKIE)
         return
-    user = request.user
+    # Pré-carregamentos, lugares não públicos, equipe e o próprio autor não contam
     if is_speculative(request) or not (place.is_approved and place.is_active):
         return
-    if user.is_authenticated and (user.can_moderate or place.created_by_id == user.pk):
+    if place.can_edit(request.user):
         return
 
     visitor = request.COOKIES.get(VISITOR_COOKIE, "")
@@ -46,7 +46,7 @@ def most_visited(days=7, limit=4):
     """Lugares públicos com mais visitas nos últimos `days` dias."""
     since = timezone.localdate() - timedelta(days=days)
     return (
-        Place.objects.filter(is_approved=True, is_active=True)
+        Place.objects.public()
         .annotate(
             recent_visits=Count(
                 "visits", filter=Q(visits__date__gt=since), distinct=True
