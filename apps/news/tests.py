@@ -387,7 +387,7 @@ class LegacyNewsRedirectTests(TestCase):
 
 
 class NewsEventPropertyTests(TestCase):
-    """Tests for is_upcoming_event/is_past_event on event and non-event news"""
+    """Tests for is_past_event on event and non-event news"""
 
     def setUp(self):
         self.user = User.objects.create_user(username="author", password="pass123")
@@ -407,7 +407,6 @@ class NewsEventPropertyTests(TestCase):
             category=self.news_category,
             event_date=timezone.now() + timezone.timedelta(days=1),
         )
-        self.assertFalse(article.is_upcoming_event)
         self.assertFalse(article.is_past_event)
 
     def test_event_without_date_is_neither(self):
@@ -418,7 +417,6 @@ class NewsEventPropertyTests(TestCase):
             author=self.user,
             category=self.event_category,
         )
-        self.assertFalse(event.is_upcoming_event)
         self.assertFalse(event.is_past_event)
 
     def test_future_event_is_upcoming(self):
@@ -430,7 +428,6 @@ class NewsEventPropertyTests(TestCase):
             category=self.event_category,
             event_date=timezone.now() + timezone.timedelta(days=5),
         )
-        self.assertTrue(event.is_upcoming_event)
         self.assertFalse(event.is_past_event)
 
     def test_past_event_is_past(self):
@@ -442,7 +439,6 @@ class NewsEventPropertyTests(TestCase):
             category=self.event_category,
             event_date=timezone.now() - timezone.timedelta(days=5),
         )
-        self.assertFalse(event.is_upcoming_event)
         self.assertTrue(event.is_past_event)
 
 
@@ -713,7 +709,6 @@ class EventCrawlerTests(TestCase):
         self.assertTrue(news.is_event)
         self.assertEqual(news.status, News.PUBLISHED)
         self.assertEqual(news.event_location, "Orla do Parque Nanci")
-        self.assertFalse(news.is_external)
         self.assertTrue(news.featured_image.name.endswith(".jpg"))
         candidate.refresh_from_db()
         self.assertEqual(candidate.status, EventCandidate.APPROVED)
@@ -814,10 +809,8 @@ class EventWhenFilterTests(TestCase):
         self.assertEqual(self._when("pt-br"), "26 a 27 de outubro")
         self.assertEqual(self._when("en"), "October 26–27")
 
-    def test_calendar_and_maps_links(self):
+    def test_maps_link(self):
         self.event.event_location = "Orla do Parque Nanci"
-        self.assertIn("calendar.google.com", self.event.calendar_url)
-        self.assertIn("20261030T030000Z", self.event.calendar_url)
         self.assertIn("Orla+do+Parque+Nanci", self.event.maps_url)
 
 

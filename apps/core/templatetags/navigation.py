@@ -1,7 +1,8 @@
 from urllib.parse import urlparse
 
 from django import template
-from django.utils.http import url_has_allowed_host_and_scheme
+
+from apps.core.utils import is_local_url
 
 register = template.Library()
 
@@ -18,14 +19,9 @@ def back_url(context, default):
         request.GET.get("next"),
         request.META.get("HTTP_REFERER"),
     ):
-        if not candidate or not url_has_allowed_host_and_scheme(
-            candidate,
-            allowed_hosts={request.get_host()},
-            require_https=request.is_secure(),
-        ):
+        if not is_local_url(request, candidate):
             continue
         parsed = urlparse(candidate)
-        if parsed.path == request.path:
-            continue
-        return parsed.path + (f"?{parsed.query}" if parsed.query else "")
+        if parsed.path != request.path:
+            return parsed.path + (f"?{parsed.query}" if parsed.query else "")
     return default

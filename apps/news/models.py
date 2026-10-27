@@ -1,5 +1,3 @@
-from datetime import timedelta
-from datetime import timezone as dt_timezone
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -36,26 +34,6 @@ class NewsCategory(models.Model):
     def __str__(self):
         return self.get_name_display()
 
-    @property
-    def kind(self):
-        """Chave estável usada pelas classes CSS (kind-news, kind-event...)"""
-        return {self.EVENT: "event", self.ANNOUNCEMENT: "announcement"}.get(
-            self.name, "news"
-        )
-
-    @property
-    def label(self):
-        return {"event": _l("Eventos"), "announcement": _l("Anúncios")}.get(
-            self.kind, _l("Notícias")
-        )
-
-    @property
-    def icon_class(self):
-        return {
-            "event": "bi-calendar-event",
-            "announcement": "bi-megaphone",
-        }.get(self.kind, "bi-newspaper")
-
 
 class NewsQuerySet(models.QuerySet):
     def published(self):
@@ -68,7 +46,7 @@ class NewsQuerySet(models.QuerySet):
         """Eventos que ainda não terminaram, do mais próximo ao mais distante"""
         now = timezone.now()
         return (
-            self.filter(category__name=NewsCategory.EVENT)
+            self.events()
             .filter(models.Q(event_date__gt=now) | models.Q(event_end_date__gt=now))
             .order_by("event_date")
         )
@@ -204,63 +182,34 @@ class News(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        """Gerar slug automaticamente se não fornecido"""
         if not self.slug:
-            base_slug = slugify(self.title)
-            slug = base_slug
-            counter = 1
-            while News.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = slug
+            base = slugify(self.title)
+            self.slug, n = base, 1
+            while News.objects.filter(slug=self.slug).exists():
+                self.slug, n = f"{base}-{n}", n + 1
 
-        # Gerar resumo automaticamente se não fornecido
         if not self.excerpt and self.content:
             self.excerpt = (
                 self.content[:297] + "..." if len(self.content) > 300 else self.content
             )
 
-        # Auto-set publish_date when status changes to PUBLISHED
+        # Data de publicação = momento em que passa a "Publicado" (ou a data
+        # informada, se já passou, quando o item é criado publicado)
         if self.status == self.PUBLISHED:
-            # Check if this is a new publication (comparing with DB state)
-            if self.pk:
-                try:
-                    old_instance = News.objects.get(pk=self.pk)
-                    # If status changed from non-published to published, update date
-                    if old_instance.status != self.PUBLISHED:
-                        self.publish_date = timezone.now()
-                except News.DoesNotExist:
-                    # New object being created as published
-                    if not self.publish_date or self.publish_date > timezone.now():
-                        self.publish_date = timezone.now()
-            else:
-                # New object, set publish date if not already set or future dated
-                if not self.publish_date or self.publish_date > timezone.now():
-                    self.publish_date = timezone.now()
+            now = timezone.now()
+            previous = News.objects.filter(pk=self.pk).values_list("status", flat=True)
+            if previous:
+                if previous[0] != self.PUBLISHED:
+                    self.publish_date = now
+            elif not self.publish_date or self.publish_date > now:
+                self.publish_date = now
 
         super().save(*args, **kwargs)
-
-    @property
-    def is_external(self):
-        """Manchete importada que abre no site original; eventos têm página própria"""
-        return bool(self.source_url) and not self.is_event
-
-    @property
-    def tone(self):
-        """Índice de cor estável por veículo, para variar cards sem imagem"""
-        return sum(map(ord, self.source_name)) % 5 if self.source_name else 0
 
     @property
     def is_event(self):
         """Verificar se isto é um evento"""
         return self.category.name == NewsCategory.EVENT
-
-    @property
-    def is_upcoming_event(self):
-        """Verificar se isto é um evento futuro"""
-        if not self.is_event or not self.event_date:
-            return False
-        return self.event_date > timezone.now()
 
     @property
     def is_ongoing_event(self):
@@ -283,30 +232,10 @@ class News(models.Model):
             {"api": 1, "query": f"{self.event_location}, Maricá - RJ"}
         )
 
-    @property
-    def calendar_url(self):
-        """Link "adicionar ao Google Agenda" com início, fim e local"""
-        if not self.event_date:
-            return ""
-        start = self.event_date.astimezone(dt_timezone.utc)
-        end = (self.event_end_date or self.event_date + timedelta(hours=2)).astimezone(
-            dt_timezone.utc
-        )
-        stamp = "%Y%m%dT%H%M%SZ"
-        return "https://calendar.google.com/calendar/render?" + urlencode(
-            {
-                "action": "TEMPLATE",
-                "text": self.title,
-                "dates": f"{start.strftime(stamp)}/{end.strftime(stamp)}",
-                "location": self.event_location,
-                "details": self.excerpt,
-            }
-        )
-
     def increment_view_count(self):
-        """Incrementar o contador de visualizações"""
+        """Soma 1 no banco (atômico, sem save()) e no objeto em memória"""
+        News.objects.filter(pk=self.pk).update(view_count=models.F("view_count") + 1)
         self.view_count += 1
-        self.save(update_fields=["view_count"])
 
 
 class EventCandidate(models.Model):

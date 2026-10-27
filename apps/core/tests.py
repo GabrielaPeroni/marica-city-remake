@@ -152,15 +152,9 @@ class AdminDashboardTests(TestCase):
         self.client.login(username="staffuser", password="testpass123")
         response = self.client.get(self.url)
 
-        self.assertIn("total_places", response.context)
-        self.assertIn("pending_places", response.context)
-        self.assertIn("approved_places", response.context)
-        self.assertIn("total_users", response.context)
-
-        self.assertEqual(response.context["total_places"], 2)
         self.assertEqual(response.context["pending_places"], 1)
-        self.assertEqual(response.context["approved_places"], 1)
-        self.assertEqual(response.context["total_users"], 2)
+        self.assertEqual(response.context["places_this_week"], 2)
+        self.assertEqual(response.context["users_this_week"], 2)
 
     def test_admin_dashboard_shows_content(self):
         """Testa que o that admin dash mostra conteudo relevante"""
@@ -248,9 +242,10 @@ class AdminNewsListViewTests(TestCase):
         self.client.login(username="staffuser", password="testpass123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["total_count"], 2)
-        self.assertEqual(response.context["published_count"], 1)
-        self.assertEqual(response.context["draft_count"], 1)
+        counts = {key: n for key, _l, n, *_ in response.context["status_cards"]}
+        self.assertEqual(counts["all"], 2)
+        self.assertEqual(counts["published"], 1)
+        self.assertEqual(counts["draft"], 1)
 
     def test_filter_by_status(self):
         """Testa filtro por status de publicação"""

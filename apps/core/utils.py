@@ -6,11 +6,14 @@ def is_speculative(request):
     return "prefetch" in request.headers.get("Sec-Purpose", "")
 
 
+def is_local_url(request, url):
+    """True for a URL on this site (blocks open redirects through ?next= or Referer)."""
+    return bool(url) and url_has_allowed_host_and_scheme(
+        url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    )
+
+
 def safe_next(request, default):
     """Return the POSTed `next` URL when it is local, otherwise `default`."""
     target = request.POST.get("next", "")
-    if target and url_has_allowed_host_and_scheme(
-        target, allowed_hosts={request.get_host()}, require_https=request.is_secure()
-    ):
-        return target
-    return default
+    return target if is_local_url(request, target) else default

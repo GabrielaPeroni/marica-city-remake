@@ -4,6 +4,13 @@ from django.utils.translation import gettext_lazy as _l
 from .models import EventCandidate, News, NewsCategory
 
 
+def _datetime_input():
+    return forms.DateTimeInput(
+        attrs={"class": "form-control", "type": "datetime-local"},
+        format="%Y-%m-%dT%H:%M",
+    )
+
+
 class NewsForm(forms.ModelForm):
     """Form for creating and editing news/events"""
 
@@ -58,26 +65,14 @@ class NewsForm(forms.ModelForm):
                     "placeholder": _l("Legenda da imagem (opcional)"),
                 }
             ),
-            "event_date": forms.DateTimeInput(
-                attrs={
-                    "class": "form-control",
-                    "type": "datetime-local",
-                },
-                format="%Y-%m-%dT%H:%M",
-            ),
+            "event_date": _datetime_input(),
             "event_location": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": _l("Local do evento (opcional)"),
                 }
             ),
-            "event_end_date": forms.DateTimeInput(
-                attrs={
-                    "class": "form-control",
-                    "type": "datetime-local",
-                },
-                format="%Y-%m-%dT%H:%M",
-            ),
+            "event_end_date": _datetime_input(),
             "status": forms.Select(attrs={"class": "form-select"}),
             "is_featured": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
@@ -100,20 +95,8 @@ class NewsForm(forms.ModelForm):
             "event_date": "Obrigatório apenas para eventos",
             "event_location": "Obrigatório apenas para eventos",
             "status": "A data de publicação será definida automaticamente ao publicar",
+            "is_featured": "Marque para destacar este evento na página inicial",
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Make event fields not required by default
-        self.fields["event_date"].required = False
-        self.fields["event_location"].required = False
-        self.fields["event_end_date"].required = False
-
-        # Add help text for featured checkbox
-        self.fields["is_featured"].help_text = (
-            "Marque para destacar este evento na página inicial"
-        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -140,13 +123,6 @@ class NewsForm(forms.ModelForm):
                 _l("A data final do evento não pode ser anterior à data de início."),
             )
 
-        # Validate excerpt length
-        excerpt = cleaned_data.get("excerpt")
-        if excerpt and len(excerpt) > 300:
-            self.add_error(
-                "excerpt", _l("O resumo não pode ter mais de 300 caracteres.")
-            )
-
         return cleaned_data
 
 
@@ -159,14 +135,8 @@ class EventCandidateForm(forms.ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "summary": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
-            "event_date": forms.DateTimeInput(
-                attrs={"class": "form-control", "type": "datetime-local"},
-                format="%Y-%m-%dT%H:%M",
-            ),
-            "event_end_date": forms.DateTimeInput(
-                attrs={"class": "form-control", "type": "datetime-local"},
-                format="%Y-%m-%dT%H:%M",
-            ),
+            "event_date": _datetime_input(),
+            "event_end_date": _datetime_input(),
             "event_location": forms.TextInput(
                 attrs={
                     "class": "form-control",

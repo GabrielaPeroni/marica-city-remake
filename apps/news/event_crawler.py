@@ -331,7 +331,7 @@ def _similar(a, b):
 
 def find_duplicate(title, start):
     """Evento já publicado com título parecido perto da mesma data."""
-    events = News.objects.filter(category__name=NewsCategory.EVENT)
+    events = News.objects.events()
     if start:
         events = events.filter(
             event_date__date__range=(
@@ -339,8 +339,12 @@ def find_duplicate(title, start):
                 start.date() + timedelta(days=3),
             )
         )
-    best = max(events, key=lambda n: _similar(n.title, title), default=None)
-    return best if best and _similar(best.title, title) >= 0.55 else None
+    score, best = max(
+        ((_similar(n.title, title), n) for n in events),
+        key=lambda pair: pair[0],
+        default=(0, None),
+    )
+    return best if score >= 0.55 else None
 
 
 def same_event(a, b):
@@ -393,19 +397,22 @@ def _fold(text):
     return "".join(c for c in normalized if not unicodedata.combining(c)).casefold()
 
 
+def _open(url, timeout=20):
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    return urllib.request.urlopen(request, timeout=timeout)  # noqa: S310
+
+
 def fetch_json(url, timeout=20):
     if urlparse(url).scheme != "https":
         raise ValueError("A consulta de eventos precisa usar https.")
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310
+    with _open(url, timeout) as response:
         return response.read(MAX_FEED_BYTES)
 
 
 def fetch_image(url):
     if urlparse(url).scheme != "https":
         return None
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=20) as response:  # noqa: S310
+    with _open(url) as response:
         if not response.headers.get_content_type().startswith("image/"):
             return None
         data = response.read(MAX_IMAGE_BYTES + 1)
@@ -414,7 +421,7 @@ def fetch_image(url):
 
 def approve(candidate, user, image_fetcher=fetch_image):
     """Converte o candidato em um evento publicado."""
-    category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+    category, _created = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
     excerpt = candidate.summary.split("\n")[0]
     if len(excerpt) > 300:
         excerpt = excerpt[:297].rsplit(" ", 1)[0] + "..."
@@ -452,10 +459,7 @@ def approve(candidate, user, image_fetcher=fetch_image):
 
 
 def reject(candidate, user):
-    candidate.status = EventCandidate.REJECTED
-    candidate.reviewed_by = user
-    candidate.reviewed_at = timezone.now()
-    candidate.save(update_fields=["status", "reviewed_by", "reviewed_at"])
+    reject_many([candidate.pk], user)
 
 
 def reject_many(ids, user):

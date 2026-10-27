@@ -16,18 +16,16 @@ PAGE_SIZE = 12
 def news_list_view(request):
     """Agenda de eventos de Maricá: próximos e anteriores"""
     events = News.objects.published().events().select_related("category", "author")
-    upcoming_events = events.upcoming_events()
-    past_events = events.exclude(pk__in=upcoming_events.values("pk")).order_by(
+    upcoming = events.upcoming_events()
+    past = events.exclude(pk__in=upcoming.values("pk")).order_by(
         "-event_date", "-publish_date"
     )
-
-    page = Paginator(past_events, PAGE_SIZE).get_page(request.GET.get("page"))
-
+    page = Paginator(past, PAGE_SIZE).get_page(request.GET.get("page"))
+    agenda = list(upcoming)
     context = {
         "news_items": page,
-        "agenda": list(upcoming_events) if page.number == 1 else [],
-        "upcoming_events": upcoming_events,
-        "upcoming_count": upcoming_events.count(),
+        "agenda": agenda if page.number == 1 else [],
+        "upcoming_count": len(agenda),
     }
     return render(request, "news/news_list.html", context)
 

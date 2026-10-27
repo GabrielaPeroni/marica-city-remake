@@ -1,3 +1,4 @@
+from itertools import islice
 from urllib.error import URLError
 
 from django.core.management.base import BaseCommand
@@ -16,18 +17,19 @@ class Command(BaseCommand):
         parser.add_argument("--limit", type=int, default=200)
 
     def handle(self, *args, **options):
+        pending = (
+            obj
+            for model in MODELS
+            for obj in model.objects.iterator()
+            if needs_translation(obj)
+        )
         done = 0
-        for model in MODELS:
-            for obj in model.objects.all().iterator():
-                if done >= options["limit"]:
-                    break
-                if not needs_translation(obj):
-                    continue
-                try:
-                    translate_object(obj)
-                except (URLError, TimeoutError, ConnectionError) as exc:
-                    self.stderr.write(f"Ollama indisponível ({exc}); tente mais tarde.")
-                    return
-                done += 1
-                self.stdout.write(f"  {model.__name__} {obj.pk}")
+        for obj in islice(pending, options["limit"]):
+            try:
+                translate_object(obj)
+            except (URLError, TimeoutError, ConnectionError) as exc:
+                self.stderr.write(f"Ollama indisponível ({exc}); tente mais tarde.")
+                return
+            done += 1
+            self.stdout.write(f"  {type(obj).__name__} {obj.pk}")
         self.stdout.write(self.style.SUCCESS(f"{done} item(ns) traduzido(s)."))

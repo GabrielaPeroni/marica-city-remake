@@ -37,26 +37,33 @@ def _render(source, width):
     return buffer.getvalue()
 
 
+def _cached(key, compute, fallback):
+    """Valor em cache, ou calcula e guarda; em erro de arquivo, registra e usa o fallback."""
+    value = cache.get(key)
+    if value:
+        return value
+    try:
+        value = compute()
+    except (OSError, ValueError) as exc:
+        logger.warning("%s failed: %s", key, exc)
+        return fallback
+    cache.set(key, value, CACHE_SECONDS)
+    return value
+
+
 def thumbnail_url(field, width):
     """URL of the `width`px WebP copy of an ImageField file; the original on failure."""
     if not field:
         return ""
     name = thumb_name(field.name, width)
-    key = f"thumb:{name}"
-    url = cache.get(key)
-    if url:
-        return url
-    storage = field.storage
-    try:
-        if not storage.exists(name):
-            with storage.open(field.name, "rb") as source:
-                storage.save(name, ContentFile(_render(source, width)))
-        url = storage.url(name)
-    except (OSError, ValueError) as exc:
-        logger.warning("thumbnail failed for %s: %s", field.name, exc)
-        return field.url
-    cache.set(key, url, CACHE_SECONDS)
-    return url
+
+    def build():
+        if not field.storage.exists(name):
+            with field.storage.open(field.name, "rb") as source:
+                field.storage.save(name, ContentFile(_render(source, width)))
+        return field.storage.url(name)
+
+    return _cached(f"thumb:{name}", build, field.url)
 
 
 def generate_all(field):
@@ -68,21 +75,15 @@ def placeholder_uri(field):
     """Prévia de 16 px (data URI) usada como fundo da imagem enquanto ela decodifica."""
     if not field:
         return ""
-    key = f"lqip:{field.name}"
-    uri = cache.get(key)
-    if uri:
-        return uri
-    small = thumb_name(field.name, WIDTHS[0])
-    name = small if field.storage.exists(small) else field.name
-    try:
+
+    def build():
+        small = thumb_name(field.name, WIDTHS[0])
+        name = small if field.storage.exists(small) else field.name
         with field.storage.open(name, "rb") as source, Image.open(source) as image:
             image = ImageOps.exif_transpose(image).convert("RGB")
             image.thumbnail((16, 16))
             buffer = BytesIO()
             image.save(buffer, "WEBP", quality=40)
-    except (OSError, ValueError) as exc:
-        logger.warning("placeholder failed for %s: %s", field.name, exc)
-        return ""
-    uri = "data:image/webp;base64," + base64.b64encode(buffer.getvalue()).decode()
-    cache.set(key, uri, CACHE_SECONDS)
-    return uri
+        return "data:image/webp;base64," + base64.b64encode(buffer.getvalue()).decode()
+
+    return _cached(f"lqip:{field.name}", build, "")

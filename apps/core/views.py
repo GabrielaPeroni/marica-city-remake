@@ -3,17 +3,19 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _l
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_GET, require_POST
+from django.views.static import serve
 
 from apps.accounts.models import User
+from apps.core.decorators import moderator_required
 from apps.core.utils import safe_next
 from apps.explore.models import Category, Place, PlaceReview
 from apps.explore.visits import most_visited
@@ -34,8 +36,6 @@ def health_view(request):
 
 def media_view(request, path):
     """Uploads em desenvolvimento, com cache longo: os nomes nunca se repetem."""
-    from django.views.static import serve
-
     response = serve(request, path, document_root=settings.MEDIA_ROOT)
     response["Cache-Control"] = "public, max-age=31536000, immutable"
     return response
@@ -44,7 +44,7 @@ def media_view(request, path):
 def landing_view(request):
     # "Onde ir": os destacados pela equipe primeiro, depois os mais recentes
     featured_places = (
-        Place.objects.filter(is_approved=True, is_active=True)
+        Place.objects.public()
         .with_ratings()
         .prefetch_related("images", "categories")
         .order_by("-is_featured", "-created_at")[:6]
@@ -53,11 +53,9 @@ def landing_view(request):
     # Em alta: mais visitados na semana; sem visitas, os cadastrados na semana
     trending_places = list(most_visited())
     if not trending_places:
-        day_range = timezone.now() - timedelta(days=7)
         trending_places = (
-            Place.objects.filter(
-                is_approved=True, is_active=True, created_at__gte=day_range
-            )
+            Place.objects.public()
+            .filter(created_at__gte=timezone.now() - timedelta(days=7))
             .with_ratings()
             .prefetch_related("images", "categories")
             .order_by("-created_at")[:4]
@@ -89,7 +87,6 @@ def landing_view(request):
         "recent_events": recent_events,
         "categories": categories,
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
-        "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
     }
     return render(request, "core/landing.html", context)
 
@@ -106,76 +103,35 @@ def calculate_percentage_change(current, previous):
     return round(((current - previous) / previous) * 100, 1)
 
 
-@login_required
+def _weekly(queryset, field):
+    """(cadastros nos últimos 7 dias, variação % em relação aos 7 anteriores)"""
+    week_ago = timezone.now() - timedelta(days=7)
+    this_week = queryset.filter(**{f"{field}__gte": week_ago}).count()
+    last_week = queryset.filter(
+        **{f"{field}__gte": week_ago - timedelta(days=7), f"{field}__lt": week_ago}
+    ).count()
+    return this_week, calculate_percentage_change(this_week, last_week)
+
+
+@moderator_required
 def admin_dashboard_view(request):
-    """Dashboard de administração centralizado"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
+    """Visão geral do painel (pendências e badges vêm do context processor admin_stats)"""
+    places_this_week, places_change = _weekly(Place.objects, "created_at")
+    users_this_week, users_change = _weekly(User.objects, "date_joined")
+    reviews_this_week, reviews_change = _weekly(PlaceReview.objects, "created_at")
 
-    # Períodos de tempo
-    now = timezone.now()
-    week_ago = now - timedelta(days=7)
-    two_weeks_ago = now - timedelta(days=14)
-
-    # Obter estatísticas principais
-    total_users = User.objects.count()
-    active_users = User.objects.filter(is_active=True).count()
-    total_places = Place.objects.count()
-    pending_places = Place.objects.filter(is_approved=False, is_active=True).count()
-    approved_places = Place.objects.filter(is_approved=True).count()
-
-    # Estatísticas semanais
-    places_this_week = Place.objects.filter(created_at__gte=week_ago).count()
-    places_last_week = Place.objects.filter(
-        created_at__gte=two_weeks_ago, created_at__lt=week_ago
-    ).count()
-    places_change = calculate_percentage_change(places_this_week, places_last_week)
-
-    users_this_week = User.objects.filter(date_joined__gte=week_ago).count()
-    users_last_week = User.objects.filter(
-        date_joined__gte=two_weeks_ago, date_joined__lt=week_ago
-    ).count()
-    users_change = calculate_percentage_change(users_this_week, users_last_week)
-
-    reviews_this_week = PlaceReview.objects.filter(created_at__gte=week_ago).count()
-    reviews_last_week = PlaceReview.objects.filter(
-        created_at__gte=two_weeks_ago, created_at__lt=week_ago
-    ).count()
-    reviews_change = calculate_percentage_change(reviews_this_week, reviews_last_week)
-
-    total_reviews = PlaceReview.objects.count()
-
-    # Estatísticas de notícias
-    total_news = News.objects.count()
-    published_news = News.objects.filter(status=News.PUBLISHED).count()
-    draft_news = News.objects.filter(status=News.DRAFT).count()
-
-    # Usuários recentes (últimos 10)
     # O administrador fica sempre no topo; depois, os cadastros mais recentes
-    recent_users = list(User.objects.filter(is_superuser=True).order_by("date_joined"))
-    recent_users += list(
-        User.objects.filter(is_superuser=False).order_by("-date_joined")[:10]
-    )
-
+    recent_users = [
+        *User.objects.filter(is_superuser=True).order_by("date_joined"),
+        *User.objects.filter(is_superuser=False).order_by("-date_joined")[:10],
+    ]
     context = {
-        "total_users": total_users,
-        "active_users": active_users,
-        "total_places": total_places,
-        "pending_places": pending_places,
-        "approved_places": approved_places,
-        "total_news": total_news,
-        "published_news": published_news,
-        "draft_news": draft_news,
-        # Tendências semanais
         "places_this_week": places_this_week,
         "places_change": places_change,
         "users_this_week": users_this_week,
         "users_change": users_change,
         "reviews_this_week": reviews_this_week,
         "reviews_change": reviews_change,
-        "total_reviews": total_reviews,
-        # Dados recentes
         "recent_users": recent_users,
     }
     return render(request, "core/admin_dashboard.html", context)
@@ -184,13 +140,18 @@ def admin_dashboard_view(request):
 # Views de Gerenciamento de Notícias
 
 
-@login_required
-def admin_news_list_view(request):
-    """Listar todas as notícias com filtragem e ordenação"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
+# Filtros da lista de eventos do painel: chave -> (rótulo, status salvo, ícone, tom)
+EVENT_FILTERS = {
+    "all": (_l("Todos"), None, "collection", "neutral"),
+    "suggested": (_l("Sugestões"), None, "magic", "warning"),
+    "published": (_l("Publicados"), News.PUBLISHED, "check-circle", "success"),
+    "draft": (_l("Rascunhos"), News.DRAFT, "pencil-square", "featured"),
+    "archived": (_l("Arquivados"), News.ARCHIVED, "archive", "neutral"),
+}
 
+
+@moderator_required
+def admin_news_list_view(request):
     return render(
         request,
         "core/admin/news_list.html",
@@ -200,62 +161,45 @@ def admin_news_list_view(request):
 
 def _events_context(request, status_filter, triage_form=None):
     """Lista de eventos e, no filtro "suggested", os candidatos do crawler."""
+    # Links antigos usam o valor salvo ("Publicado") em vez da chave
+    by_value = {
+        status: key for key, (_x, status, *_r) in EVENT_FILTERS.items() if status
+    }
+    status_filter = by_value.get(status_filter, status_filter)
+    if status_filter not in EVENT_FILTERS:
+        status_filter = "all"
     category_filter = request.GET.get("category", "all")
     search_query = request.GET.get("q", "").strip()
 
-    # Começar com todas as notícias
     news_list = News.objects.select_related("author", "category").order_by(
         "-created_at"
     )
-
-    # Aplicar filtros
-    statuses = {
-        "published": News.PUBLISHED,
-        "draft": News.DRAFT,
-        "archived": News.ARCHIVED,
-    }
-    if status_filter in statuses.values():  # links antigos com o valor salvo
-        status_filter = next(k for k, v in statuses.items() if v == status_filter)
-    if status_filter in statuses:
-        news_list = news_list.filter(status=statuses[status_filter])
-    elif status_filter != "suggested":
-        status_filter = "all"
-
+    stored_status = EVENT_FILTERS[status_filter][1]
+    if stored_status:
+        news_list = news_list.filter(status=stored_status)
     if category_filter != "all":
         news_list = news_list.filter(category__name=category_filter)
-
     if search_query:
         news_list = news_list.filter(title__icontains=search_query)
 
-    # Obter categorias para o filtro
-    categories = NewsCategory.objects.all()
-
-    # Obter contagens para estatísticas
-    total_count = News.objects.count()
-    published_count = News.objects.filter(status=News.PUBLISHED).count()
-    draft_count = News.objects.filter(status=News.DRAFT).count()
-    archived_count = News.objects.filter(status=News.ARCHIVED).count()
-
-    suggested_count = EventCandidate.objects.filter(
-        status=EventCandidate.PENDING
-    ).count()
+    def count(key, status):
+        if key == "suggested":
+            return EventCandidate.objects.filter(status=EventCandidate.PENDING).count()
+        return (
+            News.objects.filter(status=status).count()
+            if status
+            else News.objects.count()
+        )
 
     context = {
         "news_list": news_list,
-        "categories": categories,
+        "categories": NewsCategory.objects.all(),
         "status_filter": status_filter,
         "category_filter": category_filter,
         "search_query": search_query,
-        "total_count": total_count,
-        "published_count": published_count,
-        "draft_count": draft_count,
-        "archived_count": archived_count,
         "status_cards": [
-            ("all", _("Todos"), total_count, "collection", "neutral"),
-            ("suggested", _("Sugestões"), suggested_count, "magic", "warning"),
-            ("published", _("Publicados"), published_count, "check-circle", "success"),
-            ("draft", _("Rascunhos"), draft_count, "pencil-square", "featured"),
-            ("archived", _("Arquivados"), archived_count, "archive", "neutral"),
+            (key, label, count(key, status), icon, tone)
+            for key, (label, status, icon, tone) in EVENT_FILTERS.items()
         ],
     }
     if status_filter == "suggested":
@@ -263,57 +207,43 @@ def _events_context(request, status_filter, triage_form=None):
     return context
 
 
-@login_required
+def _news_form(request, news=None):
+    form = NewsForm(request.POST or None, request.FILES or None, instance=news)
+    if request.method == "POST" and form.is_valid():
+        saved = form.save(commit=False)
+        if news is None:
+            saved.author = request.user
+        saved.save()
+        return saved, form
+    return None, form
+
+
+@moderator_required
 def admin_news_create_view(request):
-    """Criar uma nova notícia/evento"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
-    if request.method == "POST":
-        form = NewsForm(request.POST, request.FILES)
-        if form.is_valid():
-            news = form.save(commit=False)
-            news.author = request.user
-            news.save()
-            messages.success(
-                request,
-                _('Evento "%(title)s" criado com sucesso!') % {"title": news.title},
-            )
-            return redirect("core:admin_news_list")
-    else:
+    if request.method == "GET":
         event = NewsCategory.objects.filter(name=NewsCategory.EVENT).first()
-        form = NewsForm(initial={"category": event})
-
-    context = {
-        "form": form,
-        "title": _("Criar novo evento"),
-        "submit_text": _("Criar"),
-    }
+        form, news = NewsForm(initial={"category": event}), None
+    else:
+        news, form = _news_form(request)
+    if news:
+        messages.success(
+            request, _('Evento "%(title)s" criado com sucesso!') % {"title": news.title}
+        )
+        return redirect("core:admin_news_list")
+    context = {"form": form, "title": _("Criar novo evento"), "submit_text": _("Criar")}
     return render(request, "core/admin/news_form.html", context)
 
 
-@login_required
+@moderator_required
 def admin_news_edit_view(request, pk):
-    """Editar uma notícia/evento existente"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
     news = get_object_or_404(News, pk=pk)
-
-    if request.method == "POST":
-        form = NewsForm(request.POST, request.FILES, instance=news)
-        if form.is_valid():
-            form.save()
-            messages.success(
-                request,
-                _('Evento "%(title)s" atualizado com sucesso!') % {"title": news.title},
-            )
-            return redirect("core:admin_news_list")
-    else:
-        form = NewsForm(instance=news)
-
+    saved, form = _news_form(request, news)
+    if saved:
+        messages.success(
+            request,
+            _('Evento "%(title)s" atualizado com sucesso!') % {"title": saved.title},
+        )
+        return redirect("core:admin_news_list")
     context = {
         "form": form,
         "news": news,
@@ -323,75 +253,63 @@ def admin_news_edit_view(request, pk):
     return render(request, "core/admin/news_form.html", context)
 
 
-@login_required
+@moderator_required
 def admin_news_delete_view(request, pk):
-    """Excluir uma notícia/evento"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
     news = get_object_or_404(News, pk=pk)
+    if request.method != "POST":
+        return render(request, "core/admin/news_delete_confirm.html", {"news": news})
 
-    if request.method == "POST":
-        news_title = news.title
-        news.delete()
-        messages.success(
-            request,
-            _('Evento "%(news_title)s" excluído com sucesso.')
-            % {"news_title": news_title},
-        )
-        return redirect("core:admin_news_list")
-
-    context = {"news": news}
-    return render(request, "core/admin/news_delete_confirm.html", context)
+    news.delete()
+    messages.success(
+        request,
+        _('Evento "%(news_title)s" excluído com sucesso.') % {"news_title": news.title},
+    )
+    return redirect("core:admin_news_list")
 
 
-@login_required
+# Ações em massa que mudam o status; save() de cada item define publish_date ao publicar
+BULK_STATUS = {"publish": News.PUBLISHED, "archive": News.ARCHIVED}
+
+
+def _bulk_message(action, count):
+    return {
+        "publish": ngettext(
+            "%(count)d evento publicado", "%(count)d eventos publicados", count
+        ),
+        "archive": ngettext(
+            "%(count)d evento arquivado", "%(count)d eventos arquivados", count
+        ),
+        "delete": ngettext(
+            "%(count)d evento excluído", "%(count)d eventos excluídos", count
+        ),
+    }[action] % {"count": count}
+
+
+@moderator_required
 @require_POST
 def admin_news_bulk_view(request):
     """Publicar, arquivar ou excluir vários eventos de uma vez."""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
     destination = safe_next(request, reverse("core:admin_news_list"))
-    action = request.POST.get("action")
     ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
     if not ids:
         messages.error(request, _("Selecione ao menos um evento."))
         return redirect(destination)
 
     items = News.objects.filter(pk__in=ids)
-    if action == "publish":
-        items = items.exclude(status=News.PUBLISHED)
-        count = 0
-        for item in items:
-            item.status = News.PUBLISHED
+    action = request.POST.get("action")
+    if action in BULK_STATUS:
+        changed = list(items.exclude(status=BULK_STATUS[action]))
+        for item in changed:
+            item.status = BULK_STATUS[action]
             item.save()
-            count += 1
-        message = ngettext(
-            "%(count)d evento publicado", "%(count)d eventos publicados", count
-        )
-    elif action == "archive":
-        items = items.exclude(status=News.ARCHIVED)
-        count = 0
-        for item in items:
-            item.status = News.ARCHIVED
-            item.save()
-            count += 1
-        message = ngettext(
-            "%(count)d evento arquivado", "%(count)d eventos arquivados", count
-        )
+        count = len(changed)
     elif action == "delete":
         count = items.count()
         items.delete()
-        message = ngettext(
-            "%(count)d evento excluído", "%(count)d eventos excluídos", count
-        )
     else:
         messages.error(request, _("Ação inválida."))
         return redirect(destination)
-    messages.success(request, message % {"count": count})
+    messages.success(request, _bulk_message(action, count))
     return redirect(destination)
 
 
@@ -404,16 +322,18 @@ def _triage_context(bound_form=None):
             "possible_duplicate"
         )
     )
-    candidates = []
-    for c in pending:
-        if bound_form is not None and bound_form.instance.pk == c.pk:
-            form = bound_form
-        else:
-            form = EventCandidateForm(instance=c, prefix=f"c{c.pk}")
-        siblings = [
-            o for o in pending if o.pk != c.pk and event_crawler.same_event(c, o)
-        ]
-        candidates.append((c, form, siblings))
+    candidates = [
+        (
+            c,
+            (
+                bound_form
+                if bound_form and bound_form.instance.pk == c.pk
+                else EventCandidateForm(instance=c, prefix=f"c{c.pk}")
+            ),
+            [o for o in pending if o.pk != c.pk and event_crawler.same_event(c, o)],
+        )
+        for c in pending
+    ]
     recent = (
         EventCandidate.objects.exclude(status=EventCandidate.PENDING)
         .select_related("news", "reviewed_by")
@@ -426,21 +346,14 @@ def _suggestions_url():
     return reverse("core:admin_news_list") + "?status=suggested"
 
 
-@login_required
+@moderator_required
 def admin_event_triage_view(request):
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
     return redirect(_suggestions_url())
 
 
-@login_required
+@moderator_required
 @require_POST
 def admin_event_triage_action_view(request, pk):
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
     candidate = get_object_or_404(EventCandidate, pk=pk, status=EventCandidate.PENDING)
     if request.POST.get("action") == "reject":
         event_crawler.reject(candidate, request.user)
@@ -468,14 +381,10 @@ def admin_event_triage_action_view(request, pk):
     return redirect(_suggestions_url())
 
 
-@login_required
+@moderator_required
 @require_POST
 def admin_event_triage_bulk_view(request):
     """Descartar vários candidatos de uma vez."""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
     ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
     if not ids:
         messages.error(request, _("Selecione ao menos um evento."))
@@ -493,12 +402,9 @@ def admin_event_triage_bulk_view(request):
     return redirect(_suggestions_url())
 
 
-@login_required
+@moderator_required
 @require_POST
 def admin_event_crawl_view(request):
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
     try:
         created = event_crawler.store_candidates(event_crawler.fetch_prefeitura_posts())
     except Exception:
