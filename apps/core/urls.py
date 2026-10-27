@@ -15,6 +15,11 @@ urlpatterns = [
     path("painel-admin/", views.admin_dashboard_view, name="admin_dashboard"),
     path("painel-admin/noticias/", views.admin_news_list_view, name="admin_news_list"),
     path(
+        "painel-admin/noticias/em-massa/",
+        views.admin_news_bulk_view,
+        name="admin_news_bulk",
+    ),
+    path(
         "painel-admin/noticias/criar/",
         views.admin_news_create_view,
         name="admin_news_create",
@@ -33,6 +38,11 @@ urlpatterns = [
         "painel-admin/eventos/triagem/",
         views.admin_event_triage_view,
         name="admin_event_triage",
+    ),
+    path(
+        "painel-admin/eventos/triagem/em-massa/",
+        views.admin_event_triage_bulk_view,
+        name="admin_event_triage_bulk",
     ),
     path(
         "painel-admin/eventos/triagem/<int:pk>/",

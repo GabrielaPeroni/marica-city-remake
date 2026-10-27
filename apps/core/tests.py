@@ -1,3 +1,4 @@
+from django.contrib.messages import get_messages
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
@@ -579,3 +580,68 @@ class VisitPageTests(TestCase):
         response = self.client.get(reverse("core:about"))
         self.assertContains(response, "Vermelhinhos")
         self.assertContains(response, "<strong>192</strong>", html=False)
+
+
+class AdminNewsBulkTests(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="staffuser", password="testpass123", is_staff=True
+        )
+        self.regular = User.objects.create_user(
+            username="regularuser", password="testpass123"
+        )
+        category, _ = NewsCategory.objects.get_or_create(name=NewsCategory.EVENT)
+        self.items = [
+            News.objects.create(
+                title=f"Item {i}",
+                content="Content",
+                author=self.staff,
+                category=category,
+                status=News.DRAFT,
+            )
+            for i in range(3)
+        ]
+        self.url = reverse("core:admin_news_bulk")
+
+    def _post(self, ids, action):
+        return self.client.post(self.url, {"ids": ids, "action": action})
+
+    def test_bulk_publish(self):
+        self.client.login(username="staffuser", password="testpass123")
+        self._post([i.pk for i in self.items[:2]], "publish")
+        statuses = [News.objects.get(pk=i.pk).status for i in self.items]
+        self.assertEqual(statuses, [News.PUBLISHED, News.PUBLISHED, News.DRAFT])
+        self.assertIsNotNone(News.objects.get(pk=self.items[0].pk).publish_date)
+
+    def test_bulk_archive(self):
+        self.client.login(username="staffuser", password="testpass123")
+        self._post([i.pk for i in self.items], "archive")
+        self.assertEqual(News.objects.filter(status=News.ARCHIVED).count(), 3)
+
+    def test_bulk_delete(self):
+        self.client.login(username="staffuser", password="testpass123")
+        self._post([self.items[0].pk, self.items[1].pk], "delete")
+        self.assertEqual(News.objects.count(), 1)
+
+    def test_already_archived_ignored_in_count(self):
+        self.client.login(username="staffuser", password="testpass123")
+        self.items[0].status = News.ARCHIVED
+        self.items[0].save()
+        response = self._post([self.items[0].pk, self.items[1].pk], "archive")
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("1 evento arquivado", messages)
+
+    def test_non_staff_forbidden(self):
+        self.client.login(username="regularuser", password="testpass123")
+        self._post([self.items[0].pk], "delete")
+        self.assertEqual(News.objects.count(), 3)
+
+    def test_invalid_action_changes_nothing(self):
+        self.client.login(username="staffuser", password="testpass123")
+        self._post([self.items[0].pk], "explode")
+        self.assertEqual(News.objects.filter(status=News.DRAFT).count(), 3)
+
+    def test_list_page_has_checkboxes(self):
+        self.client.login(username="staffuser", password="testpass123")
+        response = self.client.get(reverse("core:admin_news_list"))
+        self.assertContains(response, "data-bulk-item", count=3)

@@ -6,8 +6,12 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
+from django.views.decorators.http import require_POST
 
 from django_ratelimit.decorators import ratelimit
+
+from apps.core.utils import safe_next
 
 from .forms import PlaceForm, PlaceImageFormSet, PlaceReviewForm
 from .models import Category, Favorite, Place, PlaceApproval, PlaceReview
@@ -322,6 +326,35 @@ def place_delete_view(request, pk):
 # Views de aprovação do administrador
 
 
+def _approve_place(place, reviewer, comments=""):
+    PlaceApproval.objects.create(
+        place=place,
+        reviewer=reviewer,
+        action=PlaceApproval.ActionType.APPROVE,
+        comments=comments,
+    )
+
+
+def _removal_comments(reason, custom_comments):
+    """Return (comments, error) for a removal reason; "Outros" needs a comment."""
+    if not reason:
+        return None, _("Por favor, selecione um motivo para a rejeição.")
+    if reason == "Outros":
+        if not custom_comments:
+            return None, _("Por favor, especifique o motivo da rejeição.")
+        return custom_comments, None
+    return reason, None
+
+
+def _reject_place(place, reviewer, comments):
+    PlaceApproval.objects.create(
+        place=place,
+        reviewer=reviewer,
+        action=PlaceApproval.ActionType.REJECT,
+        comments=comments,
+    )
+
+
 @login_required
 def approval_queue_view(request):
     """Fila de aprovação do administrador - redireciona para backlog com view=queue"""
@@ -347,13 +380,7 @@ def approve_place_view(request, pk):
     place = get_object_or_404(Place, pk=pk)
 
     if request.method == "POST":
-        # Criar registro de aprovação
-        PlaceApproval.objects.create(
-            place=place,
-            reviewer=request.user,
-            action=PlaceApproval.ActionType.APPROVE,
-            comments=request.POST.get("comments", ""),
-        )
+        _approve_place(place, request.user, request.POST.get("comments", ""))
 
         messages.success(
             request,
@@ -380,30 +407,12 @@ def reject_place_view(request, pk):
         reason = request.POST.get("reason", "")
         custom_comments = request.POST.get("comments", "")
 
-        if not reason:
-            messages.error(
-                request, _("Por favor, selecione um motivo para a rejeição.")
-            )
+        comments, error = _removal_comments(reason, custom_comments)
+        if error:
+            messages.error(request, error)
             return redirect("explore:reject_place", pk=pk)
 
-        # Use custom comments if "Outros" is selected, otherwise use the reason
-        if reason == "Outros":
-            if not custom_comments:
-                messages.error(
-                    request, _("Por favor, especifique o motivo da rejeição.")
-                )
-                return redirect("explore:reject_place", pk=pk)
-            comments = custom_comments
-        else:
-            comments = reason
-
-        # Criar registro de rejeição
-        PlaceApproval.objects.create(
-            place=place,
-            reviewer=request.user,
-            action=PlaceApproval.ActionType.REJECT,
-            comments=comments,
-        )
+        _reject_place(place, request.user, comments)
 
         messages.success(
             request,
@@ -413,6 +422,54 @@ def reject_place_view(request, pk):
 
     # If GET request, redirect to backlog (modal handles rejection)
     return redirect("explore:backlog")
+
+
+@login_required
+@require_POST
+def bulk_places_view(request):
+    """Aprovar ou remover vários lugares de uma vez."""
+    if not request.user.can_moderate:
+        messages.error(request, _("Você não tem permissão para realizar esta ação."))
+        return redirect("explore:explore")
+
+    destination = safe_next(request, reverse("explore:backlog") + "?view=queue")
+    action = request.POST.get("action")
+    ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
+    if not ids:
+        messages.error(request, _("Selecione ao menos um lugar."))
+        return redirect(destination)
+
+    if action == "approve":
+        places = Place.objects.filter(pk__in=ids, is_approved=False, is_active=True)
+        count = 0
+        for place in places:
+            _approve_place(place, request.user)
+            count += 1
+        messages.success(
+            request,
+            ngettext("%(count)d lugar aprovado", "%(count)d lugares aprovados", count)
+            % {"count": count},
+        )
+    elif action == "remove":
+        comments, error = _removal_comments(
+            request.POST.get("reason", ""), request.POST.get("comments", "").strip()
+        )
+        if error:
+            messages.error(request, error)
+            return redirect(destination)
+        places = Place.objects.filter(pk__in=ids, is_active=True)
+        count = 0
+        for place in places:
+            _reject_place(place, request.user, comments)
+            count += 1
+        messages.success(
+            request,
+            ngettext("%(count)d lugar removido", "%(count)d lugares removidos", count)
+            % {"count": count},
+        )
+    else:
+        messages.error(request, _("Ação inválida."))
+    return redirect(destination)
 
 
 @login_required

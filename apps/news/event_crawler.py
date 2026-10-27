@@ -456,3 +456,12 @@ def reject(candidate, user):
     candidate.reviewed_by = user
     candidate.reviewed_at = timezone.now()
     candidate.save(update_fields=["status", "reviewed_by", "reviewed_at"])
+
+
+def reject_many(ids, user):
+    """Descarta os candidatos pendentes entre `ids`; devolve quantos foram."""
+    return EventCandidate.objects.filter(
+        pk__in=ids, status=EventCandidate.PENDING
+    ).update(
+        status=EventCandidate.REJECTED, reviewed_by=user, reviewed_at=timezone.now()
+    )

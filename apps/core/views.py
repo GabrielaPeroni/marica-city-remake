@@ -7,11 +7,14 @@ from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.views.decorators.http import require_GET, require_POST
 
 from apps.accounts.models import User
+from apps.core.utils import safe_next
 from apps.explore.models import Category, Place, PlaceReview
 from apps.news import event_crawler
 from apps.news.forms import EventCandidateForm, NewsForm
@@ -297,6 +300,55 @@ def admin_news_delete_view(request, pk):
     return render(request, "core/admin/news_delete_confirm.html", context)
 
 
+@login_required
+@require_POST
+def admin_news_bulk_view(request):
+    """Publicar, arquivar ou excluir vários eventos de uma vez."""
+    if not request.user.can_moderate:
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
+        return redirect("core:landing")
+
+    destination = safe_next(request, reverse("core:admin_news_list"))
+    action = request.POST.get("action")
+    ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
+    if not ids:
+        messages.error(request, _("Selecione ao menos um evento."))
+        return redirect(destination)
+
+    items = News.objects.filter(pk__in=ids)
+    if action == "publish":
+        items = items.exclude(status=News.PUBLISHED)
+        count = 0
+        for item in items:
+            item.status = News.PUBLISHED
+            item.save()
+            count += 1
+        message = ngettext(
+            "%(count)d evento publicado", "%(count)d eventos publicados", count
+        )
+    elif action == "archive":
+        items = items.exclude(status=News.ARCHIVED)
+        count = 0
+        for item in items:
+            item.status = News.ARCHIVED
+            item.save()
+            count += 1
+        message = ngettext(
+            "%(count)d evento arquivado", "%(count)d eventos arquivados", count
+        )
+    elif action == "delete":
+        count = items.count()
+        items.delete()
+        message = ngettext(
+            "%(count)d evento excluído", "%(count)d eventos excluídos", count
+        )
+    else:
+        messages.error(request, _("Ação inválida."))
+        return redirect(destination)
+    messages.success(request, message % {"count": count})
+    return redirect(destination)
+
+
 # Triagem de eventos encontrados pelo crawler
 
 
@@ -360,6 +412,31 @@ def admin_event_triage_action_view(request, pk):
     messages.success(
         request, _('"%(title)s" publicado na agenda.') % {"title": news.title}
     )
+    return redirect("core:admin_event_triage")
+
+
+@login_required
+@require_POST
+def admin_event_triage_bulk_view(request):
+    """Descartar vários candidatos de uma vez."""
+    if not request.user.can_moderate:
+        messages.error(request, _("Você não tem permissão para acessar esta página."))
+        return redirect("core:landing")
+
+    ids = [i for i in request.POST.getlist("ids") if i.isdigit()]
+    if not ids:
+        messages.error(request, _("Selecione ao menos um evento."))
+    elif request.POST.get("action") == "reject":
+        count = event_crawler.reject_many(ids, request.user)
+        messages.success(
+            request,
+            ngettext(
+                "%(count)d evento descartado", "%(count)d eventos descartados", count
+            )
+            % {"count": count},
+        )
+    else:
+        messages.error(request, _("Ação inválida."))
     return redirect("core:admin_event_triage")
 
 

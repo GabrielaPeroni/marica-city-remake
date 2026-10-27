@@ -819,3 +819,63 @@ class EventWhenFilterTests(TestCase):
         self.assertIn("calendar.google.com", self.event.calendar_url)
         self.assertIn("20261030T030000Z", self.event.calendar_url)
         self.assertIn("Orla+do+Parque+Nanci", self.event.maps_url)
+
+
+class EventTriageBulkTests(TestCase):
+    def setUp(self):
+        self.moderator = User.objects.create_user(
+            username="mod", password="pass123", is_staff=True
+        )
+        self.regular = User.objects.create_user(username="reg", password="pass123")
+        self.candidates = [
+            EventCandidate.objects.create(
+                source="prefeitura",
+                source_id=str(i),
+                source_name="Prefeitura de Maricá",
+                source_url=f"https://www.marica.rj.gov.br/noticia/{i}/",
+                source_published_at=timezone.now(),
+                title=f"Evento {i}",
+                summary="Descrição.",
+            )
+            for i in range(3)
+        ]
+        self.url = reverse("core:admin_event_triage_bulk")
+
+    def test_bulk_discard(self):
+        self.client.login(username="mod", password="pass123")
+        ids = [c.pk for c in self.candidates[:2]]
+        response = self.client.post(self.url, {"ids": ids, "action": "reject"})
+        self.assertEqual(response.status_code, 302)
+        statuses = [EventCandidate.objects.get(pk=c.pk).status for c in self.candidates]
+        self.assertEqual(
+            statuses,
+            [
+                EventCandidate.REJECTED,
+                EventCandidate.REJECTED,
+                EventCandidate.PENDING,
+            ],
+        )
+        rejected = EventCandidate.objects.get(pk=ids[0])
+        self.assertEqual(rejected.reviewed_by, self.moderator)
+        self.assertIsNotNone(rejected.reviewed_at)
+
+    def test_already_reviewed_ignored(self):
+        self.client.login(username="mod", password="pass123")
+        done = self.candidates[0]
+        done.status = EventCandidate.APPROVED
+        done.save()
+        self.client.post(self.url, {"ids": [done.pk], "action": "reject"})
+        done.refresh_from_db()
+        self.assertEqual(done.status, EventCandidate.APPROVED)
+
+    def test_non_staff_forbidden(self):
+        self.client.login(username="reg", password="pass123")
+        self.client.post(self.url, {"ids": [self.candidates[0].pk], "action": "reject"})
+        self.candidates[0].refresh_from_db()
+        self.assertEqual(self.candidates[0].status, EventCandidate.PENDING)
+
+    def test_triage_page_has_checkboxes(self):
+        self.client.login(username="mod", password="pass123")
+        response = self.client.get(reverse("core:admin_event_triage"))
+        self.assertContains(response, "data-bulk-item", count=3)
+        self.assertContains(response, "Descartar selecionados")

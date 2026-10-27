@@ -2,6 +2,7 @@ import json
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
@@ -2414,3 +2415,116 @@ class CategorySearchTests(TestCase):
         response = self.client.get(self.url, {"q": "zzzz"})
         self.assertContains(response, "Nenhum resultado para")
         self.assertNotContains(response, "Praia do Sol")
+
+
+class BulkPlaceModerationTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+        self.staff = User.objects.create_user(
+            username="mod", password="pass123", is_staff=True
+        )
+        self.regular = User.objects.create_user(username="reg", password="pass123")
+        self.places = [
+            Place.objects.create(
+                name=f"Pendente {i}",
+                description="d",
+                address="a",
+                created_by=self.regular,
+            )
+            for i in range(3)
+        ]
+        self.approved = Place.objects.create(
+            name="Ja aprovado",
+            description="d",
+            address="a",
+            created_by=self.regular,
+            is_approved=True,
+        )
+        self.url = reverse("explore:bulk_places")
+
+    def _post(self, ids, **extra):
+        return self.client.post(self.url, {"ids": ids, **extra})
+
+    def test_bulk_approve(self):
+        self.client.login(username="mod", password="pass123")
+        ids = [p.pk for p in self.places] + [self.approved.pk]
+        response = self._post(ids, action="approve")
+        self.assertEqual(response.status_code, 302)
+        for place in self.places:
+            place.refresh_from_db()
+            self.assertTrue(place.is_approved)
+        self.assertEqual(
+            PlaceApproval.objects.filter(
+                action=PlaceApproval.ActionType.APPROVE, reviewer=self.staff
+            ).count(),
+            3,
+        )
+        self.assertFalse(self.approved.approval_history.exists())
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("3 lugares aprovados", messages)
+
+    def test_bulk_approve_single_uses_singular(self):
+        self.client.login(username="mod", password="pass123")
+        response = self._post([self.places[0].pk], action="approve")
+        messages = [str(m) for m in get_messages(response.wsgi_request)]
+        self.assertIn("1 lugar aprovado", messages)
+
+    def test_non_staff_forbidden(self):
+        self.client.login(username="reg", password="pass123")
+        self._post([self.places[0].pk], action="approve")
+        self.places[0].refresh_from_db()
+        self.assertFalse(self.places[0].is_approved)
+        self.assertFalse(PlaceApproval.objects.exists())
+
+    def test_get_not_allowed(self):
+        self.client.login(username="mod", password="pass123")
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+
+    def test_bulk_remove_requires_reason(self):
+        self.client.login(username="mod", password="pass123")
+        self._post([self.places[0].pk], action="remove")
+        self.places[0].refresh_from_db()
+        self.assertTrue(self.places[0].is_active)
+        self.assertFalse(PlaceApproval.objects.exists())
+
+    def test_bulk_remove_outros_requires_comment(self):
+        self.client.login(username="mod", password="pass123")
+        self._post([self.places[0].pk], action="remove", reason="Outros")
+        self.places[0].refresh_from_db()
+        self.assertTrue(self.places[0].is_active)
+
+    def test_bulk_remove(self):
+        self.client.login(username="mod", password="pass123")
+        ids = [p.pk for p in self.places[:2]]
+        self._post(ids, action="remove", reason="Duplicado")
+        for place in self.places[:2]:
+            place.refresh_from_db()
+            self.assertFalse(place.is_active)
+        self.assertEqual(
+            PlaceApproval.objects.filter(
+                action=PlaceApproval.ActionType.REJECT, comments="Duplicado"
+            ).count(),
+            2,
+        )
+        self.places[2].refresh_from_db()
+        self.assertTrue(self.places[2].is_active)
+
+    def test_bulk_remove_outros_uses_comment(self):
+        self.client.login(username="mod", password="pass123")
+        self._post(
+            [self.places[0].pk], action="remove", reason="Outros", comments="Spam"
+        )
+        self.assertTrue(PlaceApproval.objects.filter(comments="Spam").exists())
+
+    def test_invalid_ids_ignored(self):
+        self.client.login(username="mod", password="pass123")
+        response = self._post(["abc", "99999"], action="approve")
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(PlaceApproval.objects.exists())
+
+    def test_external_next_is_ignored(self):
+        self.client.login(username="mod", password="pass123")
+        response = self._post(
+            [self.places[0].pk], action="approve", next="https://evil.example/"
+        )
+        self.assertNotIn("evil.example", response["Location"])

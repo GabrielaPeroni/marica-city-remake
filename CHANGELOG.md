@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Bulk actions in the staff panel. The places approval queue and history can
+  approve or remove (with a reason, like the single flow) several places at
+  once, the event triage can discard several candidates, and the events list
+  can publish, archive or delete several events. Each page has row checkboxes,
+  a select-all with an indeterminate state and a sticky bar showing the number
+  selected; the forms also work without JavaScript.
 - `manage.py seed_demo_places` creates 18 real, approved places for the demo
   (at least three per category) from `apps/explore/demo_data/places.json`, with
   the sources recorded for each. It is idempotent (matches by name). Photos from

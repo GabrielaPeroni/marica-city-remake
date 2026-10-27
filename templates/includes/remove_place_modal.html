@@ -18,13 +18,7 @@
               {% translate "Motivo da remoção" %} <span class="text-danger">*</span>
             </label>
             <select id="removeReason" name="reason" required class="form-select">
-              <option value="">{% translate "Selecione um motivo" %}</option>
-              <option value="Informações incompletas">{% translate "Informações incompletas" %}</option>
-              <option value="Conteúdo inadequado">{% translate "Conteúdo inadequado" %}</option>
-              <option value="Localização incorreta">{% translate "Localização incorreta" %}</option>
-              <option value="Duplicado">{% translate "Duplicado" %}</option>
-              <option value="Não é um lugar turístico">{% translate "Não é um lugar turístico" %}</option>
-              <option value="Outros">{% translate "Outros" %}</option>
+              {% include 'includes/place_removal_reasons.html' %}
             </select>
           </div>
 

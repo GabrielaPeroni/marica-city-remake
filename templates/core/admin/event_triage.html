@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
 <link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/bulk_select.css' %}">
 <script>
 (function() {
   if (localStorage.getItem('sidebarCollapsed') === 'true') {
@@ -36,6 +37,21 @@
           </form>
         </div>
 
+        {% if candidates %}
+        <form method="post" action="{% url 'core:admin_event_triage_bulk' %}" id="bulk-triage" data-bulk-form>
+          {% csrf_token %}
+          <div class="bulk-bar" data-bulk-bar>
+            <label class="d-flex align-items-center gap-2 mb-0">
+              <input type="checkbox" class="bulk-check" data-bulk-all> {% translate "Selecionar todos" %}
+            </label>
+            <span class="bulk-bar__count" data-bulk-count="bulk-triage" aria-live="polite">{% translate "0 selecionados" %}</span>
+            <button type="submit" name="action" value="reject" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled>
+              <i class="bi bi-trash me-1" aria-hidden="true"></i>{% translate "Descartar selecionados" %}
+            </button>
+          </div>
+        </form>
+        {% endif %}
+
         {% for candidate, form, siblings in candidates %}
         <article class="card triage-card mb-4" id="candidate-{{ candidate.pk }}">
           <div class="row g-0">
@@ -48,6 +64,10 @@
             </div>
             <div class="col-lg-9">
               <div class="card-body">
+                <label class="bulk-select-row small">
+                  <input type="checkbox" class="bulk-check" form="bulk-triage" name="ids" value="{{ candidate.pk }}" data-bulk-item>
+                  {% translate "Selecionar" %}
+                </label>
                 <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
                   <span class="badge triage-score {% if candidate.score >= 80 %}is-high{% elif candidate.score >= 50 %}is-mid{% else %}is-low{% endif %}">{% blocktranslate with score=candidate.score %}Confiança {{ score }}%{% endblocktranslate %}</span>
                   {% for signal in candidate.signals %}<span class="badge text-bg-light">{{ signal }}</span>{% endfor %}
@@ -116,4 +136,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/components/bulk_select.js' %}"></script>
 {% endblock %}

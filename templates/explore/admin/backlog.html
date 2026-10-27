@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
 <link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/bulk_select.css' %}">
 <!-- Prevent sidebar flicker - must run before page renders -->
 <script>
 (function() {
@@ -153,12 +154,35 @@
   {% endif %}
 
   {% if places %}
+  <form method="post" action="{% url 'explore:bulk_places' %}" id="bulk-places" data-bulk-form>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <div class="bulk-bar" data-bulk-bar>
+      <span class="bulk-bar__count" data-bulk-count="bulk-places" aria-live="polite">{% translate "0 selecionados" %}</span>
+      <button type="submit" name="action" value="approve" class="btn btn-success btn-sm" data-bulk-action disabled>
+        <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% translate "Aprovar selecionados" %}
+      </button>
+      <div class="bulk-bar__reason">
+        <select name="reason" class="form-select form-select-sm w-auto" aria-label="{% translate 'Motivo da remoção' %}">
+          {% include 'includes/place_removal_reasons.html' %}
+        </select>
+        <input type="text" name="comments" class="form-control form-control-sm w-auto" hidden
+               placeholder="{% translate 'Especifique o motivo' %}" aria-label="{% translate 'Especifique o motivo' %}">
+        <button type="submit" name="action" value="remove" class="btn btn-danger btn-sm" data-bulk-action data-bulk-require="reason" disabled>
+          <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{% translate "Remover selecionados" %}
+        </button>
+      </div>
+    </div>
+  </form>
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
             <tr>
+              <th style="width: 2rem;">
+                <input type="checkbox" class="bulk-check" form="bulk-places" data-bulk-all aria-label="{% translate 'Selecionar todos' %}">
+              </th>
               <th>{% translate "Lugar" %}</th>
               <th>{% translate "Categorias" %}</th>
               <th>{% translate "Status" %}</th>
@@ -170,6 +194,10 @@
           <tbody>
             {% for place in places %}
             <tr class="clickable-row" data-href="{% url 'explore:place_detail' place.pk %}" style="cursor: pointer;">
+              <td onclick="event.stopPropagation();">
+                <input type="checkbox" class="bulk-check" form="bulk-places" name="ids" value="{{ place.pk }}"
+                       data-bulk-item aria-label="{% translate 'Selecionar' %} {{ place.name }}"{% if not place.is_active %} disabled{% endif %}>
+              </td>
               <td>
                 <div class="d-flex align-items-center">
                   {% if place.primary_image %}
@@ -264,6 +292,8 @@
 </div>
 
 {% include 'includes/remove_place_modal.html' %}
+
+<script src="{% static 'js/components/bulk_select.js' %}"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

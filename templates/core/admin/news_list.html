@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
 <link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
+<link rel="stylesheet" href="{% static 'css/components/bulk_select.css' %}">
 <!-- Prevent sidebar flicker - must run before page renders -->
 <script>
 (function() {
@@ -148,10 +149,30 @@
     <div class="card">
       <div class="card-body">
         {% if news_list %}
+        <form method="post" action="{% url 'core:admin_news_bulk' %}" id="bulk-news" data-bulk-form>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <div class="bulk-bar" data-bulk-bar>
+            <span class="bulk-bar__count" data-bulk-count="bulk-news" aria-live="polite">{% translate "0 selecionados" %}</span>
+            <button type="submit" name="action" value="publish" class="btn btn-success btn-sm" data-bulk-action disabled>
+              <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% translate "Publicar" %}
+            </button>
+            <button type="submit" name="action" value="archive" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled>
+              <i class="bi bi-archive me-1" aria-hidden="true"></i>{% translate "Arquivar" %}
+            </button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm" data-bulk-action
+                    data-bulk-confirm="{% translate 'Excluir os eventos selecionados? Esta ação não pode ser desfeita.' %}" disabled>
+              <i class="bi bi-trash me-1" aria-hidden="true"></i>{% translate "Excluir" %}
+            </button>
+          </div>
+        </form>
         <div class="table-responsive">
           <table class="table table-hover">
             <thead>
               <tr>
+                <th style="width: 2rem;">
+                  <input type="checkbox" class="bulk-check" form="bulk-news" data-bulk-all aria-label="{% translate 'Selecionar todos' %}">
+                </th>
                 <th>{% translate "Título" %}</th>
                 <th>{% translate "Categoria" %}</th>
                 <th>{% translate "Status" %}</th>
@@ -164,6 +185,10 @@
             <tbody>
               {% for news in news_list %}
               <tr>
+                <td>
+                  <input type="checkbox" class="bulk-check" form="bulk-news" name="ids" value="{{ news.pk }}"
+                         data-bulk-item aria-label="{% translate 'Selecionar' %} {{ news.title }}">
+                </td>
                 <td>
                   <div class="d-flex align-items-center">
                     {% if news.featured_image %}
@@ -233,4 +258,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/components/bulk_select.js' %}"></script>
 {% endblock %}

@@ -20,6 +20,7 @@ urlpatterns = [
         "admin/place/<int:pk>/approve/", views.approve_place_view, name="approve_place"
     ),
     path("admin/place/<int:pk>/reject/", views.reject_place_view, name="reject_place"),
+    path("admin/places/bulk/", views.bulk_places_view, name="bulk_places"),
     path("admin/backlog/", views.backlog_view, name="backlog"),
     # Review URLs
     path(
