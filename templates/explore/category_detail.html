@@ -2,6 +2,7 @@
 {% load i18n static content_i18n thumbs %}
 
 {% block title %}{{ category|tr:"name" }} - MaricaCity{% endblock %}
+{% block meta_description %}{% if category.description %}{{ category|tr:"description"|truncatechars:155 }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">

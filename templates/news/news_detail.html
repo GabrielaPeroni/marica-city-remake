@@ -2,6 +2,7 @@
 {% load i18n static event_dates content_i18n thumbs %}
 
 {% block title %}{{ news_item|tr:"title" }} - MaricaCity{% endblock %}
+{% block meta_description %}{{ news_item|tr:"excerpt"|truncatechars:155 }}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">

@@ -1,3 +1,4 @@
+from contextlib import closing
 from itertools import islice
 from urllib.error import URLError
 
@@ -23,13 +24,16 @@ class Command(BaseCommand):
             for obj in model.objects.iterator()
             if needs_translation(obj)
         )
-        done = 0
-        for obj in islice(pending, options["limit"]):
-            try:
-                translate_object(obj)
-            except (URLError, TimeoutError, ConnectionError) as exc:
-                self.stderr.write(f"Ollama indisponível ({exc}); tente mais tarde.")
-                return
-            done += 1
-            self.stdout.write(f"  {type(obj).__name__} {obj.pk}")
+        # closing(): if we stop early, the Postgres server-side cursor behind
+        # .iterator() is closed now, not later inside someone else's transaction
+        with closing(pending):
+            done = 0
+            for obj in islice(pending, options["limit"]):
+                try:
+                    translate_object(obj)
+                except (URLError, TimeoutError, ConnectionError) as exc:
+                    self.stderr.write(f"Ollama indisponível ({exc}); tente mais tarde.")
+                    return
+                done += 1
+                self.stdout.write(f"  {type(obj).__name__} {obj.pk}")
         self.stdout.write(self.style.SUCCESS(f"{done} item(ns) traduzido(s)."))

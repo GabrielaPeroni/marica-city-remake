@@ -2,6 +2,7 @@
 {% load i18n static content_i18n thumbs %}
 
 {% block title %}{{ place.name }} - MaricaCity{% endblock %}
+{% block meta_description %}{{ place|tr:"description"|truncatechars:155 }}{% endblock %}
 
 {% block extra_css %}
 <meta name="view-beacon" content="{% url 'explore:place_visit' place.pk %}">

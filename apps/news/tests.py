@@ -733,19 +733,20 @@ class EventTriageViewTests(TestCase):
         )
         self.url = reverse("core:admin_event_triage_action", args=[self.candidate.pk])
 
-    def _post(self, **extra):
-        data = {
-            "c1-title": "Show na praça",
-            "c1-summary": "Descrição do show.",
-            "c1-event_date": (timezone.now() + timedelta(days=5)).strftime(
+    def _post(self, action="approve", **overrides):
+        fields = {
+            "title": "Show na praça",
+            "summary": "Descrição do show.",
+            "event_date": (timezone.now() + timedelta(days=5)).strftime(
                 "%Y-%m-%dT%H:%M"
             ),
-            "c1-event_end_date": "",
-            "c1-event_location": "Praça Central",
-            "action": "approve",
+            "event_end_date": "",
+            "event_location": "Praça Central",
+            **overrides,
         }
-        data.update(extra)
-        return self.client.post(self.url, data)
+        # The form prefix uses the candidate id (sequences don't reset per test on Postgres)
+        data = {f"c{self.candidate.pk}-{name}": value for name, value in fields.items()}
+        return self.client.post(self.url, {**data, "action": action})
 
     def test_regular_user_cannot_triage(self):
         User.objects.create_user(username="visitor", password="pass123")
@@ -756,7 +757,7 @@ class EventTriageViewTests(TestCase):
 
     def test_approve_requires_location(self):
         self.client.login(username="mod", password="pass123")
-        response = self._post(**{"c1-event_location": ""})
+        response = self._post(event_location="")
         self.assertEqual(response.status_code, 400)
         self.assertFalse(News.objects.exists())
 

@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lintert:
+  linters:
     name: Linters
     runs-on: ubuntu-latest
 
@@ -54,10 +54,10 @@ jobs:
         run: |
           uv run pip-audit
 
-      - name: Install Prettier
+      - name: Set up Node
         uses: actions/setup-node@v7
         with:
-          node-version: "18"
+          node-version: "22"
 
       - name: Install Prettier
         run: |
@@ -72,6 +72,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DJANGO_SETTINGS_MODULE: config.settings.dev
+      DEBUG: "True"
+      SECRET_KEY: test-secret-key-for-ci
+      GOOGLE_OAUTH_CLIENT_ID: test-client-id-for-ci-only
+      RATELIMIT_ENABLE: "False"
+      # Same database engine as production
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: test_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: "5432"
 
     services:
       postgres:
@@ -106,27 +117,21 @@ jobs:
         run: |
           uv sync --locked
 
-      - name: Create .env file for testing
-        run: |
-          echo "DEBUG=True" > .env
-          echo "SECRET_KEY=test-secret-key-for-ci" >> .env
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> .env
-          echo "GOOGLE_OAUTH_CLIENT_ID=test-client-id-for-ci-only" >> .env
-          echo "RATELIMIT_ENABLE=False" >> .env
-
       - name: Check Django system
         run: |
-          uv run python manage.py check --deploy
+          uv run python manage.py check
 
-      - name: Run Django migrations check
+      - name: Check for missing migrations
         run: |
           uv run python manage.py makemigrations --check --dry-run
 
-      - name: Run Django tests
+      - name: Run tests with coverage (floor 90%)
         run: |
-          uv run python manage.py test apps --verbosity=2
-
-      - name: Run tests under coverage and enforce floor
-        run: |
-          uv run coverage run manage.py test apps --verbosity=0
+          uv run coverage run manage.py test apps --verbosity=2
           uv run coverage report --fail-under=90
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo '### Coverage' >> "$GITHUB_STEP_SUMMARY"
+          uv run coverage report --format=markdown >> "$GITHUB_STEP_SUMMARY"

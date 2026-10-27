@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Container pipeline (`.github/workflows/container.yml`):
+  - Every PR and push builds the production image and runs it against
+    Postgres with production settings.
+  - It runs `check --deploy`, migrates, waits for the Docker healthcheck,
+    smoke-tests the main pages, `robots.txt`, `sitemap.xml` and the hashed,
+    immutable static files, and runs Lighthouse CI with score floors
+    (accessibility, best practices and SEO ≥ 95; performance ≥ 85).
+  - Pushes to `main` publish the image to GHCR with an SBOM and build
+    provenance.
+  - A `v*` tag creates the GitHub Release from the matching CHANGELOG
+    section.
+- `robots.txt`, `sitemap.xml` (pages, places, events) and a meta description
+  on every page (a place's or event's own text where there is one).
+- Dependabot also watches the Docker base image.
 - Staff can feature places (star button in the places list, or the Django
   admin). Featured places lead the "Onde ir" section of the landing page.
 - Bulk actions (approve, remove, publish, archive, delete, discard) ask for
@@ -94,6 +108,23 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Backend cleanup (no feature changes):
+  - A single `moderator_required` decorator guards every staff view. Denied
+    users always go to the home page.
+  - `Place.objects.public()`/`visible_to()`, `Place.can_edit()`,
+    `Place.ensure_primary_image()` and `PlaceApproval.record()` replace logic
+    that was copied across views and the Django admin.
+  - Create/edit share one form helper (places and events).
+  - The panel's status filters are defined once (places, events).
+  - `is_local_url()` backs `next` and the back links.
+  - Removed unused context data and leftover
+    `News` properties from the old news section (`calendar_url`,
+    `is_external`, `tone`, `kind`, `label`, `icon_class`,
+    `is_upcoming_event`).
+  - View counts increment atomically.
+  - `translate_content --limit` stops at the limit.
+  - Approve/remove are POST-only.
+  - Syncing favorites with invalid IDs ignores them instead of returning a 500.
 - Forms (place, review, event) have a "Voltar" button at the top that returns
   to the page you came from, a "Cancelar e voltar" button, and a save bar that
   stays at the bottom of the screen. Leaving after editing asks for
@@ -156,6 +187,18 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Fixed
 
+- The Docker `HEALTHCHECK` failed in production: the probe to
+  `127.0.0.1:8000/healthz/` got a 400 (host not in `ALLOWED_HOSTS`) and would
+  then get the HTTPS redirect. `/healthz/` is now answered by a middleware
+  ahead of host validation and the redirect.
+- CI tests ran on SQLite although the workflow started a Postgres service (it
+  wrote `DATABASE_URL`, which the settings don't read). They now run on
+  Postgres, which exposed two failures SQLite hid:
+  - `translate_content` left a server-side cursor open when stopping early.
+  - A triage test assumed the candidate's id was 1.
+- The test suite runs once under coverage instead of twice.
+- Card titles use the next heading level after their section (they jumped
+  from `h2` to `h5`).
 - The "ou" separator in the sign-in dropdown and on the sign-up page used a
   white background; it now matches the box it sits in.
 - Admin news list: the Publicadas, Rascunhos and Arquivadas tabs compared

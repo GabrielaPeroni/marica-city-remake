@@ -177,6 +177,12 @@ class HealthViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "ok"})
 
+    @override_settings(ALLOWED_HOSTS=["example.com"], SECURE_SSL_REDIRECT=True)
+    def test_health_endpoint_answers_internal_probes(self):
+        """Sondas internas (127.0.0.1, http) recebem 200, sem 400 de host nem 301"""
+        response = self.client.get(self.url, HTTP_HOST="127.0.0.1:8000")
+        self.assertEqual(response.status_code, 200)
+
     def test_health_endpoint_rejects_post(self):
         """Testa que o endpoint de health só aceita GET"""
         response = self.client.post(self.url)

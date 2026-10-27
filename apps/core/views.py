@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.db import connection
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -32,6 +32,19 @@ def health_view(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
     return JsonResponse({"status": "ok"})
+
+
+@require_GET
+def robots_txt_view(request):
+    """Rastreadores: tudo público, menos painel, admin e contas; aponta o sitemap"""
+    lines = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Disallow: /painel-admin/",
+        "Disallow: /accounts/",
+        f"Sitemap: {request.build_absolute_uri(reverse('sitemap'))}",
+    ]
+    return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
 
 
 def media_view(request, path):
