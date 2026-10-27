@@ -29,7 +29,7 @@
     <div class="col-12 col-md-6 col-lg-4">
       <div class="card border-2 h-100 card-hover">
         {% if favorite.place.primary_image %}
-        <img src="{{ favorite.place.primary_image.image|thumb:960 }}" srcset="{{ favorite.place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="{{ favorite.place.name }}" class="card-img-top" style="height: 240px; object-fit: cover;" loading="lazy">
+        <img src="{{ favorite.place.primary_image.image|thumb:960 }}" srcset="{{ favorite.place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ favorite.place.name }}" class="img-ph card-img-top" style="height: 240px; object-fit: cover;" loading="{% if forloop.counter <= 6 %}eager{% else %}lazy{% endif %}" style="{{ favorite.place.primary_image.image|placeholder }}">
         {% else %}
         <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 240px;">
           <span class="display-4 fw-bold">{{ favorite.place.name|first }}</span>

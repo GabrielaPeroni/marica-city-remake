@@ -133,7 +133,7 @@
               <td>
                 <div class="d-flex align-items-center">
                   {% if place.primary_image %}
-                  <img src="{{ place.primary_image.image|thumb:480 }}" decoding="async" loading="lazy" alt="{{ place.name }}"
+                  <img src="{{ place.primary_image.image|thumb:480 }}" loading="lazy" alt="{{ place.name }}"
                        class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
                   {% else %}
                   <div class="bg-dark text-white d-flex align-items-center justify-content-center me-2"

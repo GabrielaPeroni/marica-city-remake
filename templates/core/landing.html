@@ -137,7 +137,7 @@
         <div class="card border h-100 card-hover">
           <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none">
             {% if place.primary_image %}
-            <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="{{ place.name }}" class="card-img-top place-card-img" loading="lazy">
+            <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ place.name }}" class="img-ph card-img-top place-card-img" loading="eager" style="{{ place.primary_image.image|placeholder }}">
             {% else %}
             <div class="bg-dark text-white d-flex align-items-center justify-content-center place-card-placeholder">
               <span class="display-4 fw-bold">{{ place.name|first }}</span>
@@ -207,7 +207,7 @@
               <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none d-block h-100">
                 {% if place.primary_image %}
                 <div class="position-relative rounded-4 overflow-hidden shadow h-100">
-                  <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="{{ place.name }}" class="w-100 h-100 img-cover" loading="lazy">
+                  <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ place.name }}" class="img-ph w-100 h-100 img-cover" loading="eager" style="{{ place.primary_image.image|placeholder }}">
                   <div class="position-absolute bottom-0 start-0 end-0 p-4 text-center featured-image-gradient">
                     <h3 class="text-white fw-bold fs-5 mb-2">{{ place.name }}</h3>
                     {% if place.average_rating %}

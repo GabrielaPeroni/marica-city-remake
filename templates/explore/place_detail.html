@@ -79,7 +79,7 @@
           <div class="place-carousel">
             <div class="place-carousel-images">
               {% for image in place.gallery_images %}
-              <img src="{{ image.image|thumb:1600 }}" srcset="{{ image.image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" alt="{{ image.caption|default:place.name }}" class="place-detail-image place-carousel-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+              <img src="{{ image.image|thumb:1600 }}" srcset="{{ image.image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" alt="{{ image.caption|default:place.name }}" class="img-ph place-detail-image place-carousel-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" style="{{ image.image|placeholder }}">
               {% endfor %}
             </div>
 

@@ -96,9 +96,9 @@
     {% endblock %}
 
     <script>
-      // Fade-in das imagens: as que já estão prontas (cache) aparecem sem animação
+      // Fade-in do banner: se a foto já está pronta (cache), aparece sem animação
       (function () {
-        var sel = '.hero-bg-image, .place-card-img, .place-detail-image, .event-card-media img, img.card-img-top';
+        var sel = '.hero-bg-image';
         function watch(img) {
           if (img.dataset.fadeWatched) return;
           img.dataset.fadeWatched = '1';
@@ -107,7 +107,7 @@
           else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
         }
         document.querySelectorAll(sel).forEach(watch);
-        // Imagens criadas depois por JS (favoritos, carrosséis)
+        // Slides clonados pelo carrossel
         new MutationObserver(function (records) {
           records.forEach(function (r) {
             r.addedNodes.forEach(function (n) {
@@ -144,6 +144,7 @@
 
     <script src="{% static 'js/components/cookie_consent.js' %}"></script>
     <script src="{% static 'js/components/nav_progress.js' %}"></script>
+    <script src="{% static 'js/components/unsaved_guard.js' %}"></script>
 
     {% include 'includes/speculation_rules.html' %}
 

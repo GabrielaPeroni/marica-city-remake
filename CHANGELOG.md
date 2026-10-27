@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The hero slides show an inline 32 px blurred preview while the photo
     loads (the first one is preloaded), and photos fade in once they arrive
     instead of popping in over a gray box.
+  - Every photo (cards, place and event pages) has an inline 16 px blurred
+    copy of itself as its background, so a loading or decoding image shows a
+    soft preview instead of a gray box. Images above the fold load eagerly;
+    only the ones further down are lazy.
+  - In development, images, fonts and uploads are served with long cache
+    headers (CSS/JS still revalidate). Before, every page change re-requested
+    each image and it stayed empty until the server answered.
   - Place lists annotate ratings in one query (landing page: 74 queries to 9).
   - Swiper loads only on the landing page, the unused Shoelace stylesheet is
     gone, the icon font is preloaded, and Google Sign-In loads only when the
@@ -86,6 +93,10 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Forms (place, review, event) have a "Voltar" button at the top that returns
+  to the page you came from, a "Cancelar e voltar" button, and a save bar that
+  stays at the bottom of the screen. Leaving after editing asks for
+  confirmation.
 - Admin panel:
   - "Voltar ao site" is the first and most visible item of the side menu.
     The menu reads "Visão geral", "Lugares", "Eventos", "Usuários".

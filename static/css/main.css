@@ -105,7 +105,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  /* clip (não hidden): corta o excesso lateral sem virar área de rolagem, o que quebraria position: sticky */
+  overflow-x: clip;
 }
 
 h1,
@@ -781,44 +782,23 @@ html {
   }
 }
 
-/* Imagens surgem suavemente quando terminam de carregar (as já em cache aparecem direto).
-   Os cards ficam com fundo neutro; o banner mostra uma prévia borrada (landing.css). */
+/* Só o banner tem fade-in (sobre a prévia borrada de landing.css); as demais imagens
+   aparecem direto. Os cards têm fundo neutro enquanto carregam. */
 img.place-card-img,
 img.card-img-top,
 .event-card-media img {
   background-color: var(--surface-alt);
 }
 
-.js
-  :is(
-    .hero-bg-image,
-    .place-card-img,
-    .place-detail-image,
-    .event-card-media img,
-    img.card-img-top
-  ) {
+.js .hero-bg-image {
   transition: opacity 0.35s ease;
 }
 
-.js
-  :is(
-    .hero-bg-image,
-    .place-card-img,
-    .place-detail-image,
-    .event-card-media img,
-    img.card-img-top
-  ):not(.is-loaded) {
+.js .hero-bg-image:not(.is-loaded) {
   opacity: 0;
 }
 
-.js
-  :is(
-    .hero-bg-image,
-    .place-card-img,
-    .place-detail-image,
-    .event-card-media img,
-    img.card-img-top
-  ).no-fade {
+.js .hero-bg-image.no-fade {
   transition: none;
 }
 
@@ -848,4 +828,55 @@ img.card-img-top,
   transition:
     width 0.2s ease-out,
     opacity 0.25s ease 0.2s;
+}
+
+/* Formulários: "Voltar" bem visível no topo e botões de salvar sempre à vista */
+.form-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.form-back-link:hover,
+.form-back-link:focus-visible {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.form-actions-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  padding-block: 0.85rem;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 14px rgba(43, 40, 38, 0.06);
+}
+
+/* Num formulário em edição, o seletor de idioma cobriria o botão de salvar (e trocar de
+   idioma recarregaria a página, perdendo o que foi digitado) */
+body:has(form[data-unsaved-guard]) .lang-switcher,
+body:has(form[data-unsaved-guard]) .cookie-consent {
+  display: none;
+}
+
+/* Cards com formulário: sem overflow hidden, senão a barra de botões não gruda no rodapé */
+.card:has(form[data-unsaved-guard]) {
+  overflow: visible;
+}
+
+/* Prévia borrada da própria foto (16 px, embutida) atrás da imagem enquanto ela carrega ou
+   decodifica: em vez de um quadro cinza, a foto aparece suave e ganha nitidez. */
+img.img-ph {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }

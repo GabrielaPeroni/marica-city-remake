@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 23:19-0300\n"
+"POT-Creation-Date: 2026-10-26 23:37-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -30,13 +30,29 @@ msgid_plural "%s selecionados"
 msgstr[0] "%s seleccionado"
 msgstr[1] "%s seleccionados"
 
-#: static/js/components/bulk_select.js:128
+#: static/js/components/bulk_select.js:135
 msgid "Fechar"
 msgstr "Cerrar"
 
-#: static/js/components/bulk_select.js:129
+#: static/js/components/bulk_select.js:137
 msgid "Cancelar"
 msgstr "Cancelar"
+
+#: static/js/components/unsaved_guard.js:40
+msgid "Sair sem salvar?"
+msgstr "¿Salir sin guardar?"
+
+#: static/js/components/unsaved_guard.js:41
+msgid "Você fez alterações neste formulário. Se sair agora, elas serão perdidas."
+msgstr "Hiciste cambios en este formulario. Si sales ahora, se perderán."
+
+#: static/js/components/unsaved_guard.js:42
+msgid "Continuar editando"
+msgstr "Seguir editando"
+
+#: static/js/components/unsaved_guard.js:43
+msgid "Descartar e sair"
+msgstr "Descartar y salir"
 
 #: static/js/components/user_management.js:18
 msgid ""

@@ -1,6 +1,6 @@
 from django import template
 
-from apps.core.thumbnails import thumbnail_url
+from apps.core.thumbnails import placeholder_uri, thumbnail_url
 
 register = template.Library()
 
@@ -19,3 +19,10 @@ def srcset(field, widths):
     return ", ".join(
         f"{thumbnail_url(field, int(w))} {int(w)}w" for w in str(widths).split(",")
     )
+
+
+@register.filter
+def placeholder(field):
+    """style="{{ image|placeholder }}" -> fundo borrado da própria foto enquanto carrega."""
+    uri = placeholder_uri(field)
+    return f"background-image: url({uri})" if uri else ""

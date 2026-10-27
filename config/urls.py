@@ -1,11 +1,10 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.generic import RedirectView
 from django.views.i18n import JavaScriptCatalog
 
-from apps.core.views import health_view
+from apps.core.views import health_view, media_view
 
 urlpatterns = [
     path("healthz/", health_view, name="healthz"),
@@ -26,6 +25,8 @@ urlpatterns = [
     path("", include("apps.core.urls")),
 ]
 
-# Servir arquivos de mídia durante o desenvolvimento
+# Servir arquivos de mídia durante o desenvolvimento (em produção ficam no R2)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        re_path(rf"^{settings.MEDIA_URL.strip('/')}/(?P<path>.*)$", media_view),
+    ]

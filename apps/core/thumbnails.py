@@ -3,6 +3,7 @@
 thumbs/<width>/<original path without extension>.webp
 """
 
+import base64
 import logging
 from io import BytesIO
 from pathlib import PurePosixPath
@@ -61,3 +62,27 @@ def thumbnail_url(field, width):
 def generate_all(field):
     for width in WIDTHS:
         thumbnail_url(field, width)
+
+
+def placeholder_uri(field):
+    """Prévia de 16 px (data URI) usada como fundo da imagem enquanto ela decodifica."""
+    if not field:
+        return ""
+    key = f"lqip:{field.name}"
+    uri = cache.get(key)
+    if uri:
+        return uri
+    small = thumb_name(field.name, WIDTHS[0])
+    name = small if field.storage.exists(small) else field.name
+    try:
+        with field.storage.open(name, "rb") as source, Image.open(source) as image:
+            image = ImageOps.exif_transpose(image).convert("RGB")
+            image.thumbnail((16, 16))
+            buffer = BytesIO()
+            image.save(buffer, "WEBP", quality=40)
+    except (OSError, ValueError) as exc:
+        logger.warning("placeholder failed for %s: %s", field.name, exc)
+        return ""
+    uri = "data:image/webp;base64," + base64.b64encode(buffer.getvalue()).decode()
+    cache.set(key, uri, CACHE_SECONDS)
+    return uri

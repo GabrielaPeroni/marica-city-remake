@@ -32,7 +32,7 @@
     <article class="place-detail-main">
       {% if news_item.featured_image %}
       <figure class="mb-3 place-detail-image-container">
-        <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" fetchpriority="high" class="place-detail-image" alt="{{ news_item.image_caption|default:news_item.title }}">
+        <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" fetchpriority="high" class="img-ph place-detail-image" alt="{{ news_item.image_caption|default:news_item.title }}" loading="eager" style="{{ news_item.featured_image|placeholder }}">
       </figure>
       {% if news_item.image_caption %}
       <p class="text-muted small mb-3">{{ news_item.image_caption }}</p>

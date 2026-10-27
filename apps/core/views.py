@@ -32,6 +32,15 @@ def health_view(request):
     return JsonResponse({"status": "ok"})
 
 
+def media_view(request, path):
+    """Uploads em desenvolvimento, com cache longo: os nomes nunca se repetem."""
+    from django.views.static import serve
+
+    response = serve(request, path, document_root=settings.MEDIA_ROOT)
+    response["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
+
+
 def landing_view(request):
     # "Onde ir": os destacados pela equipe primeiro, depois os mais recentes
     featured_places = (

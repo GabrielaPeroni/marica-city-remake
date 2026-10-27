@@ -72,7 +72,7 @@
           <div class="card place-card position-relative h-100 shadow-sm" {% if place.is_pending %}style="border: 2px solid #60a5fa !important;"{% else %}style="border: 0;"{% endif %}>
             <div class="position-relative place-card-image-wrapper">
               {% if place.primary_image %}
-              <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="" class="card-img-top place-card-img" loading="lazy">
+              <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="" class="img-ph card-img-top place-card-img" loading="{% if forloop.counter <= 6 %}eager{% else %}lazy{% endif %}" style="{{ place.primary_image.image|placeholder }}">
               {% else %}
               <div class="bg-light text-muted d-flex align-items-center justify-content-center place-card-placeholder">
                 <span class="display-4 fw-bold" aria-hidden="true">{{ place.name|first }}</span>
