@@ -11,23 +11,24 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0").s
     ","
 )
 
-# Whitenoise serves static files in dev too. CSS/JS are not cached, so edits show up
-# on a normal reload; images and fonts are cached for a day, otherwise every page
-# change revalidates each one and they flash empty until the server answers.
+# Static files work like production: versioned URLs (config/storage.py) cached for a
+# year, so pages never revalidate CSS, JS or images; an edit changes the URL.
 INSTALLED_APPS = ["whitenoise.runserver_nostatic", *INSTALLED_APPS]
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
-WHITENOISE_MAX_AGE = 0
-
-_CACHED_STATIC = (".webp", ".jpg", ".jpeg", ".png", ".svg", ".ico", ".woff2", ".woff")
+WHITENOISE_MAX_AGE = 60 * 60 * 24 * 365
 
 
-def _static_headers(headers, path, url):
-    if path.lower().endswith(_CACHED_STATIC):
-        headers["Cache-Control"] = "public, max-age=86400"
+def _versioned(path, url):
+    # Every static URL carries ?v=<mtime> (see config/storage.py)
+    return True
 
 
-WHITENOISE_ADD_HEADERS_FUNCTION = _static_headers
+WHITENOISE_IMMUTABLE_FILE_TEST = _versioned
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "config.storage.VersionedStaticFilesStorage"},
+}
 
 LOGGING["root"]["level"] = "DEBUG"
 LOGGING["loggers"]["apps"]["level"] = "DEBUG"

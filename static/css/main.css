@@ -782,24 +782,11 @@ html {
   }
 }
 
-/* Só o banner tem fade-in (sobre a prévia borrada de landing.css); as demais imagens
-   aparecem direto. Os cards têm fundo neutro enquanto carregam. */
+/* Fundo neutro dos cards enquanto a foto chega (a prévia borrada vem no style da <img>) */
 img.place-card-img,
 img.card-img-top,
 .event-card-media img {
   background-color: var(--surface-alt);
-}
-
-.js .hero-bg-image {
-  transition: opacity 0.35s ease;
-}
-
-.js .hero-bg-image:not(.is-loaded) {
-  opacity: 0;
-}
-
-.js .hero-bg-image.no-fade {
-  transition: none;
 }
 
 .nav-progress {

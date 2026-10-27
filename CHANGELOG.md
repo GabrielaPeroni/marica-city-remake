@@ -26,19 +26,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     when the page is actually shown.
   - A thin progress bar appears when a page takes more than 120 ms to load,
     and keeps running until the new page's images have loaded.
-  - The hero slides show an inline 32 px blurred preview while the photo
-    loads (the first one is preloaded), and photos fade in once they arrive
-    instead of popping in over a gray box.
+  - The hero slides have an inline 32 px blurred preview as their background
+    while the photo loads, and the first slide is preloaded.
   - Every photo (cards, place and event pages) has an inline 16 px blurred
     copy of itself as its background, so a loading or decoding image shows a
     soft preview instead of a gray box. Images above the fold load eagerly;
     only the ones further down are lazy.
-  - In development, images, fonts and uploads are served with long cache
-    headers (CSS/JS still revalidate). Before, every page change re-requested
-    each image and it stayed empty until the server answered.
+  - Development serves static files like production: every `{% static %}`
+    URL carries a version (`?v=<mtime>`, `config/storage.py`) and is cached
+    for a year as immutable, and uploads are immutable too. Before, the dev
+    server sent `max-age=0`, so every page change re-requested each image and
+    it stayed empty (gray) until the server answered.
   - Place lists annotate ratings in one query (landing page: 74 queries to 9).
-  - Swiper loads only on the landing page, the unused Shoelace stylesheet is
-    gone, the icon font is preloaded, and Google Sign-In loads only when the
+  - Swiper loads only on the landing page, the unused Shoelace stylesheet and
+    autoloader are gone, the icon font is preloaded, and Google Sign-In loads only when the
     "Entrar" menu is opened.
   - `ConditionalGetMiddleware` adds ETags; media on R2 gets a one-year
     `Cache-Control`.
