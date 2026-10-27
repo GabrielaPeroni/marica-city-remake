@@ -40,6 +40,7 @@
     </main>
 
     {% include 'includes/language_switcher.html' %}
+    {% include 'includes/cookie_consent.html' %}
 
 
     <footer class="site-footer mt-auto">
@@ -114,6 +115,8 @@
     <!-- Sistema de favoritos (localStorage + sincronização opcional com backend) -->
     <script src="{% static 'js/favorites-service.js' %}"></script>
     <script src="{% static 'js/favorites-ui.js' %}"></script>
+
+    <script src="{% static 'js/components/cookie_consent.js' %}"></script>
 
     {% block extra_js %}{% endblock %}
     {% block scripts %}{% endblock %}

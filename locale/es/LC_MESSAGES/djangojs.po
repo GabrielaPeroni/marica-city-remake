@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 22:19-0300\n"
+"POT-Creation-Date: 2026-10-26 22:32-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -44,8 +44,7 @@ msgstr ""
 msgid "Erro ao atualizar tipo de usuário"
 msgstr "Error al actualizar el tipo de usuario"
 
-#: static/js/components/user_management.js:65
-#: static/js/components/user_management.js:121
+#: static/js/components/user_management.js:65 static/js/components/user_management.js:121
 msgid "Erro ao processar solicitação"
 msgstr "Error al procesar la solicitud"
 

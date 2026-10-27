@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- One-time cookie consent banner. Visitors who accept get an anonymous
+  first-party cookie, and each place page view is counted once per visitor and
+  day (`PlaceVisit`). Declining stores the answer and removes the identifier;
+  staff and the place's author are not counted. "Em alta" on the landing page
+  now lists the most-visited places of the last 7 days, falling back to the
+  newest places when there are no visits.
 - Bulk actions in the staff panel. The places approval queue and history can
   approve or remove (with a reason, like the single flow) several places at
   once, the event triage can discard several candidates, and the events list

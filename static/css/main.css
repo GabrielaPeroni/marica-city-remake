@@ -698,3 +698,41 @@ html {
   --bs-btn-hover-border-color: transparent;
   --bs-btn-active-border-color: transparent;
 }
+
+.cookie-consent {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 1060;
+  max-width: 420px;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(43, 40, 38, 0.2);
+}
+
+.cookie-consent[hidden] {
+  display: none;
+}
+
+.cookie-consent__text {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.cookie-consent__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 575.98px) {
+  .cookie-consent {
+    left: 12px;
+    right: 12px;
+    bottom: 76px;
+    max-width: none;
+  }
+}

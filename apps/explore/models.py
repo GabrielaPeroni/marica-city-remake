@@ -372,3 +372,22 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} favorited {self.place.name}"
+
+
+class PlaceVisit(models.Model):
+    """Uma visita por visitante anônimo, lugar e dia (só com consentimento de cookies)."""
+
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="visits")
+    visitor = models.CharField(max_length=32)
+    date = models.DateField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["place", "visitor", "date"], name="unique_daily_place_visit"
+            )
+        ]
+        indexes = [models.Index(fields=["place", "date"])]
+
+    def __str__(self):
+        return f"{self.place.name} ({self.date})"

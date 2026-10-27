@@ -2,7 +2,15 @@ from django.contrib import admin
 
 from apps.core.admin_mixins import TranslationsAdminMixin
 
-from .models import Category, Favorite, Place, PlaceApproval, PlaceImage, PlaceReview
+from .models import (
+    Category,
+    Favorite,
+    Place,
+    PlaceApproval,
+    PlaceImage,
+    PlaceReview,
+    PlaceVisit,
+)
 
 
 @admin.register(Category)
@@ -204,3 +212,17 @@ class FavoriteAdmin(admin.ModelAdmin):
         ("Informações do Favorito", {"fields": ("user", "place")}),
         ("Data e Horário", {"fields": ("created_at",)}),
     )
+
+
+@admin.register(PlaceVisit)
+class PlaceVisitAdmin(admin.ModelAdmin):
+    list_display = ("place", "date")
+    list_filter = ("date",)
+    search_fields = ("place__name",)
+    date_hierarchy = "date"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

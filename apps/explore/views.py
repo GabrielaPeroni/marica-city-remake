@@ -15,6 +15,7 @@ from apps.core.utils import safe_next
 
 from .forms import PlaceForm, PlaceImageFormSet, PlaceReviewForm
 from .models import Category, Favorite, Place, PlaceApproval, PlaceReview
+from .visits import record_visit
 
 
 def explore_view(request):
@@ -170,7 +171,9 @@ def place_detail_view(request, pk):
         "favorites_count": favorites_count,
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
     }
-    return render(request, "explore/place_detail.html", context)
+    response = render(request, "explore/place_detail.html", context)
+    record_visit(request, response, place)
+    return response
 
 
 @login_required

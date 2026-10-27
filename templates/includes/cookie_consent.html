@@ -1,0 +1,10 @@
+{% load i18n %}
+<div class="cookie-consent" id="cookieConsent" role="region" aria-label="{% translate 'Cookies' %}" hidden>
+  <p class="cookie-consent__text">
+    {% translate "Podemos usar um cookie para contar visitas aos lugares de forma anônima? Isso ajuda a mostrar o que está em alta. Nenhum dado pessoal é coletado." %}
+  </p>
+  <div class="cookie-consent__actions">
+    <button type="button" class="btn btn-sm btn-outline-secondary" data-consent="declined">{% translate "Recusar" %}</button>
+    <button type="button" class="btn btn-sm btn-dark" data-consent="accepted">{% translate "Aceitar" %}</button>
+  </div>
+</div>
