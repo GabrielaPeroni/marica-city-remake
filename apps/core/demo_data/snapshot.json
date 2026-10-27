@@ -1,0 +1,1395 @@
+{
+  "users": [
+    {
+      "username": "henrique.dias",
+      "first_name": "Henrique",
+      "last_name": "Dias",
+      "email": "henrique.dias@example.com"
+    },
+    {
+      "username": "gabi.martins",
+      "first_name": "Gabi",
+      "last_name": "Martins",
+      "email": "gabi.martins@example.com"
+    },
+    {
+      "username": "felipe.costa",
+      "first_name": "Felipe",
+      "last_name": "Costa",
+      "email": "felipe.costa@example.com"
+    },
+    {
+      "username": "elisa.rocha",
+      "first_name": "Elisa",
+      "last_name": "Rocha",
+      "email": "elisa.rocha@example.com"
+    },
+    {
+      "username": "diego.alves",
+      "first_name": "Diego",
+      "last_name": "Alves",
+      "email": "diego.alves@example.com"
+    },
+    {
+      "username": "carla.mendes",
+      "first_name": "Carla",
+      "last_name": "Mendes",
+      "email": "carla.mendes@example.com"
+    },
+    {
+      "username": "bruno.lima",
+      "first_name": "Bruno",
+      "last_name": "Lima",
+      "email": "bruno.lima@example.com"
+    },
+    {
+      "username": "ana.souza",
+      "first_name": "Ana",
+      "last_name": "Souza",
+      "email": "ana.souza@example.com"
+    }
+  ],
+  "categories": [
+    {
+      "slug": "restaurantes",
+      "name": "Restaurantes",
+      "description": "Melhores lugares para comer em Maricá",
+      "icon": "🍽️",
+      "display_order": 1,
+      "translations": {
+        "source": "2ab2d07889c7e736",
+        "en": {
+          "name": "Restaurants",
+          "description": "Best places to eat in Maricá"
+        },
+        "es": {
+          "name": "Restaurantes",
+          "description": "Mejores lugares para comer en Maricá"
+        }
+      }
+    },
+    {
+      "slug": "hoteis-pousadas",
+      "name": "Hotéis e Pousadas",
+      "description": "Acomodações confortáveis",
+      "icon": "🏨",
+      "display_order": 2,
+      "translations": {
+        "source": "ae5283dae051f877",
+        "en": {
+          "name": "Hotels and Guesthouses",
+          "description": "Comfortable accommodations"
+        },
+        "es": {
+          "name": "Hoteles y Posadas",
+          "description": "Acomodaciones confortables"
+        }
+      }
+    },
+    {
+      "slug": "natureza-parques",
+      "name": "Natureza e Parques",
+      "description": "Áreas naturais e parques",
+      "icon": "🌳",
+      "display_order": 3,
+      "translations": {
+        "source": "49d3e0f72a9ae476",
+        "en": {
+          "name": "Nature and Parks",
+          "description": "Natural areas and parks"
+        },
+        "es": {
+          "name": "Naturaleza y Parques",
+          "description": "Áreas naturales y parques"
+        }
+      }
+    },
+    {
+      "slug": "artes-cultura",
+      "name": "Artes e Cultura",
+      "description": "Atrações culturais e museus",
+      "icon": "🎨",
+      "display_order": 4,
+      "translations": {
+        "source": "e42f580885e20637",
+        "en": {
+          "name": "Arts and Culture",
+          "description": "Cultural attractions and museums"
+        },
+        "es": {
+          "name": "Artes y Cultura",
+          "description": "Atracciones culturales y museos"
+        }
+      }
+    },
+    {
+      "slug": "praias",
+      "name": "Praias",
+      "description": "Praias deslumbrantes e pontos costeiros",
+      "icon": "🏖️",
+      "display_order": 5,
+      "translations": {
+        "source": "3460d154076bb487",
+        "en": {
+          "name": "Beaches",
+          "description": "Breathtaking beaches and coastal points"
+        },
+        "es": {
+          "name": "Playas",
+          "description": "Playas impresionantes y puntos costeros"
+        }
+      }
+    },
+    {
+      "slug": "compras",
+      "name": "Compras",
+      "description": "Lojas locais e mercados",
+      "icon": "🛍️",
+      "display_order": 6,
+      "translations": {
+        "source": "5c7cacc767af2d94",
+        "en": {
+          "name": "Shopping",
+          "description": "Local shops and markets"
+        },
+        "es": {
+          "name": "Compras",
+          "description": "Tiendas locales y mercados"
+        }
+      }
+    }
+  ],
+  "places": [
+    {
+      "name": "Praia de Ponta Negra",
+      "description": "Praia de Maricá com fundo de areia, boa para surfistas de todos os níveis e de fácil acesso pela Rodovia Amaral Peixoto, com placas indicando a entrada. Fica perto do Farol de Ponta Negra e da Lagoa de Guarapina, e a região concentra várias pousadas. Foto: Wilfredor / Wikimedia Commons (CC0).",
+      "address": "Ponta Negra, Maricá - RJ",
+      "latitude": "-22.953500",
+      "longitude": "-42.695300",
+      "categories": ["praias"],
+      "is_featured": false,
+      "translations": {
+        "source": "79fa8dfe1f33a749",
+        "en": {
+          "description": "Maricá Beach with a sandy bottom, good for surfers of all levels and easily accessible via Amaral Peixoto Highway, with signs indicating the entrance. It is near Ponta Negra Lighthouse and Lagoa de Guarapina, and the area has several guest houses. Photo: Wilfredor / Wikimedia Commons (CC0)."
+        },
+        "es": {
+          "description": "Playa de Maricá con fondo de arena, buena para surfistas de todos los niveles y de fácil acceso por la Rodovia Amaral Peixoto, con carteles indicando la entrada. Está cerca del Faro de Ponta Negra y de la Laguna de Guarapina, y la región concentra varias posadas. Foto: Wilfredor / Wikimedia Commons (CC0)."
+        }
+      },
+      "created_at": "2026-10-25T11:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "15.webp",
+          "caption": "Praia de Ponta Negra",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "bruno.lima",
+          "rating": 5,
+          "comment": "Mar azul e a vista do farol no fim da tarde vale a subida. Fomos num dia de semana e estava tranquila.",
+          "translations": {
+            "source": "18b4d0423241fc12",
+            "en": {
+              "comment": "The blue sea and the view from the lighthouse at sunset are worth the climb. We went on a weekday and it was peaceful."
+            },
+            "es": {
+              "comment": "El mar azul y la vista del faro al final de la tarde valen la subida. Fuimos un día de semana y estaba tranquilo."
+            }
+          },
+          "created_at": "2026-10-26T14:51:25.816163+00:00"
+        },
+        {
+          "user": "carla.mendes",
+          "rating": 5,
+          "comment": "Passeio perfeito de domingo. Dá para emendar com a Gruta da Sacristia.",
+          "translations": {
+            "source": "d0afc4ce4d247507",
+            "en": {
+              "comment": "Perfect Sunday outing. Can be combined with the Gruta da Sacristia."
+            },
+            "es": {
+              "comment": "Pase perfecto para un domingo. Se puede combinar con la Gruta de la Sacristía."
+            }
+          },
+          "created_at": "2026-10-26T07:02:41.123781+00:00"
+        },
+        {
+          "user": "ana.souza",
+          "rating": 5,
+          "comment": "Uma das praias mais bonitas da região. Leve água, porque a orla tem pouca sombra.",
+          "translations": {
+            "source": "f97a0d19a1148bd3",
+            "en": {
+              "comment": "One of the most beautiful beaches in the area. Bring water, as the promenade has little shade."
+            },
+            "es": {
+              "comment": "Una de las playas más hermosas de la región. Lleva agua, porque la orla tiene poca sombra."
+            }
+          },
+          "created_at": "2026-10-26T05:53:54.183409+00:00"
+        },
+        {
+          "user": "felipe.costa",
+          "rating": 4,
+          "comment": "Linda, mas o mar estava agitado no dia. Ficamos mais na parte do canal com as crianças.",
+          "translations": {
+            "source": "c27e3bd448481f8c",
+            "en": {
+              "comment": "Beautiful, but the sea was rough that day. We stayed more by the canal area with the kids."
+            },
+            "es": {
+              "comment": "Linda, pero el mar estaba agitado el día. Nos quedamos más en la parte del canal con los niños."
+            }
+          },
+          "created_at": "2026-10-25T23:00:46.948473+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Mirante Pedra do Elefante",
+      "description": "O Mirante da Pedra do Elefante, cercado pela mata preservada do Parque da Serra da Tiririca, fica na divisa entre os municípios de Maricá e Niterói. É uma das paisagens mais bonitas da cidade com uma bela visão de toda a orla oceânica de Maricá. No local existe um telescópio para você não perder nenhum detalhe.\r\n\r\nA Pedra do Elefante possui 412 metros de altura, o ponto mais alto da cidade. Deste local privilegiado a vista alcança até as praias de Saquarema, já na Região dos Lagos do Rio de Janeiro. Em dias com boa visibilidade, é possível ver a Ilha de Cabo Frio, e as Ilhas Maricás.\r\n\r\nA região é também é conhecida como Falso Pão de Açúcar, Pedra de Itaipuaçu e Alto Mourão.",
+      "address": "Av. da Praia - Itaipuaçu, Maricá - RJ, Brasil",
+      "latitude": "-22.971127",
+      "longitude": "-42.947708",
+      "categories": ["natureza-parques"],
+      "is_featured": false,
+      "translations": {
+        "source": "c6f76679dbb9412e",
+        "en": {
+          "description": "The Pedra do Elefante viewpoint, surrounded by the preserved forest of Serra da Tiririca Park, is located at the border between the municipalities of Maricá and Niterói. It is one of the most beautiful landscapes in the city with a beautiful view of the entire oceanic coastline of Maricá. There is a telescope at the location so you don't miss any detail.\r\n\r\nPedra do Elefante has an altitude of 412 meters, the highest point in the city. From this privileged location, the view reaches as far as the beaches of Saquarema, already in the Lagos Region of Rio de Janeiro. On days with good visibility, it is possible to see the Ilha de Cabo Frio, and the Ilhas Maricás.\r\n\r\nThe region is also known as Falso Pão de Açúcar, Pedra de Itaipuaçu and Alto Mourão."
+        },
+        "es": {
+          "description": "El Mirador de la Piedra del Elefante, rodeado por la mata preservada del Parque de la Sierra de Tiririca, se encuentra en la frontera entre los municipios de Maricá y Niterói. Es una de las vistas más hermosas de la ciudad con una vista impresionante de toda la orla oceánica de Maricá. En el lugar existe un telescopio para que no se pierda ningún detalle.\r\n\r\nLa Piedra del Elefante tiene una altura de 412 metros, el punto más alto de la ciudad. Desde este lugar privilegiado la vista alcanza hasta las playas de Saquarema, ya en la Región de los Lagos de Río de Janeiro. En días con buena visibilidad, es posible ver la Isla de Cabo Frio, y las Islas Maricás.\r\n\r\nLa región también es conocida como Falso Pão de Açúcar, Piedra de Itaipuaçu y Alto Mourão."
+        }
+      },
+      "created_at": "2026-10-24T13:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "imagem_2025-11-11_230906762.webp",
+          "caption": "",
+          "is_primary": true,
+          "display_order": 1
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 5,
+          "comment": "Trilha puxada no final, mas a vista de Itaipuaçu lá de cima compensa cada passo.",
+          "translations": {
+            "source": "1af3ee10236cfadb",
+            "en": {
+              "comment": "The trail gets tough at the end, but the view of Itaipuaçu from up top makes every step worthwhile."
+            },
+            "es": {
+              "comment": "Sendero exigente al final, pero la vista de Itaipuaçu desde arriba compensa cada paso."
+            }
+          },
+          "created_at": "2026-10-26T02:27:53.116985+00:00"
+        },
+        {
+          "user": "henrique.dias",
+          "rating": 5,
+          "comment": "Melhor pôr do sol que já vi em Maricá. Desça com lanterna se ficar até escurecer.",
+          "translations": {
+            "source": "a75c38e09ea7a848",
+            "en": {
+              "comment": "Best sunset I've ever seen in Maricá. Bring a flashlight if you stay until it gets dark."
+            },
+            "es": {
+              "comment": "Mejor puesta de sol que he visto en Maricá. Baje con linterna si se queda hasta que oscurezca."
+            }
+          },
+          "created_at": "2026-10-25T07:02:10.781568+00:00"
+        },
+        {
+          "user": "elisa.rocha",
+          "rating": 4,
+          "comment": "Vale muito a pena. Vá cedo, porque depois das 10h o sol castiga na subida.",
+          "translations": {
+            "source": "26b1f4fb55b32d64",
+            "en": {
+              "comment": "It's definitely worth it. Go early, because after 10 am the sun is harsh on the climb."
+            },
+            "es": {
+              "comment": "Merece la pena. Ve a primera hora, porque después de las 10h el sol castiga en la subida."
+            }
+          },
+          "created_at": "2026-10-25T06:09:00.018586+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Lagoa de Araçatiba",
+      "description": "Linda lagoa perfeita para caiaque, stand-up paddle e relaxamento. Cercada pela natureza.\n\nFoto: Daniel Souza Lima / Wikimedia Commons (CC BY-SA 4.0)",
+      "address": "RJ-114, Maricá - RJ, Brasil",
+      "latitude": "-22.900305",
+      "longitude": "-42.799873",
+      "categories": ["natureza-parques", "praias"],
+      "is_featured": false,
+      "translations": {
+        "source": "00541d1d5bdc8a41",
+        "en": {
+          "description": "Beautiful lake perfect for kayaking, stand-up paddleboarding and relaxation. Surrounded by nature.\n\nPhoto: Daniel Souza Lima / Wikimedia Commons (CC BY-SA 4.0)"
+        },
+        "es": {
+          "description": "Linda laguna perfecta para kayak, stand-up paddle y relajación. Rodeada de la naturaleza.\n\nFoto: Daniel Souza Lima / Wikimedia Commons (CC BY-SA 4.0)"
+        }
+      },
+      "created_at": "2026-10-22T10:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "place-3-capa.webp",
+          "caption": "Lagoa de Araçatiba",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "equipe-maricacity",
+          "rating": 5,
+          "comment": "Praia muito bonita e areia muito fofa! recomendo muito",
+          "translations": {
+            "source": "414e69b982f77dec",
+            "en": {
+              "comment": "Very beautiful beach with very soft sand! Highly recommend"
+            },
+            "es": {
+              "comment": "Playa muy hermosa y la arena muy suave! la recomiendo mucho"
+            }
+          },
+          "created_at": "2026-10-26T02:21:23.962929+00:00"
+        },
+        {
+          "user": "carla.mendes",
+          "rating": 4,
+          "comment": "Lugar agradável e bem perto do centro. Nos fins de semana fica cheio.",
+          "translations": {
+            "source": "d362af925aa4b6cd",
+            "en": {
+              "comment": "A pleasant place and close to the center. It gets crowded on weekends."
+            },
+            "es": {
+              "comment": "Lugar agradable y cerca del centro. Los fines de semana está lleno."
+            }
+          },
+          "created_at": "2026-10-24T02:20:21.393654+00:00"
+        },
+        {
+          "user": "gabi.martins",
+          "rating": 5,
+          "comment": "Fim de tarde na lagoa é obrigatório. Bom para caminhar e ver o movimento da orla.",
+          "translations": {
+            "source": "f929f44e0c492896",
+            "en": {
+              "comment": "Evening by the lake is a must. Good for walking and watching the beachfront activity."
+            },
+            "es": {
+              "comment": "La tarde en la laguna es obligatoria. Bueno para caminar y ver el movimiento de la orla."
+            }
+          },
+          "created_at": "2026-10-23T19:51:50.243899+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Casa de Cultura e Museu Histórico de Maricá",
+      "description": "Prédio colonial do século XIX tombado pelo Inepac, que já foi cadeia pública, prefeitura e sede da Câmara Municipal. Restaurado entre 2015 e o início de 2020, hoje abriga a Casa de Cultura e é a sede do Museu Histórico de Maricá, dedicado a preservar e divulgar a história do município. Recebe exposições e é uma das paradas do city tour cultural do centro histórico. Foto: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Praça Orlando de Barros Pimentel, Centro, Maricá - RJ",
+      "latitude": "-22.919370",
+      "longitude": "-42.818670",
+      "categories": ["artes-cultura"],
+      "is_featured": false,
+      "translations": {
+        "source": "9e52f8178e42ad14",
+        "en": {
+          "description": "A colonial building from the 19th century listed by Inepac, which was formerly a public jail, city hall, and the seat of the Municipal Chamber. Restored between 2015 and the beginning of 2020, it now houses the Cultural House and is the headquarters of the Maricá Historical Museum, dedicated to preserving and promoting the history of the municipality. It hosts exhibitions and is one of the stops on the cultural city tour of the historic center. Photo: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Edificio colonial del siglo XIX declarado patrimonio por el Inepac, que fue en su momento cárcel pública, ayuntamiento y sede del Concejo Municipal. Restaurado entre 2015 y principios de 2020, hoy alberga la Casa de Cultura y es la sede del Museo Histórico de Maricá, dedicado a preservar y divulgar la historia del municipio. Recibe exposiciones y es una de las paradas del city tour cultural del centro histórico. Foto: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-10-20T22:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "11.webp",
+          "caption": "Casa de Cultura e Museu Histórico de Maricá",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "ana.souza",
+          "rating": 5,
+          "comment": "Prédio lindo e bem restaurado. A exposição conta a história da cidade de um jeito simples.",
+          "translations": {
+            "source": "008026a77fc2a9d6",
+            "en": {
+              "comment": "Beautiful building and well restored. The exhibition tells the city's history in a simple way."
+            },
+            "es": {
+              "comment": "Edificio hermoso y bien restaurado. La exposición cuenta la historia de la ciudad de una manera sencilla."
+            }
+          },
+          "created_at": "2026-10-24T20:00:43.523178+00:00"
+        },
+        {
+          "user": "carla.mendes",
+          "rating": 4,
+          "comment": "Visita rápida e gratuita. Combina bem com um passeio pela praça e pela Igreja Matriz.",
+          "translations": {
+            "source": "c827d6d12b3475ed",
+            "en": {
+              "comment": "Quick and free visit. Goes well with a stroll through the square and the Matriz Church."
+            },
+            "es": {
+              "comment": "Visita rápida y gratuita. Combina bien con un paseo por la plaza y la Iglesia Matriz."
+            }
+          },
+          "created_at": "2026-10-24T09:11:18.584943+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Pousada das Estrelas",
+      "description": "Pousada no bairro de Itaipuaçu, perto da praia. Imagem ilustrativa (pôr do sol em Itaipuaçu): MiPorto / Wikimedia Commons (CC BY-SA 3.0).",
+      "address": "Rua Dezessete de Novembro, Qd 02, Lt 10, Praia de Itaipuaçu, Maricá - RJ",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["hoteis-pousadas"],
+      "is_featured": false,
+      "translations": {
+        "source": "c53670da9539be48",
+        "en": {
+          "description": "Guesthouse in the Itaipuaçu neighborhood, near the beach. Illustrative image (sunset in Itaipuaçu): MiPorto / Wikimedia Commons (CC BY-SA 3.0)."
+        },
+        "es": {
+          "description": "Posada en el barrio de Itaipuaçu, cerca de la playa. Imagen ilustrativa (puesta de sol en Itaipuaçu): MiPorto / Wikimedia Commons (CC BY-SA 3.0)."
+        }
+      },
+      "created_at": "2026-10-14T23:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "24.webp",
+          "caption": "Pousada das Estrelas",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "name": "Restaurante Costela Fogo de Chão",
+      "description": "Rancho de comida brasileira e churrasco no Espraiado, na zona rural de Maricá. Participa do circuito Espraiado de Portas Abertas, que reúne restaurantes, sítios e atrações culturais da região. Imagem ilustrativa (costela de fogo de chão): Jonas Joaquim Tavare… / Wikimedia Commons (CC BY-SA 3.0).",
+      "address": "Rua José Thomaz, 67, Espraiado, Maricá - RJ",
+      "latitude": "-22.882350",
+      "longitude": "-42.701330",
+      "categories": ["restaurantes"],
+      "is_featured": false,
+      "translations": {
+        "source": "3aca1d8f9ebda39f",
+        "en": {
+          "description": "Brazilian cuisine and barbecue ranch in Espraiado, in the rural area of Maricá. Participates in the Espraiado Open Doors circuit, which brings together restaurants, farms, and cultural attractions in the region. Illustrative image (fire-roasted ribs): Jonas Joaquim Tavares… / Wikimedia Commons (CC BY-SA 3.0)."
+        },
+        "es": {
+          "description": "Rancho de comida brasileña y asado en Espraiado, en la zona rural de Maricá. Participa del circuito Espraiado de Puertas Abiertas, que reúne restaurantes, fincas y atracciones culturales de la región. Imagen ilustrativa (costilla de fuego de leña): Jonas Joaquim Tavares… / Wikimedia Commons (CC BY-SA 3.0)."
+        }
+      },
+      "created_at": "2026-10-14T08:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "21.webp",
+          "caption": "Restaurante Costela Fogo de Chão",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "ana.souza",
+          "rating": 5,
+          "comment": "A costela vale a viagem até o Espraiado. Chegue cedo no domingo.",
+          "translations": {
+            "source": "c1c215cbf252e767",
+            "en": {
+              "comment": "The ribs are worth the trip to Espraiado. Arrive early on Sunday."
+            },
+            "es": {
+              "comment": "La ribera vale el viaje hasta el Espraiado. Llegue temprano el domingo."
+            }
+          },
+          "created_at": "2026-10-18T08:42:08.211307+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Boulevard Maricá",
+      "description": "Shopping do Centro de Maricá, inaugurado em 2021, com lojas e serviços e estacionamento que também recebe feiras e eventos da cidade. Imagem ilustrativa (Centro de Maricá): Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Rua Vereador Luiz Antonio da Cunha, 35, Lote 0A, Centro, Maricá - RJ",
+      "latitude": "-22.915600",
+      "longitude": "-42.816910",
+      "categories": ["compras"],
+      "is_featured": false,
+      "translations": {
+        "source": "4766f371445df3b5",
+        "en": {
+          "description": "Shopping in Maricá's Downtown, opened in 2021, with shops and services and parking that also hosts city fairs and events. Illustrative image (Maricá's Downtown): Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Centro comercial de Maricá, inaugurado en 2021, con tiendas y servicios y estacionamiento que también alberga ferias y eventos de la ciudad. Imagen ilustrativa (Centro de Maricá): Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-10-06T07:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "26.webp",
+          "caption": "Boulevard Maricá",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "name": "Feirarte",
+      "description": "Feira de artesanato organizada pela Secretaria de Turismo, que reúne artesãos locais em praças da cidade. Faz parte do ArteMar, núcleo que articula as feiras locais de Maricá. Os locais e datas variam, então vale conferir a programação da prefeitura. Imagem ilustrativa (feira de artesanato): Mateus S. Figueiredo / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Praças do Centro de Maricá - RJ (locais variam)",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["artes-cultura", "compras"],
+      "is_featured": false,
+      "translations": {
+        "source": "39358deffbdf0d6f",
+        "en": {
+          "description": "Craft fair organized by the Tourism Secretariat, which brings together local artisans in city squares. It is part of ArteMar, a hub that coordinates local fairs in Maricá. The locations and dates vary, so it's worth checking the city hall's schedule. Illustrative image (craft fair): Mateus S. Figueiredo / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Feria de artesanía organizada por la Secretaría de Turismo, que reúne a artesanos locales en plazas de la ciudad. Forma parte del ArteMar, núcleo que articula las ferias locales de Maricá. Los lugares y fechas varían, entonces es conveniente consultar la programación del municipio. Imagen ilustrativa (feria de artesanía): Mateus S. Figueiredo / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-10-04T04:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "27.webp",
+          "caption": "Feirarte",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 4,
+          "comment": "Bastante artesanato local. Confira a programação antes, porque o local muda.",
+          "translations": {
+            "source": "0e316eca7878df40",
+            "en": {
+              "comment": "A lot of local crafts. Check the schedule beforehand, because the location changes."
+            },
+            "es": {
+              "comment": "Mucha artesanía local. Revisa la programación antes, porque el lugar cambia."
+            }
+          },
+          "created_at": "2026-10-11T22:43:08.693603+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Igreja Matriz Nossa Senhora do Amparo",
+      "description": "Principal símbolo histórico do centro de Maricá, a matriz de Nossa Senhora do Amparo está ligada à origem da cidade, cuja freguesia foi criada em 1755. É uma das poucas construções do município com mais de cem anos. Sua padroeira é celebrada em 15 de agosto, e a escadaria da igreja recebe cerimônias de religiões de matriz africana. Foto: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Rua Álvares de Castro, 239, Centro, Maricá - RJ",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["artes-cultura"],
+      "is_featured": false,
+      "translations": {
+        "source": "5db0eb7709f68ffc",
+        "en": {
+          "description": "The main historical symbol of Maricá's downtown, the church of Nossa Senhora do Amparo, is linked to the origin of the city, whose parish was created in 1755. It is one of the few constructions in the municipality that is over a hundred years old. Its patron saint is celebrated on August 15, and the church's staircase hosts ceremonies of African-derived religions. Photo: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Símbolo histórico principal del centro de Maricá, la matriz de Nuestra Señora del Amparo está ligada al origen de la ciudad, cuya parroquia fue creada en 1755. Es una de las pocas construcciones del municipio con más de cien años. Su patrona es celebrada el 15 de agosto, y la escalinata de la iglesia recibe ceremonias de religiones de matriz africana. Foto: Donatas Dabravolskas / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-09-28T19:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "13.webp",
+          "caption": "Igreja Matriz Nossa Senhora do Amparo",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "henrique.dias",
+          "rating": 5,
+          "comment": "Igreja histórica no coração do centro, vale a parada para conhecer.",
+          "translations": {
+            "source": "e0a0bd564ec6e630",
+            "en": {
+              "comment": "Historical church in the heart of downtown, worth a stop to visit."
+            },
+            "es": {
+              "comment": "Iglesia histórica en el corazón del centro, vale la pena visitar para conocerla."
+            }
+          },
+          "created_at": "2026-10-10T10:00:42.471503+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Praia da Barra de Maricá",
+      "description": "Uma das principais praias do município, entre o mar aberto e o sistema de lagoas protegido pela APA de Maricá. O bairro da Barra tem pousadas e restaurantes à beira da lagoa. Foto: MICROLARM / Wikimedia Commons (CC BY-SA 3.0).",
+      "address": "Barra de Maricá, Maricá - RJ",
+      "latitude": "-22.959090",
+      "longitude": "-42.819990",
+      "categories": ["praias"],
+      "is_featured": false,
+      "translations": {
+        "source": "0357e55be0151c6e",
+        "en": {
+          "description": "One of the main beaches in the municipality, between the open sea and the protected lagoon system within the Maricá Environmental Protection Area (APA). The Barra neighborhood has inns and restaurants by the lagoon. Photo: MICROLARM / Wikimedia Commons (CC BY-SA 3.0)."
+        },
+        "es": {
+          "description": "Una de las principales playas del municipio, entre el mar abierto y el sistema de lagunas protegido por la APA de Maricá. El barrio de la Barra tiene posadas y restaurantes a orillas de la laguna. Foto: MICROLARM / Wikimedia Commons (CC BY-SA 3.0)."
+        }
+      },
+      "created_at": "2026-09-27T03:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "16.webp",
+          "caption": "Praia da Barra de Maricá",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 4,
+          "comment": "Praia extensa e pouco cheia. Bom lugar para caminhar na areia.",
+          "translations": {
+            "source": "fc1077d7e770ea61",
+            "en": {
+              "comment": "Long beach and not crowded. Good place for walking on the sand."
+            },
+            "es": {
+              "comment": "Playa extensa y poco concurrida. Buen lugar para caminar por la arena."
+            }
+          },
+          "created_at": "2026-10-25T00:59:01.112018+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Restaurante João & João",
+      "description": "Restaurante de churrasco e comida brasileira no Centro de Maricá. Há também uma unidade no bairro de Cordeirinho. Imagem ilustrativa (churrasco): Afrank99 / Wikimedia Commons (CC BY-SA 2.5).",
+      "address": "Rua Athaíde Parreiras, 127, Centro, Maricá - RJ",
+      "latitude": "-22.916760",
+      "longitude": "-42.818220",
+      "categories": ["restaurantes"],
+      "is_featured": false,
+      "translations": {
+        "source": "209ced40641f6d00",
+        "en": {
+          "description": "Brazilian barbecue and cuisine restaurant in Maricá's downtown. There is also a unit in the Cordeirinho neighborhood. Illustrative image (barbecue): Afrank99 / Wikimedia Commons (CC BY-SA 2.5)."
+        },
+        "es": {
+          "description": "Restaurante de asado y comida brasileña en el Centro de Maricá. También hay una unidad en el barrio de Cordeirinho. Imagen ilustrativa (asado): Afrank99 / Wikimedia Commons (CC BY-SA 2.5)."
+        }
+      },
+      "created_at": "2026-09-22T03:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "20.webp",
+          "caption": "Restaurante João & João",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "name": "Pousada Tamarindos",
+      "description": "Pousada em Araçatiba, perto da lagoa e do Centro de Maricá. Imagem ilustrativa (pôr do sol na Lagoa de Araçatiba): Filipo tardim / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Rua Álvares de Castro, 1385, Araçatiba, Maricá - RJ",
+      "latitude": "-22.926050",
+      "longitude": "-42.827430",
+      "categories": ["hoteis-pousadas"],
+      "is_featured": false,
+      "translations": {
+        "source": "13baaff334d3bc32",
+        "en": {
+          "description": "Guesthouse in Araçatiba, near the lake and the center of Maricá. Illustrative image (sunset at Lagoa de Araçatiba): Filipo tardim / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Posada en Araçatiba, cerca de la laguna y del Centro de Maricá. Imagen ilustrativa (puesta de sol en la Lagoa de Araçatiba): Filipo tardim / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-09-20T18:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "23.webp",
+          "caption": "Pousada Tamarindos",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "henrique.dias",
+          "rating": 4,
+          "comment": "Pousada aconchegante e bem localizada para conhecer a lagoa.",
+          "translations": {
+            "source": "cae6214dffdcb3e0",
+            "en": {
+              "comment": "Cozy and well-located guesthouse to explore the lake."
+            },
+            "es": {
+              "comment": "Posada acogedora y bien ubicada para conocer la laguna."
+            }
+          },
+          "created_at": "2026-10-10T05:03:23.928252+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Rancho Tempero Maranhense",
+      "description": "Quinta a Domingo (quinta a partir das 17h)\r\nSexta a domingo das 11:30 as 00h\r\n🎤Música ao vivo Sex,Sáb e domin",
+      "address": "R. Canarinhos, 664 - Ponta Grossa, Maricá - RJ, 24914-160, Brasil",
+      "latitude": "-22.921979",
+      "longitude": "-42.847967",
+      "categories": ["restaurantes"],
+      "is_featured": false,
+      "translations": {
+        "source": "4f0db7a41df66dfb",
+        "en": {
+          "description": "Thursday to Sunday (Thursday from 5pm)\r\nFriday to Sunday from 11:30am to midnight\r\n🎤Live music Fri,Sat and Sun"
+        },
+        "es": {
+          "description": "Quinta a Domingo (quinta a partir de las 17h)\r\nSexta a domingo de 11:30 a 00h\r\n🎤Música en vivo Vie,Sáb y dom"
+        }
+      },
+      "created_at": "2026-09-15T00:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "imagem_2025-11-11_230150560.webp",
+          "caption": "",
+          "is_primary": true,
+          "display_order": 1
+        },
+        {
+          "file": "imagem_2025-11-11_230207388.webp",
+          "caption": "",
+          "is_primary": false,
+          "display_order": 3
+        },
+        {
+          "file": "imagem_2025-11-11_230223918.webp",
+          "caption": "",
+          "is_primary": false,
+          "display_order": 5
+        }
+      ],
+      "reviews": [
+        {
+          "user": "henrique.dias",
+          "rating": 5,
+          "comment": "Comida caseira e farta, atendimento muito simpático.",
+          "translations": {
+            "source": "fcb9160940db817b",
+            "en": {
+              "comment": "Homestyle food in generous portions, very friendly service."
+            },
+            "es": {
+              "comment": "Comida casera y abundante, atención muy simpática."
+            }
+          },
+          "created_at": "2026-10-13T00:02:57.330682+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Parque Estadual da Serra da Tiririca",
+      "description": "Unidade de conservação de Mata Atlântica dividida entre Niterói e Maricá, com 3.493 hectares, incluindo um trecho marinho. O ponto mais alto é o Morro do Elefante, com 412 metros. Tem trilhas como a do Alto Mourão e a das Andorinhas, e os horários e regras de visitação devem ser confirmados com o Inea. Foto: Felipe Chermont / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Itaipuaçu, Maricá - RJ (parque compartilhado com Niterói)",
+      "latitude": "-22.932770",
+      "longitude": "-42.984170",
+      "categories": ["natureza-parques"],
+      "is_featured": false,
+      "translations": {
+        "source": "9e4aefb979440aae",
+        "en": {
+          "description": "Atlantic Forest Conservation Unit divided between Niterói and Maricá, covering 3,493 hectares, including a marine section. The highest point is Morro do Elefante, at 412 meters. It features trails such as the Alto Mourão trail and the Andorinhas trail, and visitation hours and rules must be confirmed with the Inea. Photo: Felipe Chermont / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Unidad de conservación de Mata Atlántica dividida entre Niterói y Maricá, con 3.493 hectáreas, incluyendo un tramo marino. El punto más alto es el Morro do Elefante, con 412 metros. Tiene senderos como el de Alto Mourão y el de las Golondrinas, y los horarios y reglas de visita deben confirmarse con el Inea. Foto: Felipe Chermont / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-09-13T01:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "17.webp",
+          "caption": "Parque Estadual da Serra da Tiririca",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "bruno.lima",
+          "rating": 5,
+          "comment": "Trilhas bem marcadas e muita mata. Fomos com guia e aprendemos bastante.",
+          "translations": {
+            "source": "344a5bd5ee9f6488",
+            "en": {
+              "comment": "Well-marked trails and lots of forest. We went with a guide and learned a lot."
+            },
+            "es": {
+              "comment": "Senderos bien marcados y mucha selva. Fuimos con guía y aprendimos mucho."
+            }
+          },
+          "created_at": "2026-10-24T23:49:23.230005+00:00"
+        },
+        {
+          "user": "gabi.martins",
+          "rating": 4,
+          "comment": "Bonito demais. Leve repelente e bastante água.",
+          "translations": {
+            "source": "f818384a9ab87a7c",
+            "en": {
+              "comment": "Too beautiful. Bring insect repellent and plenty of water."
+            },
+            "es": {
+              "comment": "Demasiado hermoso. Lleva repelente y mucha agua."
+            }
+          },
+          "created_at": "2026-10-20T06:13:29.296134+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Cine Henfil",
+      "description": "Cinema municipal no Centro de Maricá com 200 lugares, incluindo espaços reservados para cadeirantes, pessoas com mobilidade reduzida e pessoas com obesidade. A entrada é gratuita, com reserva de ingressos pela internet. A programação mistura filmes brasileiros recentes, animações infantis e mostras, e há sessões adaptadas para pessoas com TEA. Imagem ilustrativa (sala de cinema): Dalto.Ruiz / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Rua Alferes Gomes, 390, Centro, Maricá - RJ",
+      "latitude": "-22.921380",
+      "longitude": "-42.817860",
+      "categories": ["artes-cultura"],
+      "is_featured": false,
+      "translations": {
+        "source": "ce0ed84abd5d3022",
+        "en": {
+          "description": "Municipal cinema in Maricá's downtown with 200 seats, including spaces reserved for wheelchair users, people with reduced mobility, and people with obesity. Entry is free, with ticket reservations made online. The program mixes recent Brazilian films, children's animations, and showcases, and there are sessions adapted for people with autism spectrum disorder. Illustrative image (cinema room): Dalto.Ruiz / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Cine municipal en el Centro de Maricá con 200 asientos, incluyendo espacios reservados para personas con sillas de ruedas, con movilidad reducida y personas con obesidad. La entrada es gratuita, con reservas de entradas por internet. La programación mezcla películas brasileñas recientes, animaciones infantiles y muestras, y hay sesiones adaptadas para personas con TEA. Imagen ilustrativa (sala de cine): Dalto.Ruiz / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-09-04T22:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "12.webp",
+          "caption": "Cine Henfil",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 5,
+          "comment": "Cinema confortável e com entrada gratuita. Reservamos pela internet sem problema.",
+          "translations": {
+            "source": "fec308cf2cb71437",
+            "en": {
+              "comment": "Comfortable cinema with free entry. We booked online without any issues."
+            },
+            "es": {
+              "comment": "Cine cómodo y con entrada gratuita. Hicimos la reserva por internet sin problema."
+            }
+          },
+          "created_at": "2026-10-20T04:32:35.537471+00:00"
+        },
+        {
+          "user": "henrique.dias",
+          "rating": 4,
+          "comment": "Ótima iniciativa. Programação variada, as sessões infantis lotam rápido.",
+          "translations": {
+            "source": "6e36388fe15244fb",
+            "en": {
+              "comment": "Great initiative. Varied program, the children's sessions fill up quickly."
+            },
+            "es": {
+              "comment": "Excelente iniciativa. Programación variada, las sesiones infantiles se llenan rápido."
+            }
+          },
+          "created_at": "2026-09-23T09:12:59.981603+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Praia de Itaipuaçu",
+      "description": "Uma das principais praias de Maricá, com cerca de 15 km de extensão e ciclovia paralela à orla, usada para pedalar e correr. Do Costão de Itaipuaçu parte uma trilha com vista para a Pedra do Elefante. O mar aberto tem correntes de retorno fortes; o Recanto, onde o mar encontra um canal, é a área mais indicada para famílias com crianças. Foto: Gustavoolimiranda / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Itaipuaçu, Maricá - RJ",
+      "latitude": "-22.962350",
+      "longitude": "-42.994060",
+      "categories": ["praias"],
+      "is_featured": false,
+      "translations": {
+        "source": "feb37a875883e378",
+        "en": {
+          "description": "One of the main beaches in Maricá, stretching about 15 km with a parallel bike path used for cycling and running. From the Itaipuaçu Cliffs, a trail offers a view of the Elephant Rock. The open sea has strong return currents; the Recanto, where the sea meets a channel, is the area most recommended for families with children. Photo: Gustavoolimiranda / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Una de las principales playas de Maricá, con una extensión de aproximadamente 15 km y una ciclovía paralela a la orilla, utilizada para andar en bicicleta y correr. Desde el Costão de Itaipuaçu parte un sendero con vista al Elefante de Piedra. El mar abierto tiene fuertes corrientes de retorno; el Recinto, donde el mar se encuentra con un canal, es la zona más indicada para familias con niños. Foto: Gustavoolimiranda / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-09-04T17:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "14.webp",
+          "caption": "Praia de Itaipuaçu",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 4,
+          "comment": "Orla enorme e boa para pedalar na ciclovia. Cuidado com as correntes no mar aberto.",
+          "translations": {
+            "source": "628b601af9dc3191",
+            "en": {
+              "comment": "Long beachfront and good for cycling on the bike path. Be careful with the currents in the open sea."
+            },
+            "es": {
+              "comment": "Costa enorme y buena para pedalear en la ciclovía. Cuidado con las corrientes en el mar abierto."
+            }
+          },
+          "created_at": "2026-10-11T10:56:50.455043+00:00"
+        },
+        {
+          "user": "felipe.costa",
+          "rating": 5,
+          "comment": "O Recanto é ótimo para ir com criança, a água é bem mais calma.",
+          "translations": {
+            "source": "1bddd42b8feec364",
+            "en": {
+              "comment": "The Recanto is great for going with children, the water is much calmer."
+            },
+            "es": {
+              "comment": "El Recanto es excelente para ir con niños, el agua es mucho más tranquila."
+            }
+          },
+          "created_at": "2026-09-28T17:26:12.545822+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Alexandre Restaurante",
+      "description": "🥘 Restaurante especializado em Frutos do Mar\r\n🕓 Almoço - Ter a Dom: 11:30h às 16h\r\n👇🏻Delivery, cardápio e mais.\r\n\r\nhttps://www.instagram.com/restaurantedoalexandre",
+      "address": "Alameda Maricá - Ponta Negra, Maricá - RJ, 24900-000, Brasil",
+      "latitude": "-22.896726",
+      "longitude": "-42.792307",
+      "categories": ["restaurantes"],
+      "is_featured": false,
+      "translations": {
+        "source": "54ece752ff0e9892",
+        "en": {
+          "description": "🥘 Seafood Restaurant\r\n🕓 Lunch - Tue to Sun: 11:30am to 4pm\r\n👇🏻Delivery, menu and more.\r\n\r\nhttps://www.instagram.com/restaurantedoalexandre"
+        },
+        "es": {
+          "description": "🥘 Restaurante especializado en Mariscos\r\n🕓 Almuerzo - De Miércoles a Domingo: 11:30h a 16h\r\n👇🏻Entrega a domicilio, menú y más.\r\n\r\nhttps://www.instagram.com/restaurantedoalexandre"
+        }
+      },
+      "created_at": "2026-09-03T06:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "imagem_2025-11-11_230346980.webp",
+          "caption": "",
+          "is_primary": true,
+          "display_order": 1
+        },
+        {
+          "file": "imagem_2025-11-11_230522111.webp",
+          "caption": "",
+          "is_primary": false,
+          "display_order": 3
+        },
+        {
+          "file": "imagem_2025-11-11_230609601.webp",
+          "caption": "",
+          "is_primary": false,
+          "display_order": 5
+        }
+      ],
+      "reviews": [
+        {
+          "user": "bruno.lima",
+          "rating": 4,
+          "comment": "Boa comida e ambiente tranquilo. Voltaria.",
+          "translations": {
+            "source": "76ae7bc68feb1ac7",
+            "en": {
+              "comment": "Good food and a quiet atmosphere. I would return."
+            },
+            "es": {
+              "comment": "Buena comida y ambiente tranquilo. Volvería."
+            }
+          },
+          "created_at": "2026-09-18T12:34:47.942124+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Comunidade Pesqueira de Zacarias",
+      "description": "Visitas com agendamento – Associação de Pescadores - Rua Apigio Luís da Costa, 8 – Zacarias - (21) 99757-2501 Sr. Vilson Correa.\r\n\r\nEm 1790 esta tradicional comunidade pesqueira já aparecia nos mapas. Criadores da técnica artesanal da “pesca de galho”, eles ainda resistem ao tempo com suas tradições.\r\n\r\nNa tradicional Colônia de Pescadores de Maricá é possível encontrar peixe fresco e provar a cachaça Camboinha, típica da região. O local mantém construções tradicionais e apresenta um visual bastante primitivo em alguns pontos.",
+      "address": "Rua São José - Itaipuaçu, Maricá - RJ, Brasil",
+      "latitude": "-22.966193",
+      "longitude": "-42.920794",
+      "categories": ["natureza-parques"],
+      "is_featured": false,
+      "translations": {
+        "source": "c404d25dd03959d1",
+        "en": {
+          "description": "Scheduled visits – Fishermen’s Association - Rua Apigio Luís da Costa, 8 – Zacarias - (21) 99757-2501 Mr. Vilson Correa.\r\n\r\nIn 1790 this traditional fishing community was already appearing on maps. Creators of the artisanal 'branch fishing' technique, they still resist the passage of time with their traditions.\r\n\r\nAt the traditional Maricá Fishermen’s Colony, it is possible to find fresh fish and taste the Camboinha cachaça, typical of the region. The place maintains traditional constructions and presents a very primitive appearance in some points."
+        },
+        "es": {
+          "description": "Visitas con reserva – Asociación de Pescadores - Rua Apigio Luís da Costa, 8 – Zacarias - (21) 99757-2501 Sr. Vilson Correa.\r\n\r\nEn 1790 esta tradicional comunidad pesquera ya aparecía en los mapas. Creadores de la técnica artesanal de la “pesca de galho”, ellos aún resisten al tiempo con sus tradiciones.\r\n\r\nEn la tradicional Colonia de Pescadores de Maricá es posible encontrar pescado fresco y probar la caña Camboinha, típica de la región. El lugar mantiene construcciones tradicionales y presenta un visual bastante primitivo en algunos puntos."
+        }
+      },
+      "created_at": "2026-08-30T22:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "imagem_2025-11-11_230957701.webp",
+          "caption": "",
+          "is_primary": true,
+          "display_order": 1
+        }
+      ],
+      "reviews": [
+        {
+          "user": "ana.souza",
+          "rating": 4,
+          "comment": "Lugar simples e muito bonito na beira da lagoa. Ótimo para fotos no fim da tarde.",
+          "translations": {
+            "source": "f42f4aae7048f5a2",
+            "en": {
+              "comment": "A simple and very beautiful place by the lake. Great for photos at the end of the afternoon."
+            },
+            "es": {
+              "comment": "Lugar sencillo y muy bonito en la orilla de la laguna. Ideal para fotos al final de la tarde."
+            }
+          },
+          "created_at": "2026-09-19T01:33:27.164991+00:00"
+        }
+      ]
+    },
+    {
+      "name": "APA de Maricá",
+      "description": "Área de Proteção Ambiental criada em 1984 para proteger a restinga e o sistema lagunar de Maricá, que inclui as lagoas de Maricá, da Barra, do Padre, de Guarapina e de Jaconé, além da Lagoa Brava e da Ilha Cardosa. É a APA mais antiga sob administração estadual e hoje é gerida pelo Inea. Foto: Filipo Tardim / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Restinga e lagoas de Maricá, Maricá - RJ",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["natureza-parques"],
+      "is_featured": false,
+      "translations": {
+        "source": "9d803f12be59d34c",
+        "en": {
+          "description": "Environmental Protection Area created in 1984 to protect the coastal sand habitat and the lagoon system of Maricá, which includes the lagoons of Maricá, Barra, Padre, Guarapina, and Jaconé, as well as Lagoa Brava and Ilha Cardosa. It is the oldest APA under state administration and is now managed by Inea. Photo: Filipo Tardim / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Área de Protección Ambiental creada en 1984 para proteger la restinga y el sistema lagunar de Maricá, que incluye las lagunas de Maricá, de la Barra, del Padre, de Guarapina y de Jaconé, además de la Lagoa Brava y la Isla Cardosa. Es la APA más antigua bajo administración estatal y hoy es gestionada por el Inea. Foto: Filipo Tardim / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-08-25T18:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "19.webp",
+          "caption": "APA de Maricá",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "name": "Centro de Comércio Popular (Cecop)",
+      "description": "Espaço coberto inaugurado pela prefeitura em fevereiro de 2024 como parte da revitalização do Centro, com 114 boxes. Vende comidas, bebidas, souvenires, artesanato, peças de arte, roupas, calçados e acessórios. A Feira da Agricultura Familiar já foi realizada em frente ao local. Imagem ilustrativa (centro de comércio popular): Rodrigo_Santos / Wikimedia Commons (CC BY 3.0).",
+      "address": "Rua Juvenal José Bitencourt, 37, Centro, Maricá - RJ",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["compras"],
+      "is_featured": false,
+      "translations": {
+        "source": "af87b5337e12b6b2",
+        "en": {
+          "description": "Covered space inaugurated by the city hall in February 2024 as part of the revitalization of the Center, with 114 stalls. Sells food, drinks, souvenirs, handicrafts, art pieces, clothing, shoes, and accessories. The Family Agriculture Fair has already been held in front of the location. Illustrative image (popular commerce center): Rodrigo_Santos / Wikimedia Commons (CC BY 3.0)."
+        },
+        "es": {
+          "description": "Espacio cubierto inaugurado por la alcaldía en febrero de 2024 como parte de la revitalización del Centro, con 114 cajas. Vende comidas, bebidas, recuerdos, artesanías, piezas de arte, ropa, calzado y accesorios. La Feria de la Agricultura Familiar ya se realizó frente al lugar. Imagen ilustrativa (centro de comercio popular): Rodrigo_Santos / Wikimedia Commons (CC BY 3.0)."
+        }
+      },
+      "created_at": "2026-08-25T00:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "25.webp",
+          "caption": "Centro de Comércio Popular (Cecop)",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "name": "Cachoeira do Espraiado",
+      "description": "Cachoeira em área preservada de Mata Atlântica no Espraiado, tornada patrimônio cultural, turístico e paisagístico do estado do Rio de Janeiro pela Lei 10.998 de 2025. Em 2022 a prefeitura informou a reabertura da cachoeira e da Gruta da Sacristia para visitação e banho, com mergulho e escalada proibidos por causa do fundo de pedras irregulares. O Espraiado também recebe o circuito rural Espraiado de Portas Abertas. Imagem ilustrativa (poço em cachoeira da Mata Atlântica fluminense): João P. Burini / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Espraiado, Maricá - RJ",
+      "latitude": null,
+      "longitude": null,
+      "categories": ["natureza-parques"],
+      "is_featured": false,
+      "translations": {
+        "source": "0e070578c8499042",
+        "en": {
+          "description": "Waterfall in a preserved area of Atlantic Rainforest in Espraiado, declared cultural, tourist, and landscape heritage of the state of Rio de Janeiro by Law 10.998 of 2025. In 2022, the city hall announced the reopening of the waterfall and the Gruta da Sacristia for visits and bathing, with diving and climbing prohibited due to the uneven rocky bottom. Espraiado also hosts the rural circuit Espraiado de Portas Abertas. Illustrative image (pool in a waterfall in the Atlantic Rainforest of Rio de Janeiro state): João P. Burini / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Cascada en área preservada de Mata Atlántica en Espraiado, declarada patrimonio cultural, turístico y paisajístico del estado de Río de Janeiro por la Ley 10.998 de 2025. En 2022, la alcaldía informó la reapertura de la cascada y la Gruta de la Sacristía para visitación y baño, con prohibición de buceo y escalada debido al fondo de rocas irregulares. El Espraiado también acoge el circuito rural Espraiado de Puertas Abiertas. Imagen ilustrativa (pozo en cascada de la Mata Atlántica fluminense): João P. Burini / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-08-21T07:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "18.webp",
+          "caption": "Cachoeira do Espraiado",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": [
+        {
+          "user": "diego.alves",
+          "rating": 4,
+          "comment": "Água geladinha e lugar bem preservado. Não dá para mergulhar, mas o banho é ótimo.",
+          "translations": {
+            "source": "fc5add85309af2a3",
+            "en": {
+              "comment": "Cold water and well-preserved place. Not suitable for diving, but the bathing is excellent."
+            },
+            "es": {
+              "comment": "Agua gelada y lugar bien preservado. No se puede bucear, pero el baño es excelente."
+            }
+          },
+          "created_at": "2026-09-27T09:41:54.928124+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Black Point Beach Club",
+      "description": "Pousada à beira-mar em Ponta Negra, com piscina, bar na piscina e restaurante com vista para o mar. Imagem ilustrativa (mar de Ponta Negra): Rodrigo Alves / Wikimedia Commons (CC BY-SA 4.0).",
+      "address": "Rua Cento e Cinquenta e Sete, Lt 2A, Ponta Negra, Maricá - RJ",
+      "latitude": "-22.955290",
+      "longitude": "-42.706820",
+      "categories": ["hoteis-pousadas"],
+      "is_featured": false,
+      "translations": {
+        "source": "eab7f07ad37fd298",
+        "en": {
+          "description": "Beachfront guesthouse in Ponta Negra, with swimming pool, pool bar and restaurant with sea views. Illustrative image (sea of Ponta Negra): Rodrigo Alves / Wikimedia Commons (CC BY-SA 4.0)."
+        },
+        "es": {
+          "description": "Posada a orillas del mar en Ponta Negra, con piscina, bar en la piscina y restaurante con vista al mar. Imagen ilustrativa (mar de Ponta Negra): Rodrigo Alves / Wikimedia Commons (CC BY-SA 4.0)."
+        }
+      },
+      "created_at": "2026-08-14T06:31:09.383724+00:00",
+      "images": [
+        {
+          "file": "22.webp",
+          "caption": "Black Point Beach Club",
+          "is_primary": true,
+          "display_order": 0
+        }
+      ],
+      "reviews": []
+    }
+  ],
+  "events": [
+    {
+      "title": "FLIM 2026: Festa Literária Internacional de Maricá",
+      "slug": "flim-2026-festa-literaria-internacional-de-marica",
+      "excerpt": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva e Guilherme Briggs estão entre as atrações confirmadas da 11ª Festa Literária Internacional de Maricá (FLIM). Realizado pela Prefeitura de Maricá, o evento acontecerá de 30 de outubro a 8 de novembro, na Orla do Parque Nanci,...",
+      "content": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva e Guilherme Briggs estão entre as atrações confirmadas da 11ª Festa Literária Internacional de Maricá (FLIM). Realizado pela Prefeitura de Maricá, o evento acontecerá de 30 de outubro a 8 de novembro, na Orla do Parque Nanci, com encontros sobre literatura, educação, música e cultura digital, além de atividades para visitantes de todas as idades.",
+      "image": "WhatsApp-Image-2026-10-20-at-10.33.34.webp",
+      "image_caption": "Foto: Prefeitura de Maricá",
+      "event_date": "2026-10-30T03:00:00+00:00",
+      "event_end_date": "2026-11-09T02:59:00+00:00",
+      "event_location": "Orla do Parque Nanci",
+      "source_name": "Prefeitura de Maricá",
+      "source_url": "https://www.marica.rj.gov.br/noticia/marica-aline-midlej-barbara-carine-e-eduardo-spohr-estao-confirmados-na-flim-2026/",
+      "is_featured": true,
+      "translations": {
+        "source": "2195a570a6464cae",
+        "en": {
+          "title": "FLIM 2026: International Literary Festival of Maricá",
+          "excerpt": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva, and Guilherme Briggs are among the confirmed attractions of the 11th International Literary Festival of Maricá (FLIM). Organized by the Maricá City Hall, the event will take place from October 30 to November 8, at the Nanci Park Promenade, with meetings on literature, education, music, and digital culture, as well as activities for visitors of all ages.",
+          "content": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva, and Guilherme Briggs are among the confirmed attractions of the 11th International Literary Festival of Maricá (FLIM). Organized by the Maricá City Hall, the event will take place from October 30 to November 8, at the Nanci Park Promenade, with meetings on literature, education, music, and digital culture, as well as activities for visitors of all ages."
+        },
+        "es": {
+          "title": "FLIM 2026: Fiesta Literaria Internacional de Maricá",
+          "excerpt": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva e Guilherme Briggs están entre las atracciones confirmadas de la 11ª Fiesta Literaria Internacional de Maricá (FLIM). Realizado por la Prefeitura de Maricá, el evento tendrá lugar del 30 de octubre al 8 de noviembre, en la Orla del Parque Nanci,...",
+          "content": "Aline Midlej, Bárbara Carine, Eduardo Spohr, Ana Beatriz Barbosa Silva y Guilherme Briggs están entre las atracciones confirmadas de la 11ª Fiesta Literaria Internacional de Maricá (FLIM). Realizado por la Prefeitura de Maricá, el evento tendrá lugar del 30 de octubre al 8 de noviembre, en la Orla del Parque Nanci, con encuentros sobre literatura, educación, música y cultura digital, además de actividades para visitantes de todas las edades."
+        }
+      },
+      "publish_date": "2026-10-26T00:49:16.154888+00:00"
+    },
+    {
+      "title": "Bike Night Outubro Rosa: pedalada noturna",
+      "slug": "bike-night-outubro-rosa-pedalada-noturna",
+      "excerpt": "A Prefeitura de Maricá realiza, no dia 27/10 (terça-feira), a edição especial Outubro Rosa do “Bike Night”. A iniciativa da Secretaria de Esporte e Lazer é voltada à conscientização sobre a prevenção e o diagnóstico precoce do câncer de mama e do colo do útero, unindo esporte, saúde e...",
+      "content": "A Prefeitura de Maricá realiza, no dia 27/10 (terça-feira), a edição especial Outubro Rosa do “Bike Night”. A iniciativa da Secretaria de Esporte e Lazer é voltada à conscientização sobre a prevenção e o diagnóstico precoce do câncer de mama e do colo do útero, unindo esporte, saúde e mobilização comunitária pelas ruas do Centro e de Araçatiba.\n\nA concentração dos participantes acontece a partir das 18h, na Praça Orlando de Barros Pimentel, no Centro. Do local, o grupo seguirá pela Rua Álvares de Castro até o fim do calçadão de Araçatiba, fazendo o retorno na altura do Deck para voltar à praça.",
+      "image": "Screenshot_1-1.webp",
+      "image_caption": "Foto: Prefeitura de Maricá",
+      "event_date": "2026-10-27T21:00:00+00:00",
+      "event_end_date": null,
+      "event_location": "Praça Orlando de Barros Pimentel, Centro",
+      "source_name": "Prefeitura de Maricá",
+      "source_url": "https://www.marica.rj.gov.br/noticia/marica-tera-pedalada-noturna-de-conscientizacao-pelo-outubro-rosa-no-dia-27-10/",
+      "is_featured": false,
+      "translations": {
+        "source": "a4d3a7f703c88a38",
+        "en": {
+          "title": "Bike Night Pink October: night bike ride",
+          "excerpt": "The Maricá City Hall hosts, on October 27 (Tuesday), the Pink October special edition of “Bike Night”. This initiative by the Department of Sports and Leisure aims to raise awareness about the prevention and early diagnosis of breast cancer and cervical cancer, combining sports, health, and community mobilization along the streets of the city center and Araçatiba.",
+          "content": "The Maricá City Hall hosts, on October 27, the Pink October special edition of “Bike Night”. This initiative by the Department of Sports and Leisure aims to raise awareness about the prevention and early diagnosis of breast cancer and cervical cancer, combining sports, health, and community mobilization along the streets of the city center and Araçatiba.\n\nParticipants will gather from 6 PM onwards at Orlando de Barros Pimentel Square, in the city center. From there, the group will proceed along Álvares de Castro Street until the end of the Araçatiba promenade, making a return at the Deck area to head back to the square."
+        },
+        "es": {
+          "title": "Bike Night Octubre Rosa: pedalada nocturna",
+          "excerpt": "El Municipio de Maricá realiza, el día 27/10 (miércoles), la edición especial Octubre Rosa del “Bike Night”. La iniciativa de la Secretaría de Deportes y Ocio es orientada a la concientización sobre la prevención y el diagnóstico precoz del cáncer de mama y del cuello uterino, uniendo deporte, salud y movilización comunitaria por las calles del Centro y de Araçatiba.",
+          "content": "El Municipio de Maricá realiza, el día 27/10 (miércoles), la edición especial Octubre Rosa del “Bike Night”. La iniciativa de la Secretaría de Deportes y Ocio es orientada a la concientización sobre la prevención y el diagnóstico precoz del cáncer de mama y del cuello uterino, uniendo deporte, salud y movilización comunitaria por las calles del Centro y de Araçatiba.\n\nLa concentración de los participantes se realiza a partir de las 18h, en la Plaza Orlando de Barros Pimentel, en el Centro. Desde allí, el grupo sigue por la Avenida Álvares de Castro hasta el final del paseo marítimo de Araçatiba, haciendo el retorno en la altura del Deck para volver a la plaza."
+        }
+      },
+      "publish_date": "2026-10-26T00:49:14.958987+00:00"
+    },
+    {
+      "title": "2º Seminário Darcy Ribeiro, Intérprete das Utopias",
+      "slug": "2o-seminario-darcy-ribeiro-interprete-das-utopias",
+      "excerpt": "A Prefeitura de Maricá promove, nos dias 26 e 27 de outubro, o 2º Seminário “Darcy Ribeiro, Intérprete das Utopias”, no Cine Henfil. O encontro marca as celebrações pelos 104 anos de nascimento do antropólogo, educador e pesquisador, que viveu seus últimos anos no município. A ação é organizada...",
+      "content": "A Prefeitura de Maricá promove, nos dias 26 e 27 de outubro, o 2º Seminário “Darcy Ribeiro, Intérprete das Utopias”, no Cine Henfil. O encontro marca as celebrações pelos 104 anos de nascimento do antropólogo, educador e pesquisador, que viveu seus últimos anos no município. A ação é organizada pela Secretaria de Cultura e das Utopias, com parceria da Companhia de Cultura e Turismo de Maricá (MARÉ).\n\nO seminário tem como objetivo propor um passeio pela trajetória e contribuições de Darcy Ribeiro para a formação cultural e educacional do país, além de destacar o protagonismo do município na preservação da memória histórica e no fomento às políticas públicas do setor.",
+      "image": "Foto-Elsson-Campos-2-2-2048x1365-1.webp",
+      "image_caption": "Foto: Prefeitura de Maricá",
+      "event_date": "2026-10-26T03:00:00+00:00",
+      "event_end_date": "2026-10-28T02:59:00+00:00",
+      "event_location": "Cine Henfil",
+      "source_name": "Prefeitura de Maricá",
+      "source_url": "https://www.marica.rj.gov.br/noticia/marica-celebra-legado-de-darcy-ribeiro-em-seminario-no-cine-henfil/",
+      "is_featured": false,
+      "translations": {
+        "source": "d5c9f0f0ab43ff9a",
+        "en": {
+          "title": "2nd Darcy Ribeiro, Interpreter of Utopias Seminar",
+          "excerpt": "The Maricá City Hall is promoting, on October 26 and 27, the 2nd Seminar “Darcy Ribeiro, Interpreter of Utopias”, at Cine Henfil. The event marks the celebrations for the 104th anniversary of the birth of the anthropologist, educator, and researcher who spent his last years in the municipality. The action is organized...",
+          "content": "The Maricá City Hall is promoting, on October 26 and 27, the 2nd Seminar “Darcy Ribeiro, Interpreter of Utopias”, at Cine Henfil. The event marks the celebrations for the 104th anniversary of the birth of the anthropologist, educator, and researcher who spent his last years in the municipality. The action is organized by the Department of Culture and Utopias, in partnership with the Maricá Culture and Tourism Company (MARÉ).\n\nThe seminar aims to propose a journey through Darcy Ribeiro's trajectory and contributions to the cultural and educational formation of the country, as well as to highlight the municipality's protagonism in preserving historical memory and promoting public policies in the sector."
+        },
+        "es": {
+          "title": "2º Seminario Darcy Ribeiro, Intérprete de las Utopías",
+          "excerpt": "La Prefectura de Maricá promueve, los días 26 y 27 de octubre, el 2º Seminario “Darcy Ribeiro, Intérprete de las Utopías”, en Cine Henfil. El encuentro marca las celebraciones por los 104 años de nacimiento del antropólogo, educador y investigador, que vivió sus últimos años en el municipio. La acción es organizada...",
+          "content": "La Prefectura de Maricá promueve, los días 26 y 27 de octubre, el 2º Seminario “Darcy Ribeiro, Intérprete de las Utopías”, en Cine Henfil. El encuentro marca las celebraciones por los 104 años de nacimiento del antropólogo, educador e investigador, que vivió sus últimos años en el municipio. La acción es organizada por la Secretaría de Cultura y de las Utopías, con la colaboración de la Compañía de Cultura y Turismo de Maricá (MARÉ).\n\nEl seminario tiene como objetivo proponer un recorrido por la trayectoria y contribuciones de Darcy Ribeiro para la formación cultural y educativa del país, además de destacar el protagonismo del municipio en la preservación de la memoria histórica y en el fomento a las políticas públicas del sector."
+        }
+      },
+      "publish_date": "2026-10-26T00:49:14.763261+00:00"
+    },
+    {
+      "title": "Maricá abre o Natal Iluminado de 2024",
+      "slug": "marica-abre-o-natal-iluminado-de-2024",
+      "excerpt": "Espetáculo 'Jardim das Águas' atraiu milhares de visitantes para o Deck Pôr do Sol, em Araçatiba",
+      "content": "A Prefeitura de Maricá abriu oficialmente neste sábado (14/12), o Natal Iluminado de 2024, com o espetáculo ‘Jardim das Águas’ no Deck Pôr do Sol, em Araçatiba, uma das novidades dessa edição que atraiu milhares de visitantes para o local. O espaço conta com toda uma estrutura, acompanhada de música e gastronomia, que funcionará de terça a domingo, à partir das 18h, nos mesmos moldes do evento Pedacinho do Céu.\r\n\r\nA programação de Natal de Maricá se estende nesse domingo a inauguração do evento na Praça Orlando de Barros Pimentel, no Centro, às 18:30h, seguida de uma peca de teatro infantil e da Casa do Papai Noel.\r\n\r\nO evento turístico é um dos mais procurados no estado do Rio de Janeiro, e conta com uma programação repleta de atrações para encantar moradores, turistas e visitantes, com espetáculos no céu e na água, na Lagoa de Araçatiba, além da decoração natalina em toda a cidade.\r\n\r\n“Essa é uma das grandes novidades do ano de 2024, e aqui fica realmente um cenário muito bonito. Acredito que esse vai ser um Natal maravilhoso e muito especial. Este é um evento consolidado na cidade, que o povo de Maricá e os visitantes abraçaram e tenho certeza que ficarão encantados com as apresentações”, disse o secretário de Turismo, Robson Dutra.",
+      "image": "imagem_2025-11-11_233613785.webp",
+      "image_caption": "",
+      "event_date": "2024-12-14T20:00:00+00:00",
+      "event_end_date": "2024-12-31T20:00:00+00:00",
+      "event_location": "Aracatiba",
+      "source_name": "",
+      "source_url": "",
+      "is_featured": false,
+      "translations": {
+        "source": "4bedb07fdaac3604",
+        "en": {
+          "title": "Marica Opens the Illuminated Christmas of 2024",
+          "excerpt": "The 'Water Garden' show attracted thousands of visitors to the Sunset Deck in Aracatiba",
+          "content": "The Marica City Hall officially opened this Saturday (14/12) the Illuminated Christmas of 2024, with the show 'Water Garden' at the Sunset Deck in Aracatiba, one of the novelties of this edition that attracted thousands of visitors to the location. The space features a complete structure, accompanied by music and gastronomy, which will operate from Tuesday to Sunday, starting at 6:00 PM, in the same format as the Pedacinho do Céu event.\n\nThe Christmas program in Marica extends to this Sunday with the inauguration of the event at Orlando de Barros Pimentel Square, in the Center, at 6:30 PM, followed by a children's theater play and Santa Claus' House.\n\nThe tourist event is one of the most sought after in the state of Rio de Janeiro, and features a full program of attractions to enchant residents, tourists, and visitors, with shows in the sky and water at Lagoa de Aracatiba, as well as Christmas decorations throughout the city.\n\n'This is one of the great novelties of the year 2024, and here is really a very beautiful scene. I believe this will be a wonderful and very special Christmas. This is a consolidated event in the city, which the people of Marica and visitors have embraced and I am sure they will be enchanted by the presentations', said the Tourism Secretary, Robson Dutra."
+        },
+        "es": {
+          "title": "Maricá abre el Iluminado de Navidad de 2024",
+          "excerpt": "El espectáculo 'Jardín de las Aguas' atrajo a miles de visitantes al Deck Puesta del Sol, en Araçatiba",
+          "content": "La Prefectura de Maricá abrió oficialmente este sábado (14/12), el Iluminado de Navidad de 2024, con el espectáculo ‘Jardín de las Aguas’ en el Deck Puesta del Sol, en Araçatiba, una de las novedades de esta edición que atrajo a miles de visitantes al lugar. El espacio cuenta con toda una estructura, acompañada de música y gastronomía, que funcionará de martes a domingo, a partir de las 18h, en los mismos moldes del evento Pedacinho do Céu.\r\n\r\nLa programación de Navidad de Maricá se extiende este domingo con la inauguración del evento en la Plaza Orlando de Barros Pimentel, en el Centro, a las 18:30h, seguida de una obra de teatro infantil y la Casa del Papá Noel.\r\n\r\nEl evento turístico es uno de los más buscados en el estado de Río de Janeiro, y cuenta con una programación llena de atracciones para encantar a residentes, turistas y visitantes, con espectáculos en el cielo y en el agua, en la Lagoa de Araçatiba, además de la decoración navideña en toda la ciudad.\r\n\r\n“Esta es una de las grandes novedades del año 2024, y aquí queda realmente un escenario muy bonito. Creo que este va a ser un Navidad maravillosa y muy especial. Este es un evento consolidado en la ciudad, que el pueblo de Maricá y los visitantes abrazaron y estoy seguro de que quedarán encantados con las presentaciones”, dijo el secretario de Turismo, Robson Dutra."
+        }
+      },
+      "publish_date": "2025-11-12T02:35:03.429500+00:00"
+    },
+    {
+      "title": "Arraiá de Maricá 2025",
+      "slug": "arraia-de-marica-2025",
+      "excerpt": "Moradores e turistas poderão desfrutar de atrações culturais, shows de artistas locais e concursos de quadrilhas",
+      "content": "O espaço de eventos da Rua João Saldanha, na Barra de Maricá, recebe a partir desta quinta-feira (19/06) mais uma edição do tradicional Arraiá de Maricá. A programação contará com apresentações musicais de artistas da cidade, performances culturais e quadrilhas profissionais, além de concursos que celebram uma das maiores tradições populares do Brasil.\r\n\r\nNesta quinta-feira, Cristiano e a Boneca Clei abrem o evento às 18h. Uma hora mais tarde, o forró do Trio Espírito Santo colocam todo mundo para dançar. Às 22h, a banda Pimenta do Reino sobe ao palco para encerrar a noite em alto estilo.\r\nA programação segue até domingo (22/06), quando dá uma pausa até o próximo final de semana (27 a 29 de junho). Com foco na valorização da cultura regional, o evento também oferecerá opções de gastronomia típica e atividades voltadas para toda a família.\r\n\r\nProgramação do Arraiá de Maricá 2025\r\n\r\nPrimeiro fim de semana\r\nQuinta-feira – 19 de junho\r\n18h – Apresentação de Cristiano e a Boneca Clei\r\n19h – Trio Espírito Santo\r\n22h – Pimenta do Reino\r\n\r\nSexta-feira – 20 de junho\r\n18h – Apresentação de Cristiano e a Boneca Clei\r\n19h – Show com Herick Almeida\r\n22h – Projeto “É Forró Que Eu Quero” (com Eduardo Silva, Givan e Júnior, e Banda TaTudoemCasa)\r\n\r\nSábado – 21 de junho\r\n19h – Apresentação de Quadrilhas Show\r\n20h – Sinfônica Ambulante\r\n22h – Projeto “Batom e Viola” (com Angel Campos, Lavínia Guimarães e Sacha Alexa)\r\n\r\n_Domingo – 22 de junho\r\n19h às 20h30 – Apresentação de Quadrilhas Show\r\n21h – Grupo Raiz do Sana\r\n\r\nSegundo fim de semana\r\nSexta-feira – 27 de junho\r\n18h – Apresentação de Cristiano e a Boneca Clei\r\n19h – Show com Janael\r\n21h – Baião do Biguá\r\n\r\nSábado – 28 de junho\r\n19h às 22h – Concurso de Quadrilhas Show\r\n22h – Projeto “É de Forró Que o Povo Gosta” (com Betinho Bahia, Ismayer Alves, Edu Farias e Natália Pani)\r\n\r\nDomingo – 29 de junho\r\n18h30 às 20h30 – Concurso de Quadrilhas Show\r\n21h – Projeto “Sertão” (com Douglas Kali, Rohan Victor e Maiara Coboski)",
+      "image": "imagem_2025-11-11_232627997.webp",
+      "image_caption": "",
+      "event_date": "2025-06-19T18:00:00+00:00",
+      "event_end_date": "2025-06-29T20:00:00+00:00",
+      "event_location": "Barra de Maricá",
+      "source_name": "",
+      "source_url": "",
+      "is_featured": false,
+      "translations": {
+        "source": "03b47f967147f1c1",
+        "en": {
+          "title": "Maricá Arraiá 2025",
+          "excerpt": "Residents and tourists can enjoy cultural attractions, performances by local artists, and square dance contests",
+          "content": "The event space on João Saldanha Street, in Barra de Maricá, will host the traditional Maricá Arraiá starting this Thursday (19/06). The program will feature musical performances by city artists, cultural performances, and professional square dances, as well as contests celebrating one of the greatest popular traditions in Brazil.\r\n\r\nOn Thursday, Cristiano and the Doll Clei open the event at 6 PM. An hour later, the forró of Trio Espírito Santo gets everyone dancing. At 10 PM, the band Pimenta do Reino takes the stage to close the night in high style.\r\nThe program runs until Sunday (22/06), when it takes a break until the following weekend (27 to 29 June). With a focus on valuing regional culture, the event also offers typical food options and activities for the whole family.\r\n\r\nMaricá Arraiá 2025 Program\r\n\r\nFirst weekend\r\nThursday – June 19\r\n6 PM – Presentation by Cristiano and the Doll Clei\r\n7 PM – Trio Espírito Santo\r\n10 PM – Pimenta do Reino\r\n\r\nFriday – June 20\r\n6 PM – Presentation by Cristiano and the Doll Clei\r\n7 PM – Show with Herick Almeida\r\n10 PM – Project “It’s Forró That I Want” (with Eduardo Silva, Givan and Júnior, and Banda TaTudoemCasa)\r\n\r\nSaturday – June 21\r\n7 PM – Presentation of Quadrilha Show\r\n8 PM – Sinfônica Ambulante\r\n10 PM – Project “Lipstick and Guitar” (with Angel Campos, Lavínia Guimarães and Sacha Alexa)\r\n\r\nSunday – June 22\r\n7 PM to 8:30 PM – Presentation of Quadrilha Show\r\n9:30 PM – Group Raiz do Sana\r\n\r\nSecond weekend\r\nFriday – June 27\r\n6 PM – Presentation by Cristiano and the Doll Clei\r\n7 PM – Show with Janael\r\n9 PM – Baião do Biguá\r\n\r\nSaturday – June 28\r\n7 PM to 10 PM – Quadrilha Show Contest\r\n10 PM – Project “It’s Forró That the People Like” (with Betinho Bahia, Ismayer Alves, Edu Farias and Natália Pani)\r\n\r\nSunday – June 29\r\n6:30 PM to 8:30 PM – Quadrilha Show Contest\r\n9 PM – Project “Sertão” (with Douglas Kali, Rohan Victor and Maiara Coboski)"
+        },
+        "es": {
+          "title": "Arraiá de Maricá 2025",
+          "excerpt": "Los residentes y los turistas podrán disfrutar de atracciones culturales, shows de artistas locales y concursos de cuadrillas",
+          "content": "El espacio de eventos de la Calle João Saldanha, en la Barra de Maricá, recibe a partir de este jueves (19/06) otra edición del tradicional Arraiá de Maricá. La programación contará con presentaciones musicales de artistas de la ciudad, performances culturales y cuadrillas profesionales, además de concursos que celebran una de las mayores tradiciones populares de Brasil.\r\n\r\nEsta noche, Cristiano y la Muñeca Clei abren el evento a las 18h. Una hora más tarde, el forró del Trio Espírito Santo ponen a todo el mundo a bailar. A las 22h, la banda Pimenta do Reino sube al escenario para cerrar la noche en alto estilo.\r\nLa programación continúa hasta el domingo (22/06), cuando da una pausa hasta el próximo fin de semana (27 a 29 de junio). Con enfoque en la valorización de la cultura regional, el evento también ofrecerá opciones de gastronomía típica y actividades dirigidas a toda la familia.\r\n\r\nProgramación del Arraiá de Maricá 2025\r\n\r\nPrimer fin de semana\r\nJueves – 19 de junio\r\n18h – Presentación de Cristiano y la Muñeca Clei\r\n19h – Trio Espírito Santo\r\n22h – Pimenta do Reino\r\n\r\nViernes – 20 de junio\r\n18h – Presentación de Cristiano y la Muñeca Clei\r\n19h – Show con Herick Almeida\r\n22h – Proyecto “Es Forró Que Yo Quiero” (con Eduardo Silva, Givan y Júnior, y Banda TaTudoemCasa)\r\n\r\nSábado – 21 de junio\r\n19h – Presentación de Cuadrillas Show\r\n20h – Sinfónica Ambulante\r\n22h – Proyecto “Batom y Viola” (con Angel Campos, Lavínia Guimarães y Sacha Alexa)\r\n\r\n_Domingo – 22 de junio\r\n19h a 20h30 – Presentación de Cuadrillas Show\r\n21h – Grupo Raiz do Sana\r\n\r\nSegundo fin de semana\r\nViernes – 27 de junio\r\n18h – Presentación de Cristiano y la Muñeca Clei\r\n19h – Show con Janael\r\n21h – Baião do Biguá\r\n\r\nSábado – 28 de junio\r\n19h a 22h – Concurso de Cuadrillas Show\r\n22h – Proyecto “Es de Forró Que el Pueblo Gosta” (con Betinho Bahia, Ismayer Alves, Edu Farias y Natália Pani)\r\n\r\nDomingo – 29 de junio\r\n18h30 a 20h30 – Concurso de Cuadrillas Show\r\n21h – Proyecto “Sertão” (con Douglas Kali, Rohan Victor y Maiara Coboski)"
+        }
+      },
+      "publish_date": "2025-11-12T02:28:05.523499+00:00"
+    },
+    {
+      "title": "Maricá Bier Fest",
+      "slug": "marica-bier-fest",
+      "excerpt": "O Maricá Bier Fest será integrado ao 3ª Exposição de Carros Antigos de Itaipuaçu. Confira a programação, traga sua família e convide seus amigos.",
+      "content": "O Estado do Rio de Janeiro é destaque na produção de cerveja artesanal no Brasil.\r\nEm Maricá o segmento não para de crescer, o que contribui muito para a promoção da cidade, incrementando o turismo e a gastronomia local.\r\n O Maricá Bier Fest já integra o calendário oficial de eventos, e nesta edição será na Lona Cultural em Itaipuaçu, pela primeira vez o festival terá a participação de cervejarias estabelecidas no município. Um grande orgulho para todos nós!\r\n\r\n Além dos mais variados estilos de cervejas, o Maricá Bier Fest contará com shows todas as noites e muita animação, além do tradicional concurso de chopp em metro conta também com artesanato local e espaço kids. Você Vai Amar Maricá!",
+      "image": "imagem_2025-11-11_232438721.webp",
+      "image_caption": "Banner Bier Fest",
+      "event_date": "2024-11-14T18:00:00+00:00",
+      "event_end_date": "2024-11-17T22:00:00+00:00",
+      "event_location": "Itaipuacu, Maricá, RJ",
+      "source_name": "",
+      "source_url": "",
+      "is_featured": false,
+      "translations": {
+        "source": "93c399f9f80ae912",
+        "en": {
+          "title": "Maricá Bier Fest",
+          "excerpt": "The Maricá Bier Fest will be integrated with the 3rd Antique Car Exhibition in Itaipuaçu. Check the schedule, bring your family and invite your friends.",
+          "content": "The State of Rio de Janeiro is a highlight in the production of craft beer in Brazil.\r\nIn Maricá, the segment is not stopping to grow, which contributes a lot to the promotion of the city, increasing tourism and local cuisine.\r\n The Maricá Bier Fest is already part of the official event calendar, and this edition will be at the Cultural Tent in Itaipuaçu, for the first time the festival will have the participation of breweries established in the municipality. A great pride for all of us!\r\n\r\n In addition to the various styles of beer, the Maricá Bier Fest will feature shows every night and lots of fun, in addition to the traditional beer meter contest, it also includes local crafts and a kids' area. You Will Love Maricá!"
+        },
+        "es": {
+          "title": "Maricá Bier Fest",
+          "excerpt": "El Maricá Bier Fest será integrado a la 3ª Exposición de Coches Antiguos de Itaipuaçu. Consulte la programación, trae a su familia y invite a sus amigos.",
+          "content": "El Estado de Río de Janeiro es destacado en la producción de cerveza artesanal en Brasil.\r\nEn Maricá el segmento no para de crecer, lo que contribuye mucho a la promoción de la ciudad, incrementando el turismo y la gastronomía local.\r\n El Maricá Bier Fest ya integra el calendario oficial de eventos, y en esta edición será en la Lona Cultural en Itaipuaçu, por primera vez el festival tendrá la participación de cervecerías establecidas en el municipio. Un gran orgullo para todos nosotros!\r\n\r\n Además de los más variados estilos de cervezas, el Maricá Bier Fest contará con shows todas las noches y mucha animación, además del tradicional concurso de chopp a metro también cuenta con artesanía local y espacio kids. ¡Usted Va a Amar Maricá!"
+        }
+      },
+      "publish_date": "2025-11-12T02:25:44.929285+00:00"
+    }
+  ]
+}

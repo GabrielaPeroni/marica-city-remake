@@ -141,3 +141,10 @@ version_files = ["pyproject.toml:version"]
 changelog_file = "CHANGELOG.md"
 update_changelog_on_bump = true
 tag_format = "v$version"
+
+[tool.vercel]
+entrypoint = "config.wsgi:application"
+
+[tool.vercel.scripts]
+# Migrations, demo content and the admin account (scripts/vercel_build.py)
+build = "python scripts/vercel_build.py"

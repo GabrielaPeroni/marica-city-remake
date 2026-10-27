@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from datetime import timezone as dt_timezone
 from pathlib import Path
+from unittest import mock
 
 from django.contrib import admin
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -873,3 +874,29 @@ class EventTriageBulkTests(TestCase):
         response = self.client.get(reverse("core:admin_event_triage"), follow=True)
         self.assertContains(response, "data-bulk-item", count=3)
         self.assertContains(response, "Descartar selecionados")
+
+
+class CronCrawlEventsTests(TestCase):
+    url = "/cron/crawl-events/"
+
+    @override_settings(CRON_SECRET="s3cret")
+    def test_rejects_missing_or_wrong_secret(self):
+        self.assertEqual(self.client.get(self.url).status_code, 401)
+        wrong = self.client.get(self.url, HTTP_AUTHORIZATION="Bearer nope")
+        self.assertEqual(wrong.status_code, 401)
+
+    @override_settings(CRON_SECRET="")
+    def test_disabled_without_secret(self):
+        response = self.client.get(self.url, HTTP_AUTHORIZATION="Bearer ")
+        self.assertEqual(response.status_code, 401)
+
+    @override_settings(CRON_SECRET="s3cret")
+    def test_runs_crawler_with_secret(self):
+        with mock.patch(
+            "apps.news.event_crawler.fetch_prefeitura_posts",
+            autospec=True,
+            return_value=[],
+        ):
+            response = self.client.get(self.url, HTTP_AUTHORIZATION="Bearer s3cret")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"created": 0})

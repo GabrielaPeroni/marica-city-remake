@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `robots.txt`, `sitemap.xml` (pages, places, events) and a meta description
   on every page (a place's or event's own text where there is one).
 - Dependabot also watches the Docker base image.
+- Ready for Vercel (see `documentacao/DEPLOYMENT.md`):
+  - `[tool.vercel]` entry point and a build step (`scripts/vercel_build.py`)
+    that migrates, loads the demo content and creates the admin from
+    environment variables.
+  - `DATABASE_URL` support (Neon) and a daily Vercel Cron for the event
+    crawler at `/cron/crawl-events/`, protected by `CRON_SECRET`.
+  - `deploy-check.yml` smoke-tests and runs Lighthouse against the live site
+    after each production deploy.
+- Demo content snapshot: `export_demo_data` writes the curated places,
+  photos, reviews, events and translations to `apps/core/demo_data/`, and
+  `load_demo_data` recreates them on an empty database. Personal accounts are
+  never exported; demo authors have no usable password.
 - Staff can feature places (star button in the places list, or the Django
   admin). Featured places lead the "Onde ir" section of the landing page.
 - Bulk actions (approve, remove, publish, archive, delete, discard) ask for
@@ -187,6 +199,8 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Fixed
 
+- The image could not store uploads without R2: `/app` was owned by root, so
+  the non-root `app` user couldn't create `/app/media`.
 - The Docker `HEALTHCHECK` failed in production: the probe to
   `127.0.0.1:8000/healthz/` got a 400 (host not in `ALLOWED_HOSTS`) and would
   then get the HTTPS redirect. `/healthz/` is now answered by a middleware

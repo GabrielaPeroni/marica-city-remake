@@ -34,6 +34,8 @@ WORKDIR /app
 
 COPY --from=builder /venv /venv
 COPY --from=builder --chown=app:app /app /app
+# WORKDIR created /app as root; uploads without R2 need a writable media folder
+RUN mkdir -p /app/media && chown app:app /app/media
 
 USER app
 

@@ -1,13 +1,16 @@
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Case, IntegerField, Q, Value, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.utils.crypto import constant_time_compare
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from apps.core.utils import is_speculative
 
+from . import event_crawler
 from .models import News
 
 PAGE_SIZE = 12
@@ -67,3 +70,18 @@ def news_view_beacon(request, slug):
         News.objects.published().events(), slug=slug
     ).increment_view_count()
     return JsonResponse({"ok": True})
+
+
+@require_GET
+def cron_crawl_events_view(request):
+    """Vercel Cron: busca eventos novos da Prefeitura e os põe em triagem.
+
+    Só responde a quem envia ``Authorization: Bearer <CRON_SECRET>``.
+    """
+    expected = f"Bearer {settings.CRON_SECRET}"
+    if not settings.CRON_SECRET or not constant_time_compare(
+        request.headers.get("Authorization", ""), expected
+    ):
+        return JsonResponse({"error": "unauthorized"}, status=401)
+    created = event_crawler.store_candidates(event_crawler.fetch_prefeitura_posts())
+    return JsonResponse({"created": created})

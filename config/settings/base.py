@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import parse_qsl, unquote, urlsplit
 
 from decouple import config
 
@@ -62,15 +63,37 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
-        "NAME": config("DB_NAME", default=str(BASE_DIR / "db.sqlite3")),
-        "USER": config("DB_USER", default=""),
-        "PASSWORD": config("DB_PASSWORD", default=""),
-        "HOST": config("DB_HOST", default=""),
-        "PORT": config("DB_PORT", default=""),
+
+def _database_from_url(url):
+    """postgres://user:pass@host:port/name?sslmode=require (Vercel/Neon set DATABASE_URL)"""
+    parts = urlsplit(url)
+    return {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": parts.path.lstrip("/"),
+        "USER": unquote(parts.username or ""),
+        "PASSWORD": unquote(parts.password or ""),
+        "HOST": parts.hostname or "",
+        "PORT": str(parts.port or ""),
+        "OPTIONS": dict(parse_qsl(parts.query)),
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
     }
+
+
+DATABASE_URL = config("DATABASE_URL", default="")
+DATABASES = {
+    "default": (
+        _database_from_url(DATABASE_URL)
+        if DATABASE_URL
+        else {
+            "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
+            "NAME": config("DB_NAME", default=str(BASE_DIR / "db.sqlite3")),
+            "USER": config("DB_USER", default=""),
+            "PASSWORD": config("DB_PASSWORD", default=""),
+            "HOST": config("DB_HOST", default=""),
+            "PORT": config("DB_PORT", default=""),
+        }
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -152,6 +175,9 @@ LOGOUT_REDIRECT_URL = "core:landing"
 # Deve ser definido no arquivo .env
 GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY", default="")
+
+# Vercel Cron envia este segredo no cabeçalho Authorization (/cron/...)
+CRON_SECRET = config("CRON_SECRET", default="")
 
 # Tradução automática de conteúdo (manage.py translate_content)
 OLLAMA_URL = config("OLLAMA_URL", default="http://localhost:11434")
