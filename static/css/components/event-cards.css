@@ -223,3 +223,23 @@
   font-size: 0.8rem;
   font-weight: 700;
 }
+
+.event-info {
+  margin-bottom: 0;
+}
+
+.event-info .event-info-facts {
+  flex: 1 1 260px;
+}
+
+.event-info-back {
+  align-self: center;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.event-info-back:hover {
+  color: var(--brand-red);
+}

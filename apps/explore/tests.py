@@ -1826,7 +1826,7 @@ class BacklogViewTests(TestCase):
         response = self.client.get(reverse("explore:backlog"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["places"].count(), 3)
-        self.assertEqual(response.context["view_mode"], "history")
+        self.assertEqual(response.context["status_filter"], "all")
 
     def test_backlog_queue_mode_shows_only_pending(self):
         """Test queue mode shows only pending, active places"""
@@ -1912,7 +1912,7 @@ class ApprovalWorkflowViewTests(TestCase):
         response = self.client.get(reverse("explore:approval_queue"))
         self.assertRedirects(
             response,
-            reverse("explore:backlog") + "?view=queue",
+            reverse("explore:backlog") + "?status=pending",
             fetch_redirect_response=False,
         )
 

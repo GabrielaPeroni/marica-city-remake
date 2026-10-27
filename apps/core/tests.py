@@ -167,7 +167,7 @@ class AdminDashboardTests(TestCase):
         self.client.login(username="staffuser", password="testpass123")
         response = self.client.get(self.url)
 
-        self.assertContains(response, "DASHBOARD")
+        self.assertContains(response, "Visão geral")
 
 
 class HealthViewTests(TestCase):

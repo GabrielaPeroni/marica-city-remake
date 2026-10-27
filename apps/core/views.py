@@ -33,12 +33,12 @@ def health_view(request):
 
 
 def landing_view(request):
-    # Lugares em destaque (mais recentes)
+    # "Onde ir": os destacados pela equipe primeiro, depois os mais recentes
     featured_places = (
         Place.objects.filter(is_approved=True, is_active=True)
         .with_ratings()
         .prefetch_related("images", "categories")
-        .order_by("-created_at")[:6]
+        .order_by("-is_featured", "-created_at")[:6]
     )
 
     # Em alta: mais visitados na semana; sem visitas, os cadastrados na semana
@@ -57,7 +57,7 @@ def landing_view(request):
     categories = (
         Category.objects.filter(is_active=True)
         .with_place_counts()
-        .order_by("display_order")[:8]
+        .order_by("display_order")[:6]
     )
 
     events = News.objects.published().select_related("category")
@@ -143,7 +143,11 @@ def admin_dashboard_view(request):
     draft_news = News.objects.filter(status=News.DRAFT).count()
 
     # Usuários recentes (últimos 10)
-    recent_users = User.objects.select_related().order_by("-date_joined")[:10]
+    # O administrador fica sempre no topo; depois, os cadastros mais recentes
+    recent_users = list(User.objects.filter(is_superuser=True).order_by("date_joined"))
+    recent_users += list(
+        User.objects.filter(is_superuser=False).order_by("-date_joined")[:10]
+    )
 
     context = {
         "total_users": total_users,
@@ -178,8 +182,15 @@ def admin_news_list_view(request):
         messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
 
-    # Obter parâmetros de filtro
-    status_filter = request.GET.get("status", "all")
+    return render(
+        request,
+        "core/admin/news_list.html",
+        _events_context(request, request.GET.get("status", "all")),
+    )
+
+
+def _events_context(request, status_filter, triage_form=None):
+    """Lista de eventos e, no filtro "suggested", os candidatos do crawler."""
     category_filter = request.GET.get("category", "all")
     search_query = request.GET.get("q", "").strip()
 
@@ -194,8 +205,12 @@ def admin_news_list_view(request):
         "draft": News.DRAFT,
         "archived": News.ARCHIVED,
     }
-    if status_filter != "all":
-        news_list = news_list.filter(status=statuses.get(status_filter, status_filter))
+    if status_filter in statuses.values():  # links antigos com o valor salvo
+        status_filter = next(k for k, v in statuses.items() if v == status_filter)
+    if status_filter in statuses:
+        news_list = news_list.filter(status=statuses[status_filter])
+    elif status_filter != "suggested":
+        status_filter = "all"
 
     if category_filter != "all":
         news_list = news_list.filter(category__name=category_filter)
@@ -212,6 +227,10 @@ def admin_news_list_view(request):
     draft_count = News.objects.filter(status=News.DRAFT).count()
     archived_count = News.objects.filter(status=News.ARCHIVED).count()
 
+    suggested_count = EventCandidate.objects.filter(
+        status=EventCandidate.PENDING
+    ).count()
+
     context = {
         "news_list": news_list,
         "categories": categories,
@@ -222,8 +241,17 @@ def admin_news_list_view(request):
         "published_count": published_count,
         "draft_count": draft_count,
         "archived_count": archived_count,
+        "status_cards": [
+            ("all", _("Todos"), total_count, "collection", "neutral"),
+            ("suggested", _("Sugestões"), suggested_count, "magic", "warning"),
+            ("published", _("Publicados"), published_count, "check-circle", "success"),
+            ("draft", _("Rascunhos"), draft_count, "pencil-square", "featured"),
+            ("archived", _("Arquivados"), archived_count, "archive", "neutral"),
+        ],
     }
-    return render(request, "core/admin/news_list.html", context)
+    if status_filter == "suggested":
+        context.update(_triage_context(triage_form))
+    return context
 
 
 @login_required
@@ -385,12 +413,16 @@ def _triage_context(bound_form=None):
     return {"candidates": candidates, "recent": recent}
 
 
+def _suggestions_url():
+    return reverse("core:admin_news_list") + "?status=suggested"
+
+
 @login_required
 def admin_event_triage_view(request):
     if not request.user.can_moderate:
         messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("core:landing")
-    return render(request, "core/admin/event_triage.html", _triage_context())
+    return redirect(_suggestions_url())
 
 
 @login_required
@@ -406,7 +438,7 @@ def admin_event_triage_action_view(request, pk):
         messages.info(
             request, _('"%(title)s" foi descartado.') % {"title": candidate.title}
         )
-        return redirect("core:admin_event_triage")
+        return redirect(_suggestions_url())
 
     form = EventCandidateForm(request.POST, instance=candidate, prefix=f"c{pk}")
     if not form.is_valid():
@@ -414,14 +446,17 @@ def admin_event_triage_action_view(request, pk):
             request, _('Revise os campos de "%(title)s".') % {"title": candidate.title}
         )
         return render(
-            request, "core/admin/event_triage.html", _triage_context(form), status=400
+            request,
+            "core/admin/news_list.html",
+            _events_context(request, "suggested", form),
+            status=400,
         )
 
     news = event_crawler.approve(form.save(), request.user)
     messages.success(
         request, _('"%(title)s" publicado na agenda.') % {"title": news.title}
     )
-    return redirect("core:admin_event_triage")
+    return redirect(_suggestions_url())
 
 
 @login_required
@@ -446,7 +481,7 @@ def admin_event_triage_bulk_view(request):
         )
     else:
         messages.error(request, _("Ação inválida."))
-    return redirect("core:admin_event_triage")
+    return redirect(_suggestions_url())
 
 
 @login_required
@@ -465,4 +500,4 @@ def admin_event_crawl_view(request):
             request,
             _("%(created)s evento(s) novo(s) para triagem.") % {"created": created},
         )
-    return redirect("core:admin_event_triage")
+    return redirect(_suggestions_url())

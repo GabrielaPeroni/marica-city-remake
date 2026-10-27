@@ -544,20 +544,6 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Page fade-in on load */
-body {
-  animation: fadeIn 0.8s ease-in;
-}
-
 .hero-content {
   animation: fadeInUp 1.2s ease-out;
 }

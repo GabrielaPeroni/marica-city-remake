@@ -133,6 +133,11 @@ class Place(models.Model):
         default=True, help_text=_l("Se o lugar está atualmente ativo")
     )
 
+    is_featured = models.BooleanField(
+        default=False,
+        help_text=_l("Em destaque na página inicial"),
+    )
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 22:32-0300\n"
+"POT-Creation-Date: 2026-10-26 23:19-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -41,7 +41,7 @@ msgstr "Home"
 msgid "Explorar lugares"
 msgstr "Explore places"
 
-#: templates/404.html:21 templates/base.html:68 templates/news/news_list.html:4
+#: templates/404.html:21 templates/base.html:70 templates/news/news_list.html:4
 msgid "Agenda de eventos"
 msgstr "Events agenda"
 
@@ -73,7 +73,7 @@ msgstr "Create your account"
 msgid "Salve favoritos, avalie e compartilhe os seus lugares de Maricá."
 msgstr "Save favorites, rate and share your places in Maricá."
 
-#: templates/accounts/register.html:25 templates/explore/review_delete_confirm.html:37
+#: templates/accounts/register.html:25 templates/explore/review_delete_confirm.html:40
 #: templates/includes/login_dropdown.html:12
 msgid "Nome de usuário"
 msgstr "Username"
@@ -82,7 +82,7 @@ msgstr "Username"
 msgid "Endereço de e-mail"
 msgstr "Email address"
 
-#: templates/accounts/register.html:45 templates/explore/review_delete_confirm.html:41
+#: templates/accounts/register.html:45 templates/explore/review_delete_confirm.html:44
 #: templates/includes/login_dropdown.html:16
 msgid "Senha"
 msgstr "Password"
@@ -99,156 +99,174 @@ msgstr "Sign up"
 msgid "ou"
 msgstr "or"
 
-#: templates/accounts/user_delete_confirm.html:25
-#: templates/core/admin/news_delete_confirm.html:30 templates/explore/place_form.html:211
-#: templates/explore/review_delete_confirm.html:67
+#: templates/accounts/user_delete_confirm.html:27
+#: templates/core/admin/news_delete_confirm.html:32 templates/explore/place_form.html:211
+#: templates/explore/review_delete_confirm.html:70
 msgid "Confirmar Exclusão"
 msgstr "Confirm Deletion"
 
-#: templates/accounts/user_delete_confirm.html:36
+#: templates/accounts/user_delete_confirm.html:38
 msgid "Equipe"
 msgstr "Staff"
 
-#: templates/accounts/user_delete_confirm.html:36
+#: templates/accounts/user_delete_confirm.html:38
 msgid "Comum"
 msgstr "Regular"
 
-#: templates/accounts/user_delete_confirm.html:42
-#: templates/core/admin/news_delete_confirm.html:42
+#: templates/accounts/user_delete_confirm.html:44
+#: templates/core/admin/news_delete_confirm.html:44
 msgid "Atenção!"
 msgstr "Attention!"
 
-#: templates/accounts/user_delete_confirm.html:42
-#: templates/core/admin/news_delete_confirm.html:42 templates/explore/place_detail.html:336
-#: templates/explore/review_delete_confirm.html:86
+#: templates/accounts/user_delete_confirm.html:44
+#: templates/core/admin/news_delete_confirm.html:44 templates/explore/place_detail.html:337
+#: templates/explore/review_delete_confirm.html:89
 msgid "Esta ação não pode ser desfeita."
 msgstr "This action cannot be undone."
 
-#: templates/accounts/user_delete_confirm.html:45
+#: templates/accounts/user_delete_confirm.html:47
 msgid "Você está prestes a excluir permanentemente este usuário. Isso irá:"
 msgstr "You are about to permanently delete this user. This will:"
 
-#: templates/accounts/user_delete_confirm.html:47
+#: templates/accounts/user_delete_confirm.html:49
 msgid "Remover o usuário do sistema"
 msgstr "Remove the user from the system"
 
-#: templates/accounts/user_delete_confirm.html:48
+#: templates/accounts/user_delete_confirm.html:50
 msgid "Excluir todos os lugares criados por este usuário"
 msgstr "Delete all places created by this user"
 
-#: templates/accounts/user_delete_confirm.html:49
+#: templates/accounts/user_delete_confirm.html:51
 msgid "Excluir todas as avaliações feitas por este usuário"
 msgstr "Delete all reviews made by this user"
 
-#: templates/accounts/user_delete_confirm.html:50
+#: templates/accounts/user_delete_confirm.html:52
 msgid "Remover todas as interações e favoritos"
 msgstr "Remove all interactions and favorites"
 
-#: templates/accounts/user_delete_confirm.html:53
+#: templates/accounts/user_delete_confirm.html:55
 msgid "Tem certeza que deseja continuar?"
 msgstr "Are you sure you want to continue?"
 
-#: templates/accounts/user_delete_confirm.html:58
-#: templates/core/admin/news_delete_confirm.html:91 templates/core/admin/news_form.html:207
-#: templates/explore/place_detail.html:310 templates/explore/place_detail.html:311
-#: templates/explore/place_detail.html:342 templates/explore/place_form.html:167
-#: templates/explore/place_form.html:223 templates/explore/review_delete_confirm.html:98
+#: templates/accounts/user_delete_confirm.html:60
+#: templates/core/admin/news_delete_confirm.html:93 templates/core/admin/news_form.html:209
+#: templates/explore/place_detail.html:311 templates/explore/place_detail.html:312
+#: templates/explore/place_detail.html:343 templates/explore/place_form.html:167
+#: templates/explore/place_form.html:223 templates/explore/review_delete_confirm.html:101
 #: templates/explore/review_form.html:88 templates/includes/remove_place_modal.html:39
 msgid "Cancelar"
 msgstr "Cancel"
 
-#: templates/accounts/user_delete_confirm.html:61
+#: templates/accounts/user_delete_confirm.html:63
 msgid "Sim, Excluir Usuário"
 msgstr "Yes, Delete User"
 
-#: templates/accounts/user_management.html:29
+#: templates/accounts/user_management.html:31
 msgid "Gerenciamento de Usuários"
 msgstr "User Management"
 
-#: templates/accounts/user_management.html:39
+#: templates/accounts/user_management.html:41
 msgid "Tipo de Usuário"
 msgstr "User Type"
 
-#: templates/accounts/user_management.html:41
+#: templates/accounts/user_management.html:43
 msgid "Todos os tipos"
 msgstr "All types"
 
-#: apps/accounts/views.py:196 templates/accounts/user_management.html:42
-#: templates/accounts/user_management.html:93
-msgid "Staff"
-msgstr "Staff"
+#: templates/accounts/user_management.html:44 templates/accounts/user_management.html:96
+#: templates/core/admin_dashboard.html:212
+msgid "Administrador"
+msgstr "Administrator"
 
-#: apps/accounts/views.py:196 templates/accounts/user_management.html:43
-#: templates/accounts/user_management.html:94
+#: apps/accounts/views.py:206 templates/accounts/user_management.html:45
+#: templates/accounts/user_management.html:102
+msgid "Moderador"
+msgstr "Moderator"
+
+#: apps/accounts/views.py:206 templates/accounts/user_management.html:46
+#: templates/accounts/user_management.html:103
 msgid "Regular"
 msgstr "Regular"
 
-#: templates/accounts/user_management.html:47 templates/accounts/user_management.html:76
-#: templates/core/admin/news_list.html:178 templates/core/admin_dashboard.html:197
-#: templates/explore/admin/backlog.html:188
+#: templates/accounts/user_management.html:50 templates/accounts/user_management.html:79
+#: templates/core/admin/news_list.html:115 templates/core/admin_dashboard.html:198
+#: templates/explore/admin/backlog.html:120
 msgid "Status"
 msgstr "Status"
 
-#: templates/accounts/user_management.html:49
+#: templates/accounts/user_management.html:52
 msgid "Todos os status"
 msgstr "All statuses"
 
-#: templates/accounts/user_management.html:50 templates/accounts/user_management.html:99
-#: templates/core/admin_dashboard.html:216
+#: templates/accounts/user_management.html:53 templates/accounts/user_management.html:109
+#: templates/core/admin_dashboard.html:218
 msgid "Ativo"
 msgstr "Active"
 
-#: templates/accounts/user_management.html:51 templates/accounts/user_management.html:99
-#: templates/core/admin_dashboard.html:218
+#: templates/accounts/user_management.html:54 templates/accounts/user_management.html:109
+#: templates/core/admin_dashboard.html:220
 msgid "Inativo"
 msgstr "Inactive"
 
-#: templates/accounts/user_management.html:55 templates/includes/admin_topbar.html:19
+#: templates/accounts/user_management.html:58
 msgid "Pesquisar"
 msgstr "Search"
 
-#: templates/accounts/user_management.html:56
+#: templates/accounts/user_management.html:59
 msgid "Nome, email, nome de usuário..."
 msgstr "Name, email, username..."
 
-#: templates/accounts/user_management.html:60 templates/core/admin_dashboard.html:184
+#: templates/accounts/user_management.html:63 templates/core/admin_dashboard.html:185
 msgid "Filtrar"
 msgstr "Filter"
 
-#: templates/accounts/user_management.html:74 templates/includes/navbar.html:39
+#: templates/accounts/user_management.html:77 templates/includes/navbar.html:39
 msgid "Usuário"
 msgstr "User"
 
-#: templates/accounts/user_management.html:75
+#: templates/accounts/user_management.html:78
 msgid "Tipo"
 msgstr "Type"
 
-#: templates/accounts/user_management.html:77
+#: templates/accounts/user_management.html:80
 msgid "Membro desde"
 msgstr "Member since"
 
-#: templates/accounts/user_management.html:78 templates/core/admin/news_list.html:182
-#: templates/explore/admin/approval_queue.html:48 templates/explore/admin/backlog.html:191
+#: templates/accounts/user_management.html:81 templates/core/admin/news_list.html:119
+#: templates/explore/admin/backlog.html:123
 msgid "Ações"
 msgstr "Actions"
 
-#: templates/accounts/user_management.html:106
+#: templates/accounts/user_management.html:90
+msgid "você"
+msgstr "you"
+
+#: templates/accounts/user_management.html:100
+#, python-format
+msgid "Alterar tipo de usuário de %(name)s"
+msgstr "Change user type for %(name)s"
+
+#: templates/accounts/user_management.html:117
+msgid "Protegido"
+msgstr "Protected"
+
+#: templates/accounts/user_management.html:119
 msgid "Ações do usuário"
 msgstr "User Actions"
 
-#: templates/accounts/user_management.html:111
+#: templates/accounts/user_management.html:124
 msgid "Você não pode modificar sua própria conta"
 msgstr "You cannot modify your own account"
 
-#: templates/accounts/user_management.html:116
+#: templates/accounts/user_management.html:129
 msgid "Excluir usuário"
 msgstr "Delete user"
 
-#: templates/accounts/user_management.html:117
+#: templates/accounts/user_management.html:130
 msgid "Você não pode excluir sua própria conta"
 msgstr "You cannot delete your own account"
 
-#: templates/accounts/user_management.html:127
+#: templates/accounts/user_management.html:141
 msgid "Nenhum usuário encontrado"
 msgstr "No user found"
 
@@ -256,13 +274,13 @@ msgstr "No user found"
 msgid "Pular para o conteúdo"
 msgstr "Skip to content"
 
-#: templates/base.html:31 templates/explore/place_detail.html:268
-#: templates/explore/place_detail.html:328 templates/explore/place_form.html:213
+#: templates/base.html:31 templates/explore/place_detail.html:269
+#: templates/explore/place_detail.html:329 templates/explore/place_form.html:213
 #: templates/includes/remove_place_modal.html:9
 msgid "Fechar"
 msgstr "Close"
 
-#: templates/base.html:51
+#: templates/base.html:53
 msgid ""
 "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da "
 "cidade, em português, inglês e espanhol."
@@ -270,64 +288,64 @@ msgstr ""
 "A tourism guide to Maricá: beaches, lagoons, trails, culture and the city's events, "
 "in Portuguese, English and Spanish."
 
-#: templates/base.html:53
+#: templates/base.html:55
 msgid "Código no GitHub"
 msgstr "Code on GitHub"
 
-#: templates/base.html:53 templates/news/news_detail.html:46
-#: templates/news/news_detail.html:50 templates/news/news_detail.html:74
+#: templates/base.html:55 templates/news/news_detail.html:74
+#: templates/news/news_detail.html:90
 msgid "abre em nova aba"
 msgstr "opens in new tab"
 
-#: templates/base.html:56
+#: templates/base.html:58
 msgid "Rodapé: explorar"
 msgstr "Footer: explore"
 
-#: templates/base.html:57 templates/explore/category_detail.html:17
-#: templates/explore/place_detail.html:25 templates/explore/place_form.html:17
+#: templates/base.html:59 templates/explore/category_detail.html:17
+#: templates/explore/place_detail.html:26 templates/explore/place_form.html:17
 #: templates/explore/review_delete_confirm.html:15 templates/explore/review_form.html:17
 #: templates/includes/navbar.html:17
 msgid "Explorar"
 msgstr "Explore"
 
-#: templates/base.html:62
+#: templates/base.html:64
 msgid "Todos os lugares"
 msgstr "All places"
 
-#: templates/base.html:65
+#: templates/base.html:67
 msgid "Rodapé: visite"
 msgstr "Footer: visit"
 
-#: templates/base.html:66
+#: templates/base.html:68
 msgid "Visite"
 msgstr "Visit"
 
-#: templates/base.html:69 templates/core/about.html:58
+#: templates/base.html:71 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Plan your visit"
 
-#: templates/base.html:70 templates/core/about.html:138
+#: templates/base.html:72 templates/core/about.html:138
 msgid "Telefones de emergência"
 msgstr "Emergency numbers"
 
-#: templates/base.html:71 templates/core/about.html:4
+#: templates/base.html:73 templates/core/about.html:4
 msgid "Sobre o projeto"
 msgstr "About the project"
 
-#: templates/base.html:74
+#: templates/base.html:76
 msgid "Rodapé: participar"
 msgstr "Footer: participate"
 
-#: templates/base.html:75
+#: templates/base.html:77
 msgid "Participar"
 msgstr "Participate"
 
-#: templates/base.html:78 templates/base.html:82 templates/explore/favorites.html:4
+#: templates/base.html:80 templates/base.html:84 templates/explore/favorites.html:4
 #: templates/explore/favorites.html:17 templates/includes/navbar.html:52
 msgid "Meus favoritos"
 msgstr "My favorites"
 
-#: apps/explore/views.py:237 templates/base.html:79 templates/core/landing.html:96
+#: apps/explore/views.py:252 templates/base.html:81 templates/core/landing.html:96
 #: templates/core/landing.html:254 templates/explore/category_detail.html:123
 #: templates/explore/explore.html:59 templates/explore/explore.html:61
 #: templates/explore/explore.html:128 templates/includes/admin_navbar.html:47
@@ -335,11 +353,11 @@ msgstr "My favorites"
 msgid "Cadastrar lugar"
 msgstr "Submit a place"
 
-#: templates/base.html:81 templates/core/about.html:158
+#: templates/base.html:83 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Create account"
 
-#: templates/base.html:89
+#: templates/base.html:91
 msgid "Código sob licença MIT · Fotos: Wikimedia Commons e colaboradores"
 msgstr "Code under the MIT licence · Photos: Wikimedia Commons and contributors"
 
@@ -508,12 +526,7 @@ msgstr ""
 msgid "Ver agenda de eventos"
 msgstr "See the events agenda"
 
-#: templates/core/admin/event_triage.html:4 templates/core/admin/event_triage.html:31
-#: templates/includes/admin_sidebar.html:50
-msgid "Triagem de eventos"
-msgstr "Event triage"
-
-#: templates/core/admin/event_triage.html:32
+#: templates/core/admin/_event_suggestions.html:4
 msgid ""
 "Eventos encontrados automaticamente no portal da Prefeitura. Confira os dados e "
 "publique na agenda."
@@ -521,59 +534,64 @@ msgstr ""
 "Events found automatically on the Prefeitura's website. Check the details and publish"
 " them to the agenda."
 
-#: templates/core/admin/event_triage.html:36
+#: templates/core/admin/_event_suggestions.html:8
 msgid "Buscar agora"
 msgstr "Search now"
 
-#: templates/core/admin/event_triage.html:45 templates/core/admin/news_list.html:174
-#: templates/explore/admin/backlog.html:184
+#: templates/core/admin/_event_suggestions.html:17 templates/core/admin/news_list.html:111
+#: templates/explore/admin/backlog.html:116
 msgid "Selecionar todos"
 msgstr "Select all"
 
-#: templates/core/admin/event_triage.html:47 templates/core/admin/news_list.html:156
-#: templates/explore/admin/backlog.html:161
+#: templates/core/admin/_event_suggestions.html:19 templates/core/admin/news_list.html:91
+#: templates/explore/admin/backlog.html:84
 msgid "0 selecionados"
 msgstr "0 selected"
 
-#: templates/core/admin/event_triage.html:49
+#: templates/core/admin/_event_suggestions.html:21
+#, python-format
+msgid "Sugestões selecionadas: %%s. Elas serão descartadas. Continuar?"
+msgstr "Selected suggestions: %%s. They will be discarded. Continue?"
+
+#: templates/core/admin/_event_suggestions.html:22
 msgid "Descartar selecionados"
 msgstr "Discard selected"
 
-#: templates/core/admin/event_triage.html:69 templates/core/admin/news_list.html:190
-#: templates/explore/admin/backlog.html:199
+#: templates/core/admin/_event_suggestions.html:42 templates/core/admin/news_list.html:127
+#: templates/explore/admin/backlog.html:131
 msgid "Selecionar"
 msgstr "Select"
 
-#: templates/core/admin/event_triage.html:72
+#: templates/core/admin/_event_suggestions.html:45
 #, python-format
 msgid "Confiança %(score)s%%"
 msgstr "Confidence %(score)s%%"
 
-#: templates/core/admin/event_triage.html:81
+#: templates/core/admin/_event_suggestions.html:54
 msgid "Parecido com"
 msgstr "Similar to"
 
-#: templates/core/admin/event_triage.html:82
+#: templates/core/admin/_event_suggestions.html:55
 msgid ", já publicado."
 msgstr ", already published."
 
-#: templates/core/admin/event_triage.html:88
+#: templates/core/admin/_event_suggestions.html:61
 msgid "Mesmo dia e local que:"
 msgstr "Same day and location as:"
 
-#: templates/core/admin/event_triage.html:90
+#: templates/core/admin/_event_suggestions.html:63
 msgid "Publique um e descarte os outros."
 msgstr "Publish one and discard the others."
 
-#: templates/core/admin/event_triage.html:107
+#: templates/core/admin/_event_suggestions.html:80
 msgid "Descartar"
 msgstr "Discard"
 
-#: templates/core/admin/event_triage.html:108
+#: templates/core/admin/_event_suggestions.html:81
 msgid "Publicar na agenda"
 msgstr "Publish to the agenda"
 
-#: templates/core/admin/event_triage.html:118
+#: templates/core/admin/_event_suggestions.html:91
 msgid ""
 "Nada para revisar. O crawler roda a cada 6 horas; use “Buscar agora” para consultar "
 "já."
@@ -581,236 +599,250 @@ msgstr ""
 "Nothing to review. The crawler runs every 6 hours; use “Search now” to check "
 "immediately."
 
-#: templates/core/admin/event_triage.html:123
+#: templates/core/admin/_event_suggestions.html:96
 msgid "Revisados recentemente"
 msgstr "Recently reviewed"
 
-#: templates/core/admin/event_triage.html:130
+#: templates/core/admin/_event_suggestions.html:103
 #, python-format
 msgid "%(status)s por %(user)s"
 msgstr "%(status)s by %(user)s"
 
-#: templates/core/admin/news_delete_confirm.html:33 templates/core/admin/news_form.html:64
+#: templates/core/admin/news_delete_confirm.html:35 templates/core/admin/news_form.html:66
+#: templates/news/news_detail.html:61
 msgid "Voltar"
 msgstr "Back"
 
-#: templates/core/admin/news_delete_confirm.html:46
+#: templates/core/admin/news_delete_confirm.html:48
 msgid "Tem certeza que deseja excluir este evento?"
 msgstr "Are you sure you want to delete this event?"
 
-#: templates/core/admin/news_delete_confirm.html:65 templates/core/admin/news_list.html:211
+#: templates/core/admin/news_delete_confirm.html:67 templates/core/admin/news_list.html:148
 msgid "Publicado"
 msgstr "Published"
 
-#: templates/core/admin/news_delete_confirm.html:67 templates/core/admin/news_list.html:213
+#: templates/core/admin/news_delete_confirm.html:69 templates/core/admin/news_list.html:150
 msgid "Rascunho"
 msgstr "Draft"
 
-#: templates/core/admin/news_delete_confirm.html:69 templates/core/admin/news_list.html:215
+#: templates/core/admin/news_delete_confirm.html:71 templates/core/admin/news_list.html:152
 msgid "Arquivado"
 msgstr "Archived"
 
-#: templates/core/admin/news_delete_confirm.html:75 templates/news/news_detail.html:82
+#: templates/core/admin/news_delete_confirm.html:77 templates/news/news_detail.html:86
 #, python-format
 msgid "%(counter)s visualização"
 msgid_plural "%(counter)s visualizações"
 msgstr[0] "%(counter)s view"
 msgstr[1] "%(counter)s views"
 
-#: templates/core/admin/news_delete_confirm.html:88
+#: templates/core/admin/news_delete_confirm.html:90
 msgid "Sim, excluir evento"
 msgstr "Yes, delete event"
 
-#: templates/core/admin/news_form.html:73 templates/explore/place_form.html:47
+#: templates/core/admin/news_form.html:75 templates/explore/place_form.html:47
 msgid "Informações Básicas"
 msgstr "Basic Information"
 
-#: templates/core/admin/news_form.html:112
+#: templates/core/admin/news_form.html:114
 msgid "Imagem Destacada"
 msgstr "Featured Image"
 
-#: templates/core/admin/news_form.html:116
+#: templates/core/admin/news_form.html:118
 msgid "Imagem atual"
 msgstr "Current image"
 
-#: templates/core/admin/news_form.html:139
+#: templates/core/admin/news_form.html:141
 msgid "Informações do Evento"
 msgstr "Event Information"
 
-#: templates/core/admin/news_form.html:170
+#: templates/core/admin/news_form.html:172
 msgid "Configurações de Publicação"
 msgstr "Publication Settings"
 
-#: templates/core/admin/news_list.html:31 templates/core/admin_dashboard.html:160
-msgid "Gerenciar eventos"
-msgstr "Manage events"
+#: templates/core/admin/news_list.html:31 templates/includes/admin_sidebar.html:40
+#: templates/includes/navbar.html:20
+msgid "Eventos"
+msgstr "Events"
 
-#: templates/core/admin/news_list.html:34
+#: templates/core/admin/news_list.html:33
 msgid "Criar evento"
 msgstr "Create event"
 
-#: templates/core/admin/news_list.html:47 templates/explore/admin/backlog.html:49
-msgid "Total"
-msgstr "Total"
+#: templates/core/admin/news_list.html:38 templates/explore/admin/backlog.html:37
+msgid "Filtrar por status"
+msgstr "Filter by status"
 
-#: templates/core/admin/news_list.html:60 templates/core/admin/news_list.html:103
-msgid "Publicadas"
-msgstr "Published"
-
-#: templates/core/admin/news_list.html:73 templates/core/admin/news_list.html:106
-msgid "Rascunhos"
-msgstr "Drafts"
-
-#: templates/core/admin/news_list.html:86 templates/core/admin/news_list.html:109
-msgid "Arquivadas"
-msgstr "Archived"
-
-#: templates/core/admin/news_list.html:100 templates/core/admin/news_list.html:125
-#: templates/explore/admin/backlog.html:133
-msgid "Todas"
-msgstr "All"
-
-#: templates/core/admin/news_list.html:123 templates/core/admin/news_list.html:177
+#: templates/core/admin/news_list.html:58 templates/core/admin/news_list.html:114
+#: templates/explore/admin/backlog.html:56
 msgid "Categoria"
 msgstr "Category"
 
-#: templates/core/admin/news_list.html:134 templates/explore/category_detail.html:33
-#: templates/explore/explore.html:27
+#: templates/core/admin/news_list.html:60 templates/explore/admin/backlog.html:58
+msgid "Todas"
+msgstr "All"
+
+#: templates/core/admin/news_list.html:69 templates/explore/admin/backlog.html:74
+#: templates/explore/category_detail.html:33 templates/explore/explore.html:27
 msgid "Buscar"
 msgstr "Search"
 
-#: templates/core/admin/news_list.html:137
+#: templates/core/admin/news_list.html:72
 msgid "Buscar por título..."
 msgstr "Search by title..."
 
-#: templates/core/admin/news_list.html:158
+#: templates/core/admin/news_list.html:93
+#, python-format
+msgid "Eventos selecionados: %%s. Eles aparecerão na agenda. Publicar todos?"
+msgstr "Selected events: %%s. They will appear in the calendar. Publish all?"
+
+#: templates/core/admin/news_list.html:94
 msgid "Publicar"
 msgstr "Publish"
 
-#: templates/core/admin/news_list.html:161
+#: templates/core/admin/news_list.html:97
+#, python-format
+msgid "Eventos selecionados: %%s. Eles sairão da agenda. Arquivar todos?"
+msgstr "Selected events: %%s. They will leave the calendar. Archive all?"
+
+#: templates/core/admin/news_list.html:98
 msgid "Arquivar"
 msgstr "Archive"
 
-#: templates/core/admin/news_list.html:164
-msgid "Excluir os eventos selecionados? Esta ação não pode ser desfeita."
-msgstr "Delete selected events? This action cannot be undone."
+#: templates/core/admin/news_list.html:101
+#, python-format
+msgid "Eventos selecionados: %%s. Esta ação não pode ser desfeita. Excluir todos?"
+msgstr "Selected events: %%s. This cannot be undone. Delete all?"
 
-#: templates/core/admin/news_list.html:165 templates/core/admin/news_list.html:234
-#: templates/explore/place_detail.html:221 templates/explore/place_form.html:174
+#: templates/core/admin/news_list.html:102 templates/core/admin/news_list.html:171
+#: templates/explore/place_detail.html:222 templates/explore/place_form.html:174
 msgid "Excluir"
 msgstr "Delete"
 
-#: templates/core/admin/news_list.html:176
+#: templates/core/admin/news_list.html:113
 msgid "Título"
 msgstr "Title"
 
-#: templates/core/admin/news_list.html:179 templates/explore/place_detail.html:194
+#: templates/core/admin/news_list.html:116 templates/explore/place_detail.html:195
 msgid "Autor"
 msgstr "Author"
 
-#: templates/core/admin/news_list.html:180 templates/core/admin_dashboard.html:196
-#: templates/explore/admin/approval_queue.html:47 templates/explore/admin/backlog.html:190
+#: templates/core/admin/news_list.html:117 templates/core/admin_dashboard.html:197
+#: templates/explore/admin/backlog.html:122
 msgid "Data"
 msgstr "Date"
 
-#: templates/core/admin/news_list.html:181
+#: templates/core/admin/news_list.html:118
 msgid "Visualizações"
 msgstr "Views"
 
-#: templates/core/admin/news_list.html:201 templates/news/news_detail.html:20
+#: templates/core/admin/news_list.html:138
 msgid "Destaque"
 msgstr "Featured"
 
-#: templates/core/admin/news_list.html:226
+#: templates/core/admin/news_list.html:163
 msgid "Visualizar"
 msgstr "View"
 
-#: templates/core/admin/news_list.html:230 templates/explore/admin/backlog.html:240
-#: templates/explore/place_detail.html:216 templates/explore/place_form.html:19
+#: templates/core/admin/news_list.html:167 templates/explore/admin/backlog.html:173
+#: templates/explore/place_detail.html:217 templates/explore/place_form.html:19
 msgid "Editar"
 msgstr "Edit"
 
-#: templates/core/admin/news_list.html:247
+#: templates/core/admin/news_list.html:184
 msgid "Nenhum evento encontrado."
 msgstr "No events found."
 
-#: templates/core/admin/news_list.html:249
+#: templates/core/admin/news_list.html:186
 msgid "Criar primeiro evento"
 msgstr "Create first event"
 
-#: templates/core/admin_dashboard.html:29
-msgid "Painel Administrativo"
-msgstr "Admin Panel"
+#: templates/core/admin_dashboard.html:31 templates/includes/admin_sidebar.html:26
+msgid "Visão geral"
+msgstr "Overview"
 
-#: templates/core/admin_dashboard.html:43
+#: templates/core/admin_dashboard.html:45
 msgid "Novos Lugares"
 msgstr "New Places"
 
-#: templates/core/admin_dashboard.html:50 templates/core/admin_dashboard.html:70
-#: templates/core/admin_dashboard.html:90 templates/core/admin_dashboard.html:110
+#: templates/core/admin_dashboard.html:52 templates/core/admin_dashboard.html:72
+#: templates/core/admin_dashboard.html:111
 msgid "Desde a semana passada"
 msgstr "Since last week"
 
-#: templates/core/admin_dashboard.html:63 templates/core/admin_dashboard.html:181
+#: templates/core/admin_dashboard.html:65 templates/core/admin_dashboard.html:182
 msgid "Novos Usuários"
 msgstr "New Users"
 
-#: templates/core/admin_dashboard.html:83
-msgid "Solicitações"
-msgstr "Requests"
+#: apps/explore/views.py:594 templates/core/admin_dashboard.html:85
+#: templates/explore/explore.html:83 templates/includes/admin_sidebar.html:34
+msgid "Aguardando aprovação"
+msgstr "Pending approval"
 
-#: templates/core/admin_dashboard.html:103 templates/explore/place_detail.html:181
+#: templates/core/admin_dashboard.html:91
+msgid "Clique para revisar"
+msgstr "Click to review"
+
+#: templates/core/admin_dashboard.html:91
+msgid "Tudo em dia"
+msgstr "All caught up"
+
+#: templates/core/admin_dashboard.html:104 templates/explore/place_detail.html:182
 msgid "Avaliações"
 msgstr "Reviews"
 
-#: templates/core/admin_dashboard.html:123
+#: templates/core/admin_dashboard.html:124
 msgid "Gerenciar Usuários"
 msgstr "Manage Users"
 
-#: templates/core/admin_dashboard.html:126
+#: templates/core/admin_dashboard.html:127
 msgid "Visualizar, editar e gerenciar contas de usuários do sistema."
 msgstr "View, edit and manage system user accounts."
 
-#: templates/core/admin_dashboard.html:129 templates/core/admin_dashboard.html:149
-#: templates/core/admin_dashboard.html:169
+#: templates/core/admin_dashboard.html:130 templates/core/admin_dashboard.html:150
+#: templates/core/admin_dashboard.html:170
 msgid "Acessar"
 msgstr "Access"
 
-#: templates/core/admin_dashboard.html:140
+#: templates/core/admin_dashboard.html:141
 msgid "Gestão de Lugares"
 msgstr "Place Management"
 
-#: templates/core/admin_dashboard.html:143
+#: templates/core/admin_dashboard.html:144
 msgid "Revisar, aprovar e gerenciar lugares da comunidade."
 msgstr "Review, approve and manage community places."
 
-#: templates/core/admin_dashboard.html:145
+#: templates/core/admin_dashboard.html:146
 #, python-format
 msgid "%(counter)s pendente"
 msgid_plural "%(counter)s pendentes"
 msgstr[0] "%(counter)s pending"
 msgstr[1] "%(counter)s pendings"
 
-#: templates/core/admin_dashboard.html:163
+#: templates/core/admin_dashboard.html:161
+msgid "Gerenciar eventos"
+msgstr "Manage events"
+
+#: templates/core/admin_dashboard.html:164
 msgid "Criar, editar e publicar eventos da agenda."
 msgstr "Create, edit, and publish agenda events."
 
-#: templates/core/admin_dashboard.html:165
+#: templates/core/admin_dashboard.html:166
 #, python-format
 msgid "%(counter)s rascunho"
 msgid_plural "%(counter)s rascunhos"
 msgstr[0] "%(counter)s draft"
 msgstr[1] "%(counter)s drafts"
 
-#: templates/core/admin_dashboard.html:194
+#: templates/core/admin_dashboard.html:195
 msgid "Id"
 msgstr "ID"
 
-#: templates/core/admin_dashboard.html:195
+#: templates/core/admin_dashboard.html:196
 msgid "Nome de Usuário"
 msgstr "Username"
 
-#: templates/core/admin_dashboard.html:229
+#: templates/core/admin_dashboard.html:231
 msgid "Nenhum usuário recente encontrado."
 msgstr "No recent user found."
 
@@ -899,7 +931,7 @@ msgstr "Trending now"
 msgid "Destinos populares este mês"
 msgstr "Popular destinations this month"
 
-#: templates/core/landing.html:149 templates/explore/place_detail.html:198
+#: templates/core/landing.html:149 templates/explore/place_detail.html:199
 #, python-format
 msgid "Nota %(rating)s de 5"
 msgstr "Rating %(rating)s out of 5"
@@ -912,7 +944,7 @@ msgstr "View details"
 #: templates/core/landing.html:171 templates/core/landing.html:172
 #: templates/explore/category_detail.html:79 templates/explore/category_detail.html:80
 #: templates/explore/explore.html:88 templates/explore/explore.html:89
-#: templates/explore/place_detail.html:106 templates/explore/place_detail.html:107
+#: templates/explore/place_detail.html:107 templates/explore/place_detail.html:108
 msgid "Adicionar aos favoritos"
 msgstr "Add to favorites"
 
@@ -954,7 +986,7 @@ msgstr "Upcoming events in Maricá"
 msgid "Eventos recentes em Maricá"
 msgstr "Recent events in Maricá"
 
-#: templates/core/landing.html:267 templates/news/news_detail.html:97
+#: templates/core/landing.html:267 templates/news/news_detail.html:102
 msgid "Ver agenda completa"
 msgstr "See the full agenda"
 
@@ -1013,152 +1045,134 @@ msgstr "Loading interactive map..."
 msgid "Clique nos marcadores para ver detalhes de cada lugar"
 msgstr "Click on markers to see details of each place"
 
-#: templates/explore/admin/approval_queue.html:4
-msgid "Fila de aprovação"
-msgstr "Approval Queue"
-
-#: templates/explore/admin/approval_queue.html:33 templates/explore/admin/backlog.html:34
-#: templates/explore/admin/backlog.html:103
-msgid "Fila de Aprovação"
-msgstr "Approval Queue"
-
-#: templates/explore/admin/approval_queue.html:44 templates/explore/admin/backlog.html:186
-msgid "Lugar"
-msgstr "Place"
-
-#: templates/explore/admin/approval_queue.html:45 templates/explore/admin/backlog.html:187
-#: templates/explore/category_detail.html:45 templates/explore/explore.html:39
-#: templates/explore/place_form.html:95
-msgid "Categorias"
-msgstr "Categories"
-
-#: templates/explore/admin/approval_queue.html:46 templates/explore/admin/backlog.html:189
-msgid "Criado por"
-msgstr "Created by"
-
-#: templates/explore/admin/approval_queue.html:84 templates/explore/admin/backlog.html:245
-msgid "Aprovar"
-msgstr "Approve"
-
-#: templates/explore/admin/approval_queue.html:91
-msgid "Rejeitar"
-msgstr "Reject"
-
-#: templates/explore/admin/approval_queue.html:108 templates/explore/admin/backlog.html:271
-msgid "Nenhum lugar pendente"
-msgstr "No pending places"
-
-#: templates/explore/admin/approval_queue.html:109 templates/explore/admin/backlog.html:272
-msgid "Não há lugares aguardando aprovação no momento."
-msgstr "There are no places awaiting approval at the moment."
-
-#: templates/explore/admin/approval_queue.html:111 templates/explore/admin/backlog.html:274
-msgid "Explorar Lugares"
-msgstr "Explore Places"
-
-#: templates/explore/admin/backlog.html:4
+#: templates/explore/admin/backlog.html:6
 msgid "Histórico de lugares"
 msgstr "Place History"
 
-#: templates/explore/admin/backlog.html:36
-msgid "Histórico de Lugares"
-msgstr "Place History"
+#: templates/explore/admin/backlog.html:33 templates/includes/admin_sidebar.html:32
+msgid "Lugares"
+msgstr "Places"
 
-#: templates/explore/admin/backlog.html:62 templates/explore/admin/backlog.html:124
-msgid "Aprovados"
-msgstr "Approved"
+#: templates/explore/admin/backlog.html:52
+msgid "Buscar pelo nome"
+msgstr "Search by name"
 
-#: templates/explore/admin/backlog.html:75 templates/explore/admin/backlog.html:125
-msgid "Pendentes"
-msgstr "Pending"
+#: templates/explore/admin/backlog.html:53
+msgid "Ex.: Ponta Negra"
+msgstr "e.g. Ponta Negra"
 
-#: templates/explore/admin/backlog.html:88 templates/explore/admin/backlog.html:126
-msgid "Rejeitados"
-msgstr "Rejected"
-
-#: templates/explore/admin/backlog.html:106
-msgid "Histórico Completo"
-msgstr "Complete History"
-
-#: templates/explore/admin/backlog.html:121
-msgid "Filtrar por Status"
-msgstr "Filter by Status"
-
-#: templates/explore/admin/backlog.html:123
-msgid "Todos"
-msgstr "All"
-
-#: templates/explore/admin/backlog.html:131
-msgid "Filtrar por Categoria"
-msgstr "Filter by Category"
-
-#: templates/explore/admin/backlog.html:143
+#: templates/explore/admin/backlog.html:65
 msgid "Ordenar por"
 msgstr "Sort By"
 
-#: templates/explore/admin/backlog.html:145
-msgid "Mais Recentes"
-msgstr "Most Recent"
+#: templates/explore/admin/backlog.html:67
+msgid "Mais recentes"
+msgstr "Newest"
 
-#: templates/explore/admin/backlog.html:146
-msgid "Mais Antigos"
+#: templates/explore/admin/backlog.html:68
+msgid "Mais antigos"
 msgstr "Oldest"
 
-#: templates/explore/admin/backlog.html:147
+#: templates/explore/admin/backlog.html:69
 msgid "Nome (A-Z)"
 msgstr "Name (A-Z)"
 
-#: templates/explore/admin/backlog.html:148
+#: templates/explore/admin/backlog.html:70
 msgid "Nome (Z-A)"
 msgstr "Name (Z-A)"
 
-#: templates/explore/admin/backlog.html:163
-msgid "Aprovar selecionados"
-msgstr "Approve selected"
+#: templates/explore/admin/backlog.html:86
+#, python-format
+msgid "Lugares selecionados: %%s. Eles ficarão visíveis no site. Aprovar todos?"
+msgstr "Selected places: %%s. They will be visible on the site. Approve all?"
 
-#: templates/explore/admin/backlog.html:166 templates/includes/remove_place_modal.html:18
-msgid "Motivo da remoção"
-msgstr "Reason for removal"
+#: templates/explore/admin/backlog.html:87 templates/explore/admin/backlog.html:178
+msgid "Aprovar"
+msgstr "Approve"
 
-#: templates/explore/admin/backlog.html:170 templates/includes/remove_place_modal.html:27
-msgid "Especifique o motivo"
-msgstr "Specify the reason"
+#: templates/explore/admin/backlog.html:90
+#, python-format
+msgid "Lugares selecionados: %%s. Eles sairão do site. Escolha o motivo, que o autor verá:"
+msgstr ""
+"Selected places: %%s. They will be removed from the site. Choose the reason the "
+"author will see:"
 
-#: templates/explore/admin/backlog.html:172
-msgid "Remover selecionados"
-msgstr "Remove selected"
-
-#: templates/explore/admin/backlog.html:228
-msgid "Aprovado"
-msgstr "Approved"
-
-#: templates/explore/admin/backlog.html:230
-msgid "Rejeitado"
-msgstr "Rejected"
-
-#: templates/explore/admin/backlog.html:232
-msgid "Pendente"
-msgstr "Pending"
-
-#: templates/explore/admin/backlog.html:253
+#: templates/explore/admin/backlog.html:91 templates/explore/admin/backlog.html:193
 msgid "Remover"
 msgstr "Remove"
 
-#: templates/explore/admin/backlog.html:278
+#: templates/explore/admin/backlog.html:96 templates/includes/remove_place_modal.html:18
+msgid "Motivo da remoção"
+msgstr "Reason for removal"
+
+#: templates/explore/admin/backlog.html:101 templates/includes/remove_place_modal.html:27
+msgid "Especifique o motivo"
+msgstr "Specify the reason"
+
+#: templates/explore/admin/backlog.html:118
+msgid "Lugar"
+msgstr "Place"
+
+#: templates/explore/admin/backlog.html:119 templates/explore/category_detail.html:45
+#: templates/explore/explore.html:39 templates/explore/place_form.html:95
+msgid "Categorias"
+msgstr "Categories"
+
+#: templates/explore/admin/backlog.html:121
+msgid "Criado por"
+msgstr "Created by"
+
+#: templates/explore/admin/backlog.html:145
+msgid "Em destaque na página inicial"
+msgstr "Featured on the home page"
+
+#: apps/explore/views.py:596 templates/explore/admin/backlog.html:145
+msgid "Em destaque"
+msgstr "Featured"
+
+#: templates/explore/admin/backlog.html:161
+msgid "Aprovado"
+msgstr "Approved"
+
+#: templates/explore/admin/backlog.html:163
+msgid "Removido"
+msgstr "Removed"
+
+#: templates/explore/admin/backlog.html:165
+msgid "Pendente"
+msgstr "Pending"
+
+#: templates/explore/admin/backlog.html:187
+msgid "Tirar do destaque"
+msgstr "Remove from featured"
+
+#: templates/explore/admin/backlog.html:187
+msgid "Destacar na página inicial"
+msgstr "Feature on the home page"
+
+#: templates/explore/admin/backlog.html:211
+msgid "Nenhum lugar pendente"
+msgstr "No pending places"
+
+#: templates/explore/admin/backlog.html:212
+msgid "Não há lugares aguardando aprovação no momento."
+msgstr "There are no places awaiting approval at the moment."
+
+#: templates/explore/admin/backlog.html:215
 msgid "Nenhum lugar encontrado"
 msgstr "No places found"
 
-#: templates/explore/admin/backlog.html:279
+#: templates/explore/admin/backlog.html:216
 msgid "Não há lugares que correspondam aos filtros selecionados."
 msgstr "No places match the selected filters."
 
-#: templates/explore/admin/backlog.html:281
-msgid "Limpar Filtros"
-msgstr "Clear Filters"
+#: templates/explore/admin/backlog.html:219
+msgid "Ver todos os lugares"
+msgstr "See all places"
 
-#: templates/explore/category_detail.html:15 templates/explore/place_detail.html:23
+#: templates/explore/category_detail.html:15 templates/explore/place_detail.html:24
 #: templates/explore/place_form.html:15 templates/explore/review_form.html:15
-#: templates/news/news_detail.html:11
+#: templates/news/news_detail.html:16
 msgid "Trilha de navegação"
 msgstr "Breadcrumb navigation"
 
@@ -1187,7 +1201,7 @@ msgid "Todas as categorias"
 msgstr "All categories"
 
 #: templates/explore/category_detail.html:96 templates/explore/explore.html:105
-#: templates/explore/place_detail.html:41
+#: templates/explore/place_detail.html:42
 #, python-format
 msgid "%(rating)s · %(counter)s avaliação"
 msgid_plural "%(rating)s · %(counter)s avaliações"
@@ -1218,10 +1232,6 @@ msgid "%(counter)s lugar para conhecer em Maricá."
 msgid_plural "%(counter)s lugares para conhecer em Maricá."
 msgstr[0] "%(counter)s place to discover in Maricá."
 msgstr[1] "%(counter)s places to discover in Maricá."
-
-#: templates/explore/explore.html:83
-msgid "Aguardando aprovação"
-msgstr "Pending approval"
 
 #: templates/explore/explore.html:126
 msgid "Nenhum lugar disponível ainda. Seja o primeiro a cadastrar um!"
@@ -1263,19 +1273,19 @@ msgstr "You don't have any favorites yet."
 msgid "Explore lugares incríveis e salve seus favoritos!"
 msgstr "Explore amazing places and save your favorites!"
 
-#: templates/explore/place_detail.html:51
+#: templates/explore/place_detail.html:52
 msgid "Editar este lugar"
 msgstr "Edit this place"
 
-#: templates/explore/place_detail.html:65
+#: templates/explore/place_detail.html:66
 msgid "Pré-visualização"
 msgstr "Preview"
 
-#: templates/explore/place_detail.html:66
+#: templates/explore/place_detail.html:67
 msgid "Lugar aguardando aprovação"
 msgstr "Place pending approval"
 
-#: templates/explore/place_detail.html:68
+#: templates/explore/place_detail.html:69
 msgid ""
 "Este lugar ainda não foi aprovado e não está visível publicamente. Somente você e os "
 "moderadores podem visualizá-lo."
@@ -1283,99 +1293,99 @@ msgstr ""
 "This place has not been approved yet and is not visible publicly. Only you and the "
 "moderators can view it."
 
-#: templates/explore/place_detail.html:87
+#: templates/explore/place_detail.html:88
 msgid "Imagem anterior"
 msgstr "Previous image"
 
-#: templates/explore/place_detail.html:90
+#: templates/explore/place_detail.html:91
 msgid "Próxima imagem"
 msgstr "Next image"
 
-#: templates/explore/place_detail.html:97
+#: templates/explore/place_detail.html:98
 #, python-format
 msgid "Ir para imagem %(number)s"
 msgstr "Go to image %(number)s"
 
-#: templates/explore/place_detail.html:134 templates/news/news_detail.html:70
+#: templates/explore/place_detail.html:135 templates/news/news_detail.html:54
 msgid "Traduzido automaticamente do português."
 msgstr "Translated automatically from Portuguese."
 
-#: templates/explore/place_detail.html:140
+#: templates/explore/place_detail.html:141
 msgid "Localização"
 msgstr "Location"
 
-#: templates/explore/place_detail.html:148 templates/news/news_detail.html:46
+#: templates/explore/place_detail.html:149 templates/news/news_detail.html:74
 msgid "Como chegar"
 msgstr "Get directions"
 
-#: templates/explore/place_detail.html:148
+#: templates/explore/place_detail.html:149
 msgid "abre o Google Maps em nova aba"
 msgstr "open Google Maps in new tab"
 
-#: templates/explore/place_detail.html:167
+#: templates/explore/place_detail.html:168
 msgid "Sobre este lugar"
 msgstr "About this place"
 
-#: templates/explore/place_detail.html:170
+#: templates/explore/place_detail.html:171
 #, python-format
 msgid "Criado por <strong>%(author)s</strong>"
 msgstr "Created by <strong>%(author)s</strong>"
 
-#: templates/explore/place_detail.html:237
+#: templates/explore/place_detail.html:238
 msgid "Editar minha avaliação"
 msgstr "Edit my review"
 
-#: templates/explore/place_detail.html:237 templates/explore/place_detail.html:267
+#: templates/explore/place_detail.html:238 templates/explore/place_detail.html:268
 #: templates/explore/review_form.html:4 templates/explore/review_form.html:22
 msgid "Escrever avaliação"
 msgstr "Write a review"
 
-#: templates/explore/place_detail.html:244
+#: templates/explore/place_detail.html:245
 msgid "Ainda não há avaliações para este lugar."
 msgstr "No reviews yet for this place."
 
-#: templates/explore/place_detail.html:247
+#: templates/explore/place_detail.html:248
 msgid "Seja o primeiro a avaliar"
 msgstr "Be the first to review"
 
-#: templates/explore/place_detail.html:251
+#: templates/explore/place_detail.html:252
 msgid "Entre para avaliar"
 msgstr "Sign in to review"
 
-#: templates/explore/place_detail.html:276
+#: templates/explore/place_detail.html:277
 msgid "Avaliação"
 msgstr "Rating"
 
-#: templates/explore/place_detail.html:299
+#: templates/explore/place_detail.html:300
 msgid "Clique nas estrelas para avaliar"
 msgstr "Click the stars to rate"
 
-#: templates/explore/place_detail.html:303
+#: templates/explore/place_detail.html:304
 msgid "Comentário"
 msgstr "Comment"
 
-#: templates/explore/place_detail.html:304
+#: templates/explore/place_detail.html:305
 msgid "Compartilhe sua experiência neste lugar..."
 msgstr "Share your experience at this place..."
 
-#: templates/explore/place_detail.html:305
+#: templates/explore/place_detail.html:306
 msgid "Máximo 1000 caracteres"
 msgstr "Maximum 1000 characters"
 
-#: templates/explore/place_detail.html:313 templates/explore/place_detail.html:314
+#: templates/explore/place_detail.html:314 templates/explore/place_detail.html:315
 #: templates/explore/review_form.html:84
 msgid "Enviar avaliação"
 msgstr "Submit review"
 
-#: templates/explore/place_detail.html:326
+#: templates/explore/place_detail.html:327
 msgid "Confirmar exclusão"
 msgstr "Confirm deletion"
 
-#: templates/explore/place_detail.html:333
+#: templates/explore/place_detail.html:334
 msgid "Tem certeza que deseja excluir sua avaliação?"
 msgstr "Are you sure you want to delete your review?"
 
-#: templates/explore/place_detail.html:345
+#: templates/explore/place_detail.html:346
 msgid "Sim, excluir avaliação"
 msgstr "Yes, delete review"
 
@@ -1488,41 +1498,41 @@ msgstr "Delete review"
 msgid "Sobre"
 msgstr "About"
 
-#: templates/explore/review_delete_confirm.html:25 templates/includes/admin_navbar.html:53
-#: templates/includes/admin_topbar.html:39 templates/includes/navbar.html:63
+#: templates/explore/review_delete_confirm.html:27 templates/includes/admin_navbar.html:56
+#: templates/includes/admin_topbar.html:36 templates/includes/navbar.html:66
 msgid "Sair"
 msgstr "Sign out"
 
-#: templates/explore/review_delete_confirm.html:30
-#: templates/explore/review_delete_confirm.html:45 templates/includes/login_dropdown.html:5
+#: templates/explore/review_delete_confirm.html:33
+#: templates/explore/review_delete_confirm.html:48 templates/includes/login_dropdown.html:5
 #: templates/includes/login_dropdown.html:25
 msgid "Entrar"
 msgstr "Sign in"
 
-#: templates/explore/review_delete_confirm.html:33 templates/includes/login_dropdown.html:8
+#: templates/explore/review_delete_confirm.html:36 templates/includes/login_dropdown.html:8
 msgid "Entre na sua conta"
 msgstr "Sign in to your account"
 
-#: templates/explore/review_delete_confirm.html:50
+#: templates/explore/review_delete_confirm.html:53
 #: templates/includes/login_dropdown.html:20
 msgid "Não tem uma conta?"
 msgstr "Don't have an account?"
 
-#: templates/explore/review_delete_confirm.html:51
+#: templates/explore/review_delete_confirm.html:54
 #: templates/includes/login_dropdown.html:21
 msgid "Cadastre-se agora"
 msgstr "Sign up now"
 
-#: templates/explore/review_delete_confirm.html:70
+#: templates/explore/review_delete_confirm.html:73
 msgid "Tem certeza que deseja excluir sua avaliação de"
 msgstr "Are you sure you want to delete your review of"
 
-#: templates/explore/review_delete_confirm.html:79
+#: templates/explore/review_delete_confirm.html:82
 #, python-format
 msgid "por %(user)s"
 msgstr "by %(user)s"
 
-#: templates/explore/review_delete_confirm.html:94
+#: templates/explore/review_delete_confirm.html:97
 msgid "Sim, Excluir Avaliação"
 msgstr "Yes, Delete Review"
 
@@ -1550,7 +1560,7 @@ msgstr "Toggle navigation"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/includes/admin_navbar.html:18 templates/includes/admin_sidebar.html:66
+#: templates/includes/admin_navbar.html:18
 msgid "Voltar ao Site"
 msgstr "Back to Site"
 
@@ -1558,33 +1568,37 @@ msgstr "Back to Site"
 msgid "Meus Favoritos"
 msgstr "My Favorites"
 
-#: templates/includes/admin_sidebar.html:10
-msgid "DASHBOARD"
-msgstr "DASHBOARD"
+#: templates/includes/admin_sidebar.html:4
+msgid "Recolher ou expandir o menu"
+msgstr "Collapse or expand the menu"
 
-#: templates/includes/admin_sidebar.html:11
-msgid "Admin Panel"
-msgstr "Admin Panel"
+#: templates/includes/admin_sidebar.html:10 templates/includes/navbar.html:47
+msgid "Painel de administração"
+msgstr "Admin dashboard"
 
-#: templates/includes/admin_sidebar.html:16
+#: templates/includes/admin_sidebar.html:14
 msgid "Recolher barra lateral"
 msgstr "Collapse sidebar"
 
-#: templates/includes/admin_sidebar.html:24
-msgid "Painel"
-msgstr "Dashboard"
+#: templates/includes/admin_sidebar.html:18
+msgid "Menu do painel"
+msgstr "Admin menu"
 
-#: templates/includes/admin_sidebar.html:29
-msgid "Lugares"
-msgstr "Places"
+#: templates/includes/admin_sidebar.html:21
+msgid "Voltar ao site"
+msgstr "Back to the site"
 
-#: templates/includes/admin_sidebar.html:37
+#: templates/includes/admin_sidebar.html:42
+msgid "Sugestões para revisar"
+msgstr "Suggestions to review"
+
+#: templates/includes/admin_sidebar.html:49
 msgid "Usuários"
 msgstr "Users"
 
-#: templates/includes/admin_sidebar.html:42 templates/includes/navbar.html:20
-msgid "Eventos"
-msgstr "Events"
+#: templates/includes/admin_sidebar.html:56
+msgid "Admin avançado (Django)"
+msgstr "Advanced admin (Django)"
 
 #: templates/includes/admin_topbar.html:11
 #, python-format
@@ -1611,11 +1625,11 @@ msgstr "Decline"
 msgid "Aceitar"
 msgstr "Accept"
 
-#: templates/includes/event_card.html:15 templates/news/news_detail.html:37
+#: templates/includes/event_card.html:15 templates/news/news_detail.html:45
 msgid "Acontecendo agora"
 msgstr "Happening now"
 
-#: templates/includes/event_card.html:17
+#: templates/includes/event_card.html:17 templates/news/news_detail.html:47
 msgid "Encerrado"
 msgstr "Ended"
 
@@ -1634,10 +1648,6 @@ msgstr "Open menu"
 #: templates/includes/navbar.html:14
 msgid "Início"
 msgstr "Home"
-
-#: templates/includes/navbar.html:47
-msgid "Painel de administração"
-msgstr "Admin dashboard"
 
 #: templates/includes/place_removal_reasons.html:1
 msgid "Selecione um motivo"
@@ -1692,32 +1702,32 @@ msgstr ""
 msgid "Por favor, especifique o motivo da remoção."
 msgstr "Please specify the reason for removal."
 
-#: templates/news/news_detail.html:13
+#: templates/news/news_detail.html:18
 msgid "Agenda"
 msgstr "Agenda"
 
-#: templates/news/news_detail.html:39
+#: templates/news/news_detail.html:43
+msgid "Evento"
+msgstr "Event"
+
+#: templates/news/news_detail.html:69
 msgid "Este evento já terminou."
 msgstr "This event has already ended."
 
-#: templates/news/news_detail.html:50
-msgid "Adicionar ao calendário"
-msgstr "Add to calendar"
+#: templates/news/news_detail.html:83
+msgid "Sobre este evento"
+msgstr "About this event"
 
-#: templates/news/news_detail.html:74
+#: templates/news/news_detail.html:84
+#, python-format
+msgid "Publicado em <strong>%(date)s</strong>"
+msgstr "Published on <strong>%(date)s</strong>"
+
+#: templates/news/news_detail.html:90
 msgid "Fonte"
 msgstr "Source"
 
-#: templates/news/news_detail.html:83
-#, python-format
-msgid "Atualizado em %(date)s"
-msgstr "Updated on %(date)s"
-
-#: templates/news/news_detail.html:86
-msgid "Voltar à agenda"
-msgstr "Back to the agenda"
-
-#: templates/news/news_detail.html:96
+#: templates/news/news_detail.html:101
 msgid "Mais eventos"
 msgstr "More events"
 
@@ -1765,184 +1775,212 @@ msgstr "Page %(number)s of %(total)s"
 msgid "Próxima"
 msgstr "Next"
 
-#: apps/accounts/views.py:25
+#: apps/accounts/views.py:26
 msgid "Cadastro realizado com sucesso! Bem-vindo ao MaricaCity."
 msgstr "Sign-up complete! Welcome to MaricaCity."
 
-#: apps/accounts/views.py:51
+#: apps/accounts/views.py:52
 msgid "Por favor, preencha todos os campos."
 msgstr "Please fill in all fields."
 
-#: apps/accounts/views.py:63
+#: apps/accounts/views.py:64
 #, python-format
 msgid "Bem-vindo de volta, %(username)s!"
 msgstr "Welcome back, %(username)s!"
 
-#: apps/accounts/views.py:76
+#: apps/accounts/views.py:77
 msgid "Sua conta foi desativada. Entre em contato com o administrador."
 msgstr "Your account has been deactivated. Please contact the administrator."
 
-#: apps/accounts/views.py:85
+#: apps/accounts/views.py:86
 msgid "Nome de usuário ou senha incorretos."
 msgstr "Incorrect username or password."
 
-#: apps/accounts/views.py:92 apps/accounts/views.py:177 apps/accounts/views.py:220
+#: apps/accounts/views.py:93 apps/accounts/views.py:182 apps/accounts/views.py:230
 msgid "Método não permitido"
 msgstr "Method not allowed"
 
-#: apps/accounts/views.py:99
+#: apps/accounts/views.py:101
 msgid "Você saiu com sucesso."
 msgstr "You have successfully logged out."
 
-#: apps/accounts/views.py:117 apps/core/views.py:98 apps/core/views.py:172
-#: apps/core/views.py:227 apps/core/views.py:257 apps/core/views.py:287
-#: apps/core/views.py:311 apps/core/views.py:385 apps/core/views.py:394
-#: apps/core/views.py:426 apps/core/views.py:450 apps/explore/views.py:367
-#: apps/explore/views.py:484
+#: apps/accounts/views.py:119 apps/core/views.py:104 apps/core/views.py:182
+#: apps/core/views.py:255 apps/core/views.py:285 apps/core/views.py:315
+#: apps/core/views.py:339 apps/core/views.py:417 apps/core/views.py:426
+#: apps/core/views.py:461 apps/core/views.py:485 apps/explore/views.py:382
+#: apps/explore/views.py:519
 msgid "Você não tem permissão para acessar esta página."
 msgstr "You do not have permission to access this page."
 
-#: apps/accounts/views.py:173 apps/accounts/views.py:216
+#: apps/accounts/views.py:178 apps/accounts/views.py:226
 msgid "Sem permissão"
 msgstr "Permission denied"
 
-#: apps/accounts/views.py:187
+#: apps/accounts/views.py:188 apps/accounts/views.py:236
+msgid "O administrador não pode ser alterado."
+msgstr "The administrator cannot be changed."
+
+#: apps/accounts/views.py:197
 msgid "Você não pode alterar seu próprio status"
 msgstr "You cannot change your own status"
 
-#: apps/accounts/views.py:199
+#: apps/accounts/views.py:209
 #, python-format
 msgid "Status de %(username)s alterado para %(role_display)s."
 msgstr "Status of %(username)s changed to %(role_display)s."
 
-#: apps/accounts/views.py:205
+#: apps/accounts/views.py:215
 msgid "Status de usuário atualizado"
 msgstr "User status updated"
 
-#: apps/accounts/views.py:228
+#: apps/accounts/views.py:243
 msgid "Você não pode desativar sua própria conta"
 msgstr "You cannot deactivate your own account"
 
-#: apps/accounts/views.py:238
+#: apps/accounts/views.py:253
 #, python-format
 msgid "Usuário %(username)s %(status_text)s com sucesso."
 msgstr "User %(username)s %(status_text)s successfully."
 
-#: apps/accounts/views.py:246
+#: apps/accounts/views.py:261
 #, python-format
 msgid "Usuário %(status_text)s"
 msgstr "User %(status_text)s"
 
-#: apps/accounts/views.py:255
+#: apps/accounts/views.py:270
 msgid "Você não tem permissão para excluir usuários."
 msgstr "You do not have permission to delete users."
 
-#: apps/accounts/views.py:262
+#: apps/accounts/views.py:276
+msgid "O administrador não pode ser excluído."
+msgstr "The administrator cannot be deleted."
+
+#: apps/accounts/views.py:281
 msgid "Você não pode excluir sua própria conta."
 msgstr "You cannot delete your own account."
 
-#: apps/accounts/views.py:270
+#: apps/accounts/views.py:289
 #, python-format
 msgid "Usuário %(username)s excluído com sucesso."
 msgstr "User %(username)s deleted successfully."
 
-#: apps/core/views.py:238
+#: apps/core/views.py:239 apps/explore/views.py:593
+msgid "Todos"
+msgstr "All"
+
+#: apps/core/views.py:240
+msgid "Sugestões"
+msgstr "Suggestions"
+
+#: apps/core/views.py:241
+msgid "Publicados"
+msgstr "Published"
+
+#: apps/core/views.py:242
+msgid "Rascunhos"
+msgstr "Drafts"
+
+#: apps/core/views.py:243
+msgid "Arquivados"
+msgstr "Archived"
+
+#: apps/core/views.py:266
 #, python-format
 msgid "Evento \"%(title)s\" criado com sucesso!"
 msgstr "Event \"%(title)s\" created successfully!"
 
-#: apps/core/views.py:247
+#: apps/core/views.py:275
 msgid "Criar novo evento"
 msgstr "Create new event"
 
-#: apps/core/views.py:248
+#: apps/core/views.py:276
 msgid "Criar"
 msgstr "Create"
 
-#: apps/core/views.py:268
+#: apps/core/views.py:296
 #, python-format
 msgid "Evento \"%(title)s\" atualizado com sucesso!"
 msgstr "Event \"%(title)s\" updated successfully!"
 
-#: apps/core/views.py:277
+#: apps/core/views.py:305
 #, python-format
 msgid "Editar: %(title)s"
 msgstr "Edit: %(title)s"
 
-#: apps/core/views.py:278 apps/explore/views.py:298
+#: apps/core/views.py:306 apps/explore/views.py:313
 msgid "Salvar Alterações"
 msgstr "Save Changes"
 
-#: apps/core/views.py:297
+#: apps/core/views.py:325
 #, python-format
 msgid "Evento \"%(news_title)s\" excluído com sucesso."
 msgstr "Event \"%(news_title)s\" deleted successfully."
 
-#: apps/core/views.py:318 apps/core/views.py:431
+#: apps/core/views.py:346 apps/core/views.py:466
 msgid "Selecione ao menos um evento."
 msgstr "Select at least one event."
 
-#: apps/core/views.py:330
+#: apps/core/views.py:358
 #, python-format
 msgid "%(count)d evento publicado"
 msgid_plural "%(count)d eventos publicados"
 msgstr[0] "%(count)d event published"
 msgstr[1] "%(count)d events published"
 
-#: apps/core/views.py:340
+#: apps/core/views.py:368
 #, python-format
 msgid "%(count)d evento arquivado"
 msgid_plural "%(count)d eventos arquivados"
 msgstr[0] "%(count)d event archived"
 msgstr[1] "%(count)d events archived"
 
-#: apps/core/views.py:346
+#: apps/core/views.py:374
 #, python-format
 msgid "%(count)d evento excluído"
 msgid_plural "%(count)d eventos excluídos"
 msgstr[0] "%(count)d event deleted"
 msgstr[1] "%(count)d events deleted"
 
-#: apps/core/views.py:349 apps/core/views.py:442 apps/explore/views.py:474
+#: apps/core/views.py:377 apps/core/views.py:477 apps/explore/views.py:509
 msgid "Ação inválida."
 msgstr "Invalid action."
 
-#: apps/core/views.py:401
+#: apps/core/views.py:433
 #, python-format
 msgid "\"%(title)s\" foi descartado."
 msgstr "\"%(title)s\" has been discarded."
 
-#: apps/core/views.py:408
+#: apps/core/views.py:440
 #, python-format
 msgid "Revise os campos de \"%(title)s\"."
 msgstr "Review the fields of \"%(title)s\"."
 
-#: apps/core/views.py:416
+#: apps/core/views.py:451
 #, python-format
 msgid "\"%(title)s\" publicado na agenda."
 msgstr "\"%(title)s\" published to the agenda."
 
-#: apps/core/views.py:437
+#: apps/core/views.py:472
 #, python-format
 msgid "%(count)d evento descartado"
 msgid_plural "%(count)d eventos descartados"
 msgstr[0] "%(count)d event discarded"
 msgstr[1] "%(count)d events discarded"
 
-#: apps/core/views.py:456
+#: apps/core/views.py:491
 msgid "Não foi possível consultar a Prefeitura agora."
 msgstr "Couldn't reach the Prefeitura's website right now."
 
-#: apps/core/views.py:460
+#: apps/core/views.py:495
 #, python-format
 msgid "%(created)s evento(s) novo(s) para triagem."
 msgstr "%(created)s new event(s) to review."
 
-#: apps/explore/views.py:186
+#: apps/explore/views.py:201
 msgid "Você não tem permissão para criar lugares."
 msgstr "You do not have permission to create places."
 
-#: apps/explore/views.py:225
+#: apps/explore/views.py:240
 #, python-format
 msgid ""
 "Lugar \"%(name)s\" criado com sucesso! Ele será revisado por um administrador antes "
@@ -1951,110 +1989,129 @@ msgstr ""
 "Place \"%(name)s\" created successfully! It will be reviewed by an administrator "
 "before appearing on the site."
 
-#: apps/explore/views.py:238
+#: apps/explore/views.py:253
 msgid "Enviar para Aprovação"
 msgstr "Submit for Approval"
 
-#: apps/explore/views.py:254
+#: apps/explore/views.py:269
 msgid "Você não tem permissão para editar este lugar."
 msgstr "You do not have permission to edit this place."
 
-#: apps/explore/views.py:285
+#: apps/explore/views.py:300
 #, python-format
 msgid "Lugar \"%(name)s\" atualizado com sucesso!"
 msgstr "Place \"%(name)s\" updated successfully!"
 
-#: apps/explore/views.py:297
+#: apps/explore/views.py:312
 #, python-format
 msgid "Editar %(name)s"
 msgstr "Edit %(name)s"
 
-#: apps/explore/views.py:312
+#: apps/explore/views.py:327
 msgid "Você não tem permissão para excluir este lugar."
 msgstr "You do not have permission to delete this place."
 
-#: apps/explore/views.py:320
+#: apps/explore/views.py:335
 #, python-format
 msgid "Lugar \"%(place_name)s\" foi excluído com sucesso."
 msgstr "Place \"%(place_name)s\" was deleted successfully."
 
-#: apps/explore/views.py:344
+#: apps/explore/views.py:359
 msgid "Por favor, selecione um motivo para a rejeição."
 msgstr "Please select a reason for rejection."
 
-#: apps/explore/views.py:347
+#: apps/explore/views.py:362
 msgid "Por favor, especifique o motivo da rejeição."
 msgstr "Please specify the reason for rejection."
 
-#: apps/explore/views.py:380 apps/explore/views.py:404 apps/explore/views.py:435
+#: apps/explore/views.py:393 apps/explore/views.py:415 apps/explore/views.py:439
+#: apps/explore/views.py:470
 msgid "Você não tem permissão para realizar esta ação."
 msgstr "You do not have permission to perform this action."
 
-#: apps/explore/views.py:390
+#: apps/explore/views.py:400
+#, python-format
+msgid "%(name)s está em destaque na página inicial."
+msgstr "%(name)s is now featured on the home page."
+
+#: apps/explore/views.py:404
+#, python-format
+msgid "%(name)s saiu dos destaques."
+msgstr "%(name)s is no longer featured."
+
+#: apps/explore/views.py:425
 #, python-format
 msgid "Lugar \"%(name)s\" foi aprovado com sucesso!"
 msgstr "Place \"%(name)s\" was approved successfully!"
 
-#: apps/explore/views.py:422
+#: apps/explore/views.py:457
 #, python-format
 msgid "Lugar \"%(name)s\" foi removido."
 msgstr "Place \"%(name)s\" was removed."
 
-#: apps/explore/views.py:442
+#: apps/explore/views.py:477
 msgid "Selecione ao menos um lugar."
 msgstr "Select at least one place."
 
-#: apps/explore/views.py:453
+#: apps/explore/views.py:488
 #, python-format
 msgid "%(count)d lugar aprovado"
 msgid_plural "%(count)d lugares aprovados"
 msgstr[0] "%(count)d place approved"
 msgstr[1] "%(count)d places approved"
 
-#: apps/explore/views.py:470
+#: apps/explore/views.py:505
 #, python-format
 msgid "%(count)d lugar removido"
 msgid_plural "%(count)d lugares removidos"
 msgstr[0] "%(count)d place removed"
 msgstr[1] "%(count)d places removed"
 
-#: apps/explore/views.py:562
+#: apps/explore/views.py:595
+msgid "Aprovados"
+msgstr "Approved"
+
+#: apps/explore/views.py:597
+msgid "Removidos"
+msgstr "Removed"
+
+#: apps/explore/views.py:615
 msgid "Você já avaliou este lugar. Edite sua avaliação existente."
 msgstr "You have already reviewed this place. Edit your existing review."
 
-#: apps/explore/views.py:573
+#: apps/explore/views.py:626
 msgid "Avaliação enviada com sucesso!"
 msgstr "Review submitted successfully!"
 
-#: apps/explore/views.py:589
+#: apps/explore/views.py:642
 msgid "Você não tem permissão para editar esta avaliação."
 msgstr "You do not have permission to edit this review."
 
-#: apps/explore/views.py:596
+#: apps/explore/views.py:649
 msgid "Avaliação atualizada com sucesso!"
 msgstr "Review updated successfully!"
 
-#: apps/explore/views.py:613
+#: apps/explore/views.py:666
 msgid "Você não tem permissão para excluir esta avaliação."
 msgstr "You do not have permission to delete this review."
 
-#: apps/explore/views.py:620
+#: apps/explore/views.py:673
 msgid "Avaliação excluída com sucesso!"
 msgstr "Review deleted successfully!"
 
-#: apps/explore/views.py:650
+#: apps/explore/views.py:703
 msgid "Lugar removido dos favoritos"
 msgstr "Place removed from favorites"
 
-#: apps/explore/views.py:655
+#: apps/explore/views.py:708
 msgid "Lugar adicionado aos favoritos"
 msgstr "Place added to favorites"
 
-#: apps/explore/views.py:674
+#: apps/explore/views.py:727
 msgid "Favorito atualizado"
 msgstr "Favorite updated"
 
-#: apps/explore/views.py:756
+#: apps/explore/views.py:809
 #, python-format
 msgid "%(value)s favoritos sincronizados"
 msgstr "%(value)s favorites synchronized"

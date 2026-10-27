@@ -4,6 +4,7 @@
 {% block title %}{{ news_item|tr:"title" }} - MaricaCity{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
 <meta name="view-beacon" content="{% url 'news:news_view_beacon' news_item.slug %}">
 {% endblock %}
 
@@ -20,78 +21,78 @@
     </nav>
     <h1>{{ news_item|tr:"title" }}</h1>
     <p class="page-header-subtitle">
-      {{ news_item.publish_date|date:"SHORT_DATE_FORMAT" }}
-      {% if news_item.is_featured %}· <i class="bi bi-star-fill" aria-hidden="true"></i> {% translate "Destaque" %}{% endif %}
+      <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>{{ news_item|event_when }}
+      {% if news_item.event_location %}<span class="mx-1" aria-hidden="true">·</span><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ news_item.event_location }}{% endif %}
     </p>
   </div>
 </header>
 
-<div class="container py-4 py-md-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <article>
-        {% if news_item.is_event %}
-        <div class="event-info" role="note">
-          <ul class="event-info-facts">
-            <li><i class="bi bi-calendar3" aria-hidden="true"></i><span class="event-card-when">{{ news_item|event_when }}</span></li>
-            {% if news_item.event_location %}
-            <li><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ news_item.event_location }}</li>
-            {% endif %}
-            {% if news_item.is_ongoing_event %}
-            <li><span class="event-status-inline">{% translate "Acontecendo agora" %}</span></li>
-            {% elif news_item.is_past_event %}
-            <li class="text-muted">{% translate "Este evento já terminou." %}</li>
-            {% endif %}
-          </ul>
-          {% if not news_item.is_past_event %}
-          <div class="event-info-actions">
-            {% if news_item.maps_url %}
-            <a class="btn btn-dark" href="{{ news_item.maps_url }}" target="_blank" rel="noopener noreferrer">
-              <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>{% translate "Como chegar" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
-            </a>
-            {% endif %}
-            <a class="btn btn-outline-dark" href="{{ news_item.calendar_url }}" target="_blank" rel="noopener noreferrer">
-              <i class="bi bi-calendar-plus me-1" aria-hidden="true"></i>{% translate "Adicionar ao calendário" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
-            </a>
-          </div>
-          {% endif %}
-        </div>
-        {% endif %}
+<div class="container py-4 py-md-5 place-detail-container">
+  <div class="row g-4">
+    <article class="place-detail-main">
+      {% if news_item.featured_image %}
+      <figure class="mb-3 place-detail-image-container">
+        <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" fetchpriority="high" class="place-detail-image" alt="{{ news_item.image_caption|default:news_item.title }}">
+      </figure>
+      {% if news_item.image_caption %}
+      <p class="text-muted small mb-3">{{ news_item.image_caption }}</p>
+      {% endif %}
+      {% endif %}
 
-        {% if news_item.featured_image %}
-        <figure class="mb-4">
-          <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" class="img-fluid rounded shadow-sm w-100" alt="{{ news_item.image_caption|default:news_item.title }}">
-          {% if news_item.image_caption %}
-          <figcaption class="text-muted small mt-2 text-center">{{ news_item.image_caption }}</figcaption>
-          {% endif %}
-        </figure>
+      <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+        <span class="badge bg-light text-dark" style="font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.5rem;">📅 {% translate "Evento" %}</span>
+        {% if news_item.is_ongoing_event %}
+        <span class="event-status-inline">{% translate "Acontecendo agora" %}</span>
+        {% elif news_item.is_past_event %}
+        <span class="badge text-bg-secondary">{% translate "Encerrado" %}</span>
         {% endif %}
+      </div>
 
-        <div class="content-body fs-6 lh-lg">
-          {{ news_item|tr:"content"|linebreaks }}
-        </div>
+      <div class="mb-4">
+        <div class="text-muted" style="line-height: 1.6; font-size: 0.875rem;">{{ news_item|tr:"content"|linebreaks }}</div>
         {% if news_item|machine_translated %}
         <p class="machine-note"><i class="bi bi-translate me-1" aria-hidden="true"></i>{% translate "Traduzido automaticamente do português." %}</p>
         {% endif %}
-        {% if news_item.source_url %}
-        <p class="small text-muted mt-3">
-          {% translate "Fonte" %}: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span></a>
-        </p>
+      </div>
+
+      {# Quando e onde: no fim do texto, com "Voltar" à esquerda e "Como chegar" à direita #}
+      <div class="event-info" role="note">
+        <a href="{% url 'news:news_list' %}" class="event-info-back">
+          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{% translate "Voltar" %}
+        </a>
+        <ul class="event-info-facts">
+          <li><i class="bi bi-calendar3" aria-hidden="true"></i><span class="event-card-when">{{ news_item|event_when }}</span></li>
+          {% if news_item.event_location %}
+          <li><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ news_item.event_location }}</li>
+          {% endif %}
+          {% if news_item.is_past_event %}
+          <li class="text-muted">{% translate "Este evento já terminou." %}</li>
+          {% endif %}
+        </ul>
+        {% if news_item.maps_url and not news_item.is_past_event %}
+        <a class="btn btn-dark" href="{{ news_item.maps_url }}" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>{% translate "Como chegar" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
+        </a>
         {% endif %}
+      </div>
+    </article>
 
-        <hr class="my-4">
-
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <span class="text-muted small">
+    <aside class="place-detail-sidebar">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body p-3">
+          <h2 class="text-uppercase mb-3" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">{% translate "Sobre este evento" %}</h2>
+          <p class="mb-1" style="font-size: 0.8rem;">{% blocktranslate with date=news_item.publish_date|date:"DATE_FORMAT" %}Publicado em <strong>{{ date }}</strong>{% endblocktranslate %}</p>
+          <p class="text-muted mb-2" style="font-size: 0.75rem;">
             <i class="bi bi-eye me-1" aria-hidden="true"></i>{% blocktranslate trimmed count counter=news_item.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}
-            · {% blocktranslate with date=news_item.updated_at|date:"SHORT_DATETIME_FORMAT" %}Atualizado em {{ date }}{% endblocktranslate %}
-          </span>
-          <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark btn-sm">
-            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{% translate "Voltar à agenda" %}
-          </a>
+          </p>
+          {% if news_item.source_url %}
+          <p class="mb-0" style="font-size: 0.8rem;">
+            {% translate "Fonte" %}: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span></a>
+          </p>
+          {% endif %}
         </div>
-      </article>
-    </div>
+      </div>
+    </aside>
   </div>
 
   {% if related_news %}

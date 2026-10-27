@@ -876,6 +876,6 @@ class EventTriageBulkTests(TestCase):
 
     def test_triage_page_has_checkboxes(self):
         self.client.login(username="mod", password="pass123")
-        response = self.client.get(reverse("core:admin_event_triage"))
+        response = self.client.get(reverse("core:admin_event_triage"), follow=True)
         self.assertContains(response, "data-bulk-item", count=3)
         self.assertContains(response, "Descartar selecionados")

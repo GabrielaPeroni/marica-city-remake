@@ -98,9 +98,22 @@ class PlaceAdmin(TranslationsAdminMixin, admin.ModelAdmin):
 
     inlines = [PlaceImageInline]
 
-    list_display = ("name", "created_by", "is_approved", "is_active", "created_at")
+    list_display = (
+        "name",
+        "created_by",
+        "is_approved",
+        "is_active",
+        "is_featured",
+        "created_at",
+    )
 
-    list_filter = ("is_approved", "is_active", "categories", "created_at", "updated_at")
+    list_filter = (
+        "is_approved",
+        "is_active",
+        "is_featured",
+        "categories",
+        "created_at",
+    )
 
     search_fields = ("name", "description", "address", "created_by__username")
 
@@ -117,7 +130,7 @@ class PlaceAdmin(TranslationsAdminMixin, admin.ModelAdmin):
             "Localização",
             {"fields": ("latitude", "longitude"), "classes": ("collapse",)},
         ),
-        ("Status", {"fields": ("is_approved", "is_active")}),
+        ("Status", {"fields": ("is_approved", "is_active", "is_featured")}),
         (
             "Metadados",
             {

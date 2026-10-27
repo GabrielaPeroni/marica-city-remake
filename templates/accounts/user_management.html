@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n static %}
 
+{% block site_chrome %}{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
@@ -39,7 +41,8 @@
             <label for="roleFilter" class="form-label">{% translate "Tipo de Usuário" %}</label>
             <select class="form-select" id="roleFilter" name="role">
               <option value="">{% translate "Todos os tipos" %}</option>
-              <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>{% translate "Staff" %}</option>
+              <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>{% translate "Administrador" %}</option>
+              <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>{% translate "Moderador" %}</option>
               <option value="regular" {% if role_filter == 'regular' %}selected{% endif %}>{% translate "Regular" %}</option>
             </select>
           </div>
@@ -80,19 +83,26 @@
             </thead>
             <tbody>
               {% for user_item in users %}
-              <tr id="user-row-{{ user_item.id }}">
+              <tr id="user-row-{{ user_item.id }}"{% if user_item.is_superuser %} class="user-row-admin"{% endif %}>
                 <td>
-                  <div class="fw-bold">{{ user_item.username }}</div>
+                  <div class="fw-bold">
+                    {{ user_item.username }}
+                    {% if user_item == user %}<span class="text-muted fw-normal small">({% translate "você" %})</span>{% endif %}
+                  </div>
                   <small class="text-muted">{{ user_item.email|default:"-" }}</small>
                 </td>
                 <td>
+                  {% if user_item.is_superuser %}
+                  <span class="badge user-admin-badge"><i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i>{% translate "Administrador" %}</span>
+                  {% else %}
                   <select class="form-select form-select-sm user-role-select"
                           data-user-id="{{ user_item.id }}"
-                          aria-label="Alterar tipo de usuário para {{ user_item.username }}"
+                          aria-label="{% blocktranslate with name=user_item.username %}Alterar tipo de usuário de {{ name }}{% endblocktranslate %}"
                           {% if user_item == user %}disabled{% endif %}>
-                    <option value="staff" {% if user_item.is_staff %}selected{% endif %}>{% translate "Staff" %}</option>
+                    <option value="staff" {% if user_item.is_staff %}selected{% endif %}>{% translate "Moderador" %}</option>
                     <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>{% translate "Regular" %}</option>
                   </select>
+                  {% endif %}
                 </td>
                 <td>
                   <span class="badge status-badge-{{ user_item.id }} {% if user_item.is_active %}bg-success{% else %}bg-secondary{% endif %}">
@@ -103,6 +113,9 @@
                   <small class="text-muted">{{ user_item.created_at|date:"SHORT_DATE_FORMAT" }}</small>
                 </td>
                 <td>
+                  {% if user_item.is_superuser %}
+                  <span class="text-muted small">{% translate "Protegido" %}</span>
+                  {% else %}
                   <div class="btn-group" role="group" aria-label="{% translate 'Ações do usuário' %}">
                     <button type="button"
                             class="btn btn-sm btn-outline-primary toggle-status-btn"
@@ -118,6 +131,7 @@
                       <i class="bi bi-trash"></i>
                     </a>
                   </div>
+                  {% endif %}
                 </td>
               </tr>
               {% empty %}

@@ -13,12 +13,6 @@
 
   <!-- Ações da Barra Superior -->
   <div class="topbar-actions">
-    <!-- Caixa de Pesquisa -->
-    <div class="search-box d-none d-md-flex">
-      <i class="bi bi-search"></i>
-      <input type="text" placeholder="{% translate 'Pesquisar' %}" id="topbarSearch" aria-label="{% translate 'Pesquisar' %}">
-    </div>
-
     <!-- Menu do Usuário -->
     <div class="user-menu" id="userMenuToggle">
       <div class="user-avatar-placeholder">
@@ -79,26 +73,5 @@
       });
     }
 
-    // Botão de notificações (espaço reservado - pode ser expandido depois)
-    const notificationBtn = document.getElementById('notificationBtn');
-    if (notificationBtn) {
-      notificationBtn.addEventListener('click', function() {
-        // Redirecionar para fila de aprovação se houver itens pendentes
-        {% if pending_places > 0 %}
-          window.location.href = "{% url 'explore:backlog' %}?view=queue";
-        {% endif %}
-      });
-    }
-
-    // Funcionalidade de pesquisa (espaço reservado - pode ser expandido depois)
-    const searchInput = document.getElementById('topbarSearch');
-    if (searchInput) {
-      searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          // Pode implementar funcionalidade de pesquisa aqui
-          console.log('Pesquisar:', this.value);
-        }
-      });
-    }
   });
 </script>

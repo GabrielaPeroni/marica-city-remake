@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, Value, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -382,8 +382,29 @@ def approval_queue_view(request):
         messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("explore:explore")
 
-    # Redirecionar para a visualização unificada no modo de fila
-    return redirect(reverse("explore:backlog") + "?view=queue")
+    return redirect(reverse("explore:backlog") + "?status=pending")
+
+
+@login_required
+@require_POST
+def place_feature_view(request, pk):
+    """Liga/desliga o destaque de um lugar aprovado na página inicial"""
+    if not request.user.can_moderate:
+        messages.error(request, _("Você não tem permissão para realizar esta ação."))
+        return redirect("explore:explore")
+    place = get_object_or_404(Place, pk=pk, is_approved=True, is_active=True)
+    place.is_featured = not place.is_featured
+    place.save(update_fields=["is_featured", "updated_at"])
+    if place.is_featured:
+        messages.success(
+            request,
+            _("%(name)s está em destaque na página inicial.") % {"name": place.name},
+        )
+    else:
+        messages.success(
+            request, _("%(name)s saiu dos destaques.") % {"name": place.name}
+        )
+    return redirect(safe_next(request, reverse("explore:backlog")))
 
 
 @login_required
@@ -499,30 +520,31 @@ def backlog_view(request):
         messages.error(request, _("Você não tem permissão para acessar esta página."))
         return redirect("explore:explore")
 
-    # Obter parâmetro de visualização (queue ou history)
-    view_mode = request.GET.get("view", "history")
-
-    # Obter parâmetros de filtro
+    # Uma só tela: os cartões de status no topo filtram a lista
     status_filter = request.GET.get("status", "all")
+    if request.GET.get("view") == "queue":  # links antigos da "Fila de aprovação"
+        status_filter = "pending"
     category_filter = request.GET.get("category", "all")
     sort_by = request.GET.get("sort", "-created_at")
+    search_query = request.GET.get("q", "").strip()
 
-    # Começar com todos os lugares
     places = Place.objects.select_related("created_by").prefetch_related(
         "images", "categories"
     )
 
-    # Se estiver no modo de fila, mostrar apenas pendentes
-    if view_mode == "queue":
+    if status_filter == "approved":
+        places = places.filter(is_approved=True, is_active=True)
+    elif status_filter == "pending":
         places = places.filter(is_approved=False, is_active=True)
+    elif status_filter == "rejected":
+        places = places.filter(is_active=False)
+    elif status_filter == "featured":
+        places = places.filter(is_featured=True, is_approved=True, is_active=True)
     else:
-        # Aplicar filtro de status no modo histórico
-        if status_filter == "approved":
-            places = places.filter(is_approved=True, is_active=True)
-        elif status_filter == "pending":
-            places = places.filter(is_approved=False, is_active=True)
-        elif status_filter == "rejected":
-            places = places.filter(is_active=False)
+        status_filter = "all"
+
+    if search_query:
+        places = places.filter(name__icontains=search_query)
 
     # Aplicar filtro de categoria
     if category_filter != "all":
@@ -536,7 +558,13 @@ def backlog_view(request):
         "-name": "-name",
     }
     sort_order = valid_sorts.get(sort_by, "-created_at")
-    places = places.order_by(sort_order).distinct()
+    # Pendentes sempre no topo, para não se perderem no histórico
+    pending_first = Case(
+        When(is_approved=False, is_active=True, then=Value(0)),
+        default=Value(1),
+        output_field=IntegerField(),
+    )
+    places = places.order_by(pending_first, sort_order).distinct()
 
     # Obter todas as categorias para o menu suspenso de filtro
     categories = Category.objects.filter(is_active=True).order_by("name")
@@ -546,6 +574,9 @@ def backlog_view(request):
     approved_count = Place.objects.filter(is_approved=True, is_active=True).count()
     pending_count = Place.objects.filter(is_approved=False, is_active=True).count()
     rejected_count = Place.objects.filter(is_active=False).count()
+    featured_count = Place.objects.filter(
+        is_featured=True, is_approved=True, is_active=True
+    ).count()
 
     context = {
         "places": places,
@@ -557,7 +588,21 @@ def backlog_view(request):
         "approved_count": approved_count,
         "pending_count": pending_count,
         "rejected_count": rejected_count,
-        "view_mode": view_mode,
+        "featured_count": featured_count,
+        "search_query": search_query,
+        "status_cards": [
+            ("all", _("Todos"), total_count, "collection", "neutral"),
+            (
+                "pending",
+                _("Aguardando aprovação"),
+                pending_count,
+                "hourglass-split",
+                "warning",
+            ),
+            ("approved", _("Aprovados"), approved_count, "check-circle", "success"),
+            ("featured", _("Em destaque"), featured_count, "star", "featured"),
+            ("rejected", _("Removidos"), rejected_count, "x-circle", "danger"),
+        ],
     }
     return render(request, "explore/admin/backlog.html", context)
 

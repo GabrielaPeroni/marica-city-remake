@@ -699,6 +699,25 @@ html {
   --bs-btn-active-border-color: transparent;
 }
 
+/* Coração centralizado nos botões redondos (o ícone tem espaço extra embaixo) */
+.btn.favorite-heart-icon,
+.btn.favorite-btn-overlay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.btn.favorite-heart-icon > .bi,
+.btn.favorite-btn-overlay > .bi {
+  line-height: 1;
+}
+
+.btn.favorite-heart-icon > .bi::before,
+.btn.favorite-btn-overlay > .bi::before {
+  vertical-align: 0;
+}
+
 .cookie-consent {
   position: fixed;
   left: 24px;

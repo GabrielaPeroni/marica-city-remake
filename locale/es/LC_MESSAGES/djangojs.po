@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 22:32-0300\n"
+"POT-Creation-Date: 2026-10-26 23:19-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -23,12 +23,20 @@ msgstr ""
 msgid "Comece a digitar o endereço..."
 msgstr "Comience a escribir la dirección..."
 
-#: static/js/components/bulk_select.js:32
+#: static/js/components/bulk_select.js:34
 #, python-format
 msgid "%s selecionado"
 msgid_plural "%s selecionados"
 msgstr[0] "%s seleccionado"
 msgstr[1] "%s seleccionados"
+
+#: static/js/components/bulk_select.js:128
+msgid "Fechar"
+msgstr "Cerrar"
+
+#: static/js/components/bulk_select.js:129
+msgid "Cancelar"
+msgstr "Cancelar"
 
 #: static/js/components/user_management.js:18
 msgid ""

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Staff can feature places (star button in the places list, or the Django
+  admin). Featured places lead the "Onde ir" section of the landing page.
+- Bulk actions (approve, remove, publish, archive, delete, discard) ask for
+  confirmation in a dialog that shows how many items are selected. The removal
+  reason is chosen inside that dialog. Shift+click selects a range of rows,
+  and the whole checkbox cell is clickable.
 - Faster, smoother navigation:
   - Uploaded images are served as resized WebP copies (480/960/1600 px,
     generated once under `media/thumbs/`, `manage.py generate_thumbnails`)
@@ -76,6 +82,27 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Admin panel:
+  - "Voltar ao site" is the first and most visible item of the side menu.
+    The menu reads "Visão geral", "Lugares", "Eventos", "Usuários".
+  - The language switcher, cookie banner and site footer are hidden inside
+    the panel.
+  - The dashboard cards link to their lists ("Aguardando aprovação" opens the
+    pending places).
+  - Places and events each have one screen whose status cards filter the
+    list. Pending places stay at the top. Event suggestions found by the
+    crawler are a "Sugestões" filter on the events screen instead of a
+    separate triage page.
+  - The administrator account is listed first, with its own badge, on the
+    dashboard and in the users list. Moderators can't demote, deactivate or
+    delete it.
+  - The non-functional top-bar search and a hard-coded trend figure were
+    removed.
+- The event page follows the place page layout. Its date and place box sits
+  below the description, with "Voltar" and "Como chegar" ("Adicionar ao
+  calendário" was removed).
+- "Explorar por categoria" is a 3×2 grid. The landing page no longer fades in
+  from white, and the favorite heart is centered.
 - Logging out is a POST form (CSRF-safe; prefetching can't sign anyone out).
 - New footer: a short description of the guide, a GitHub link, direct links to
   each category, a "Visite" column (agenda, planning, emergency numbers) and

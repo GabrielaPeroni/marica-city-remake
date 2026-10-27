@@ -1,69 +1,59 @@
 {% load i18n static %}
 
 <div class="admin-sidebar" id="adminSidebar">
-  <!-- Sidebar Header -->
-  <div class="sidebar-header">
+  <div class="sidebar-header" title="{% translate 'Recolher ou expandir o menu' %}">
     <div class="sidebar-logo">
       <i class="bi bi-grid"></i>
     </div>
     <div class="sidebar-title">
-      <h2>{% translate "DASHBOARD" %}</h2>
-      <span class="sidebar-subtitle">{% translate "Admin Panel" %}</span>
+      <h2>MaricaCity</h2>
+      <span class="sidebar-subtitle">{% translate "Painel de administração" %}</span>
     </div>
   </div>
 
-  <!-- Botão de Colapso Desktop -->
   <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="{% translate 'Recolher barra lateral' %}">
     <i class="bi bi-chevron-left"></i>
   </button>
 
-  <!-- Navegação -->
-  <nav class="sidebar-nav">
+  <nav class="sidebar-nav" aria-label="{% translate 'Menu do painel' %}">
+    <a href="{% url 'core:landing' %}" class="nav-item sidebar-back-to-site">
+      <i class="bi bi-box-arrow-left"></i>
+      <span>{% translate "Voltar ao site" %}</span>
+    </a>
+
     <a href="{% url 'core:admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
       <i class="bi bi-speedometer2"></i>
-      <span>{% translate "Painel" %}</span>
+      <span>{% translate "Visão geral" %}</span>
     </a>
+
 
     <a href="{% url 'explore:backlog' %}" class="nav-item {% if 'backlog' in request.path or 'approval' in request.path %}active{% endif %}">
       <i class="bi bi-geo-alt"></i>
       <span>{% translate "Lugares" %}</span>
       {% if pending_places > 0 %}
-        <span class="nav-badge">{{ pending_places }}</span>
+        <span class="nav-badge" title="{% translate 'Aguardando aprovação' %}">{{ pending_places }}</span>
       {% endif %}
     </a>
+
+    <a href="{% url 'core:admin_news_list' %}" class="nav-item {% if 'noticias' in request.path or 'eventos' in request.path %}active{% endif %}">
+      <i class="bi bi-calendar-event"></i>
+      <span>{% translate "Eventos" %}</span>
+      {% if pending_events > 0 %}
+        <span class="nav-badge" title="{% translate 'Sugestões para revisar' %}">{{ pending_events }}</span>
+      {% endif %}
+    </a>
+
 
     <a href="{% url 'accounts:user_management' %}" class="nav-item {% if 'usuarios' in request.path %}active{% endif %}">
       <i class="bi bi-people"></i>
       <span>{% translate "Usuários" %}</span>
     </a>
-
-    <a href="{% url 'core:admin_news_list' %}" class="nav-item {% if 'noticias' in request.path %}active{% endif %}">
-      <i class="bi bi-newspaper"></i>
-      <span>{% translate "Eventos" %}</span>
-      {% if draft_news > 0 %}
-        <span class="nav-badge">{{ draft_news }}</span>
-      {% endif %}
-    </a>
-
-    <a href="{% url 'core:admin_event_triage' %}" class="nav-item {% if 'eventos' in request.path %}active{% endif %}">
-      <i class="bi bi-calendar-check"></i>
-      <span>{% translate "Triagem de eventos" %}</span>
-      {% if pending_events > 0 %}
-        <span class="nav-badge">{{ pending_events }}</span>
-      {% endif %}
-    </a>
   </nav>
 
-  <!-- Rodapé da Barra Lateral -->
   <div class="sidebar-footer">
-    <a href="/admin/" class="nav-item" target="_blank">
+    <a href="/admin/" class="nav-item" target="_blank" rel="noopener">
       <i class="bi bi-gear-fill"></i>
-      <span>Django Admin</span>
-    </a>
-
-    <a href="{% url 'core:landing' %}" class="nav-item">
-      <i class="bi bi-arrow-left-circle"></i>
-      <span>{% translate "Voltar ao Site" %}</span>
+      <span>{% translate "Admin avançado (Django)" %}</span>
     </a>
   </div>
 </div>

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n static %}
 
+{% block site_chrome %}{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
@@ -26,7 +28,7 @@
       <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="admin-title">
-        <i class="bi bi-speedometer2 me-2"></i>{% translate "Painel Administrativo" %}
+        <i class="bi bi-speedometer2 me-2"></i>{% translate "Visão geral" %}
       </h1>
     </div>
 
@@ -34,7 +36,7 @@
     <div class="row g-3 mb-4">
       <!-- Novos Lugares -->
       <div class="col-md-3">
-        <div class="stat-card-enhanced">
+        <a class="stat-card-enhanced stat-card-link" href="{% url 'explore:backlog' %}?sort=-created_at">
           <div class="stat-header">
             <div class="stat-icon-enhanced bg-primary">
               <i class="bi bi-geo-alt"></i>
@@ -49,12 +51,12 @@
             <span>{% if places_change > 0 %}+{% endif %}{{ places_change }}%</span>
             <small>{% translate "Desde a semana passada" %}</small>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Novos Usuários -->
       <div class="col-md-3">
-        <div class="stat-card-enhanced">
+        <a class="stat-card-enhanced stat-card-link" href="{% url 'accounts:user_management' %}">
           <div class="stat-header">
             <div class="stat-icon-enhanced bg-info">
               <i class="bi bi-people"></i>
@@ -69,32 +71,31 @@
             <span>{% if users_change > 0 %}+{% endif %}{{ users_change }}%</span>
             <small>{% translate "Desde a semana passada" %}</small>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Solicitações -->
       <div class="col-md-3">
-        <div class="stat-card-enhanced">
+        <a class="stat-card-enhanced stat-card-link" href="{% url 'explore:backlog' %}?status=pending">
           <div class="stat-header">
             <div class="stat-icon-enhanced bg-warning">
               <i class="bi bi-hourglass-split"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Solicitações" %}</div>
+              <div class="stat-label-enhanced">{% translate "Aguardando aprovação" %}</div>
               <div class="stat-value-enhanced">{{ pending_places }}</div>
             </div>
           </div>
           <div class="stat-trend {% if pending_places > 0 %}trend-warning{% else %}trend-neutral{% endif %}">
-            <i class="bi bi-dash-circle"></i>
-            <span>-0.2%</span>
-            <small>{% translate "Desde a semana passada" %}</small>
+            <i class="bi bi-{% if pending_places > 0 %}arrow-right-circle{% else %}check-circle{% endif %}"></i>
+            <small>{% if pending_places > 0 %}{% translate "Clique para revisar" %}{% else %}{% translate "Tudo em dia" %}{% endif %}</small>
           </div>
-        </div>
+        </a>
       </div>
 
       <!-- Avaliações -->
       <div class="col-md-3">
-        <div class="stat-card-enhanced">
+        <a class="stat-card-enhanced stat-card-link" href="/admin/explore/placereview/">
           <div class="stat-header">
             <div class="stat-icon-enhanced bg-success">
               <i class="bi bi-star"></i>
@@ -109,7 +110,7 @@
             <span>{% if reviews_change > 0 %}+{% endif %}{{ reviews_change }}%</span>
             <small>{% translate "Desde a semana passada" %}</small>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -199,7 +200,7 @@
               </thead>
               <tbody>
                 {% for user in recent_users %}
-                <tr>
+                <tr{% if user.is_superuser %} class="user-row-admin"{% endif %}>
                   <td>{{ forloop.counter }}</td>
                   <td>#{{ user.id|stringformat:"06d" }}</td>
                   <td>
@@ -208,6 +209,7 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <span>{{ user.username }}</span>
+                      {% if user.is_superuser %}<span class="badge user-admin-badge"><i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i>{% translate "Administrador" %}</span>{% endif %}
                     </div>
                   </td>
                   <td>{{ user.date_joined|date:"SHORT_DATETIME_FORMAT" }}</td>
@@ -247,6 +249,17 @@
   transition: all 0.3s ease;
   height: 100%;
   border: 1px solid var(--line);
+}
+
+.stat-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.stat-card-link:focus-visible {
+  outline: 3px solid var(--brand-red);
+  outline-offset: 2px;
 }
 
 .stat-card-enhanced:hover {

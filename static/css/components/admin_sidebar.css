@@ -367,3 +367,23 @@ html.sidebar-initially-collapsed .sidebar-collapse-btn {
 body.sidebar-open {
   overflow: hidden;
 }
+
+/* "Voltar ao site": primeiro item e o mais visível do menu */
+.admin-sidebar .nav-item.sidebar-back-to-site {
+  margin: 0.75rem 0.75rem 1rem;
+  border-radius: 10px;
+  background: var(--brand-red, #bc2f38);
+  color: #fff;
+  font-weight: 700;
+}
+
+.admin-sidebar .nav-item.sidebar-back-to-site:hover,
+.admin-sidebar .nav-item.sidebar-back-to-site:focus-visible {
+  background: #a3262e;
+  color: #fff;
+}
+
+.admin-sidebar.collapsed .nav-item.sidebar-back-to-site,
+html.sidebar-initially-collapsed .admin-sidebar .nav-item.sidebar-back-to-site {
+  margin: 0.75rem 0.5rem 1rem;
+}

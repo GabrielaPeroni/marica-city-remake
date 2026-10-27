@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n static thumbs %}
 
+{% block site_chrome %}{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
@@ -25,96 +27,29 @@
 
     <div class="admin-content-wrapper">
       <div class="container-fluid px-4 py-4">
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title">
-        <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar eventos" %}
-      </h1>
+      <h1 class="admin-title"><i class="bi bi-calendar-event me-2"></i>{% translate "Eventos" %}</h1>
       <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
         <i class="bi bi-plus-circle me-1"></i>{% translate "Criar evento" %}
       </a>
     </div>
 
-    <!-- Status -->
-    <div class="row g-3 mb-4">
-      <div class="col-md-3">
-        <div class="stat-card-enhanced">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-primary">
-              <i class="bi bi-file-earmark-text"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Total" %}</div>
-              <div class="stat-value-enhanced">{{ total_count }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card-enhanced">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-success">
-              <i class="bi bi-check-circle"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Publicadas" %}</div>
-              <div class="stat-value-enhanced">{{ published_count }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card-enhanced">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-warning">
-              <i class="bi bi-pencil-square"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Rascunhos" %}</div>
-              <div class="stat-value-enhanced">{{ draft_count }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card-enhanced">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-secondary">
-              <i class="bi bi-archive"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Arquivadas" %}</div>
-              <div class="stat-value-enhanced">{{ archived_count }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    {# Os cartões são o filtro de status; "Sugestões" mostra os eventos achados automaticamente #}
+    <nav class="status-filter mb-4" aria-label="{% translate 'Filtrar por status' %}">
+      {% for key, label, count, icon, tone in status_cards %}
+      <a href="?status={{ key }}"
+         class="status-filter__item status-filter__item--{{ tone }}{% if status_filter == key %} is-active{% endif %}"
+         {% if status_filter == key %}aria-current="true"{% endif %}>
+        <i class="bi bi-{{ icon }}" aria-hidden="true"></i>
+        <span class="status-filter__label">{{ label }}</span>
+        <span class="status-filter__count">{{ count }}</span>
+      </a>
+      {% endfor %}
+    </nav>
 
-  <div class="row">
-    <div class="col-md-3 col-lg-2">
-      <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 20px;">
-        <div class="card-body p-0">
-          <div class="list-group list-group-flush">
-            <a href="{% url 'core:admin_news_list' %}" class="list-group-item list-group-item-action {% if status_filter == 'all' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-list-ul me-2"></i>{% translate "Todas" %}
-            </a>
-            <a href="{% url 'core:admin_news_list' %}?status=published" class="list-group-item list-group-item-action {% if status_filter == 'published' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-check-circle me-2"></i>{% translate "Publicadas" %}
-            </a>
-            <a href="{% url 'core:admin_news_list' %}?status=draft" class="list-group-item list-group-item-action {% if status_filter == 'draft' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-pencil-square me-2"></i>{% translate "Rascunhos" %}
-            </a>
-            <a href="{% url 'core:admin_news_list' %}?status=archived" class="list-group-item list-group-item-action {% if status_filter == 'archived' %}active{% endif %} border-0 py-3">
-              <i class="bi bi-archive me-2"></i>{% translate "Arquivadas" %}
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-9 col-lg-10">
-
+    {% if status_filter == 'suggested' %}
+    {% include 'core/admin/_event_suggestions.html' %}
+    {% else %}
     <!-- Filtros -->
     <div class="card mb-4">
       <div class="card-body">
@@ -146,7 +81,7 @@
     </div>
 
     <!-- Nova table -->
-    <div class="card">
+    <div class="card admin-list-inset-card">
       <div class="card-body">
         {% if news_list %}
         <form method="post" action="{% url 'core:admin_news_bulk' %}" id="bulk-news" data-bulk-form>
@@ -154,14 +89,16 @@
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <div class="bulk-bar" data-bulk-bar>
             <span class="bulk-bar__count" data-bulk-count="bulk-news" aria-live="polite">{% translate "0 selecionados" %}</span>
-            <button type="submit" name="action" value="publish" class="btn btn-success btn-sm" data-bulk-action disabled>
+            <button type="submit" name="action" value="publish" class="btn btn-success btn-sm" data-bulk-action disabled
+                    data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles aparecerão na agenda. Publicar todos?' %}">
               <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% translate "Publicar" %}
             </button>
-            <button type="submit" name="action" value="archive" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled>
+            <button type="submit" name="action" value="archive" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled
+                    data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles sairão da agenda. Arquivar todos?' %}">
               <i class="bi bi-archive me-1" aria-hidden="true"></i>{% translate "Arquivar" %}
             </button>
             <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm" data-bulk-action
-                    data-bulk-confirm="{% translate 'Excluir os eventos selecionados? Esta ação não pode ser desfeita.' %}" disabled>
+                    data-bulk-tone="danger" data-bulk-confirm="{% translate 'Eventos selecionados: %s. Esta ação não pode ser desfeita. Excluir todos?' %}" disabled>
               <i class="bi bi-trash me-1" aria-hidden="true"></i>{% translate "Excluir" %}
             </button>
           </div>
@@ -252,8 +189,7 @@
         {% endif %}
       </div>
     </div>
-    </div>
-  </div>
+    {% endif %}
       </div>
     </div>
   </div>

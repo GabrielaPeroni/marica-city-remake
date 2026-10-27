@@ -131,10 +131,12 @@ def user_management_view(request):
     ).select_related()
 
     # Aplicar filtros
-    if role_filter == "staff":
-        users = users.filter(is_staff=True)
+    if role_filter == "admin":
+        users = users.filter(is_superuser=True)
+    elif role_filter == "staff":
+        users = users.filter(is_staff=True, is_superuser=False)
     elif role_filter == "regular":
-        users = users.filter(is_staff=False)
+        users = users.filter(is_staff=False, is_superuser=False)
 
     if status_filter == "active":
         users = users.filter(is_active=True)
@@ -156,7 +158,8 @@ def user_management_view(request):
     regular_users = User.objects.filter(is_staff=False).count()
 
     context = {
-        "users": users.order_by("-created_at"),
+        # Administrador primeiro, depois moderadores, depois os demais
+        "users": users.order_by("-is_superuser", "-is_staff", "-created_at"),
         "total_users": total_users,
         "active_users": active_users,
         "staff_users": staff_users,
@@ -180,6 +183,11 @@ def user_update_type_view(request, user_id):
         )
 
     user = get_object_or_404(User, id=user_id)
+    if user.is_superuser:
+        return JsonResponse(
+            {"success": False, "error": _("O administrador não pode ser alterado.")},
+            status=403,
+        )
 
     # Prevenir alteração do próprio status de staff
     if user == request.user:
@@ -195,7 +203,7 @@ def user_update_type_view(request, user_id):
     user.is_staff = not user.is_staff
     user.save()
 
-    role_display = _("Staff") if user.is_staff else _("Regular")
+    role_display = _("Moderador") if user.is_staff else _("Regular")
     messages.success(
         request,
         _("Status de %(username)s alterado para %(role_display)s.")
@@ -223,6 +231,11 @@ def user_toggle_status_view(request, user_id):
         )
 
     user = get_object_or_404(User, id=user_id)
+    if user.is_superuser:
+        return JsonResponse(
+            {"success": False, "error": _("O administrador não pode ser alterado.")},
+            status=403,
+        )
 
     # Prevenir desativação da própria conta
     if user == request.user:
@@ -258,6 +271,10 @@ def user_delete_view(request, user_id):
         return redirect("accounts:user_management")
 
     user = get_object_or_404(User, id=user_id)
+
+    if user.is_superuser:
+        messages.error(request, _("O administrador não pode ser excluído."))
+        return redirect("accounts:user_management")
 
     # Prevenir exclusão da própria conta
     if user == request.user:
