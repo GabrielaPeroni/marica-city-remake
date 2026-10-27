@@ -736,3 +736,56 @@ html {
     max-width: none;
   }
 }
+
+/* Navegação entre páginas: transição suave em vez de tela branca (Chrome/Edge/Safari 18+).
+   A barra de navegação, o seletor de idioma e o aviso de cookies ficam parados. */
+@view-transition {
+  navigation: auto;
+}
+
+.site-navbar {
+  view-transition-name: site-navbar;
+}
+
+.lang-switcher {
+  view-transition-name: lang-switcher;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* Fundo neutro enquanto a imagem carrega, em vez de um buraco que pisca */
+img.place-card-img,
+img.card-img-top,
+.event-card-media img,
+.hero-bg-image {
+  background-color: var(--surface-alt);
+}
+
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  height: 3px;
+  width: 0;
+  background: var(--brand-red);
+  box-shadow: 0 0 8px rgba(188, 47, 56, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  view-transition-name: nav-progress;
+}
+
+.nav-progress.is-loading {
+  opacity: 1;
+  width: 85%;
+  transition: width 4s cubic-bezier(0.1, 0.7, 0.2, 1);
+}

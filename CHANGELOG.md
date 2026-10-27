@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Faster, smoother navigation:
+  - Uploaded images are served as resized WebP copies (480/960/1600 px,
+    generated once under `media/thumbs/`, `manage.py generate_thumbnails`)
+    with `srcset`. The hero slides are WebP too. The landing page's first load
+    drops from about 12 MB to 1.3 MB.
+  - Cross-document view transitions replace the white flash between pages, and
+    speculation rules prerender a page when the pointer rests on its link
+    (Chromium). Visits and event views from prerendered pages are counted only
+    when the page is actually shown.
+  - A thin progress bar appears when a page takes more than 120 ms to load.
+  - Place lists annotate ratings in one query (landing page: 74 queries to 9).
+  - Swiper loads only on the landing page, the unused Shoelace stylesheet is
+    gone, the icon font is preloaded, and Google Sign-In loads only when the
+    "Entrar" menu is opened.
+  - `ConditionalGetMiddleware` adds ETags; media on R2 gets a one-year
+    `Cache-Control`.
 - One-time cookie consent banner. Visitors who accept get an anonymous
   first-party cookie, and each place page view is counted once per visitor and
   day (`PlaceVisit`). Declining stores the answer and removes the identifier;
@@ -60,6 +76,7 @@ translate_content` translates only new or changed items (it tracks a hash of
 
 ### Changed
 
+- Logging out is a POST form (CSRF-safe; prefetching can't sign anyone out).
 - New footer: a short description of the guide, a GitHub link, direct links to
   each category, a "Visite" column (agenda, planning, emergency numbers) and
   the real licensing (MIT code, Wikimedia Commons photos) instead of "Todos os

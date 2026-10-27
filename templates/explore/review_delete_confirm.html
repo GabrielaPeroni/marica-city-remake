@@ -22,7 +22,10 @@
             <span class="nav-link text-white-50">{{ user.username }}</span>
           </li>
           <li class="nav-item">
-            <a class="btn btn-outline-light btn-sm text-uppercase" href="{% url 'accounts:logout' %}">{% translate "Sair" %}</a>
+            <form method="post" action="{% url 'accounts:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-light btn-sm text-uppercase">{% translate "Sair" %}</button>
+            </form>
           </li>
         {% else %}
           <li class="nav-item dropdown">

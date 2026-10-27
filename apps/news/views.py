@@ -1,7 +1,12 @@
 from django.core.paginator import Paginator
 from django.db.models import Case, IntegerField, Q, Value, When
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+from apps.core.utils import is_speculative
 
 from .models import News
 
@@ -30,7 +35,8 @@ def news_list_view(request):
 def news_detail_view(request, slug):
     """Exibir a página de um evento; conteúdo que não é evento não é público"""
     event = get_object_or_404(News.objects.published().events(), slug=slug)
-    event.increment_view_count()
+    if not is_speculative(request):
+        event.increment_view_count()
 
     now = timezone.now()
     related_events = (
@@ -53,3 +59,13 @@ def news_detail_view(request, slug):
         "news/news_detail.html",
         {"news_item": event, "related_news": related_events},
     )
+
+
+@csrf_exempt
+@require_POST
+def news_view_beacon(request, slug):
+    """Conta a visualização de uma página aberta a partir de um pré-carregamento."""
+    get_object_or_404(
+        News.objects.published().events(), slug=slug
+    ).increment_view_count()
+    return JsonResponse({"ok": True})

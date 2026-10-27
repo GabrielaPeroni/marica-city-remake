@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static thumbs %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -51,7 +51,7 @@
             <div class="row">
               {% if news.featured_image %}
               <div class="col-md-3">
-                <img src="{{ news.featured_image.url }}" alt="{{ news.title }}"
+                <img src="{{ news.featured_image|thumb:480 }}" alt="{{ news.title }}"
                      class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
               </div>
               <div class="col-md-9">

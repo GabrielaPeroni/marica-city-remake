@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 
 from .forms import UserRegistrationForm
 from .models import User
@@ -94,12 +95,13 @@ def login_view(request):
 
 
 @login_required
+@require_POST
 def logout_view(request):
     logout(request)
     messages.success(request, _("Você saiu com sucesso."))
 
-    # Redirect to the referring page or home
-    next_url = request.GET.get("next") or request.META.get("HTTP_REFERER")
+    # Volta para a página de origem, ou para a inicial
+    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER")
     if next_url and url_has_allowed_host_and_scheme(
         next_url,
         allowed_hosts={request.get_host()},

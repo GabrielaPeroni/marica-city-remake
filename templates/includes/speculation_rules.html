@@ -1,0 +1,35 @@
+<script>
+  // Página pré-renderizada: conta a visita só quando o visitante realmente a abre.
+  if (document.prerendering) {
+    const beacon = document.querySelector('meta[name="view-beacon"]');
+    if (beacon) {
+      document.addEventListener(
+        'prerenderingchange',
+        () => fetch(beacon.content, { method: 'POST', keepalive: true, credentials: 'same-origin' }),
+        { once: true }
+      );
+    }
+  }
+</script>
+{# Pré-carrega a próxima página ao passar o mouse sobre um link (Chrome/Edge); os demais navegadores ignoram. #}
+<script type="speculationrules">
+{
+  "prerender": [{
+    "where": {
+      "and": [
+        {"href_matches": "/*"},
+        {"not": {"href_matches": "/accounts/*"}},
+        {"not": {"href_matches": "/admin/*"}},
+        {"not": {"href_matches": "/painel-admin/*"}},
+        {"not": {"href_matches": "/i18n/*"}},
+        {"not": {"href_matches": "/*/edit/"}},
+        {"not": {"href_matches": "/*/delete/*"}},
+        {"not": {"href_matches": "/media/*"}},
+        {"not": {"href_matches": "/explore/place/create/"}},
+        {"not": {"selector_matches": "[rel~=nofollow], [target=_blank], [data-no-prerender]"}}
+      ]
+    },
+    "eagerness": "moderate"
+  }]
+}
+</script>

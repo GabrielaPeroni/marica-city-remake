@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n %}
+{% load i18n static content_i18n thumbs %}
 
 {% block title %}MaricaCity - {% translate "Descubra o Turismo Local" %}{% endblock %}
 
@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
 <link rel="stylesheet" href="{% static 'css/pages/landing.css' %}">
 {% endblock %}
 
@@ -31,7 +31,7 @@
       <div class="swiper-slide">
         <!-- Contêiner da Imagem de Fundo -->
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/main.png' %}" alt="" class="hero-bg-image">
+          <img src="{% static 'images/hero/hero_1-1920.webp' %}" srcset="{% static 'images/hero/hero_1-1280.webp' %} 1280w, {% static 'images/hero/hero_1-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" fetchpriority="high">
           <div class="hero-bg-overlay"></div>
         </div>
 
@@ -57,7 +57,7 @@
       <!-- Slide 2 -->
       <div class="swiper-slide">
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/hero_2.jpg' %}" alt="" class="hero-bg-image">
+          <img src="{% static 'images/hero/hero_2-1920.webp' %}" srcset="{% static 'images/hero/hero_2-1280.webp' %} 1280w, {% static 'images/hero/hero_2-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" loading="lazy">
           <div class="hero-bg-overlay"></div>
         </div>
 
@@ -81,7 +81,7 @@
       <!-- Slide 3 -->
       <div class="swiper-slide">
         <div class="hero-bg-container">
-          <img src="{% static 'images/hero/hero_3.jpg' %}" alt="" class="hero-bg-image">
+          <img src="{% static 'images/hero/hero_3-1920.webp' %}" srcset="{% static 'images/hero/hero_3-1280.webp' %} 1280w, {% static 'images/hero/hero_3-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" loading="lazy">
           <div class="hero-bg-overlay"></div>
         </div>
 
@@ -134,7 +134,7 @@
         <div class="card border h-100 card-hover">
           <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none">
             {% if place.primary_image %}
-            <img src="{{ place.primary_image.image.url }}" alt="{{ place.name }}" class="card-img-top place-card-img" loading="lazy">
+            <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="{{ place.name }}" class="card-img-top place-card-img" loading="lazy">
             {% else %}
             <div class="bg-dark text-white d-flex align-items-center justify-content-center place-card-placeholder">
               <span class="display-4 fw-bold">{{ place.name|first }}</span>
@@ -204,7 +204,7 @@
               <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none d-block h-100">
                 {% if place.primary_image %}
                 <div class="position-relative rounded-4 overflow-hidden shadow h-100">
-                  <img src="{{ place.primary_image.image.url }}" alt="{{ place.name }}" class="w-100 h-100 img-cover" loading="lazy">
+                  <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="{{ place.name }}" class="w-100 h-100 img-cover" loading="lazy">
                   <div class="position-absolute bottom-0 start-0 end-0 p-4 text-center featured-image-gradient">
                     <h3 class="text-white fw-bold fs-5 mb-2">{{ place.name }}</h3>
                     {% if place.average_rating %}
@@ -363,7 +363,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Swiper já está carregado globalmente no base.html -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
 <script src="{% static 'js/landing.js' %}"></script>
 {% if GOOGLE_MAPS_API_KEY %}
 <script src="{% static 'js/landing_map.js' %}?v=2"></script>

@@ -58,10 +58,14 @@
               </a>
               {% endif %}
               <div class="dropdown-divider my-2"></div>
-              <a class="dropdown-item user-menu-item text-danger" href="{% url 'accounts:logout' %}">
-                <i class="bi bi-box-arrow-right me-2"></i>
-                <span>{% translate "Sair" %}</span>
-              </a>
+              <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="dropdown-item user-menu-item text-danger">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  <span>{% translate "Sair" %}</span>
+                </button>
+              </form>
             </div>
           </li>
         {% else %}

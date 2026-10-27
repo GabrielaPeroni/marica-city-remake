@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from django_ratelimit.decorators import ratelimit
@@ -56,8 +57,10 @@ def explore_view(request):
             | Q(categories__name__icontains=search_query)
         ).distinct()
 
-    all_places = all_places.prefetch_related("images", "categories").order_by(
-        sort_order
+    all_places = (
+        all_places.with_ratings()
+        .prefetch_related("images", "categories")
+        .order_by(sort_order)
     )
 
     context = {
@@ -86,6 +89,7 @@ def category_detail_view(request, slug):
     # Obter todos os lugares aprovados e ativos nesta categoria
     places = (
         Place.objects.filter(categories=category, is_approved=True, is_active=True)
+        .with_ratings()
         .prefetch_related("images", "categories", "created_by")
         .order_by(sort_order)
     )
@@ -106,6 +110,16 @@ def category_detail_view(request, slug):
         "current_sort": sort_by,
     }
     return render(request, "explore/category_detail.html", context)
+
+
+@csrf_exempt
+@require_POST
+def place_visit_view(request, pk):
+    """Conta a visita de uma página aberta a partir de um pré-carregamento."""
+    place = get_object_or_404(Place, pk=pk, is_approved=True, is_active=True)
+    response = JsonResponse({"ok": True})
+    record_visit(request, response, place)
+    return response
 
 
 def place_detail_view(request, pk):
@@ -136,6 +150,7 @@ def place_detail_view(request, pk):
         )
         .exclude(pk=place.pk)
         .distinct()
+        .with_ratings()
         .prefetch_related("images", "categories")[:3]
     )
 

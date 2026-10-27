@@ -1,8 +1,8 @@
-{% load i18n event_dates content_i18n %}
+{% load i18n event_dates content_i18n thumbs %}
 <a class="event-card {% if lead %}event-card--lead{% endif %}" href="{% url 'news:news_detail' event.slug %}">
   <div class="event-card-media {% if not event.featured_image %}event-card-media--placeholder{% endif %}">
     {% if event.featured_image %}
-    <img src="{{ event.featured_image.url }}" alt="" loading="lazy">
+    <img src="{{ event.featured_image|thumb:960 }}" srcset="{{ event.featured_image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="" loading="lazy">
     {% else %}
     <i class="bi bi-calendar-event" aria-hidden="true"></i>
     {% endif %}

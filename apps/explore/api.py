@@ -7,6 +7,8 @@ from django.db.models import Avg, Count
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
+from apps.core.thumbnails import thumbnail_url
+
 from .models import Place
 
 
@@ -39,7 +41,7 @@ def map_data_api(request):
     for place in places:
         # Obter imagem primária ou primeira imagem
         primary_image = place.primary_image
-        image_url = primary_image.image.url if primary_image else None
+        image_url = thumbnail_url(primary_image.image, 960) if primary_image else None
 
         # Obter primeira categoria para ícone/cor (usa o cache do prefetch)
         categories = list(place.categories.all())
@@ -108,7 +110,7 @@ def places_by_ids_api(request):
     for place in places:
         # Obter imagem primária ou primeira imagem
         primary_image = place.primary_image
-        image_url = primary_image.image.url if primary_image else None
+        image_url = thumbnail_url(primary_image.image, 960) if primary_image else None
 
         # Obter categorias
         categories = [

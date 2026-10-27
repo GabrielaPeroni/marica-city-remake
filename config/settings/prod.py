@@ -45,6 +45,8 @@ AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="auto")
 AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_CUSTOM_DOMAIN", default="")
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False
+# Upload names never repeat (Django adds a suffix), so browsers and the CDN can keep them.
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "public, max-age=31536000"}
 
 if AWS_STORAGE_BUCKET_NAME:
     STORAGES["default"] = {

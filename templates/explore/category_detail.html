@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n %}
+{% load i18n static content_i18n thumbs %}
 
 {% block title %}{{ category|tr:"name" }} - MaricaCity{% endblock %}
 
@@ -68,7 +68,7 @@
           <div class="card place-card position-relative h-100 border-0 shadow-sm">
             <div class="position-relative place-card-image-wrapper">
               {% if place.primary_image %}
-              <img src="{{ place.primary_image.image.url }}" alt="" class="card-img-top place-card-img" loading="lazy">
+              <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" decoding="async" alt="" class="card-img-top place-card-img" loading="lazy">
               {% else %}
               <div class="bg-light text-muted d-flex align-items-center justify-content-center place-card-placeholder">
                 <span class="display-4 fw-bold" aria-hidden="true">{{ place.name|first }}</span>

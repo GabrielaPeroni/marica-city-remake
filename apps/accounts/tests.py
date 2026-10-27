@@ -158,8 +158,15 @@ class AuthenticationViewTests(TestCase):
     def test_logout(self):
         """Testa que o usuário pode fazer logout"""
         self.client.login(username="testuser", password="testpass123")
-        response = self.client.get(reverse("accounts:logout"))
+        response = self.client.post(reverse("accounts:logout"))
         self.assertEqual(response.status_code, 302)
+
+    def test_logout_rejects_get(self):
+        """Logout só por POST, para que links ou pré-carregamentos não deslogem"""
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(reverse("accounts:logout"))
+        self.assertEqual(response.status_code, 405)
+        self.assertIn("_auth_user_id", self.client.session)
 
     def test_login_endpoint_rejects_get_requests(self):
         """Testa que o endpoint de login só aceita POST (apenas AJAX)"""
@@ -240,14 +247,15 @@ class AuthenticationViewTests(TestCase):
     def test_logout_redirects_to_next_param(self):
         """Testa que o logout redireciona para o parâmetro 'next' quando fornecido"""
         self.client.login(username="testuser", password="testpass123")
-        response = self.client.get(reverse("accounts:logout") + "?next=/explore/")
+        response = self.client.post(reverse("accounts:logout"), {"next": "/explore/"})
         self.assertRedirects(response, "/explore/", fetch_redirect_response=False)
 
     def test_logout_ignores_external_next_url(self):
         """Logout must not redirect to another site via ?next= or Referer"""
         self.client.login(username="testuser", password="testpass123")
-        response = self.client.get(
-            reverse("accounts:logout") + "?next=https://evil.example/phish",
+        response = self.client.post(
+            reverse("accounts:logout"),
+            {"next": "https://evil.example/phish"},
             HTTP_REFERER="https://evil.example/",
         )
         self.assertRedirects(
@@ -257,7 +265,7 @@ class AuthenticationViewTests(TestCase):
     def test_logout_falls_back_to_landing_page(self):
         """Testa que o logout redireciona para a página inicial sem 'next' ou referer"""
         self.client.login(username="testuser", password="testpass123")
-        response = self.client.get(reverse("accounts:logout"))
+        response = self.client.post(reverse("accounts:logout"))
         self.assertRedirects(response, reverse("core:landing"))
 
 

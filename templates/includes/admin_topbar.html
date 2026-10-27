@@ -35,9 +35,13 @@
         <small class="text-muted">{{ request.user.email }}</small>
       </div>
       <div class="dropdown-divider"></div>
-      <a href="{% url 'accounts:logout' %}" class="dropdown-item text-danger">
-        <i class="bi bi-box-arrow-left me-2"></i>{% translate "Sair" %}
-      </a>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{% url 'core:landing' %}">
+        <button type="submit" class="dropdown-item text-danger">
+          <i class="bi bi-box-arrow-left me-2"></i>{% translate "Sair" %}
+        </button>
+      </form>
     </div>
   </div>
 </div>

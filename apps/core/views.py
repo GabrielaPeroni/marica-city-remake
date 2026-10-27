@@ -36,6 +36,7 @@ def landing_view(request):
     # Lugares em destaque (mais recentes)
     featured_places = (
         Place.objects.filter(is_approved=True, is_active=True)
+        .with_ratings()
         .prefetch_related("images", "categories")
         .order_by("-created_at")[:6]
     )
@@ -48,11 +49,16 @@ def landing_view(request):
             Place.objects.filter(
                 is_approved=True, is_active=True, created_at__gte=day_range
             )
+            .with_ratings()
             .prefetch_related("images", "categories")
             .order_by("-created_at")[:4]
         )
 
-    categories = Category.objects.filter(is_active=True).order_by("display_order")[:8]
+    categories = (
+        Category.objects.filter(is_active=True)
+        .with_place_counts()
+        .order_by("display_order")[:8]
+    )
 
     events = News.objects.published().select_related("category")
     upcoming_events = list(events.upcoming_events()[:4])

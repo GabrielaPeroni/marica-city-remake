@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
-{% load i18n static event_dates content_i18n %}
+{% load i18n static event_dates content_i18n thumbs %}
 
 {% block title %}{{ news_item|tr:"title" }} - MaricaCity{% endblock %}
+
+{% block extra_css %}
+<meta name="view-beacon" content="{% url 'news:news_view_beacon' news_item.slug %}">
+{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
@@ -56,7 +60,7 @@
 
         {% if news_item.featured_image %}
         <figure class="mb-4">
-          <img src="{{ news_item.featured_image.url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ news_item.image_caption|default:news_item.title }}">
+          <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" class="img-fluid rounded shadow-sm w-100" alt="{{ news_item.image_caption|default:news_item.title }}">
           {% if news_item.image_caption %}
           <figcaption class="text-muted small mt-2 text-center">{{ news_item.image_caption }}</figcaption>
           {% endif %}

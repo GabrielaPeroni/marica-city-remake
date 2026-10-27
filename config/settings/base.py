@@ -30,6 +30,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.http.ConditionalGetMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -208,5 +209,6 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
+        "PIL": {"level": "INFO"},
     },
 }

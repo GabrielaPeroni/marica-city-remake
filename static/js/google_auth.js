@@ -41,69 +41,70 @@ function handleCredentialResponse(response) {
     });
 }
 
-// Rastrear se o Google Sign-In foi inicializado
+// O SDK do Google (~100 KB + iframe) só é baixado quando o menu "Entrar" é aberto
 let googleInitialized = false;
+let googleSdkPromise = null;
 
-// Inicializar SDK do Google Sign-In
+function loadGoogleSDK() {
+  if (!window.GOOGLE_CLIENT_ID) return Promise.resolve(false);
+  if (!googleSdkPromise) {
+    googleSdkPromise = new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.head.appendChild(script);
+    });
+  }
+  return googleSdkPromise;
+}
+
 function initializeGoogleSDK() {
-  if (
-    typeof google !== 'undefined' &&
-    google.accounts &&
-    window.GOOGLE_CLIENT_ID &&
-    !googleInitialized
-  ) {
-    try {
-      google.accounts.id.initialize({
-        client_id: window.GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-      });
-      googleInitialized = true;
-      renderGoogleButton();
-    } catch (error) {
-      console.error('Erro ao inicializar SDK do Google Sign-In:', error);
-    }
-  } else if (!googleInitialized) {
-    // Se o SDK do Google ainda não estiver pronto, tentar novamente em 100ms
-    setTimeout(initializeGoogleSDK, 100);
+  if (googleInitialized || typeof google === 'undefined' || !google.accounts) return;
+  try {
+    google.accounts.id.initialize({
+      client_id: window.GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+    });
+    googleInitialized = true;
+  } catch (error) {
+    console.error('Erro ao inicializar SDK do Google Sign-In:', error);
   }
 }
 
-// Renderizar o botão do Google Sign-In
 function renderGoogleButton() {
-  if (!googleInitialized) {
-    return;
-  }
-
   const googleButton = document.getElementById('google-signin-button');
-  if (googleButton && !googleButton.hasChildNodes()) {
-    try {
-      google.accounts.id.renderButton(googleButton, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'rectangular',
-        logo_alignment: 'left',
-        width: 280,
-      });
-    } catch (error) {
-      console.error('Erro ao renderizar botão do Google Sign-In:', error);
-    }
+  if (!googleInitialized || !googleButton || googleButton.hasChildNodes()) return;
+  try {
+    google.accounts.id.renderButton(googleButton, {
+      type: 'standard',
+      theme: 'outline',
+      size: 'large',
+      text: 'signin_with',
+      shape: 'rectangular',
+      logo_alignment: 'left',
+      width: 280,
+    });
+  } catch (error) {
+    console.error('Erro ao renderizar botão do Google Sign-In:', error);
   }
 }
 
-// Ouvir eventos de exibição do dropdown para renderizar o botão quando ele se tornar visível
-document.addEventListener('shown.bs.dropdown', function (event) {
-  // Verificar se este é um dropdown de login
-  const dropdown = event.target;
-  if (dropdown.querySelector('#google-signin-button')) {
+function showGoogleButton() {
+  loadGoogleSDK().then(loaded => {
+    if (!loaded) return;
+    initializeGoogleSDK();
     renderGoogleButton();
-  }
-});
-
-// Iniciar inicialização quando o DOM estiver pronto
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeGoogleSDK);
-} else {
-  initializeGoogleSDK();
+  });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('google-signin-button');
+  const dropdown = button && button.closest('.dropdown');
+  if (!dropdown) return;
+  const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+  // Começa a baixar ao passar o mouse, para o botão já estar pronto ao abrir
+  toggle?.addEventListener('pointerenter', loadGoogleSDK, { once: true });
+  dropdown.addEventListener('shown.bs.dropdown', showGoogleButton);
+});

@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n %}
+{% load i18n static content_i18n thumbs %}
 
 {% block title %}{{ place.name }} - MaricaCity{% endblock %}
 
 {% block extra_css %}
+<meta name="view-beacon" content="{% url 'explore:place_visit' place.pk %}">
 <link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
 {% endblock %}
 
@@ -78,7 +79,7 @@
           <div class="place-carousel">
             <div class="place-carousel-images">
               {% for image in place.gallery_images %}
-              <img src="{{ image.image.url }}" alt="{{ image.caption|default:place.name }}" class="place-detail-image place-carousel-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+              <img src="{{ image.image|thumb:1600 }}" srcset="{{ image.image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" decoding="async" alt="{{ image.caption|default:place.name }}" class="place-detail-image place-carousel-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
               {% endfor %}
             </div>
 

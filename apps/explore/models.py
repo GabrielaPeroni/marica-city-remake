@@ -3,8 +3,20 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _l
 
 
+class CategoryQuerySet(models.QuerySet):
+    def with_place_counts(self):
+        return self.annotate(
+            public_place_count=models.Count(
+                "places",
+                filter=models.Q(places__is_active=True, places__is_approved=True),
+            )
+        )
+
+
 class Category(models.Model):
     TRANSLATABLE_FIELDS = ("name", "description")
+
+    objects = CategoryQuerySet.as_manager()
 
     name = models.CharField(
         max_length=100, unique=True, help_text=_l("Nome da categoria")
@@ -56,11 +68,24 @@ class Category(models.Model):
     @property
     def active_places_count(self):
         """Contagem de lugares ativos aprovados nesta categoria"""
+        if hasattr(self, "public_place_count"):
+            return self.public_place_count
         return self.places.filter(is_active=True, is_approved=True).count()
+
+
+class PlaceQuerySet(models.QuerySet):
+    def with_ratings(self):
+        """Anota média e contagem de avaliações (evita uma consulta por card)."""
+        return self.annotate(
+            rating_avg=models.Avg("reviews__rating"),
+            rating_count=models.Count("reviews", distinct=True),
+        )
 
 
 class Place(models.Model):
     TRANSLATABLE_FIELDS = ("description",)
+
+    objects = PlaceQuerySet.as_manager()
 
     name = models.CharField(max_length=200, help_text=_l("Nome do lugar"))
 
@@ -151,14 +176,17 @@ class Place(models.Model):
     @property
     def average_rating(self):
         """Calcula a avaliação média de todas as avaliações"""
-        from django.db.models import Avg
-
-        result = self.reviews.aggregate(Avg("rating"))
-        return round(result["rating__avg"], 1) if result["rating__avg"] else None
+        if hasattr(self, "rating_avg"):
+            avg = self.rating_avg
+        else:
+            avg = self.reviews.aggregate(avg=models.Avg("rating"))["avg"]
+        return round(avg, 1) if avg else None
 
     @property
     def review_count(self):
         """Contagem de avaliações para este lugar"""
+        if hasattr(self, "rating_count"):
+            return self.rating_count
         return self.reviews.count()
 
 

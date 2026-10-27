@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static thumbs %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
@@ -113,7 +113,7 @@
 
         {% if news.featured_image %}
         <div class="mb-3">
-          <img src="{{ news.featured_image.url }}" alt="{% translate 'Imagem atual' %}" class="image-preview">
+          <img src="{{ news.featured_image|thumb:960 }}" alt="{% translate 'Imagem atual' %}" class="image-preview">
         </div>
         {% endif %}
 

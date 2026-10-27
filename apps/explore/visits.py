@@ -5,6 +5,8 @@ from uuid import uuid4
 from django.db.models import Count, Q
 from django.utils import timezone
 
+from apps.core.utils import is_speculative
+
 from .models import Place, PlaceVisit
 
 CONSENT_COOKIE = "mc_consent"
@@ -19,7 +21,7 @@ def record_visit(request, response, place):
             response.delete_cookie(VISITOR_COOKIE)
         return
     user = request.user
-    if not (place.is_approved and place.is_active):
+    if is_speculative(request) or not (place.is_approved and place.is_active):
         return
     if user.is_authenticated and (user.can_moderate or place.created_by_id == user.pk):
         return
@@ -45,7 +47,12 @@ def most_visited(days=7, limit=4):
     since = timezone.localdate() - timedelta(days=days)
     return (
         Place.objects.filter(is_approved=True, is_active=True)
-        .annotate(recent_visits=Count("visits", filter=Q(visits__date__gt=since)))
+        .annotate(
+            recent_visits=Count(
+                "visits", filter=Q(visits__date__gt=since), distinct=True
+            )
+        )
+        .with_ratings()
         .filter(recent_visits__gt=0)
         .order_by("-recent_visits", "-created_at")
         .prefetch_related("images", "categories")[:limit]
