@@ -6,7 +6,7 @@
  * 2. Copies every Lucide icon used by {% icon "name" %} in templates, plus EXTRA_ICONS,
  *    into apps/core/icons/ (and removes icons nothing uses anymore).
  * 3. Copies the Basecoat JS we load into static/vendor/basecoat/.
- * 4. Compiles static/css/src/app.css into static/css/app.css with the Tailwind CLI.
+ * 4. Compiles frontend/css/app.css into static/css/app.css with the Tailwind CLI.
  *
  * The outputs are committed: Docker and Vercel have no Node.
  */
@@ -141,7 +141,7 @@ function buildCss() {
     [
       cli,
       '--input',
-      path.join('static', 'css', 'src', 'app.css'),
+      path.join('frontend', 'css', 'app.css'),
       '--output',
       path.join('static', 'css', 'app.css'),
       '--minify',

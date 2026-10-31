@@ -1,4 +1,4 @@
-/* Fonte do CSS do site. Compile com `npm run build:css` (gera static/css/app.css). */
+/* Fonte do CSS do site (fora de static/, não é coletada). Compile com `npm run build:css` (gera static/css/app.css); os url() são relativos à saída. */
 @import 'tailwindcss' source(none);
 @import 'basecoat-css';
 @import './pages/landing.css' layer(components);
@@ -6,9 +6,9 @@
 @import './pages/place.css';
 @import './pages/maps.css';
 
-@source '../../../templates';
-@source '../../js';
-@source '../../../apps/**/*.py';
+@source '../../templates';
+@source '../../static/js';
+@source '../../apps/**/*.py';
 
 @font-face {
   font-family: 'Inter Variable';

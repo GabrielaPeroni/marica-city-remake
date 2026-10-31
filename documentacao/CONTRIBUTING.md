@@ -91,7 +91,7 @@ npm run build:css      # fontes -> static/fonts/, ícones -> apps/core/icons/,
 npm run watch:css      # só recompila o CSS ao salvar (rode build:css ao usar ícone novo)
 ```
 
-- A fonte é `static/css/src/app.css` (tokens, `@theme`, classes de componente).
+- A fonte é `frontend/css/app.css` (fora de `static/`, para o collectstatic não publicá-la) (tokens, `@theme`, classes de componente).
   A saída (`static/css/app.css`, fontes, ícones, JS do Basecoat) é **commitada**:
   Docker e Vercel não têm Node. A CI roda `npm run build:css` e falha se o
   resultado for diferente do commitado.

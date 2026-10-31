@@ -5,7 +5,7 @@
   "description": "Frontend tooling (CSS build, JS lint/build) for MaricaCity static assets.",
   "scripts": {
     "build:css": "node scripts/build-css.mjs",
-    "watch:css": "tailwindcss --input static/css/src/app.css --output static/css/app.css --watch",
+    "watch:css": "tailwindcss --input frontend/css/app.css --output static/css/app.css --watch",
     "lint:js": "eslint static/js",
     "build:js": "node scripts/build-js.mjs"
   },
