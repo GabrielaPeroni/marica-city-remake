@@ -1,102 +1,42 @@
-{% extends 'base.html' %}
+{% extends 'accounts/auth_base.html' %}
 {% load i18n static %}
 
 {% block title %}{% translate "Cadastro" %} - MaricaCity{% endblock %}
 
-{% block content %}
-{% include 'includes/navbar.html' %}
+{% block auth_title %}{% translate "Crie sua conta" %}{% endblock %}
+{% block auth_subtitle %}{% translate "Salve favoritos, avalie e compartilhe os seus lugares de Maricá." %}{% endblock %}
 
-<header class="page-header">
-  <div class="container">
-    <h1>{% translate "Crie sua conta" %}</h1>
-    <p class="page-header-subtitle">{% translate "Salve favoritos, avalie e compartilhe os seus lugares de Maricá." %}</p>
-  </div>
-</header>
+{% block auth_body %}
+<form method="post" class="grid gap-5">
+  {% csrf_token %}
+  <c-form-field :field="form.username" label="{% translate 'Nome de usuário' %}" />
+  <c-form-field :field="form.email" label="{% translate 'Endereço de e-mail' %}" />
+  <c-form-field :field="form.password1" label="{% translate 'Senha' %}" help="{% translate 'Pelo menos 8 caracteres, sem ser só números.' %}" />
+  <c-form-field :field="form.password2" label="{% translate 'Confirmar senha' %}" help="{% translate 'Repita a senha para confirmar.' %}" />
 
-<div class="bg-light py-4 py-md-5">
-  <div class="container" style="max-width: 500px;">
-    <div class="card shadow">
-      <div class="card-body p-4">
-        <form method="post">
-          {% csrf_token %}
+  {% if form.non_field_errors %}
+  <p role="alert" class="rounded-md bg-brand-tint px-4 py-3 text-sm text-destructive">{{ form.non_field_errors.0 }}</p>
+  {% endif %}
 
-          <div class="mb-3">
-            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">
-              {% translate "Nome de usuário" %}
-            </label>
-            {{ form.username }}
-            {% if form.username.errors %}
-            <div class="text-danger small mt-2">{{ form.username.errors.0 }}</div>
-            {% endif %}
-          </div>
+  <c-button type="submit" size="lg" class="mt-1 w-full">{% translate "Cadastrar" %}</c-button>
+</form>
 
-          <div class="mb-3">
-            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
-              {% translate "Endereço de e-mail" %}
-            </label>
-            {{ form.email }}
-            {% if form.email.errors %}
-            <div class="text-danger small mt-2">{{ form.email.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <div class="mb-3">
-            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">
-              {% translate "Senha" %}
-            </label>
-            {{ form.password1 }}
-            {% if form.password1.errors %}
-            <div class="text-danger small mt-2">{{ form.password1.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          <div class="mb-3">
-            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">
-              {% translate "Confirmar senha" %}
-            </label>
-            {{ form.password2 }}
-            {% if form.password2.errors %}
-            <div class="text-danger small mt-2">{{ form.password2.errors.0 }}</div>
-            {% endif %}
-          </div>
-
-          {% if form.non_field_errors %}
-          <div class="alert alert-danger">
-            {{ form.non_field_errors.0 }}
-          </div>
-          {% endif %}
-
-          <div class="d-grid mb-4">
-            <button type="submit" class="btn btn-dark btn-lg">{% translate "Cadastrar" %}</button>
-          </div>
-        </form>
-
-        <div class="position-relative my-4">
-          <hr class="text-muted">
-          <span class="position-absolute top-50 start-50 translate-middle or-label px-3 text-muted small">{% translate "ou" %}</span>
-        </div>
-
-        <div class="text-center">
-          <div
-            id="g_id_onload"
-            data-client_id="{{ GOOGLE_OAUTH_CLIENT_ID }}"
-            data-callback="handleCredentialResponse"
-            data-auto_prompt="false">
-          </div>
-
-          <div class="g_id_signin d-flex justify-content-center"
-              data-type="standard"
-              data-theme="outline"
-              data-size="large"
-              data-width="100%">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+{% if GOOGLE_OAUTH_CLIENT_ID %}
+<div class="my-6 flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
+  <span class="h-px flex-1 bg-border"></span>{% translate "ou" %}<span class="h-px flex-1 bg-border"></span>
 </div>
+
+<div id="g_id_onload" data-client_id="{{ GOOGLE_OAUTH_CLIENT_ID }}" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+<div class="g_id_signin flex min-h-11 justify-center" data-type="standard" data-theme="outline" data-size="large" data-text="signup_with" data-width="300"></div>
+{% endif %}
+
+<p class="mt-8 text-center text-sm text-muted-foreground">
+  {% translate "Já tem uma conta?" %}
+  <button type="button" class="font-semibold text-foreground underline-offset-4 hover:underline" data-open-login>{% translate "Entrar" %}</button>
+</p>
 {% endblock %}
 
 {% block scripts %}
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+{% if GOOGLE_OAUTH_CLIENT_ID %}<script src="https://accounts.google.com/gsi/client" async defer></script>{% endif %}
+<script src="{% static 'js/components/auth.js' %}"></script>
 {% endblock %}
