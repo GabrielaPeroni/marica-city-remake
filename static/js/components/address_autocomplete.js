@@ -21,12 +21,19 @@ function initAutocomplete() {
   }
 
   // Ocultar o textarea original temporariamente
-  addressTextarea.style.display = 'none';
+  addressTextarea.hidden = true;
 
   // Criar um input de texto para autocompletar
   autocompleteInput = document.createElement('input');
   autocompleteInput.type = 'text';
-  autocompleteInput.className = addressTextarea.className;
+  autocompleteInput.className = 'input w-full';
+  autocompleteInput.id = 'id_address_search';
+  autocompleteInput.autocomplete = 'off';
+  autocompleteInput.setAttribute(
+    'aria-describedby',
+    addressTextarea.getAttribute('aria-describedby') || ''
+  );
+  addressTextarea.labels.forEach(label => (label.htmlFor = autocompleteInput.id));
   autocompleteInput.placeholder = gettext('Comece a digitar o endereço...');
   autocompleteInput.value = addressTextarea.value;
 

@@ -1,102 +1,56 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n navigation %}
+{% load i18n static content_i18n navigation thumbs icons %}
 
 {% block title %}{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %} - {{ place.name }}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
-{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
 {% url 'explore:place_detail' place.pk as default_back %}
 {% back_url default_back as back %}
-<header class="page-header">
-  <div class="container">
-    <a href="{{ back }}" class="form-back-link">
-      <i class="bi bi-arrow-left" aria-hidden="true"></i>{% translate "Voltar" %}
-    </a>
-    <nav aria-label="{% translate 'Trilha de navegação' %}">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Nova avaliação" %}{% endif %}</li>
-      </ol>
-    </nav>
-    <h1>{% if review %}{% translate "Editar sua avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %}</h1>
-    <p class="page-header-subtitle">{{ place.name }}</p>
-  </div>
-</header>
+<div class="container-page max-w-2xl py-8 md:py-14">
+  <nav class="mb-6" aria-label="{% translate 'Trilha de navegação' %}">
+    <ol class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground [&_a:hover]:text-foreground [&>li:not(:last-child)]:after:ms-1.5 [&>li:not(:last-child)]:after:content-['/']">
+      <li><a href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a></li>
+      <li><a href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></li>
+      <li aria-current="page">{% if review %}{% translate "Editar avaliação" %}{% else %}{% translate "Nova avaliação" %}{% endif %}</li>
+    </ol>
+  </nav>
 
-<div class="container py-4 py-md-5">
-  <div class="row">
-    <div class="col-12 col-lg-8 mx-auto">
-      <div class="card shadow">
-        <div class="card-body">
-          <div class="mb-4 p-3 bg-light rounded">
-            <h3 class="h5 mb-1">{{ place.name }}</h3>
-            <p class="text-muted small mb-0">
-              {% for category in place.categories.all %}
-                <span class="badge bg-secondary me-1">{{ category|tr:"name" }}</span>
-              {% endfor %}
-            </p>
-          </div>
+  <h1 class="font-display text-display-md font-semibold">{% if review %}{% translate "Editar sua avaliação" %}{% else %}{% translate "Escrever avaliação" %}{% endif %}</h1>
 
-          <form method="post" class="needs-validation" novalidate data-unsaved-guard>
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ back }}">
+  <a href="{% url 'explore:place_detail' place.pk %}" class="mt-6 flex items-center gap-4 rounded-xl bg-card p-3 shadow-card ring-1 ring-foreground/8 transition hover:shadow-lift">
+    {% with image=place.primary_image.image %}
+    {% if image %}
+    <img src="{{ image|thumb:480 }}" alt="" class="img-ph size-16 shrink-0 rounded-md object-cover" style="{{ image|placeholder }}">
+    {% else %}
+    <span class="grid size-16 shrink-0 place-items-center rounded-md bg-secondary font-display text-2xl text-muted-foreground" aria-hidden="true">{{ place.name|first }}</span>
+    {% endif %}
+    {% endwith %}
+    <span class="min-w-0">
+      <span class="block font-display text-lg font-semibold">{{ place.name }}</span>
+      <span class="mt-1 flex flex-wrap gap-1.5">{% for category in place.categories.all %}<span class="badge" data-variant="secondary">{{ category|tr:"name" }}</span>{% endfor %}</span>
+    </span>
+  </a>
 
-            <div class="mb-4">
-              <label class="form-label fw-bold">{{ form.rating.label }}</label>
-              <div class="star-rating-container d-flex gap-2">
-                {% for radio in form.rating %}
-                  <div class="form-check form-check-inline">
-                    {{ radio.tag }}
-                    <label class="form-check-label star-label" for="{{ radio.id_for_label }}">
-                      {{ radio.choice_label }}
-                    </label>
-                  </div>
-                {% endfor %}
-              </div>
-              {% if form.rating.help_text %}
-                <small class="form-text text-muted d-block mt-2">{{ form.rating.help_text }}</small>
-              {% endif %}
-              {% if form.rating.errors %}
-                <div class="text-danger small mt-2">{{ form.rating.errors.0 }}</div>
-              {% endif %}
-            </div>
+  <form method="post" class="mt-8 grid gap-6 rounded-xl bg-card p-5 shadow-card ring-1 ring-foreground/8 sm:p-8" novalidate data-unsaved-guard>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ back }}">
 
-            <div class="mb-4">
-              <label for="{{ form.comment.id_for_label }}" class="form-label fw-bold">{{ form.comment.label }}</label>
-              {{ form.comment }}
-              {% if form.comment.help_text %}
-                <small class="form-text text-muted">{{ form.comment.help_text }}</small>
-              {% endif %}
-              {% if form.comment.errors %}
-                <div class="text-danger small mt-2">{{ form.comment.errors.0 }}</div>
-              {% endif %}
-            </div>
-
-            {% if form.non_field_errors %}
-              <div class="alert alert-danger">
-                {{ form.non_field_errors.0 }}
-              </div>
-            {% endif %}
-
-            <div class="d-flex flex-wrap gap-2 form-actions-sticky">
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-circle me-2"></i>
-                {% if review %}{% translate "Atualizar avaliação" %}{% else %}{% translate "Enviar avaliação" %}{% endif %}
-              </button>
-              <a href="{{ back }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>{% translate "Cancelar e voltar" %}
-              </a>
-            </div>
-          </form>
-        </div>
-      </div>
+    {% if form.non_field_errors %}
+    <div class="alert" data-variant="destructive" role="alert">
+      {% icon "circle-alert" %}
+      <section>{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</section>
     </div>
-  </div>
+    {% endif %}
+
+    <c-form-field :field="form.rating" variant="stars" label="{% translate 'Sua nota' %}" help="{% translate 'Selecione de 1 a 5 estrelas' %}" />
+    <c-form-field :field="form.comment" label="{% translate 'Comentário' %}" help="{% translate 'Descreva sua experiência (máximo 1000 caracteres)' %}" />
+
+    <div class="form-actions-sticky flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      <c-button href="{{ back }}" variant="ghost">{% translate "Cancelar" %}</c-button>
+      <c-button type="submit" size="lg">{% icon "check" %}{% if review %}{% translate "Atualizar avaliação" %}{% else %}{% translate "Enviar avaliação" %}{% endif %}</c-button>
+    </div>
+  </form>
 </div>
 {% endblock %}

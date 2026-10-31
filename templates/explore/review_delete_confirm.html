@@ -1,110 +1,33 @@
 {% extends 'base.html' %}
-{% load i18n content_i18n %}
+{% load i18n content_i18n icons %}
 {% block title %}{% translate "Excluir avaliação" %} - {{ review.place.name }}{% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: var(--brand-red) !important;">
-  <div class="container-fluid px-4">
-    <a class="navbar-brand fw-bold text-uppercase" href="{% url 'core:landing' %}">MaricaCity</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link text-uppercase" href="{% url 'explore:explore' %}">{% translate "Explorar" %}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-uppercase" href="{% url 'core:about' %}">{% translate "Sobre" %}</a>
-        </li>
-        {% if user.is_authenticated %}
-          <li class="nav-item">
-            <span class="nav-link text-white-50">{{ user.username }}</span>
-          </li>
-          <li class="nav-item">
-            <form method="post" action="{% url 'accounts:logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-light btn-sm text-uppercase">{% translate "Sair" %}</button>
-            </form>
-          </li>
-        {% else %}
-          <li class="nav-item dropdown">
-            <button class="btn btn-outline-light btn-sm text-uppercase" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              {% translate "Entrar" %}
-            </button>
-            <div class="dropdown-menu dropdown-menu-end p-4 shadow-lg" style="width: 320px;">
-              <h5 class="fw-bold mb-3">{% translate "Entre na sua conta" %}</h5>
-              <form method="post" action="{% url 'accounts:login' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                  <label for="delete-username" class="form-label fw-semibold small text-uppercase">{% translate "Nome de usuário" %}</label>
-                  <input type="text" class="form-control" id="delete-username" name="username" required>
-                </div>
-                <div class="mb-3">
-                  <label for="delete-password" class="form-label fw-semibold small text-uppercase">{% translate "Senha" %}</label>
-                  <input type="password" class="form-control" id="delete-password" name="password" required>
-                </div>
-                <div class="d-grid mb-3">
-                  <button type="submit" class="btn btn-dark">{% translate "Entrar" %}</button>
-                </div>
-              </form>
-              <div class="text-center border-top pt-3">
-                <p class="text-muted small mb-0">
-                  {% translate "Não tem uma conta?" %}
-                  <a href="{% url 'accounts:register' %}" class="text-decoration-none fw-semibold">{% translate "Cadastre-se agora" %}</a>
-                </p>
-              </div>
-            </div>
-          </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+{% include 'includes/navbar.html' %}
 
-<div class="container mt-5 mb-5">
-  <div class="row">
-    <div class="col-12 col-lg-6 mx-auto">
-      <div class="card shadow border-danger">
-        <div class="card-header bg-danger text-white">
-          <h2 class="h4 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>{% translate "Confirmar Exclusão" %}</h2>
-        </div>
-        <div class="card-body">
-          <p class="mb-3">{% translate "Tem certeza que deseja excluir sua avaliação de" %} <strong>{{ review.place.name }}</strong>?</p>
+<div class="container-page max-w-xl py-12 md:py-20">
+  <div class="rounded-xl bg-card p-6 shadow-card ring-1 ring-foreground/8 sm:p-8">
+    <span class="grid size-12 place-items-center rounded-full bg-brand-tint text-destructive" aria-hidden="true">{% icon "trash-2" class="size-6" %}</span>
+    <h1 class="mt-5 font-display text-display-sm font-semibold">{% translate "Excluir avaliação?" %}</h1>
+    <p class="mt-2 text-muted-foreground">{% blocktranslate trimmed with name=review.place.name %}Sua avaliação de <strong class="text-foreground">{{ name }}</strong> será removida.{% endblocktranslate %}</p>
 
-          <div class="alert alert-light border">
-            <div class="d-flex align-items-center mb-2">
-              <span class="text-warning me-2">
-                {% for i in "12345" %}
-                  {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
-                {% endfor %}
-              </span>
-              <span class="text-muted small">{% blocktranslate with user=review.user.username %}por {{ user }}{% endblocktranslate %}</span>
-            </div>
-            <p class="mb-0 small">{{ review|tr:"comment"|truncatewords:30 }}</p>
-          </div>
-
-          <p class="text-danger small mb-4">
-            <i class="bi bi-info-circle me-1"></i>
-            {% translate "Esta ação não pode ser desfeita." %}
-          </p>
-
-          <form method="post">
-            {% csrf_token %}
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-danger">
-                <i class="bi bi-trash me-2"></i>
-                {% translate "Sim, Excluir Avaliação" %}
-              </button>
-              <a href="{% url 'explore:place_detail' review.place.pk %}" class="btn btn-secondary">
-                <i class="bi bi-x-circle me-2"></i>
-                {% translate "Cancelar" %}
-              </a>
-            </div>
-          </form>
-        </div>
+    <blockquote class="mt-6 rounded-lg border bg-muted/50 p-4">
+      <div class="flex flex-wrap items-center gap-2 text-sm">
+        <span class="flex items-center gap-0.5" role="img" aria-label="{% blocktranslate with rating=review.rating %}Nota {{ rating }} de 5{% endblocktranslate %}">
+          {% for i in "12345" %}{% if forloop.counter <= review.rating %}{% icon "star" class="size-4 fill-current text-star" %}{% else %}{% icon "star" class="size-4 text-input" %}{% endif %}{% endfor %}
+        </span>
+        <span class="text-muted-foreground">{% blocktranslate with user=review.user.username %}por {{ user }}{% endblocktranslate %}</span>
       </div>
-    </div>
+      <p class="mt-2 text-sm">{{ review|tr:"comment"|truncatewords:30 }}</p>
+    </blockquote>
+
+    <p class="mt-4 flex items-center gap-2 text-sm text-destructive">{% icon "info" class="size-4" %}{% translate "Esta ação não pode ser desfeita." %}</p>
+
+    <form method="post" class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+      {% csrf_token %}
+      <c-button href="{% url 'explore:place_detail' review.place.pk %}" variant="outline">{% translate "Cancelar" %}</c-button>
+      <c-button type="submit" variant="destructive">{% icon "trash-2" %}{% translate "Excluir avaliação" %}</c-button>
+    </form>
   </div>
 </div>
 {% endblock %}
