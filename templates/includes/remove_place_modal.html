@@ -1,104 +1,59 @@
-{% load i18n %}<!-- Remove Place Modal -->
-<div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title fw-bold" id="removeModalLabel">
-          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>{% translate "Remover lugar" %}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Fechar' %}"></button>
-      </div>
-      <form method="post" id="removeForm">
-        {% csrf_token %}
-        <div class="modal-body">
-          <p class="mb-3">{% blocktranslate %}Você está prestes a remover <strong id="placeName"></strong>.{% endblocktranslate %}</p>
-
-          <div class="mb-3">
-            <label for="removeReason" class="form-label fw-bold">
-              {% translate "Motivo da remoção" %} <span class="text-danger">*</span>
-            </label>
-            <select id="removeReason" name="reason" required class="form-select">
-              {% include 'includes/place_removal_reasons.html' %}
-            </select>
-          </div>
-
-          <div class="mb-3" id="customReasonField" style="display: none;">
-            <label for="removeComments" class="form-label fw-bold">
-              {% translate "Especifique o motivo" %} <span class="text-danger">*</span>
-            </label>
-            <textarea id="removeComments" name="comments" rows="4" class="form-control"
-                      placeholder="{% translate 'Explique por que este lugar está sendo removido...' %}"></textarea>
-          </div>
-
-          <div class="alert alert-danger border-0 mb-0">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            {% blocktranslate trimmed %}<strong>Atenção:</strong> Este lugar será marcado como inativo e não aparecerá no site.{% endblocktranslate %}
-          </div>
-        </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "Cancelar" %}</button>
-          <button type="submit" class="btn btn-danger">
-            <i class="bi bi-trash me-2"></i>{% translate "Remover lugar" %}
-          </button>
-        </div>
-      </form>
+{% load i18n icons %}
+<c-dialog id="removeModal" title="{% translate 'Remover lugar' %}" data-reject-url="{% url 'explore:reject_place' 0 %}">
+  <form method="post" id="removeForm" class="grid gap-5">
+    {% csrf_token %}
+    <p>{% blocktranslate %}Você está prestes a remover <strong id="placeName"></strong>.{% endblocktranslate %}</p>
+    <div class="field gap-2">
+      <label for="removeReason" class="text-sm font-medium">{% translate "Motivo da remoção" %}<span class="text-brand" aria-hidden="true"> *</span></label>
+      <select id="removeReason" name="reason" required class="select w-full">
+        {% include 'includes/place_removal_reasons.html' %}
+      </select>
     </div>
-  </div>
-</div>
+    <div class="field gap-2" id="customReasonField" hidden>
+      <label for="removeComments" class="text-sm font-medium">{% translate "Especifique o motivo" %}<span class="text-brand" aria-hidden="true"> *</span></label>
+      <textarea id="removeComments" name="comments" rows="4" class="textarea" placeholder="{% translate 'Explique por que este lugar está sendo removido...' %}"></textarea>
+    </div>
+    <div class="alert" data-variant="destructive">
+      {% icon "triangle-alert" %}
+      <section>{% blocktranslate trimmed %}<strong>Atenção:</strong> Este lugar será marcado como inativo e não aparecerá no site.{% endblocktranslate %}</section>
+    </div>
+  </form>
+  <c-slot name="footer">
+    <c-button variant="outline" data-dialog-close>{% translate "Cancelar" %}</c-button>
+    <c-button type="submit" variant="destructive" form="removeForm">{% icon "trash-2" %}{% translate "Remover lugar" %}</c-button>
+  </c-slot>
+</c-dialog>
 
 <script>
-(function() {
-  document.addEventListener('DOMContentLoaded', function() {
-    const removeForm = document.getElementById('removeForm');
-    const removeReason = document.getElementById('removeReason');
-    const customReasonField = document.getElementById('customReasonField');
-    const removeComments = document.getElementById('removeComments');
+(function () {
+  const modal = document.getElementById('removeModal');
+  const form = document.getElementById('removeForm');
+  const reason = document.getElementById('removeReason');
+  const customField = document.getElementById('customReasonField');
+  const comments = document.getElementById('removeComments');
 
-    if (!removeForm) return;
-
-    // Show/hide custom reason field
-    removeReason.addEventListener('change', function() {
-      if (this.value === 'Outros') {
-        customReasonField.style.display = 'block';
-        removeComments.required = true;
-      } else {
-        customReasonField.style.display = 'none';
-        removeComments.required = false;
-        removeComments.value = '';
-      }
-    });
-
-    // Form validation
-    removeForm.addEventListener('submit', function(e) {
-      if (removeReason.value === 'Outros' && !removeComments.value.trim()) {
-        e.preventDefault();
-        alert('{% filter escapejs %}{% translate "Por favor, especifique o motivo da remoção." %}{% endfilter %}');
-        removeComments.focus();
-        return;
-      }
-    });
-
-    // Reset form when modal is closed
-    document.getElementById('removeModal').addEventListener('hidden.bs.modal', function() {
-      removeForm.reset();
-      customReasonField.style.display = 'none';
-    });
+  reason.addEventListener('change', () => {
+    const other = reason.value === 'Outros';
+    customField.hidden = !other;
+    comments.required = other;
+    if (!other) comments.value = '';
   });
 
-  // Global function to open the modal
-  window.openRemoveModal = function(placeId, placeName) {
-    const modal = document.getElementById('removeModal');
-    const form = document.getElementById('removeForm');
+  modal.addEventListener('close', () => {
+    form.reset();
+    customField.hidden = true;
+    comments.required = false;
+  });
 
-    // Update form action
-    form.action = `/explore/admin/place/${placeId}/reject/`;
-
-    // Update place name
+  window.openRemoveModal = function (placeId, placeName) {
+    form.action = modal.dataset.rejectUrl.replace('/0/', `/${placeId}/`);
     document.getElementById('placeName').textContent = placeName;
-
-    // Show modal
-    const bsModal = new bootstrap.Modal(modal);
-    bsModal.show();
+    modal.showModal();
   };
+
+  document.addEventListener('click', event => {
+    const trigger = event.target.closest('[data-remove-place]');
+    if (trigger) openRemoveModal(trigger.dataset.removePlace, trigger.dataset.placeName);
+  });
 })();
 </script>

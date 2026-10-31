@@ -98,6 +98,7 @@ def place_detail_view(request, pk):
         pk=pk,
     )
     reviews = place.reviews.select_related("user").order_by("-created_at")
+    ratings = [r.rating for r in reviews]
     user_review = (
         next((r for r in reviews if r.user_id == request.user.pk), None)
         if request.user.is_authenticated
@@ -108,6 +109,9 @@ def place_detail_view(request, pk):
         "can_edit": place.can_edit(request.user),
         "reviews": reviews,
         "user_review": user_review,
+        "average_rating": round(sum(ratings) / len(ratings), 1) if ratings else None,
+        "rating_distribution": [(n, ratings.count(n)) for n in range(5, 0, -1)],
+        "gallery": sorted(place.images.all(), key=lambda image: not image.is_primary),
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY,
     }
     response = render(request, "explore/place_detail.html", context)
