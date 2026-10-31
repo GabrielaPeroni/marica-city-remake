@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+<div class="container-page py-8 sm:py-12 lg:py-16">
+  <div class="mx-auto grid max-w-md overflow-hidden rounded-2xl border bg-card shadow-card lg:max-w-5xl lg:grid-cols-[1.1fr_1fr]">
+    <figure class="relative hidden min-h-[36rem] lg:block">
+      <img src="{% static 'images/hero/hero_3-1280.webp' %}" width="1280" height="720" alt="" class="absolute inset-0 size-full object-cover object-[30%_center]" decoding="async">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" aria-hidden="true"></div>
+      <figcaption class="absolute inset-x-0 bottom-0 p-10 text-white">
+        <p class="font-display text-display-sm font-semibold">{% translate "Praias, lagoas e trilhas a uma hora do Rio." %}</p>
+        <p class="mt-2 text-sm text-white/80">{% translate "Costa de Maricá, RJ" %}</p>
+      </figcaption>
+    </figure>
+
+    <div class="flex flex-col justify-center p-6 sm:p-10">
+      <header class="mb-8">
+        <h1 class="font-display text-display-sm font-semibold">{% block auth_title %}{% endblock %}</h1>
+        <p class="mt-2 text-muted-foreground">{% block auth_subtitle %}{% endblock %}</p>
+      </header>
+      {% block auth_body %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

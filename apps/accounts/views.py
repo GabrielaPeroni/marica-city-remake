@@ -67,6 +67,8 @@ def _render_code_page(request, form, email, purpose, **context):
             "email": email,
             "resend_purpose": purpose,
             "autofilled": bool(autofill),
+            "code_minutes": codes.CODE_TTL // 60,
+            "code_attempts": codes.MAX_ATTEMPTS,
         }
     )
     return render(request, "accounts/email_code.html", context)
