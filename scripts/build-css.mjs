@@ -19,7 +19,18 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const nodeModules = path.join(root, 'node_modules');
 
 // Icons whose name never appears literally in a template (defaults of cotton props, Python).
-const EXTRA_ICONS = ['search'];
+// Ícones vindos do Python (filtros de status do painel)
+const EXTRA_ICONS = [
+  'search',
+  'layers',
+  'sparkles',
+  'circle-check',
+  'square-pen',
+  'archive',
+  'hourglass',
+  'star',
+  'circle-x',
+];
 
 const FONTS = [
   '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2',

@@ -1,0 +1,6 @@
+{% load i18n icons %}<span class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+  <span class="inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-semibold tabular-nums {% if change > 0 %}bg-success-tint text-success{% elif change < 0 %}bg-brand-tint text-destructive{% else %}bg-muted text-muted-foreground{% endif %}">
+    {% if change > 0 %}{% icon "trending-up" class="size-3.5" %}+{% elif change < 0 %}{% icon "trending-down" class="size-3.5" %}{% endif %}{{ change }}%
+  </span>
+  <span class="text-muted-foreground">{% translate "Desde a semana passada" %}</span>
+</span>

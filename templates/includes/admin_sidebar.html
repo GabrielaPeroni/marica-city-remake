@@ -1,97 +1,81 @@
-{% load i18n static %}
+{% load i18n icons %}{% with path=request.path %}
+<aside id="admin-sidebar" class="sidebar" data-side="left">
+  <nav aria-label="{% translate 'Menu do painel' %}">
+    <header class="border-b border-sidebar-border px-3 py-4">
+      <a href="{% url 'core:admin_dashboard' %}" class="flex items-center gap-2.5 rounded-md px-1">
+        <span class="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground">{% icon "layout-dashboard" class="size-4" %}</span>
+        <span class="grid leading-tight">
+          <span class="font-display text-lg font-semibold">MaricaCity</span>
+          <span class="text-xs text-muted-foreground">{% translate "Painel de administração" %}</span>
+        </span>
+      </a>
+    </header>
 
-<div class="admin-sidebar" id="adminSidebar">
-  <div class="sidebar-header" title="{% translate 'Recolher ou expandir o menu' %}">
-    <div class="sidebar-logo">
-      <i class="bi bi-grid"></i>
-    </div>
-    <div class="sidebar-title">
-      <h2>MaricaCity</h2>
-      <span class="sidebar-subtitle">{% translate "Painel de administração" %}</span>
-    </div>
-  </div>
+    <section class="py-2">
+      <div role="group" aria-labelledby="admin-nav-manage">
+        <h3 id="admin-nav-manage">{% translate "Gerenciar" %}</h3>
+        <ul>
+          <li>
+            <a href="{% url 'core:admin_dashboard' %}" {% if request.resolver_match.url_name == 'admin_dashboard' %}aria-current="page"{% endif %}>
+              {% icon "layout-dashboard" %}<span>{% translate "Visão geral" %}</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'explore:backlog' %}" {% if 'backlog' in path or 'approval' in path %}aria-current="page"{% endif %}>
+              {% icon "map-pin" %}<span>{% translate "Lugares" %}</span>
+              {% if pending_places > 0 %}<span class="ms-auto rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-white tabular-nums" title="{% translate 'Aguardando aprovação' %}">{{ pending_places }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:admin_news_list' %}" {% if 'noticias' in path or 'eventos' in path %}aria-current="page"{% endif %}>
+              {% icon "calendar-days" %}<span>{% translate "Eventos" %}</span>
+              {% if pending_events > 0 %}<span class="ms-auto rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-white tabular-nums" title="{% translate 'Sugestões para revisar' %}">{{ pending_events }}</span>{% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'accounts:user_management' %}" {% if 'usuarios' in path %}aria-current="page"{% endif %}>
+              {% icon "users" %}<span>{% translate "Usuários" %}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-  <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="{% translate 'Recolher barra lateral' %}">
-    <i class="bi bi-chevron-left"></i>
-  </button>
+      <div role="group" aria-labelledby="admin-nav-site">
+        <h3 id="admin-nav-site">{% translate "Site" %}</h3>
+        <ul>
+          <li>
+            <a href="{% url 'core:landing' %}">{% icon "arrow-left" %}<span>{% translate "Voltar ao site" %}</span></a>
+          </li>
+          <li>
+            <a href="/admin/" target="_blank" rel="noopener">{% icon "settings-2" %}<span>{% translate "Admin avançado (Django)" %}</span></a>
+          </li>
+        </ul>
+      </div>
+    </section>
 
-  <nav class="sidebar-nav" aria-label="{% translate 'Menu do painel' %}">
-    <a href="{% url 'core:landing' %}" class="nav-item sidebar-back-to-site">
-      <i class="bi bi-box-arrow-left"></i>
-      <span>{% translate "Voltar ao site" %}</span>
-    </a>
-
-    <a href="{% url 'core:admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
-      <i class="bi bi-speedometer2"></i>
-      <span>{% translate "Visão geral" %}</span>
-    </a>
-
-
-    <a href="{% url 'explore:backlog' %}" class="nav-item {% if 'backlog' in request.path or 'approval' in request.path %}active{% endif %}">
-      <i class="bi bi-geo-alt"></i>
-      <span>{% translate "Lugares" %}</span>
-      {% if pending_places > 0 %}
-        <span class="nav-badge" title="{% translate 'Aguardando aprovação' %}">{{ pending_places }}</span>
-      {% endif %}
-    </a>
-
-    <a href="{% url 'core:admin_news_list' %}" class="nav-item {% if 'noticias' in request.path or 'eventos' in request.path %}active{% endif %}">
-      <i class="bi bi-calendar-event"></i>
-      <span>{% translate "Eventos" %}</span>
-      {% if pending_events > 0 %}
-        <span class="nav-badge" title="{% translate 'Sugestões para revisar' %}">{{ pending_events }}</span>
-      {% endif %}
-    </a>
-
-
-    <a href="{% url 'accounts:user_management' %}" class="nav-item {% if 'usuarios' in request.path %}active{% endif %}">
-      <i class="bi bi-people"></i>
-      <span>{% translate "Usuários" %}</span>
-    </a>
+    <footer class="border-t border-sidebar-border p-3">
+      <div class="flex items-center gap-3 rounded-md px-1">
+        <span class="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold uppercase">{{ request.user.username|first }}</span>
+        <span class="grid min-w-0 flex-1 leading-tight">
+          <span class="truncate text-sm font-medium">{{ request.user.username }}</span>
+          <span class="truncate text-xs text-muted-foreground">{{ request.user.email|default:_("Administrador") }}</span>
+        </span>
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'core:landing' %}">
+          <button type="submit" class="btn" data-variant="ghost" data-size="icon-sm" aria-label="{% translate 'Sair' %}" title="{% translate 'Sair' %}">{% icon "log-out" %}</button>
+        </form>
+      </div>
+    </footer>
   </nav>
-
-  <div class="sidebar-footer">
-    <a href="/admin/" class="nav-item" target="_blank" rel="noopener">
-      <i class="bi bi-gear-fill"></i>
-      <span>{% translate "Admin avançado (Django)" %}</span>
-    </a>
-  </div>
-</div>
-
-<!-- Sobreposição para mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const sidebar = document.getElementById('adminSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const adminContainer = document.querySelector('.admin-container');
-
-    // Restaurar estado da barra lateral do localStorage
-    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-    if (isCollapsed) {
-      sidebar.classList.add('collapsed');
-      if (adminContainer) {
-        adminContainer.classList.add('sidebar-collapsed');
-      }
+  <script>
+  try {
+    if (innerWidth >= 768 && localStorage.getItem('adminSidebar') === 'closed') {
+      const aside = document.getElementById('admin-sidebar');
+      aside.dataset.initialOpen = 'false';
+      aside.setAttribute('aria-hidden', 'true');
     }
-
-    // Remove the temporary class now that proper classes are applied
-    document.documentElement.classList.remove('sidebar-initially-collapsed');
-
-    // Make sidebar header toggle the sidebar state
-    const sidebarHeader = document.querySelector('.sidebar-header');
-    if (sidebarHeader) {
-      sidebarHeader.addEventListener('click', function() {
-        const isCurrentlyCollapsed = sidebar.classList.toggle('collapsed');
-
-        if (adminContainer) {
-          adminContainer.classList.toggle('sidebar-collapsed');
-        }
-
-        // Save state
-        localStorage.setItem('sidebarCollapsed', isCurrentlyCollapsed);
-      });
-    }
-  });
-</script>
+  } catch (e) {}
+  </script>
+</aside>
+{% endwith %}

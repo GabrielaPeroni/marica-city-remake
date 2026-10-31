@@ -1,261 +1,84 @@
-{% extends "base.html" %}
-{% load i18n static thumbs navigation %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n static thumbs navigation icons %}
 
-{% block site_chrome %}{% endblock %}
+{% block title %}{{ title }} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
-<style>
-  .form-section {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
+{% block admin_content %}
+{% url 'core:admin_news_list' as default_back %}
+{% back_url default_back as back %}
+<a href="{{ back }}" class="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
+  {% icon "arrow-left" class="size-4" %}{% translate "Voltar" %}
+</a>
 
-  .form-section h5 {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--primary-color);
-  }
+<form method="post" enctype="multipart/form-data" class="mx-auto grid max-w-3xl gap-6" data-unsaved-guard>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ back }}">
+  {% for error in form.non_field_errors %}<div class="alert" data-variant="destructive" role="alert">{% icon "circle-alert" %}<section>{{ error }}</section></div>{% endfor %}
 
-  .image-preview {
-    max-width: 300px;
-    margin-top: 10px;
-    border-radius: 8px;
-  }
+  <c-card title="{% translate 'Informações Básicas' %}">
+    <div class="grid gap-5">
+      <c-form-field :field="form.title" />
+      <c-form-field :field="form.category" />
+      <c-form-field :field="form.excerpt" />
+      <c-form-field :field="form.content" />
+    </div>
+  </c-card>
 
-  .event-fields {
-    display: none;
-  }
+  <c-card title="{% translate 'Imagem Destacada' %}">
+    <div class="grid gap-5">
+      <img {% if news.featured_image %}src="{{ news.featured_image|thumb:960 }}"{% endif %} alt="{% translate 'Imagem atual' %}"
+           class="aspect-[16/9] w-full max-w-md rounded-lg object-cover" data-image-preview {% if not news.featured_image %}hidden{% endif %}>
+      <c-form-field :field="form.featured_image" />
+      <c-form-field :field="form.image_caption" />
+    </div>
+  </c-card>
 
-  .event-fields.show {
-    display: block;
-  }
-</style>
+  {# Só para a categoria Evento #}
+  <c-card title="{% translate 'Informações do Evento' %}" id="event-fields">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <c-form-field :field="form.event_date" />
+      <c-form-field :field="form.event_end_date" />
+      <c-form-field :field="form.event_location" class="sm:col-span-2" />
+    </div>
+  </c-card>
+
+  <c-card title="{% translate 'Configurações de Publicação' %}">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <c-form-field :field="form.status" />
+      <c-form-field :field="form.is_featured" class="sm:col-span-2" />
+    </div>
+  </c-card>
+
+  <div class="sticky bottom-0 z-20 -mx-4 flex flex-wrap justify-end gap-2 border-t bg-background/90 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-xl sm:border sm:shadow-bar">
+    <c-button href="{{ back }}" variant="outline">{% translate "Cancelar e voltar" %}</c-button>
+    <c-button type="submit">{% icon "check" %}{{ submit_text }}</c-button>
+  </div>
+</form>
 {% endblock %}
 
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
-
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    {% url 'core:admin_news_list' as default_back %}
-    {% back_url default_back as back %}
-    <a href="{{ back }}" class="form-back-link">
-      <i class="bi bi-arrow-left" aria-hidden="true"></i>{% translate "Voltar" %}
-    </a>
-    <h1 class="admin-title mb-4">
-      <i class="bi bi-calendar-event me-2"></i>{{ title }}
-    </h1>
-
-    <form method="post" enctype="multipart/form-data" data-unsaved-guard>
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ back }}">
-
-      <!-- Informações Básicas -->
-      <div class="form-section">
-        <h5><i class="bi bi-info-circle me-2"></i>{% translate "Informações Básicas" %}</h5>
-
-        <div class="mb-3">
-          {{ form.title.label_tag }}
-          {{ form.title }}
-          {% if form.title.errors %}
-            <div class="text-danger">{{ form.title.errors }}</div>
-          {% endif %}
-        </div>
-
-        <div class="mb-3">
-          {{ form.category.label_tag }}
-          {{ form.category }}
-          {% if form.category.errors %}
-            <div class="text-danger">{{ form.category.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted">{{ form.category.help_text }}</small>
-        </div>
-
-        <div class="mb-3">
-          {{ form.excerpt.label_tag }}
-          {{ form.excerpt }}
-          {% if form.excerpt.errors %}
-            <div class="text-danger">{{ form.excerpt.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted">{{ form.excerpt.help_text }}</small>
-        </div>
-
-        <div class="mb-3">
-          {{ form.content.label_tag }}
-          {{ form.content }}
-          {% if form.content.errors %}
-            <div class="text-danger">{{ form.content.errors }}</div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Imagem -->
-      <div class="form-section">
-        <h5><i class="bi bi-image me-2"></i>{% translate "Imagem Destacada" %}</h5>
-
-        {% if news.featured_image %}
-        <div class="mb-3">
-          <img src="{{ news.featured_image|thumb:960 }}" alt="{% translate 'Imagem atual' %}" class="image-preview">
-        </div>
-        {% endif %}
-
-        <div class="mb-3">
-          {{ form.featured_image.label_tag }}
-          {{ form.featured_image }}
-          {% if form.featured_image.errors %}
-            <div class="text-danger">{{ form.featured_image.errors }}</div>
-          {% endif %}
-        </div>
-
-        <div class="mb-3">
-          {{ form.image_caption.label_tag }}
-          {{ form.image_caption }}
-          {% if form.image_caption.errors %}
-            <div class="text-danger">{{ form.image_caption.errors }}</div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Campos de Evento (mostrados apenas se categoria Evento) -->
-      <div class="form-section event-fields" id="event-fields">
-        <h5><i class="bi bi-calendar-event me-2"></i>{% translate "Informações do Evento" %}</h5>
-
-        <div class="mb-3">
-          {{ form.event_date.label_tag }}
-          {{ form.event_date }}
-          {% if form.event_date.errors %}
-            <div class="text-danger">{{ form.event_date.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted">{{ form.event_date.help_text }}</small>
-        </div>
-
-        <div class="mb-3">
-          {{ form.event_end_date.label_tag }}
-          {{ form.event_end_date }}
-          {% if form.event_end_date.errors %}
-            <div class="text-danger">{{ form.event_end_date.errors }}</div>
-          {% endif %}
-        </div>
-
-        <div class="mb-3">
-          {{ form.event_location.label_tag }}
-          {{ form.event_location }}
-          {% if form.event_location.errors %}
-            <div class="text-danger">{{ form.event_location.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted">{{ form.event_location.help_text }}</small>
-        </div>
-      </div>
-
-      <!-- Configurações de Publicação -->
-      <div class="form-section">
-        <h5><i class="bi bi-gear me-2"></i>{% translate "Configurações de Publicação" %}</h5>
-
-        <div class="mb-3">
-          {{ form.status.label_tag }}
-          {{ form.status }}
-          {% if form.status.errors %}
-            <div class="text-danger">{{ form.status.errors }}</div>
-          {% endif %}
-        </div>
-
-        <div class="mb-3">
-          {{ form.publish_date.label_tag }}
-          {{ form.publish_date }}
-          {% if form.publish_date.errors %}
-            <div class="text-danger">{{ form.publish_date.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted">{{ form.publish_date.help_text }}</small>
-        </div>
-
-        <div class="mb-3 form-check">
-          {{ form.is_featured }}
-          <label class="form-check-label" for="{{ form.is_featured.id_for_label }}">
-            {{ form.is_featured.label }}
-          </label>
-          {% if form.is_featured.errors %}
-            <div class="text-danger">{{ form.is_featured.errors }}</div>
-          {% endif %}
-          <small class="form-text text-muted d-block">{{ form.is_featured.help_text }}</small>
-        </div>
-      </div>
-
-      <!-- Botões de Ação -->
-      <div class="d-flex flex-wrap gap-2 form-actions-sticky">
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-check-circle me-1"></i>{{ submit_text }}
-        </button>
-        <a href="{{ back }}" class="btn btn-outline-secondary">
-          <i class="bi bi-arrow-left me-1"></i>{% translate "Cancelar e voltar" %}
-        </a>
-      </div>
-    </form>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% block admin_js %}
 <script>
-  // Mostrar/ocultar campos de evento com base na seleção de categoria
-  document.addEventListener('DOMContentLoaded', function() {
-    const categorySelect = document.querySelector('#id_category');
-    const eventFields = document.querySelector('#event-fields');
-
+  document.addEventListener('DOMContentLoaded', function () {
+    const category = document.getElementById('id_category');
+    const eventFields = document.getElementById('event-fields');
     function toggleEventFields() {
-      const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-      const selectedText = selectedOption.text.toLowerCase();
-
-      if (selectedText.includes('event') || selectedText.includes('evento')) {
-        eventFields.classList.add('show');
-      } else {
-        eventFields.classList.remove('show');
-      }
+      const text = category.options[category.selectedIndex]?.text.toLowerCase() || '';
+      eventFields.hidden = !(text.includes('event') || text.includes('evento'));
+    }
+    if (category && eventFields) {
+      toggleEventFields();
+      category.addEventListener('change', toggleEventFields);
     }
 
-    // Alternar ao carregar a página
-    toggleEventFields();
-
-    // Alternar ao mudar
-    categorySelect.addEventListener('change', toggleEventFields);
-
-    // Pré-visualização de imagem
-    const imageInput = document.querySelector('#id_featured_image');
-    if (imageInput) {
-      imageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            let preview = document.querySelector('.image-preview');
-            if (!preview) {
-              preview = document.createElement('img');
-              preview.className = 'image-preview';
-              imageInput.parentElement.appendChild(preview);
-            }
-            preview.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
+    const input = document.getElementById('id_featured_image');
+    const preview = document.querySelector('[data-image-preview]');
+    if (input && preview) {
+      input.addEventListener('change', function () {
+        const file = input.files[0];
+        if (!file) return;
+        preview.src = URL.createObjectURL(file);
+        preview.hidden = false;
       });
     }
   });

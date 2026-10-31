@@ -1,245 +1,170 @@
-{% extends 'base.html' %}
-{% load i18n static thumbs %}
+{% extends 'core/admin/base_admin.html' %}
+{% load i18n static thumbs icons %}
 
-{% block site_chrome %}{% endblock %}
-
-{% block title %}{% translate "Histórico de lugares" %} - MaricaCity{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/bulk_select.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
+{% block title %}{% translate "Lugares" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Lugares" %}{% endblock %}
+{% block page_actions %}
+<c-button href="{% url 'explore:place_create' %}" size="sm">{% icon "plus" %}<span class="max-sm:sr-only">{% translate "Cadastrar lugar" %}</span></c-button>
 {% endblock %}
 
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
+{% block admin_content %}
+{% include 'core/admin/_status_filter.html' with keep_filters=True %}
 
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title"><i class="bi bi-geo-alt me-2"></i>{% translate "Lugares" %}</h1>
-    </div>
-
-    {# Os cartões são o filtro de status: um clique mostra só aquele grupo #}
-    <nav class="status-filter mb-4" aria-label="{% translate 'Filtrar por status' %}">
-      {% for key, label, count, icon, tone in status_cards %}
-      <a href="?status={{ key }}{% if category_filter != 'all' %}&category={{ category_filter }}{% endif %}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
-         class="status-filter__item status-filter__item--{{ tone }}{% if status_filter == key %} is-active{% endif %}"
-         {% if status_filter == key %}aria-current="true"{% endif %}>
-        <i class="bi bi-{{ icon }}" aria-hidden="true"></i>
-        <span class="status-filter__label">{{ label }}</span>
-        <span class="status-filter__count">{{ count }}</span>
-      </a>
+<form method="get" class="mb-6 grid gap-3 rounded-xl border bg-card p-4 shadow-card sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
+  <input type="hidden" name="status" value="{{ status_filter }}">
+  <div class="grid gap-2 sm:col-span-2 lg:col-span-1">
+    <label for="placeSearch" class="label">{% translate "Buscar pelo nome" %}</label>
+    <input id="placeSearch" type="search" name="q" value="{{ search_query }}" class="input" placeholder="{% translate 'Ex.: Ponta Negra' %}">
+  </div>
+  <div class="grid gap-2">
+    <label for="category" class="label">{% translate "Categoria" %}</label>
+    <select id="category" name="category" class="select w-full" data-autosubmit>
+      <option value="all" {% if category_filter == "all" %}selected{% endif %}>{% translate "Todas" %}</option>
+      {% for cat in categories %}
+      <option value="{{ cat.slug }}" {% if category_filter == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
       {% endfor %}
-    </nav>
+    </select>
+  </div>
+  <div class="grid gap-2">
+    <label for="sort" class="label">{% translate "Ordenar por" %}</label>
+    <select id="sort" name="sort" class="select w-full" data-autosubmit>
+      <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>{% translate "Mais recentes" %}</option>
+      <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>{% translate "Mais antigos" %}</option>
+      <option value="name" {% if current_sort == "name" %}selected{% endif %}>{% translate "Nome (A-Z)" %}</option>
+      <option value="-name" {% if current_sort == "-name" %}selected{% endif %}>{% translate "Nome (Z-A)" %}</option>
+    </select>
+  </div>
+  <c-button type="submit" class="sm:col-span-2 lg:col-span-1">{% icon "search" %}{% translate "Buscar" %}</c-button>
+</form>
 
-    <form method="get" class="row g-2 align-items-end mb-3">
-      <input type="hidden" name="status" value="{{ status_filter }}">
-      <div class="col-md-5">
-        <label for="placeSearch" class="form-label small fw-semibold">{% translate "Buscar pelo nome" %}</label>
-        <input id="placeSearch" type="search" name="q" value="{{ search_query }}" class="form-control" placeholder="{% translate 'Ex.: Ponta Negra' %}">
-      </div>
-      <div class="col-6 col-md-3">
-        <label for="category" class="form-label small fw-semibold">{% translate "Categoria" %}</label>
-        <select id="category" name="category" class="form-select" onchange="this.form.submit()">
-          <option value="all" {% if category_filter == "all" %}selected{% endif %}>{% translate "Todas" %}</option>
-          {% for cat in categories %}
-          <option value="{{ cat.slug }}" {% if category_filter == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-6 col-md-3">
-        <label for="sort" class="form-label small fw-semibold">{% translate "Ordenar por" %}</label>
-        <select id="sort" name="sort" class="form-select" onchange="this.form.submit()">
-          <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>{% translate "Mais recentes" %}</option>
-          <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>{% translate "Mais antigos" %}</option>
-          <option value="name" {% if current_sort == "name" %}selected{% endif %}>{% translate "Nome (A-Z)" %}</option>
-          <option value="-name" {% if current_sort == "-name" %}selected{% endif %}>{% translate "Nome (Z-A)" %}</option>
-        </select>
-      </div>
-      <div class="col-md-1 d-grid">
-        <button type="submit" class="btn btn-dark" aria-label="{% translate 'Buscar' %}"><i class="bi bi-search"></i></button>
-      </div>
-    </form>
-
-  <div class="admin-list-inset">
-  {% if places %}
-  <form method="post" action="{% url 'explore:bulk_places' %}" id="bulk-places" data-bulk-form>
+{% if places %}
+<div>
+  <form method="post" action="{% url 'explore:bulk_places' %}" id="bulk-places" class="contents" data-bulk-form>
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.get_full_path }}">
-    <div class="bulk-bar" data-bulk-bar>
-      <span class="bulk-bar__count" data-bulk-count="bulk-places" aria-live="polite">{% translate "0 selecionados" %}</span>
-      <button type="submit" name="action" value="approve" class="btn btn-success btn-sm" data-bulk-action disabled
+    <div class="z-40 mb-3 flex flex-wrap items-center gap-2 rounded-xl border bg-card px-3 py-2.5 shadow-card transition-shadow data-active:sticky data-active:top-2 data-active:border-foreground/30 data-active:shadow-lift" data-bulk-bar>
+      <span class="me-auto px-1 text-sm font-medium text-muted-foreground in-data-active:text-foreground" data-bulk-count="bulk-places" aria-live="polite">{% translate "0 selecionados" %}</span>
+      <button type="submit" name="action" value="approve" class="btn" data-size="sm" data-bulk-action disabled
               data-bulk-confirm="{% translate 'Lugares selecionados: %s. Eles ficarão visíveis no site. Aprovar todos?' %}">
-        <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% translate "Aprovar" %}
+        {% icon "circle-check" %}{% translate "Aprovar" %}
       </button>
-      <button type="submit" name="action" value="remove" class="btn btn-danger btn-sm" data-bulk-action data-bulk-require="reason" disabled
+      <button type="submit" name="action" value="remove" class="btn" data-variant="destructive" data-size="sm" data-bulk-action data-bulk-require="reason" disabled
               data-bulk-tone="danger" data-bulk-confirm="{% translate 'Lugares selecionados: %s. Eles sairão do site. Escolha o motivo, que o autor verá:' %}">
-        <i class="bi bi-x-circle me-1" aria-hidden="true"></i>{% translate "Remover" %}
+        {% icon "circle-x" %}{% translate "Remover" %}
       </button>
     </div>
-    {# Motivo da remoção: só aparece dentro do popup de "Remover" #}
-    <div class="bulk-reason-fields" data-bulk-reason hidden>
-      <label for="bulkReason" class="form-label small fw-semibold">{% translate "Motivo da remoção" %}</label>
-      <select id="bulkReason" name="reason" class="form-select" form="bulk-places">
+    {# Motivo da remoção: só aparece dentro do diálogo de "Remover" #}
+    <div class="mt-4 grid gap-2" data-bulk-reason hidden>
+      <label for="bulkReason" class="label">{% translate "Motivo da remoção" %}</label>
+      <select id="bulkReason" name="reason" class="select w-full" form="bulk-places">
         {% include 'includes/place_removal_reasons.html' %}
       </select>
-      <input type="text" name="comments" class="form-control mt-2" form="bulk-places" hidden
+      <input type="text" name="comments" class="input" form="bulk-places" hidden
              placeholder="{% translate 'Especifique o motivo' %}" aria-label="{% translate 'Especifique o motivo' %}">
     </div>
   </form>
-  {% for place in places %}{% if place.is_approved and place.is_active %}
+  {% for place in places %}
+  {% if place.is_approved and place.is_active %}
   <form method="post" action="{% url 'explore:place_feature' place.pk %}" id="feature-{{ place.pk }}" hidden>
     {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
   </form>
-  {% endif %}{% endfor %}
-  <div class="card">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th style="width: 2rem;">
-                <input type="checkbox" class="bulk-check" form="bulk-places" data-bulk-all aria-label="{% translate 'Selecionar todos' %}">
-              </th>
-              <th>{% translate "Lugar" %}</th>
-              <th>{% translate "Categorias" %}</th>
-              <th>{% translate "Status" %}</th>
-              <th>{% translate "Criado por" %}</th>
-              <th>{% translate "Data" %}</th>
-              <th>{% translate "Ações" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for place in places %}
-            <tr class="clickable-row{% if not place.is_approved and place.is_active %} row-pending{% endif %}" data-href="{% url 'explore:place_detail' place.pk %}" style="cursor: pointer;">
-              <td onclick="event.stopPropagation();">
-                <input type="checkbox" class="bulk-check" form="bulk-places" name="ids" value="{{ place.pk }}"
-                       data-bulk-item aria-label="{% translate 'Selecionar' %} {{ place.name }}"{% if not place.is_active %} disabled{% endif %}>
-              </td>
-              <td>
-                <div class="d-flex align-items-center">
-                  {% if place.primary_image %}
-                  <img src="{{ place.primary_image.image|thumb:480 }}" loading="lazy" alt="{{ place.name }}"
-                       class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
-                  {% else %}
-                  <div class="bg-dark text-white d-flex align-items-center justify-content-center me-2"
-                       style="width: 48px; height: 48px; border-radius: 4px;">
-                    <span class="fw-bold">{{ place.name|first }}</span>
-                  </div>
-                  {% endif %}
-                  <strong>{{ place.name }}</strong>
-                  {% if place.is_featured %}<i class="bi bi-star-fill text-warning ms-2" title="{% translate 'Em destaque na página inicial' %}" aria-label="{% translate 'Em destaque' %}"></i>{% endif %}
-                </div>
-              </td>
-              <td>
-                {% if place.categories.exists %}
-                  {% for category in place.categories.all|slice:":2" %}
-                    <span class="badge bg-light text-dark">
-                      {% if category.icon %}{{ category.icon }}{% endif %} {{ category.name }}
-                    </span>
-                  {% endfor %}
-                {% else %}
-                  <span class="text-muted">-</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if place.is_approved and place.is_active %}
-                <span class="badge bg-success">{% translate "Aprovado" %}</span>
-                {% elif not place.is_active %}
-                <span class="badge bg-danger">{% translate "Removido" %}</span>
-                {% else %}
-                <span class="badge bg-warning">{% translate "Pendente" %}</span>
-                {% endif %}
-              </td>
-              <td>{{ place.created_by.username }}</td>
-              <td>{{ place.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-              <td onclick="event.stopPropagation();">
-                <div class="btn-group btn-group-sm">
-                  <a href="{% url 'explore:place_edit' place.pk %}" class="btn btn-outline-primary"
-                     title="{% translate 'Editar' %}">
-                    <i class="bi bi-pencil"></i>
-                  </a>
-                  {% if not place.is_approved and place.is_active %}
-                  <a href="{% url 'explore:approve_place' place.pk %}" class="btn btn-outline-success"
-                     title="{% translate 'Aprovar' %}" onclick="event.preventDefault(); this.nextElementSibling.submit();">
-                    <i class="bi bi-check-circle"></i>
-                  </a>
-                  <form method="post" action="{% url 'explore:approve_place' place.pk %}" style="display: none;">
-                    {% csrf_token %}
-                  </form>
-                  {% endif %}
-                  {% if place.is_approved and place.is_active %}
-                  <button type="submit" form="feature-{{ place.pk }}" class="btn {% if place.is_featured %}btn-warning{% else %}btn-outline-warning{% endif %}"
-                          title="{% if place.is_featured %}{% translate 'Tirar do destaque' %}{% else %}{% translate 'Destacar na página inicial' %}{% endif %}"
-                          aria-pressed="{% if place.is_featured %}true{% else %}false{% endif %}">
-                    <i class="bi bi-star{% if place.is_featured %}-fill{% endif %}"></i>
-                  </button>
-                  {% endif %}
-                  <button type="button" class="btn btn-outline-danger"
-                     title="{% translate 'Remover' %}"
-                     onclick="openRemoveModal({{ place.pk }}, '{{ place.name|escapejs }}')">
-                    <i class="bi bi-x-circle"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  {% else %}
-  <div class="card border-2 shadow-sm">
-    <div class="card-body text-center py-5">
-      {% if status_filter == 'pending' %}
-      <div class="display-1 mb-4">✅</div>
-      <h2 class="h4 fw-bold mb-2">{% translate "Nenhum lugar pendente" %}</h2>
-      <p class="text-muted mb-4">{% translate "Não há lugares aguardando aprovação no momento." %}</p>
-      {% else %}
-      <div class="display-1 mb-4">📋</div>
-      <h2 class="h4 fw-bold mb-2">{% translate "Nenhum lugar encontrado" %}</h2>
-      <p class="text-muted mb-4">{% translate "Não há lugares que correspondam aos filtros selecionados." %}</p>
-      {% endif %}
-      <a href="{% url 'explore:backlog' %}" class="btn btn-dark">
-        <i class="bi bi-arrow-counterclockwise me-2"></i>{% translate "Ver todos os lugares" %}
-      </a>
-    </div>
-  </div>
+  {% elif place.is_active %}
+  <form method="post" action="{% url 'explore:approve_place' place.pk %}" id="approve-{{ place.pk }}" hidden>{% csrf_token %}</form>
   {% endif %}
-  </div>
-      </div>
-    </div>
+  {% endfor %}
+
+  <div class="table-container rounded-xl border bg-card shadow-card">
+    <table class="table [&_td]:px-3 [&_td]:py-3 [&_th]:px-3 [&_th]:text-xs [&_th]:text-muted-foreground">
+      <thead>
+        <tr>
+          <th class="w-10"><input type="checkbox" class="input cursor-pointer" form="bulk-places" data-bulk-all aria-label="{% translate 'Selecionar todos' %}"></th>
+          <th>{% translate "Lugar" %}</th>
+          <th>{% translate "Categorias" %}</th>
+          <th>{% translate "Status" %}</th>
+          <th>{% translate "Criado por" %}</th>
+          <th>{% translate "Data" %}</th>
+          <th class="text-end">{% translate "Ações" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for place in places %}
+        <tr class="data-selected:bg-brand-tint/60 {% if not place.is_approved and place.is_active %}bg-warning-tint/40{% elif not place.is_active %}text-muted-foreground{% endif %}">
+          <td>
+            <input type="checkbox" class="input cursor-pointer" form="bulk-places" name="ids" value="{{ place.pk }}"
+                   data-bulk-item aria-label="{% translate 'Selecionar' %} {{ place.name }}"{% if not place.is_active %} disabled{% endif %}>
+          </td>
+          <td>
+            <a href="{% url 'explore:place_detail' place.pk %}" target="_blank" rel="noopener" class="group flex items-center gap-3">
+              {% with image=place.primary_image.image %}
+              {% if image %}
+              <img src="{{ image|thumb:480 }}" loading="lazy" decoding="async" alt="" class="img-ph size-12 shrink-0 rounded-md object-cover" style="{{ image|placeholder }}">
+              {% else %}
+              <span class="grid size-12 shrink-0 place-items-center rounded-md bg-muted font-display text-lg font-semibold" aria-hidden="true">{{ place.name|first }}</span>
+              {% endif %}
+              {% endwith %}
+              <span class="font-medium group-hover:underline">{{ place.name }}</span>
+              {% if place.is_featured %}<span class="text-star" title="{% translate 'Em destaque na página inicial' %}">{% icon "star" class="size-4 fill-current" aria_label=_("Em destaque") %}</span>{% endif %}
+            </a>
+          </td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              {% for category in place.categories.all|slice:":2" %}
+              <c-badge variant="secondary">{% if category.icon %}{{ category.icon }} {% endif %}{{ category.name }}</c-badge>
+              {% empty %}
+              <span class="text-muted-foreground">—</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            {% if place.is_approved and place.is_active %}
+            <c-badge variant="success">{% translate "Aprovado" %}</c-badge>
+            {% elif not place.is_active %}
+            <c-badge variant="destructive">{% translate "Removido" %}</c-badge>
+            {% else %}
+            <c-badge variant="warning">{% translate "Pendente" %}</c-badge>
+            {% endif %}
+          </td>
+          <td>{{ place.created_by.username }}</td>
+          <td class="text-muted-foreground tabular-nums">{{ place.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+          <td>
+            <div class="flex justify-end gap-1">
+              <a href="{% url 'explore:place_edit' place.pk %}" class="btn" data-variant="ghost" data-size="icon-sm" title="{% translate 'Editar' %}" aria-label="{% translate 'Editar' %} {{ place.name }}">{% icon "pencil" %}</a>
+              {% if not place.is_approved and place.is_active %}
+              <button type="submit" form="approve-{{ place.pk }}" class="btn text-success" data-variant="ghost" data-size="icon-sm" title="{% translate 'Aprovar' %}" aria-label="{% translate 'Aprovar' %} {{ place.name }}">{% icon "circle-check" %}</button>
+              {% endif %}
+              {% if place.is_approved and place.is_active %}
+              <button type="submit" form="feature-{{ place.pk }}" class="btn aria-pressed:text-star aria-pressed:[&_svg]:fill-current {% if not place.is_featured %}text-muted-foreground{% endif %}" data-variant="ghost" data-size="icon-sm"
+                      title="{% if place.is_featured %}{% translate 'Tirar do destaque' %}{% else %}{% translate 'Destacar na página inicial' %}{% endif %}"
+                      aria-label="{% if place.is_featured %}{% translate 'Tirar do destaque' %}{% else %}{% translate 'Destacar na página inicial' %}{% endif %}"
+                      aria-pressed="{% if place.is_featured %}true{% else %}false{% endif %}">{% icon "star" %}</button>
+              {% endif %}
+              {% if place.is_active %}
+              <button type="button" class="btn text-destructive" data-variant="ghost" data-size="icon-sm" title="{% translate 'Remover' %}" aria-label="{% translate 'Remover' %} {{ place.name }}"
+                      data-remove-place="{{ place.pk }}" data-place-name="{{ place.name }}">{% icon "trash-2" %}</button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+{% else %}
+{% if status_filter == 'pending' %}
+<c-empty-state icon="circle-check" title="{% translate 'Nenhum lugar pendente' %}" description="{% translate 'Não há lugares aguardando aprovação no momento.' %}">
+  <c-button href="{% url 'explore:backlog' %}" variant="outline">{% icon "rotate-ccw" %}{% translate "Ver todos os lugares" %}</c-button>
+</c-empty-state>
+{% else %}
+<c-empty-state icon="map-pin" title="{% translate 'Nenhum lugar encontrado' %}" description="{% translate 'Não há lugares que correspondam aos filtros selecionados.' %}">
+  <c-button href="{% url 'explore:backlog' %}" variant="outline">{% icon "rotate-ccw" %}{% translate "Ver todos os lugares" %}</c-button>
+</c-empty-state>
+{% endif %}
+{% endif %}
 
 {% include 'includes/remove_place_modal.html' %}
+{% endblock %}
 
+{% block admin_js %}
 <script src="{% static 'js/components/bulk_select.js' %}"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Make table rows clickable
-  const clickableRows = document.querySelectorAll('.clickable-row');
-  clickableRows.forEach(row => {
-    row.addEventListener('click', function() {
-      window.open(this.dataset.href, '_blank');
-    });
-  });
-});
-</script>
 {% endblock %}

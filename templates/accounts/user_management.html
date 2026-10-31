@@ -1,158 +1,128 @@
-{% extends "base.html" %}
-{% load i18n static %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n static icons %}
 
-{% block site_chrome %}{% endblock %}
+{% block title %}{% translate "Usuários" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Gerenciamento de Usuários" %}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
-{% endblock %}
-
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
-
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title">
-        <i class="bi bi-people-fill me-2"></i>{% translate "Gerenciamento de Usuários" %}
-      </h1>
-    </div>
-
-    <!-- Filtros e Pesquisa -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <form method="get" class="row g-3">
-          {% csrf_token %}
-          <div class="col-md-3">
-            <label for="roleFilter" class="form-label">{% translate "Tipo de Usuário" %}</label>
-            <select class="form-select" id="roleFilter" name="role">
-              <option value="">{% translate "Todos os tipos" %}</option>
-              <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>{% translate "Administrador" %}</option>
-              <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>{% translate "Moderador" %}</option>
-              <option value="regular" {% if role_filter == 'regular' %}selected{% endif %}>{% translate "Regular" %}</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="statusFilter" class="form-label">{% translate "Status" %}</label>
-            <select class="form-select" id="statusFilter" name="status">
-              <option value="">{% translate "Todos os status" %}</option>
-              <option value="active" {% if status_filter == 'active' %}selected{% endif %}>{% translate "Ativo" %}</option>
-              <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>{% translate "Inativo" %}</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="searchQuery" class="form-label">{% translate "Pesquisar" %}</label>
-            <input type="text" class="form-control" id="searchQuery" name="q" value="{{ search_query }}" placeholder="{% translate 'Nome, email, nome de usuário...' %}">
-          </div>
-          <div class="col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="bi bi-search me-1"></i>{% translate "Filtrar" %}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Tabela de Usuários -->
-    <div class="card">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
-            <thead>
-              <tr>
-                <th>{% translate "Usuário" %}</th>
-                <th>{% translate "Tipo" %}</th>
-                <th>{% translate "Status" %}</th>
-                <th>{% translate "Membro desde" %}</th>
-                <th>{% translate "Ações" %}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for user_item in users %}
-              <tr id="user-row-{{ user_item.id }}"{% if user_item.is_superuser %} class="user-row-admin"{% endif %}>
-                <td>
-                  <div class="fw-bold">
-                    {{ user_item.username }}
-                    {% if user_item == user %}<span class="text-muted fw-normal small">({% translate "você" %})</span>{% endif %}
-                  </div>
-                  <small class="text-muted">{{ user_item.email|default:"-" }}</small>
-                </td>
-                <td>
-                  {% if user_item.is_superuser %}
-                  <span class="badge user-admin-badge"><i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i>{% translate "Administrador" %}</span>
-                  {% else %}
-                  <select class="form-select form-select-sm user-role-select"
-                          data-user-id="{{ user_item.id }}"
-                          aria-label="{% blocktranslate with name=user_item.username %}Alterar tipo de usuário de {{ name }}{% endblocktranslate %}"
-                          {% if user_item == user %}disabled{% endif %}>
-                    <option value="staff" {% if user_item.is_staff %}selected{% endif %}>{% translate "Moderador" %}</option>
-                    <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>{% translate "Regular" %}</option>
-                  </select>
-                  {% endif %}
-                </td>
-                <td>
-                  <span class="badge status-badge-{{ user_item.id }} {% if user_item.is_active %}bg-success{% else %}bg-secondary{% endif %}">
-                    {% if user_item.is_active %}{% translate "Ativo" %}{% else %}{% translate "Inativo" %}{% endif %}
-                  </span>
-                </td>
-                <td>
-                  <small class="text-muted">{{ user_item.created_at|date:"SHORT_DATE_FORMAT" }}</small>
-                </td>
-                <td>
-                  {% if user_item.is_superuser %}
-                  <span class="text-muted small">{% translate "Protegido" %}</span>
-                  {% else %}
-                  <div class="btn-group" role="group" aria-label="{% translate 'Ações do usuário' %}">
-                    <button type="button"
-                            class="btn btn-sm btn-outline-primary toggle-status-btn"
-                            data-user-id="{{ user_item.id }}"
-                            aria-label="{% if user_item.is_active %}Desativar usuário{% else %}Ativar usuário{% endif %}"
-                            {% if user_item == user %}disabled title="{% translate 'Você não pode modificar sua própria conta' %}"{% endif %}>
-                      <i class="bi bi-{% if user_item.is_active %}x-circle{% else %}check-circle{% endif %}"></i>
-                    </button>
-                    <a href="{% url 'accounts:user_delete' user_item.id %}"
-                       class="btn btn-sm btn-outline-danger"
-                       aria-label="{% translate 'Excluir usuário' %}"
-                       {% if user_item == user %}onclick="return false;" style="opacity: 0.5; cursor: not-allowed;" title="{% translate 'Você não pode excluir sua própria conta' %}"{% endif %}>
-                      <i class="bi bi-trash"></i>
-                    </a>
-                  </div>
-                  {% endif %}
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="5" class="text-center py-4">
-                  <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
-                  <p class="text-muted mt-2 mb-0">{% translate "Nenhum usuário encontrado" %}</p>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-      </div>
-    </div>
+{% block admin_content %}
+<form method="get" class="mb-6 grid gap-3 rounded-xl border bg-card p-4 shadow-card sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_auto] lg:items-end">
+  <div class="grid gap-2">
+    <label for="roleFilter" class="label">{% translate "Tipo de Usuário" %}</label>
+    <select class="select w-full" id="roleFilter" name="role" data-autosubmit>
+      <option value="">{% translate "Todos os tipos" %}</option>
+      <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>{% translate "Administrador" %}</option>
+      <option value="staff" {% if role_filter == 'staff' %}selected{% endif %}>{% translate "Moderador" %}</option>
+      <option value="regular" {% if role_filter == 'regular' %}selected{% endif %}>{% translate "Regular" %}</option>
+    </select>
   </div>
+  <div class="grid gap-2">
+    <label for="statusFilter" class="label">{% translate "Status" %}</label>
+    <select class="select w-full" id="statusFilter" name="status" data-autosubmit>
+      <option value="">{% translate "Todos os status" %}</option>
+      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>{% translate "Ativo" %}</option>
+      <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>{% translate "Inativo" %}</option>
+    </select>
+  </div>
+  <div class="grid gap-2 sm:col-span-2 lg:col-span-1">
+    <label for="searchQuery" class="label">{% translate "Pesquisar" %}</label>
+    <input type="search" class="input" id="searchQuery" name="q" value="{{ search_query }}" placeholder="{% translate 'Nome, email, nome de usuário...' %}">
+  </div>
+  <c-button type="submit" class="sm:col-span-2 lg:col-span-1">{% icon "search" %}{% translate "Filtrar" %}</c-button>
+</form>
+
+{% if users %}
+<div class="table-container rounded-xl border bg-card shadow-card">
+  <table class="table [&_td]:px-4 [&_td]:py-3 [&_th]:px-4 [&_th]:text-xs [&_th]:text-muted-foreground">
+    <thead>
+      <tr>
+        <th>{% translate "Usuário" %}</th>
+        <th>{% translate "Tipo" %}</th>
+        <th>{% translate "Status" %}</th>
+        <th>{% translate "Membro desde" %}</th>
+        <th class="text-end">{% translate "Ações" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_item in users %}
+      <tr id="user-row-{{ user_item.id }}"{% if user_item.is_superuser %} class="bg-muted/40"{% endif %}>
+        <td>
+          <div class="flex items-center gap-3">
+            <span class="grid size-9 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold uppercase" aria-hidden="true">{{ user_item.username|first }}</span>
+            <span class="grid leading-tight">
+              <span class="font-medium">{{ user_item.username }}{% if user_item == user %} <span class="font-normal text-muted-foreground">({% translate "você" %})</span>{% endif %}</span>
+              <span class="text-sm text-muted-foreground">{{ user_item.email|default:"—" }}</span>
+            </span>
+          </div>
+        </td>
+        <td>
+          {% if user_item.is_superuser %}
+          <c-badge>{% icon "shield-check" %}{% translate "Administrador" %}</c-badge>
+          {% else %}
+          <select class="select h-8 min-w-36 text-sm user-role-select"
+                  data-user-id="{{ user_item.id }}"
+                  aria-label="{% blocktranslate with name=user_item.username %}Alterar tipo de usuário de {{ name }}{% endblocktranslate %}"
+                  {% if user_item == user %}disabled{% endif %}>
+            <option value="staff" {% if user_item.is_staff %}selected{% endif %}>{% translate "Moderador" %}</option>
+            <option value="regular" {% if not user_item.is_staff %}selected{% endif %}>{% translate "Regular" %}</option>
+          </select>
+          {% endif %}
+        </td>
+        <td>
+          {% if user_item.is_superuser %}
+          <c-badge variant="success">{% translate "Ativo" %}</c-badge>
+          {% else %}
+          <label class="inline-flex cursor-pointer items-center gap-2 text-sm">
+            <input type="checkbox" role="switch" class="input toggle-status-btn" data-user-id="{{ user_item.id }}"
+                   {% if user_item.is_active %}checked{% endif %}
+                   aria-label="{% blocktranslate with name=user_item.username %}Conta ativa: {{ name }}{% endblocktranslate %}"
+                   {% if user_item == user %}disabled title="{% translate 'Você não pode modificar sua própria conta' %}"{% endif %}>
+            <span class="status-label-{{ user_item.id }} {% if not user_item.is_active %}text-muted-foreground{% endif %}">{% if user_item.is_active %}{% translate "Ativo" %}{% else %}{% translate "Inativo" %}{% endif %}</span>
+          </label>
+          {% endif %}
+        </td>
+        <td class="text-muted-foreground tabular-nums">{{ user_item.created_at|date:"SHORT_DATE_FORMAT" }}</td>
+        <td class="text-end">
+          {% if user_item.is_superuser %}
+          <span class="text-sm text-muted-foreground">{% translate "Protegido" %}</span>
+          {% elif user_item == user %}
+          <span class="text-sm text-muted-foreground">—</span>
+          {% else %}
+          <a href="{% url 'accounts:user_delete' user_item.id %}" class="btn text-destructive" data-variant="ghost" data-size="icon-sm"
+             data-dialog-open="delete-user" data-delete-user="{{ user_item.username }}"
+             title="{% translate 'Excluir usuário' %}" aria-label="{% translate 'Excluir usuário' %} {{ user_item.username }}">{% icon "trash-2" %}</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+{% else %}
+<c-empty-state icon="users" title="{% translate 'Nenhum usuário encontrado' %}">
+  <c-button href="{% url 'accounts:user_management' %}" variant="outline">{% icon "rotate-ccw" %}{% translate "Limpar filtros" %}</c-button>
+</c-empty-state>
+{% endif %}
+
+<c-dialog id="delete-user" title="{% translate 'Excluir usuário?' %}" size="sm">
+  <p>{% blocktranslate trimmed %}A conta <strong data-delete-name></strong> será excluída, com os lugares, avaliações e favoritos dela. Esta ação não pode ser desfeita.{% endblocktranslate %}</p>
+  <c-slot name="footer">
+    <c-button variant="outline" data-dialog-close>{% translate "Cancelar" %}</c-button>
+    <form method="post" id="deleteUserForm">
+      {% csrf_token %}
+      <c-button type="submit" variant="destructive" class="w-full">{% icon "trash-2" %}{% translate "Excluir" %}</c-button>
+    </form>
+  </c-slot>
+</c-dialog>
+
+<c-dialog id="user-confirm" title="{% translate 'Confirmar alteração' %}" size="sm">
+  <p data-confirm-message></p>
+  <c-slot name="footer">
+    <c-button variant="outline" data-dialog-close>{% translate "Cancelar" %}</c-button>
+    <c-button data-confirm>{% translate "Confirmar" %}</c-button>
+  </c-slot>
+</c-dialog>
 {% endblock %}
 
-{% block extra_js %}
+{% block admin_js %}
 <script src="{% static 'js/components/user_management.js' %}"></script>
 {% endblock %}

@@ -3,8 +3,9 @@
  *   [data-bulk-item]    row checkbox (may sit outside the form via form="id")
  *   [data-bulk-all]     select-all checkbox
  *   [data-bulk-count]   element that shows "N selecionados"
+ *   [data-bulk-bar]     toolbar; gets data-active while something is selected
  *   [data-bulk-action]  submit buttons, disabled while nothing is selected
- *   [data-bulk-confirm] message shown in a confirmation modal (%s = selected count)
+ *   [data-bulk-confirm] message shown in a confirmation dialog (%s = selected count)
  *   data-bulk-tone="danger" on a button: red confirm button
  *   data-bulk-require="reason"  on a button: the removal reason is required
  * Without JS the form still submits normally.
@@ -34,13 +35,17 @@
         const label = ngettext('%s selecionado', '%s selecionados', checked);
         el.textContent = interpolate(label, [checked]);
       });
-      if (bar) bar.classList.toggle('is-active', checked > 0);
+      items.forEach(el => {
+        const row = el.closest('tr, article');
+        if (row) row.toggleAttribute('data-selected', el.checked);
+      });
+      if (bar) bar.toggleAttribute('data-active', checked > 0);
     }
 
     all.forEach(box =>
       box.addEventListener('change', () => {
         items.forEach(el => {
-          el.checked = box.checked;
+          if (!el.disabled) el.checked = box.checked;
         });
         update();
       })
@@ -66,9 +71,9 @@
 
     // A célula inteira do checkbox é clicável (alvo maior que a caixinha)
     items.forEach(el => {
-      const cell = el.closest('td, .bulk-select-row');
-      if (!cell || cell.tagName === 'LABEL') return;
-      cell.classList.add('bulk-cell');
+      const cell = el.closest('td');
+      if (!cell) return;
+      cell.classList.add('cursor-pointer');
       cell.addEventListener('click', event => {
         if (event.target === cell && !el.disabled) el.click();
       });
@@ -100,6 +105,7 @@
     if (reason && comments) {
       const toggle = () => {
         comments.hidden = reason.value !== 'Outros';
+        comments.required = !comments.hidden && reason.required;
         if (comments.hidden) comments.value = '';
       };
       reason.addEventListener('change', toggle);
@@ -109,47 +115,46 @@
     update();
   }
 
-  // Bootstrap modal built once and reused: "Cancelar" / the action's own label
+  // <dialog> criado uma vez e reaproveitado: "Cancelar" / o rótulo da própria ação
   let dialog = null;
+  function buildDialog() {
+    const el = document.createElement('dialog');
+    el.className = 'dialog';
+    el.id = 'bulk-confirm';
+    el.setAttribute('aria-labelledby', 'bulk-confirm-title');
+    el.innerHTML = `
+      <div class="sm:max-w-md">
+        <header><h2 id="bulk-confirm-title" class="font-display text-xl font-semibold"></h2></header>
+        <section><p data-message></p></section>
+        <footer>
+          <button type="button" class="btn" data-variant="outline" data-dialog-close></button>
+          <button type="button" class="btn" data-confirm></button>
+        </footer>
+        <button type="button" class="btn" data-variant="ghost" data-size="icon-sm" data-dialog-close></button>
+      </div>`;
+    const cancel = el.querySelector('footer [data-dialog-close]');
+    cancel.textContent = gettext('Cancelar');
+    const close = el.querySelector('div > [data-dialog-close]');
+    close.setAttribute('aria-label', gettext('Fechar'));
+    const x = cloneIcon('x');
+    if (x) close.appendChild(x);
+    document.body.appendChild(el);
+    return el;
+  }
+
   function confirmDialog(btn, message, extraFields) {
-    if (!dialog) {
-      const el = document.createElement('div');
-      el.className = 'modal fade';
-      el.tabIndex = -1;
-      el.setAttribute('aria-labelledby', 'bulkConfirmTitle');
-      el.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h2 class="modal-title h5" id="bulkConfirmTitle"></h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body"><p></p></div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"></button>
-              <button type="button" class="btn" data-confirm></button>
-            </div>
-          </div>
-        </div>`;
-      document.body.appendChild(el);
-      el.querySelector('.btn-close').setAttribute('aria-label', gettext('Fechar'));
-      el.querySelector('[data-bs-dismiss].btn-outline-secondary').textContent =
-        gettext('Cancelar');
-      dialog = { el, modal: new bootstrap.Modal(el) };
-    }
-    const { el, modal } = dialog;
+    dialog = dialog || buildDialog();
     const label = btn.textContent.trim();
-    el.querySelector('.modal-title').textContent = label;
-    el.querySelector('.modal-body p').textContent = message;
-    const ok = el.querySelector('[data-confirm]');
+    dialog.querySelector('h2').textContent = label;
+    dialog.querySelector('[data-message]').textContent = message;
+    const ok = dialog.querySelector('[data-confirm]');
     ok.textContent = label;
-    ok.className = `btn ${
-      btn.dataset.bulkTone === 'danger' ? 'btn-danger' : 'btn-dark'
-    }`;
-    // Campos extras (ex.: motivo da remoção) entram no popup e voltam ao formulário ao fechar
+    if (btn.dataset.bulkTone === 'danger') ok.dataset.variant = 'destructive';
+    else delete ok.dataset.variant;
+    // Campos extras (ex.: motivo da remoção) entram no diálogo e voltam ao formulário ao fechar
     const home = extraFields && extraFields.parentElement;
     if (extraFields) {
-      el.querySelector('.modal-body').appendChild(extraFields);
+      dialog.querySelector('section').appendChild(extraFields);
       extraFields.hidden = false;
     }
     return new Promise(resolve => {
@@ -165,10 +170,10 @@
           }
         }
         confirmed = true;
-        modal.hide();
+        dialog.close();
       };
-      el.addEventListener(
-        'hidden.bs.modal',
+      dialog.addEventListener(
+        'close',
         () => {
           if (extraFields) {
             extraFields.hidden = true;
@@ -178,7 +183,7 @@
         },
         { once: true }
       );
-      modal.show();
+      dialog.showModal();
     });
   }
 

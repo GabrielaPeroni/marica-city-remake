@@ -1,103 +1,49 @@
-{% extends "base.html" %}
-{% load i18n static thumbs %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n static thumbs icons %}
 
-{% block site_chrome %}{% endblock %}
+{% block title %}{% translate "Confirmar Exclusão" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Confirmar Exclusão" %}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
-{% endblock %}
-
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
-
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title">
-        <i class="bi bi-trash me-2"></i>{% translate "Confirmar Exclusão" %}
-      </h1>
-      <a href="{% url 'core:admin_news_list' %}" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-1"></i>{% translate "Voltar" %}
-      </a>
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem;"></i>
-          <div>
-            <strong>{% translate "Atenção!" %}</strong> {% translate "Esta ação não pode ser desfeita." %}
-          </div>
-        </div>
-
-        <h4 class="mt-4 mb-3">{% translate "Tem certeza que deseja excluir este evento?" %}</h4>
-
-        <!-- News Preview -->
-        <div class="card mb-4 bg-light">
-          <div class="card-body">
-            <div class="row">
-              {% if news.featured_image %}
-              <div class="col-md-3">
-                <img src="{{ news.featured_image|thumb:480 }}" alt="{{ news.title }}"
-                     class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
-              </div>
-              <div class="col-md-9">
-              {% else %}
-              <div class="col-md-12">
-              {% endif %}
-                <h5>{{ news.title }}</h5>
-                <div class="mb-2">
-                  <span class="badge bg-info me-2">{{ news.category.get_name_display }}</span>
-                  {% if news.status == 'published' %}
-                  <span class="badge bg-success">{% translate "Publicado" %}</span>
-                  {% elif news.status == 'draft' %}
-                  <span class="badge bg-warning">{% translate "Rascunho" %}</span>
-                  {% else %}
-                  <span class="badge bg-secondary">{% translate "Arquivado" %}</span>
-                  {% endif %}
-                </div>
-                <p class="text-muted mb-2">
-                  <i class="bi bi-person me-1"></i>{{ news.author.username }}
-                  <i class="bi bi-calendar ms-3 me-1"></i>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}
-                  <i class="bi bi-eye ms-3 me-1"></i>{% blocktranslate trimmed count counter=news.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}
-                </p>
-                <p class="mb-0">{{ news.excerpt|truncatewords:30 }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Confirmation Form -->
-        <form method="post">
-          {% csrf_token %}
-          <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-danger">
-              <i class="bi bi-trash me-1"></i>{% translate "Sim, excluir evento" %}
-            </button>
-            <a href="{% url 'core:admin_news_list' %}" class="btn btn-outline-secondary">
-              <i class="bi bi-x-circle me-1"></i>{% translate "Cancelar" %}
-            </a>
-          </div>
-        </form>
-      </div>
-    </div>
-      </div>
-    </div>
+{% block admin_content %}
+<div class="mx-auto grid max-w-2xl gap-6">
+  <div class="alert" data-variant="destructive" role="alert">
+    {% icon "triangle-alert" %}
+    <h2>{% translate "Atenção!" %}</h2>
+    <section>{% translate "Esta ação não pode ser desfeita." %}</section>
   </div>
+
+  <c-card title="{% translate 'Tem certeza que deseja excluir este evento?' %}">
+    <div class="grid gap-4 sm:grid-cols-[10rem_minmax(0,1fr)]">
+      {% if news.featured_image %}
+      <img src="{{ news.featured_image|thumb:480 }}" alt="" class="img-ph aspect-[4/3] w-full rounded-lg object-cover" style="{{ news.featured_image|placeholder }}">
+      {% endif %}
+      <div class="grid content-start gap-2 {% if not news.featured_image %}sm:col-span-2{% endif %}">
+        <h3 class="font-display text-xl font-semibold">{{ news.title }}</h3>
+        <div class="flex flex-wrap gap-2">
+          <c-badge variant="secondary">{{ news.category.get_name_display }}</c-badge>
+          {% if news.status == 'published' %}
+          <c-badge variant="success">{% translate "Publicado" %}</c-badge>
+          {% elif news.status == 'draft' %}
+          <c-badge variant="warning">{% translate "Rascunho" %}</c-badge>
+          {% else %}
+          <c-badge variant="outline">{% translate "Arquivado" %}</c-badge>
+          {% endif %}
+        </div>
+        <p class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+          <span class="inline-flex items-center gap-1.5">{% icon "user" class="size-4" %}{{ news.author.username }}</span>
+          <span class="inline-flex items-center gap-1.5">{% icon "calendar-days" class="size-4" %}{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
+          <span class="inline-flex items-center gap-1.5">{% icon "eye" class="size-4" %}{% blocktranslate trimmed count counter=news.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}</span>
+        </p>
+        {% if news.excerpt %}<p>{{ news.excerpt|truncatewords:30 }}</p>{% endif %}
+      </div>
+    </div>
+    <c-slot name="footer">
+      <form method="post" class="flex w-full flex-wrap justify-end gap-2">
+        {% csrf_token %}
+        <c-button href="{% url 'core:admin_news_list' %}" variant="outline">{% translate "Cancelar" %}</c-button>
+        <c-button type="submit" variant="destructive">{% icon "trash-2" %}{% translate "Sim, excluir evento" %}</c-button>
+      </form>
+    </c-slot>
+  </c-card>
 </div>
 {% endblock %}

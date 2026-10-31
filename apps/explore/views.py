@@ -321,17 +321,17 @@ def bulk_places_view(request):
 
 # Filtros da lista de lugares do painel: chave -> (rótulo, filtro, ícone, tom)
 STATUS_FILTERS = {
-    "all": (_l("Todos"), Q(), "collection", "neutral"),
+    "all": (_l("Todos"), Q(), "layers", "neutral"),
     "pending": (
         _l("Aguardando aprovação"),
         Q(is_approved=False, is_active=True),
-        "hourglass-split",
+        "hourglass",
         "warning",
     ),
     "approved": (
         _l("Aprovados"),
         Q(is_approved=True, is_active=True),
-        "check-circle",
+        "circle-check",
         "success",
     ),
     "featured": (
@@ -340,7 +340,7 @@ STATUS_FILTERS = {
         "star",
         "featured",
     ),
-    "rejected": (_l("Removidos"), Q(is_active=False), "x-circle", "danger"),
+    "rejected": (_l("Removidos"), Q(is_active=False), "circle-x", "danger"),
 }
 
 

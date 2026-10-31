@@ -155,10 +155,10 @@ def admin_dashboard_view(request):
 
 # Filtros da lista de eventos do painel: chave -> (rótulo, status salvo, ícone, tom)
 EVENT_FILTERS = {
-    "all": (_l("Todos"), None, "collection", "neutral"),
-    "suggested": (_l("Sugestões"), None, "magic", "warning"),
-    "published": (_l("Publicados"), News.PUBLISHED, "check-circle", "success"),
-    "draft": (_l("Rascunhos"), News.DRAFT, "pencil-square", "featured"),
+    "all": (_l("Todos"), None, "layers", "neutral"),
+    "suggested": (_l("Sugestões"), None, "sparkles", "warning"),
+    "published": (_l("Publicados"), News.PUBLISHED, "circle-check", "success"),
+    "draft": (_l("Rascunhos"), News.DRAFT, "square-pen", "featured"),
     "archived": (_l("Arquivados"), News.ARCHIVED, "archive", "neutral"),
 }
 

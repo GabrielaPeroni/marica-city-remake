@@ -1,102 +1,50 @@
-{% extends "base.html" %}
-{% load i18n static %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n icons %}
 
-{% block site_chrome %}{% endblock %}
+{% block title %}{% translate "Confirmar Exclusão" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Usuários" %}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-{% endblock %}
+{% block admin_content %}
+<div class="mx-auto w-full max-w-xl sm:py-4">
+  <div class="overflow-hidden rounded-xl border border-destructive/30 bg-card shadow-card">
+    <header class="flex items-center gap-3 border-b border-destructive/20 bg-brand-tint px-6 py-4 text-destructive">
+      {% icon "triangle-alert" class="size-5 shrink-0" %}
+      <h1 class="font-display text-xl font-semibold">{% translate "Confirmar Exclusão" %}</h1>
+    </header>
 
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
-
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-lg">
-          <div class="card-header bg-danger text-white">
-            <h4 class="mb-0">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>{% translate "Confirmar Exclusão" %}
-            </h4>
-          </div>
-          <div class="card-body p-4">
-            <div class="text-center mb-4">
-              <div class="user-avatar-lg mx-auto mb-3">
-                <i class="bi bi-person-circle"></i>
-              </div>
-              <h5 class="mb-1">{{ user_to_delete.username }}</h5>
-              <p class="text-muted mb-0">{{ user_to_delete.email }}</p>
-              <span class="badge {% if user_to_delete.is_staff %}bg-primary{% else %}bg-secondary{% endif %} mt-2">
-                {% if user_to_delete.is_staff %}{% translate "Equipe" %}{% else %}{% translate "Comum" %}{% endif %}
-              </span>
-            </div>
-
-            <div class="alert alert-warning" role="alert">
-              <i class="bi bi-exclamation-triangle me-2"></i>
-              <strong>{% translate "Atenção!" %}</strong> {% translate "Esta ação não pode ser desfeita." %}
-            </div>
-
-            <p class="mb-3">{% translate "Você está prestes a excluir permanentemente este usuário. Isso irá:" %}</p>
-            <ul class="mb-4">
-              <li>{% translate "Remover o usuário do sistema" %}</li>
-              <li>{% translate "Excluir todos os lugares criados por este usuário" %}</li>
-              <li>{% translate "Excluir todas as avaliações feitas por este usuário" %}</li>
-              <li>{% translate "Remover todas as interações e favoritos" %}</li>
-            </ul>
-
-            <p class="text-danger fw-bold">{% translate "Tem certeza que deseja continuar?" %}</p>
-
-            <form method="post" class="d-flex gap-2">
-              {% csrf_token %}
-              <a href="{% url 'accounts:user_management' %}" class="btn btn-secondary flex-fill">
-                <i class="bi bi-x-circle me-1"></i>{% translate "Cancelar" %}
-              </a>
-              <button type="submit" class="btn btn-danger flex-fill">
-                <i class="bi bi-trash me-1"></i>{% translate "Sim, Excluir Usuário" %}
-              </button>
-            </form>
-          </div>
+    <div class="grid gap-6 p-6">
+      <div class="flex items-center gap-4">
+        <span class="grid size-14 shrink-0 place-items-center rounded-full bg-muted text-xl font-semibold text-muted-foreground" aria-hidden="true">{{ user_to_delete.username|first|upper }}</span>
+        <div class="min-w-0">
+          <p class="truncate text-lg font-semibold">{{ user_to_delete.username }}</p>
+          {% if user_to_delete.email %}<p class="truncate text-sm text-muted-foreground">{{ user_to_delete.email }}</p>{% endif %}
         </div>
+        <c-badge variant="{% if user_to_delete.is_staff %}info{% else %}secondary{% endif %}" class="ms-auto shrink-0">
+          {% if user_to_delete.is_staff %}{% translate "Equipe" %}{% else %}{% translate "Comum" %}{% endif %}
+        </c-badge>
       </div>
-    </div>
-  </div>
-    </div>
+
+      <div>
+        <p class="font-medium">{% translate "Você está prestes a excluir permanentemente este usuário. Isso irá:" %}</p>
+        <ul class="mt-3 grid gap-2 text-sm text-muted-foreground">
+          <li class="flex gap-2">{% icon "x" class="mt-0.5 size-4 shrink-0 text-destructive" %}{% translate "Remover o usuário do sistema" %}</li>
+          <li class="flex gap-2">{% icon "x" class="mt-0.5 size-4 shrink-0 text-destructive" %}{% translate "Excluir todos os lugares criados por este usuário" %}</li>
+          <li class="flex gap-2">{% icon "x" class="mt-0.5 size-4 shrink-0 text-destructive" %}{% translate "Excluir todas as avaliações feitas por este usuário" %}</li>
+          <li class="flex gap-2">{% icon "x" class="mt-0.5 size-4 shrink-0 text-destructive" %}{% translate "Remover todas as interações e favoritos" %}</li>
+        </ul>
       </div>
+
+      <p class="rounded-md bg-warning-tint px-4 py-3 text-sm text-warning" role="alert">
+        <strong>{% translate "Atenção!" %}</strong> {% translate "Esta ação não pode ser desfeita." %}
+        {% translate "Tem certeza que deseja continuar?" %}
+      </p>
+
+      <form method="post" class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        {% csrf_token %}
+        <c-button href="{% url 'accounts:user_management' %}" variant="outline">{% translate "Cancelar" %}</c-button>
+        <c-button type="submit" variant="destructive" class="bg-destructive text-white hover:bg-brand-strong">{% icon "trash-2" %}{% translate "Sim, Excluir Usuário" %}</c-button>
+      </form>
     </div>
   </div>
 </div>
-
-<style>
-.user-avatar-lg {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, var(--line) 0%, var(--line) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  color: var(--ink-muted);
-}
-
-.user-avatar-sm {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--line) 0%, var(--line) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: var(--ink-muted);
-}
-</style>
 {% endblock %}

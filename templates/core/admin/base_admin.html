@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n static icons %}
+
+{% block site_chrome %}{% endblock %}
+
+{% block basecoat_js %}<script src="{% static 'vendor/basecoat/sidebar.min.js' %}"></script>{% endblock %}
+
+{% block content %}
+{% include 'includes/admin_sidebar.html' %}
+<div class="min-w-0">
+  <header class="sticky top-0 z-30 border-b bg-background/85 backdrop-blur-md backdrop-saturate-150">
+    <div class="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:px-8">
+      <button type="button" class="btn" data-variant="ghost" data-size="icon" data-sidebar-toggle aria-controls="admin-sidebar" aria-label="{% translate 'Mostrar ou ocultar o menu' %}">{% icon "panel-left" %}</button>
+      <span class="h-5 w-px bg-border" aria-hidden="true"></span>
+      <h1 class="min-w-0 flex-1 truncate font-display text-xl font-semibold">{% block page_title %}{% endblock %}</h1>
+      <div class="flex flex-wrap items-center gap-2">{% block page_actions %}{% endblock %}</div>
+    </div>
+  </header>
+  <div id="conteudo" class="mx-auto w-full max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/components/admin_shell.js' %}"></script>
+{% block admin_js %}{% endblock %}
+{% endblock %}

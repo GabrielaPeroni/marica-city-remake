@@ -1,107 +1,103 @@
-{% load i18n %}
-<div class="d-flex flex-wrap gap-3 justify-content-between align-items-start mb-4">
-  <div>
-    <p class="text-muted mb-0">{% translate "Eventos encontrados automaticamente no portal da Prefeitura. Confira os dados e publique na agenda." %}</p>
-  </div>
+{% load i18n icons %}
+<div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+  <p class="max-w-2xl text-muted-foreground">{% translate "Eventos encontrados automaticamente no portal da Prefeitura. Confira os dados e publique na agenda." %}</p>
   <form method="post" action="{% url 'core:admin_event_crawl' %}">
     {% csrf_token %}
-    <button class="btn btn-outline-dark"><i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>{% translate "Buscar agora" %}</button>
+    <c-button type="submit" variant="outline">{% icon "refresh-cw" %}{% translate "Buscar agora" %}</c-button>
   </form>
 </div>
 
+<div>
 {% if candidates %}
-<form method="post" action="{% url 'core:admin_event_triage_bulk' %}" id="bulk-triage" data-bulk-form>
+<form method="post" action="{% url 'core:admin_event_triage_bulk' %}" id="bulk-triage" class="contents" data-bulk-form>
   {% csrf_token %}
-  <div class="bulk-bar" data-bulk-bar>
-    <label class="d-flex align-items-center gap-2 mb-0">
-      <input type="checkbox" class="bulk-check" data-bulk-all> {% translate "Selecionar todos" %}
+  <div class="z-40 mb-4 flex flex-wrap items-center gap-3 rounded-xl border bg-card px-3 py-2.5 shadow-card transition-shadow data-active:sticky data-active:top-2 data-active:border-foreground/30 data-active:shadow-lift" data-bulk-bar>
+    <label class="flex cursor-pointer items-center gap-2 px-1 text-sm font-medium">
+      <input type="checkbox" class="input" data-bulk-all> {% translate "Selecionar todos" %}
     </label>
-    <span class="bulk-bar__count" data-bulk-count="bulk-triage" aria-live="polite">{% translate "0 selecionados" %}</span>
-    <button type="submit" name="action" value="reject" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled
+    <span class="me-auto text-sm text-muted-foreground in-data-active:text-foreground" data-bulk-count="bulk-triage" aria-live="polite">{% translate "0 selecionados" %}</span>
+    <button type="submit" name="action" value="reject" class="btn" data-variant="outline" data-size="sm" data-bulk-action disabled
             data-bulk-tone="danger" data-bulk-confirm="{% translate 'Sugestões selecionadas: %s. Elas serão descartadas. Continuar?' %}">
-      <i class="bi bi-trash me-1" aria-hidden="true"></i>{% translate "Descartar selecionados" %}
+      {% icon "trash-2" %}{% translate "Descartar selecionados" %}
     </button>
   </div>
 </form>
 {% endif %}
 
+<div class="grid gap-5">
 {% for candidate, form, siblings in candidates %}
-<article class="card triage-card mb-4" id="candidate-{{ candidate.pk }}">
-  <div class="row g-0">
-    <div class="col-lg-3">
-      {% if candidate.image_url %}
-      <img src="{{ candidate.image_url }}" alt="" class="triage-image" loading="lazy" referrerpolicy="no-referrer">
-      {% else %}
-      <div class="triage-image triage-image--empty"><i class="bi bi-image" aria-hidden="true"></i></div>
-      {% endif %}
+<article class="grid overflow-hidden rounded-xl border bg-card shadow-card data-selected:border-foreground/40 data-selected:ring-1 data-selected:ring-foreground/20 lg:grid-cols-[18rem_minmax(0,1fr)]" id="candidate-{{ candidate.pk }}">
+  <div class="relative aspect-[16/9] bg-muted lg:aspect-auto">
+    {% if candidate.image_url %}
+    <img src="{{ candidate.image_url }}" alt="" class="absolute inset-0 size-full object-cover" loading="lazy" referrerpolicy="no-referrer">
+    {% else %}
+    <span class="absolute inset-0 grid place-items-center text-muted-foreground" aria-hidden="true">{% icon "image" class="size-8" %}</span>
+    {% endif %}
+    <label class="absolute start-3 top-3 flex cursor-pointer items-center gap-2 rounded-md bg-background/90 px-2.5 py-1.5 text-sm font-medium shadow-sm backdrop-blur">
+      <input type="checkbox" class="input" form="bulk-triage" name="ids" value="{{ candidate.pk }}" data-bulk-item>
+      {% translate "Selecionar" %}
+    </label>
+  </div>
+  <div class="grid gap-4 p-5">
+    <div class="flex flex-wrap items-center gap-2">
+      <c-badge variant="{% if candidate.score >= 80 %}success{% elif candidate.score >= 50 %}warning{% else %}destructive{% endif %}">{% blocktranslate with score=candidate.score %}Confiança {{ score }}%{% endblocktranslate %}</c-badge>
+      {% for signal in candidate.signals %}<c-badge variant="secondary">{{ signal }}</c-badge>{% endfor %}
+      <a href="{{ candidate.source_url }}" target="_blank" rel="noopener noreferrer" class="ms-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground hover:underline">
+        {{ candidate.source_name }} · {{ candidate.source_published_at|date:"SHORT_DATE_FORMAT" }} {% icon "external-link" class="size-3.5" %}
+      </a>
     </div>
-    <div class="col-lg-9">
-      <div class="card-body">
-        <label class="bulk-select-row small">
-          <input type="checkbox" class="bulk-check" form="bulk-triage" name="ids" value="{{ candidate.pk }}" data-bulk-item>
-          {% translate "Selecionar" %}
-        </label>
-        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
-          <span class="badge triage-score {% if candidate.score >= 80 %}is-high{% elif candidate.score >= 50 %}is-mid{% else %}is-low{% endif %}">{% blocktranslate with score=candidate.score %}Confiança {{ score }}%{% endblocktranslate %}</span>
-          {% for signal in candidate.signals %}<span class="badge text-bg-light">{{ signal }}</span>{% endfor %}
-          <a href="{{ candidate.source_url }}" target="_blank" rel="noopener noreferrer" class="small ms-auto">
-            {{ candidate.source_name }} · {{ candidate.source_published_at|date:"SHORT_DATE_FORMAT" }} <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
-          </a>
-        </div>
 
-        {% if candidate.possible_duplicate %}
-        <div class="alert alert-warning py-2 small">
-          <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>{% translate "Parecido com" %}
-          <a href="{% url 'news:news_detail' candidate.possible_duplicate.slug %}" target="_blank">{{ candidate.possible_duplicate.title }}</a>{% translate ", já publicado." %}
-        </div>
-        {% endif %}
+    {% if candidate.possible_duplicate %}
+    <div class="alert border-warning/30 bg-warning-tint [&>svg]:text-warning">
+      {% icon "triangle-alert" %}
+      <section>{% translate "Parecido com" %} <a class="font-medium underline" href="{% url 'news:news_detail' candidate.possible_duplicate.slug %}" target="_blank">{{ candidate.possible_duplicate.title }}</a>{% translate ", já publicado." %}</section>
+    </div>
+    {% endif %}
 
-        {% if siblings %}
-        <div class="alert alert-info py-2 small">
-          <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>{% translate "Mesmo dia e local que:" %}
-          {% for other in siblings %}<a href="#candidate-{{ other.pk }}">{{ other.title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %}.
-          {% translate "Publique um e descarte os outros." %}
-        </div>
-        {% endif %}
+    {% if siblings %}
+    <div class="alert border-info/30 bg-info-tint [&>svg]:text-info">
+      {% icon "link" %}
+      <section>
+        {% translate "Mesmo dia e local que:" %}
+        {% for other in siblings %}<a class="font-medium underline" href="#candidate-{{ other.pk }}">{{ other.title }}</a>{% if not forloop.last %}; {% endif %}{% endfor %}.
+        {% translate "Publique um e descarte os outros." %}
+      </section>
+    </div>
+    {% endif %}
 
-        <form method="post" action="{% url 'core:admin_event_triage_action' candidate.pk %}">
-          {% csrf_token %}
-          <div class="row g-3">
-            {% for field in form %}
-            <div class="{% if field.name == 'title' or field.name == 'summary' %}col-12{% elif field.name == 'event_location' %}col-md-12 col-xl-4{% else %}col-md-6 col-xl-4{% endif %}">
-              <label class="form-label small fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
-              {{ field }}
-              {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-            </div>
-            {% endfor %}
-          </div>
-          {% for error in form.non_field_errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-          <div class="d-flex gap-2 justify-content-end mt-3">
-            <button name="action" value="reject" formnovalidate class="btn btn-outline-secondary">{% translate "Descartar" %}</button>
-            <button name="action" value="approve" class="btn btn-danger"><i class="bi bi-check-lg me-1" aria-hidden="true"></i>{% translate "Publicar na agenda" %}</button>
-          </div>
-        </form>
+    <form method="post" action="{% url 'core:admin_event_triage_action' candidate.pk %}" class="grid gap-4">
+      {% csrf_token %}
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {% for field in form %}
+        <c-form-field :field="field" class="{% if field.name == 'title' or field.name == 'summary' %}md:col-span-2 xl:col-span-3{% elif field.name == 'event_location' %}md:col-span-2 xl:col-span-1{% endif %}" />
+        {% endfor %}
       </div>
-    </div>
+      {% for error in form.non_field_errors %}<p role="alert" class="text-sm text-destructive">{{ error }}</p>{% endfor %}
+      <div class="flex flex-wrap justify-end gap-2">
+        <c-button type="submit" name="action" value="reject" formnovalidate variant="outline">{% translate "Descartar" %}</c-button>
+        <c-button type="submit" name="action" value="approve" variant="brand">{% icon "check" %}{% translate "Publicar na agenda" %}</c-button>
+      </div>
+    </form>
   </div>
 </article>
 {% empty %}
-<div class="card"><div class="card-body text-center text-muted py-5">
-  <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
-  {% translate "Nada para revisar. O crawler roda a cada 6 horas; use “Buscar agora” para consultar já." %}
-</div></div>
+<c-empty-state icon="inbox" title="{% translate 'Nada para revisar.' %}" description="{% translate 'O crawler roda a cada 6 horas; use “Buscar agora” para consultar já.' %}" />
 {% endfor %}
+</div>
+</div>
 
 {% if recent %}
-<h2 class="h5 mt-5 mb-3">{% translate "Revisados recentemente" %}</h2>
-<ul class="list-group">
-  {% for item in recent %}
-  <li class="list-group-item d-flex flex-wrap gap-2 justify-content-between">
-    <span>
-      {% if item.news %}<a href="{% url 'news:news_detail' item.news.slug %}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
-    </span>
-    <span class="small text-muted">{% blocktranslate with status=item.get_status_display user=item.reviewed_by.username|default:"—" %}{{ status }} por {{ user }}{% endblocktranslate %} · {{ item.reviewed_at|date:"SHORT_DATETIME_FORMAT" }}</span>
-  </li>
-  {% endfor %}
-</ul>
+<section class="mt-10">
+  <h2 class="mb-3 font-display text-display-sm font-semibold">{% translate "Revisados recentemente" %}</h2>
+  <ul class="divide-y rounded-xl border bg-card shadow-card">
+    {% for item in recent %}
+    <li class="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+      <span class="min-w-0 font-medium">
+        {% if item.news %}<a class="hover:underline" href="{% url 'news:news_detail' item.news.slug %}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+      </span>
+      <span class="text-sm text-muted-foreground">{% blocktranslate with status=item.get_status_display user=item.reviewed_by.username|default:"—" %}{{ status }} por {{ user }}{% endblocktranslate %} · {{ item.reviewed_at|date:"SHORT_DATETIME_FORMAT" }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
 {% endif %}

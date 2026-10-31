@@ -1,447 +1,135 @@
-{% extends "base.html" %}
-{% load i18n static %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n static icons %}
 
-{% block site_chrome %}{% endblock %}
+{% block title %}{% translate "Visão geral" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Visão geral" %}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
-{% endblock %}
+{% block admin_content %}
+{% firstof request.user.first_name request.user.username as admin_name %}
+<p class="mb-6 text-lg text-muted-foreground">{% blocktranslate %}Bem-vindo, {{ admin_name }}{% endblocktranslate %}</p>
 
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
+<div class="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  {% url 'explore:backlog' as backlog_url %}
+  {% url 'accounts:user_management' as users_url %}
 
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title">
-        <i class="bi bi-speedometer2 me-2"></i>{% translate "Visão geral" %}
-      </h1>
+  <a href="{{ backlog_url }}?sort=-created_at" class="group grid gap-4 rounded-xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+    <div class="flex items-start justify-between gap-3">
+      <span class="text-sm font-medium text-muted-foreground">{% translate "Novos Lugares" %}</span>
+      <span class="grid size-9 place-items-center rounded-lg bg-brand-tint text-brand">{% icon "map-pin" class="size-4" %}</span>
     </div>
+    <span class="font-display text-4xl font-semibold tabular-nums">{{ places_this_week }}</span>
+    {% include "core/admin/_trend.html" with change=places_change %}
+  </a>
 
-    <!-- Estatísticas Aprimoradas com Tendências -->
-    <div class="row g-3 mb-4">
-      <!-- Novos Lugares -->
-      <div class="col-md-3">
-        <a class="stat-card-enhanced stat-card-link" href="{% url 'explore:backlog' %}?sort=-created_at">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-primary">
-              <i class="bi bi-geo-alt"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Novos Lugares" %}</div>
-              <div class="stat-value-enhanced">{{ places_this_week }}</div>
-            </div>
-          </div>
-          <div class="stat-trend {% if places_change >= 0 %}trend-up{% else %}trend-down{% endif %}">
-            <i class="bi bi-arrow-{% if places_change >= 0 %}up{% else %}down{% endif %}"></i>
-            <span>{% if places_change > 0 %}+{% endif %}{{ places_change }}%</span>
-            <small>{% translate "Desde a semana passada" %}</small>
-          </div>
-        </a>
-      </div>
-
-      <!-- Novos Usuários -->
-      <div class="col-md-3">
-        <a class="stat-card-enhanced stat-card-link" href="{% url 'accounts:user_management' %}">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-info">
-              <i class="bi bi-people"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Novos Usuários" %}</div>
-              <div class="stat-value-enhanced">{{ users_this_week }}</div>
-            </div>
-          </div>
-          <div class="stat-trend {% if users_change >= 0 %}trend-up{% else %}trend-down{% endif %}">
-            <i class="bi bi-arrow-{% if users_change >= 0 %}up{% else %}down{% endif %}"></i>
-            <span>{% if users_change > 0 %}+{% endif %}{{ users_change }}%</span>
-            <small>{% translate "Desde a semana passada" %}</small>
-          </div>
-        </a>
-      </div>
-
-      <!-- Solicitações -->
-      <div class="col-md-3">
-        <a class="stat-card-enhanced stat-card-link" href="{% url 'explore:backlog' %}?status=pending">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-warning">
-              <i class="bi bi-hourglass-split"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Aguardando aprovação" %}</div>
-              <div class="stat-value-enhanced">{{ pending_places }}</div>
-            </div>
-          </div>
-          <div class="stat-trend {% if pending_places > 0 %}trend-warning{% else %}trend-neutral{% endif %}">
-            <i class="bi bi-{% if pending_places > 0 %}arrow-right-circle{% else %}check-circle{% endif %}"></i>
-            <small>{% if pending_places > 0 %}{% translate "Clique para revisar" %}{% else %}{% translate "Tudo em dia" %}{% endif %}</small>
-          </div>
-        </a>
-      </div>
-
-      <!-- Avaliações -->
-      <div class="col-md-3">
-        <a class="stat-card-enhanced stat-card-link" href="/admin/explore/placereview/">
-          <div class="stat-header">
-            <div class="stat-icon-enhanced bg-success">
-              <i class="bi bi-star"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-label-enhanced">{% translate "Avaliações" %}</div>
-              <div class="stat-value-enhanced">{{ reviews_this_week }}</div>
-            </div>
-          </div>
-          <div class="stat-trend {% if reviews_change >= 0 %}trend-up{% else %}trend-down{% endif %}">
-            <i class="bi bi-arrow-{% if reviews_change >= 0 %}up{% else %}down{% endif %}"></i>
-            <span>{% if reviews_change > 0 %}+{% endif %}{{ reviews_change }}%</span>
-            <small>{% translate "Desde a semana passada" %}</small>
-          </div>
-        </a>
-      </div>
+  <a href="{{ users_url }}" class="group grid gap-4 rounded-xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+    <div class="flex items-start justify-between gap-3">
+      <span class="text-sm font-medium text-muted-foreground">{% translate "Novos Usuários" %}</span>
+      <span class="grid size-9 place-items-center rounded-lg bg-info-tint text-info">{% icon "users" class="size-4" %}</span>
     </div>
+    <span class="font-display text-4xl font-semibold tabular-nums">{{ users_this_week }}</span>
+    {% include "core/admin/_trend.html" with change=users_change %}
+  </a>
 
-    <!-- Ações Administrativas -->
-    <div class="row g-3">
-      <!-- Gerenciamento de Usuários -->
-      <div class="col-md-6">
-        <div class="card admin-card">
-          <div class="card-body">
-            <h2 class="h5 card-title">
-              <i class="bi bi-people-fill me-2"></i>{% translate "Gerenciar Usuários" %}
-            </h2>
-            <p class="card-text text-muted">
-              {% translate "Visualizar, editar e gerenciar contas de usuários do sistema." %}
-            </p>
-            <a href="{% url 'accounts:user_management' %}" class="btn btn-primary">
-              <i class="bi bi-arrow-right-circle me-1"></i>{% translate "Acessar" %}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gestão de Lugares -->
-      <div class="col-md-6">
-        <div class="card admin-card">
-          <div class="card-body">
-            <h2 class="h5 card-title">
-              <i class="bi bi-geo-alt-fill me-2"></i>{% translate "Gestão de Lugares" %}
-            </h2>
-            <p class="card-text text-muted">
-              {% translate "Revisar, aprovar e gerenciar lugares da comunidade." %}
-              {% if pending_places > 0 %}
-                <span class="badge bg-warning ms-1">{% blocktranslate trimmed count counter=pending_places %}{{ counter }} pendente{% plural %}{{ counter }} pendentes{% endblocktranslate %}</span>
-              {% endif %}
-            </p>
-            <a href="{% url 'explore:backlog' %}" class="btn btn-primary">
-              <i class="bi bi-arrow-right-circle me-1"></i>{% translate "Acessar" %}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gerenciamento de Notícias -->
-      <div class="col-md-6">
-        <div class="card admin-card">
-          <div class="card-body">
-            <h2 class="h5 card-title">
-              <i class="bi bi-newspaper me-2"></i>{% translate "Gerenciar eventos" %}
-            </h2>
-            <p class="card-text text-muted">
-              {% translate "Criar, editar e publicar eventos da agenda." %}
-              {% if draft_news > 0 %}
-                <span class="badge bg-warning ms-1">{% blocktranslate trimmed count counter=draft_news %}{{ counter }} rascunho{% plural %}{{ counter }} rascunhos{% endblocktranslate %}</span>
-              {% endif %}
-            </p>
-            <a href="{% url 'core:admin_news_list' %}" class="btn btn-primary">
-              <i class="bi bi-arrow-right-circle me-1"></i>{% translate "Acessar" %}
-            </a>
-          </div>
-        </div>
-      </div>
-
-    <!-- Tabela de Usuários Recentes -->
-    <div class="row mt-4">
-      <div class="col-12">
-        <div class="recent-users-table">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">
-              <i class="bi bi-people me-2"></i>{% translate "Novos Usuários" %}
-            </h5>
-            <a href="{% url 'accounts:user_management' %}" class="btn btn-sm btn-outline-primary">
-              <i class="bi bi-funnel me-1"></i>{% translate "Filtrar" %}
-            </a>
-          </div>
-
-          {% if recent_users %}
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Nº</th>
-                  <th>{% translate "Id" %}</th>
-                  <th>{% translate "Nome de Usuário" %}</th>
-                  <th>{% translate "Data" %}</th>
-                  <th>{% translate "Status" %}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for user in recent_users %}
-                <tr{% if user.is_superuser %} class="user-row-admin"{% endif %}>
-                  <td>{{ forloop.counter }}</td>
-                  <td>#{{ user.id|stringformat:"06d" }}</td>
-                  <td>
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="user-avatar-placeholder-mini">
-                        <i class="bi bi-person"></i>
-                      </div>
-                      <span>{{ user.username }}</span>
-                      {% if user.is_superuser %}<span class="badge user-admin-badge"><i class="bi bi-shield-lock-fill me-1" aria-hidden="true"></i>{% translate "Administrador" %}</span>{% endif %}
-                    </div>
-                  </td>
-                  <td>{{ user.date_joined|date:"SHORT_DATETIME_FORMAT" }}</td>
-                  <td>
-                    {% if user.is_active %}
-                      <span class="badge-active">{% translate "Ativo" %}</span>
-                    {% else %}
-                      <span class="badge-inactive">{% translate "Inativo" %}</span>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <div class="text-center py-4">
-            <i class="bi bi-inbox" style="font-size: 3rem; color: var(--ink-soft);"></i>
-            <p class="text-muted mt-2">{% translate "Nenhum usuário recente encontrado." %}</p>
-          </div>
-          {% endif %}
-        </div>
-      </div>
+  <a href="{{ backlog_url }}?status=pending" class="group grid gap-4 rounded-xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+    <div class="flex items-start justify-between gap-3">
+      <span class="text-sm font-medium text-muted-foreground">{% translate "Aguardando aprovação" %}</span>
+      <span class="grid size-9 place-items-center rounded-lg bg-warning-tint text-warning">{% icon "hourglass" class="size-4" %}</span>
     </div>
-      </div>
+    <span class="font-display text-4xl font-semibold tabular-nums">{{ pending_places }}</span>
+    <span class="inline-flex items-center gap-1.5 text-sm {% if pending_places > 0 %}font-medium text-warning{% else %}text-success{% endif %}">
+      {% if pending_places > 0 %}{% icon "arrow-right" class="size-4" %}{% translate "Clique para revisar" %}{% else %}{% icon "circle-check" class="size-4" %}{% translate "Tudo em dia" %}{% endif %}
+    </span>
+  </a>
+
+  <a href="/admin/explore/placereview/" class="group grid gap-4 rounded-xl border bg-card p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+    <div class="flex items-start justify-between gap-3">
+      <span class="text-sm font-medium text-muted-foreground">{% translate "Avaliações" %}</span>
+      <span class="grid size-9 place-items-center rounded-lg bg-success-tint text-success">{% icon "star" class="size-4" %}</span>
     </div>
-  </div>
+    <span class="font-display text-4xl font-semibold tabular-nums">{{ reviews_this_week }}</span>
+    {% include "core/admin/_trend.html" with change=reviews_change %}
+  </a>
 </div>
 
-<style>
-/* Enhanced Stat Cards */
-.stat-card-enhanced {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  height: 100%;
-  border: 1px solid var(--line);
-}
+<div class="grid gap-6 xl:grid-cols-3">
+  <section class="min-w-0 xl:col-span-2" aria-labelledby="recentUsersHeading">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <h2 id="recentUsersHeading" class="font-display text-display-sm font-semibold">{% translate "Novos Usuários" %}</h2>
+      <c-button href="{{ users_url }}" variant="outline" size="sm">{% icon "filter" %}{% translate "Filtrar" %}</c-button>
+    </div>
+    {% if recent_users %}
+    <div class="table-container rounded-xl border bg-card shadow-card">
+      <table class="table [&_td]:px-4 [&_td]:py-3 [&_th]:px-4 [&_th]:text-xs [&_th]:text-muted-foreground">
+        <thead>
+          <tr>
+            <th>{% translate "Id" %}</th>
+            <th>{% translate "Nome de Usuário" %}</th>
+            <th>{% translate "Data" %}</th>
+            <th>{% translate "Status" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in recent_users %}
+          <tr{% if user.is_superuser %} class="bg-muted/40"{% endif %}>
+            <td class="text-muted-foreground tabular-nums">#{{ user.id|stringformat:"06d" }}</td>
+            <td>
+              <div class="flex items-center gap-3">
+                <span class="grid size-8 shrink-0 place-items-center rounded-full bg-muted text-sm font-semibold uppercase" aria-hidden="true">{{ user.username|first }}</span>
+                <span class="font-medium">{{ user.username }}</span>
+                {% if user.is_superuser %}<c-badge>{% icon "shield-check" %}{% translate "Administrador" %}</c-badge>{% endif %}
+              </div>
+            </td>
+            <td class="text-muted-foreground tabular-nums">{{ user.date_joined|date:"SHORT_DATETIME_FORMAT" }}</td>
+            <td>
+              {% if user.is_active %}<c-badge variant="success">{% translate "Ativo" %}</c-badge>{% else %}<c-badge variant="destructive">{% translate "Inativo" %}</c-badge>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <c-empty-state icon="inbox" title="{% translate 'Nenhum usuário recente encontrado.' %}" />
+    {% endif %}
+  </section>
 
-.stat-card-link {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-
-.stat-card-link:focus-visible {
-  outline: 3px solid var(--brand-red);
-  outline-offset: 2px;
-}
-
-.stat-card-enhanced:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.stat-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.stat-icon-enhanced {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: white;
-  flex-shrink: 0;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-label-enhanced {
-  font-size: 0.875rem;
-  color: var(--ink-muted);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.stat-value-enhanced {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1;
-}
-
-.stat-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  background: var(--surface-alt);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.stat-trend i {
-  font-size: 1rem;
-}
-
-.stat-trend small {
-  margin-left: auto;
-  font-weight: 400;
-  color: var(--ink-muted);
-}
-
-.trend-up {
-  color: #10B981;
-  background: #D1FAE5;
-}
-
-.trend-down {
-  color: #EF4444;
-  background: #FEE2E2;
-}
-
-.trend-warning {
-  color: #F59E0B;
-  background: #FEF3C7;
-}
-
-.trend-neutral {
-  color: var(--ink-muted);
-  background: var(--surface-alt);
-}
-
-/* Admin Action Cards */
-.admin-card {
-  border: none;
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
-  height: 100%;
-}
-
-.admin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-.admin-card .card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-}
-
-.admin-card .card-text {
-  font-size: 0.95rem;
-  margin-bottom: 1.25rem;
-  min-height: 48px;
-}
-
-/* Recent Users Table */
-.recent-users-table {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--line);
-}
-
-.recent-users-table .table {
-  margin-bottom: 0;
-}
-
-.recent-users-table .table thead th {
-  border-bottom: 2px solid var(--line);
-  color: var(--ink-muted);
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0.75rem;
-}
-
-.recent-users-table .table tbody td {
-  padding: 1rem 0.75rem;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--surface-alt);
-}
-
-.recent-users-table .table tbody tr:hover {
-  background: var(--surface-alt);
-}
-
-.user-avatar-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--line);
-}
-
-.user-avatar-placeholder-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--line);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-muted);
-  font-size: 1rem;
-}
-
-.badge-active {
-  background: #D1FAE5;
-  color: #065F46;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.badge-inactive {
-  background: #FEE2E2;
-  color: #991B1B;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-</style>
+  <section class="min-w-0" aria-labelledby="todoHeading">
+    <h2 id="todoHeading" class="mb-3 font-display text-display-sm font-semibold">{% translate "Para revisar" %}</h2>
+    <ul class="divide-y rounded-xl border bg-card shadow-card">
+      <li>
+        <a href="{{ backlog_url }}?status=pending" class="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-muted/50">
+          <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-muted">{% icon "map-pin" class="size-5" %}</span>
+          <span class="grid min-w-0 flex-1 leading-tight">
+            <span class="font-medium">{% translate "Gestão de Lugares" %}</span>
+            <span class="text-sm text-muted-foreground">{% translate "Revisar, aprovar e gerenciar lugares da comunidade." %}</span>
+          </span>
+          {% if pending_places > 0 %}<c-badge variant="warning">{% blocktranslate trimmed count counter=pending_places %}{{ counter }} pendente{% plural %}{{ counter }} pendentes{% endblocktranslate %}</c-badge>{% endif %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'core:admin_news_list' %}{% if pending_events %}?status=suggested{% endif %}" class="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-muted/50">
+          <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-muted">{% icon "calendar-days" class="size-5" %}</span>
+          <span class="grid min-w-0 flex-1 leading-tight">
+            <span class="font-medium">{% translate "Gerenciar eventos" %}</span>
+            <span class="text-sm text-muted-foreground">{% translate "Criar, editar e publicar eventos da agenda." %}</span>
+          </span>
+          <span class="flex flex-col items-end gap-1">
+            {% if pending_events > 0 %}<c-badge variant="brand">{% blocktranslate trimmed count counter=pending_events %}{{ counter }} sugestão{% plural %}{{ counter }} sugestões{% endblocktranslate %}</c-badge>{% endif %}
+            {% if draft_news > 0 %}<c-badge variant="warning">{% blocktranslate trimmed count counter=draft_news %}{{ counter }} rascunho{% plural %}{{ counter }} rascunhos{% endblocktranslate %}</c-badge>{% endif %}
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ users_url }}" class="flex items-center gap-3 px-4 py-4 transition-colors hover:bg-muted/50">
+          <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-muted">{% icon "users" class="size-5" %}</span>
+          <span class="grid min-w-0 flex-1 leading-tight">
+            <span class="font-medium">{% translate "Gerenciar Usuários" %}</span>
+            <span class="text-sm text-muted-foreground">{% translate "Visualizar, editar e gerenciar contas de usuários do sistema." %}</span>
+          </span>
+          {% icon "chevron-right" class="size-4 text-muted-foreground" %}
+        </a>
+      </li>
+    </ul>
+  </section>
+</div>
 {% endblock %}
