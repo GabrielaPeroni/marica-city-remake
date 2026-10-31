@@ -19,42 +19,39 @@
     }
   });
 
-  let modal = null;
+  let dialog = null;
   function ask() {
-    if (!modal) {
-      const el = document.createElement('div');
-      el.className = 'modal fade';
-      el.tabIndex = -1;
-      el.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header"><h2 class="modal-title h5"></h2></div>
-            <div class="modal-body"><p class="mb-0"></p></div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-dark" data-bs-dismiss="modal"></button>
-              <button type="button" class="btn btn-outline-danger" data-leave></button>
-            </div>
-          </div>
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.className = 'dialog';
+      dialog.setAttribute('aria-labelledby', 'unsaved-guard-title');
+      dialog.innerHTML = `
+        <div class="sm:max-w-sm">
+          <header><h2 id="unsaved-guard-title" class="font-display text-xl font-semibold"></h2><p class="text-muted-foreground"></p></header>
+          <footer>
+            <button type="button" class="btn" data-variant="outline" value="leave"></button>
+            <button type="button" class="btn" value="stay" autofocus></button>
+          </footer>
         </div>`;
-      document.body.appendChild(el);
-      el.querySelector('.modal-title').textContent = gettext('Sair sem salvar?');
-      el.querySelector('.modal-body p').textContent = gettext(
+      dialog.querySelector('h2').textContent = gettext('Sair sem salvar?');
+      dialog.querySelector('header p').textContent = gettext(
         'Você fez alterações neste formulário. Se sair agora, elas serão perdidas.'
       );
-      el.querySelector('[data-bs-dismiss]').textContent = gettext('Continuar editando');
-      el.querySelector('[data-leave]').textContent = gettext('Descartar e sair');
-      modal = { el, bs: new bootstrap.Modal(el) };
+      dialog.querySelector('[value=stay]').textContent = gettext('Continuar editando');
+      dialog.querySelector('[value=leave]').textContent = gettext('Descartar e sair');
+      dialog.addEventListener('click', event => {
+        const button = event.target.closest('button[value]');
+        if (button) dialog.close(button.value);
+        else if (event.target === dialog) dialog.close('stay');
+      });
+      document.body.appendChild(dialog);
     }
     return new Promise(resolve => {
-      let leave = false;
-      modal.el.querySelector('[data-leave]').onclick = () => {
-        leave = true;
-        modal.bs.hide();
-      };
-      modal.el.addEventListener('hidden.bs.modal', () => resolve(leave), {
+      dialog.returnValue = '';
+      dialog.addEventListener('close', () => resolve(dialog.returnValue === 'leave'), {
         once: true,
       });
-      modal.bs.show();
+      dialog.showModal();
     });
   }
 

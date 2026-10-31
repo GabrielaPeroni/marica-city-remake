@@ -1,0 +1,53 @@
+/* Detalhe do lugar e formulário de lugar */
+@layer components {
+  /* Barra de distribuição das notas (<progress>, sem largura inline) */
+  .rating-bar {
+    @apply h-2 w-full appearance-none overflow-hidden rounded-full border-0 bg-muted;
+  }
+
+  .rating-bar::-webkit-progress-bar {
+    @apply rounded-full bg-muted;
+  }
+
+  .rating-bar::-webkit-progress-value {
+    @apply rounded-full bg-star;
+  }
+
+  .rating-bar::-moz-progress-bar {
+    @apply rounded-full bg-star;
+  }
+
+  /* Lightbox da galeria: <dialog> em tela cheia */
+  .lightbox {
+    @apply m-0 size-full max-h-none max-w-none bg-black p-0 text-white opacity-0 transition-[opacity,display,overlay] transition-discrete duration-200 backdrop:bg-black/60;
+  }
+
+  .lightbox[open] {
+    @apply opacity-100;
+
+    @starting-style {
+      @apply opacity-0;
+    }
+  }
+
+  .lightbox figure {
+    @apply grid size-full grid-rows-[minmax(0,1fr)_auto] place-items-center gap-3 px-4 pt-16 pb-6 sm:px-20;
+  }
+
+  .lightbox figure[hidden] {
+    display: none;
+  }
+
+  .lightbox img {
+    @apply max-h-full max-w-full rounded-md object-contain;
+  }
+
+  .lightbox-btn {
+    @apply absolute z-10 grid size-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:ring-3 focus-visible:ring-white/60 focus-visible:outline-none;
+  }
+
+  /* Formulário: barra de ações fixa no rodapé em telas pequenas */
+  .form-actions-sticky {
+    @apply sticky bottom-0 z-20 -mx-4 border-t bg-background/95 px-4 py-3 shadow-bar backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:shadow-none sm:backdrop-blur-none;
+  }
+}
