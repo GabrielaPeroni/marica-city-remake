@@ -81,6 +81,13 @@ module.exports = [
     },
   },
   {
+    // analytics.js uses ES modules (import from @vercel/analytics)
+    files: ['static/js/analytics.js'],
+    languageOptions: {
+      sourceType: 'module',
+    },
+  },
+  {
     ignores: [
       'static/js/dist/**',
       'static/vendor/**',

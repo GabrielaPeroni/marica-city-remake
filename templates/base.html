@@ -131,6 +131,9 @@
 
     {% include 'includes/speculation_rules.html' %}
 
+    <!-- Vercel Web Analytics -->
+    <script src="{% static 'js/dist/analytics.js' %}"></script>
+
     {% block extra_js %}{% endblock %}
     {% block scripts %}{% endblock %}
   </body>

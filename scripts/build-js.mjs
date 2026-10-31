@@ -30,17 +30,39 @@ if (entryPoints.length === 0) {
   process.exit(1);
 }
 
-await build({
-  entryPoints,
-  outbase: srcDir,
-  outdir: outDir,
-  bundle: false,
-  minify: true,
-  sourcemap: true,
-  target: ['es2021'],
-  format: 'iife',
-  logLevel: 'info',
-});
+// Separate analytics.js from other files (it needs to be bundled)
+const analyticsEntry = entryPoints.find(file => file.endsWith('analytics.js'));
+const regularEntries = entryPoints.filter(file => !file.endsWith('analytics.js'));
+
+// Build regular files without bundling
+if (regularEntries.length > 0) {
+  await build({
+    entryPoints: regularEntries,
+    outbase: srcDir,
+    outdir: outDir,
+    bundle: false,
+    minify: true,
+    sourcemap: true,
+    target: ['es2021'],
+    format: 'iife',
+    logLevel: 'info',
+  });
+}
+
+// Build analytics.js with bundling (it has external dependencies)
+if (analyticsEntry) {
+  await build({
+    entryPoints: [analyticsEntry],
+    outbase: srcDir,
+    outdir: outDir,
+    bundle: true,
+    minify: true,
+    sourcemap: true,
+    target: ['es2021'],
+    format: 'iife',
+    logLevel: 'info',
+  });
+}
 
 console.log(
   `Built ${entryPoints.length} JS entry point(s) to ${path.relative(rootDir, outDir)}/`
