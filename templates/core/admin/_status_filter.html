@@ -1,0 +1,15 @@
+{% load i18n icons %}
+{# Os cartões de status são o filtro: um clique mostra só aquele grupo #}
+<nav class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5" aria-label="{% translate 'Filtrar por status' %}">
+  {% for key, label, count, icon_name, tone in status_cards %}
+  <a href="?status={{ key }}{% if keep_filters %}{% if category_filter != 'all' %}&amp;category={{ category_filter|urlencode }}{% endif %}{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}{% endif %}"
+     class="group flex items-center gap-3 rounded-xl border bg-card p-3 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift sm:p-4 {% if status_filter == key %}border-foreground ring-1 ring-foreground{% endif %}"
+     {% if status_filter == key %}aria-current="true"{% endif %}>
+    <span class="grid size-10 shrink-0 place-items-center rounded-lg {% if tone == 'warning' %}bg-warning-tint text-warning{% elif tone == 'success' %}bg-success-tint text-success{% elif tone == 'featured' %}bg-brand-tint text-brand{% elif tone == 'danger' %}bg-destructive/10 text-destructive{% else %}bg-muted text-muted-foreground{% endif %}">{% icon icon_name class="size-5" %}</span>
+    <span class="grid min-w-0 leading-tight">
+      <span class="text-2xl font-semibold tabular-nums">{{ count }}</span>
+      <span class="text-sm leading-snug text-muted-foreground">{{ label }}</span>
+    </span>
+  </a>
+  {% endfor %}
+</nav>

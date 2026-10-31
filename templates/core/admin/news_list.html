@@ -1,201 +1,124 @@
-{% extends "base.html" %}
-{% load i18n static thumbs %}
+{% extends "core/admin/base_admin.html" %}
+{% load i18n static thumbs icons %}
 
-{% block site_chrome %}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/components/admin_sidebar.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/admin_topbar.css' %}">
-<link rel="stylesheet" href="{% static 'css/pages/admin.css' %}">
-<link rel="stylesheet" href="{% static 'css/components/bulk_select.css' %}">
-<!-- Prevent sidebar flicker - must run before page renders -->
-<script>
-(function() {
-  if (localStorage.getItem('sidebarCollapsed') === 'true') {
-    document.documentElement.classList.add('sidebar-initially-collapsed');
-  }
-})();
-</script>
+{% block title %}{% translate "Eventos" %} · {% translate "Painel" %} - MaricaCity{% endblock %}
+{% block page_title %}{% translate "Eventos" %}{% endblock %}
+{% block page_actions %}
+<c-button href="{% url 'core:admin_news_create' %}" size="sm">{% icon "plus" %}<span class="max-sm:sr-only">{% translate "Criar evento" %}</span></c-button>
 {% endblock %}
 
-{% block content %}
-<div class="admin-container">
-  {% include 'includes/admin_sidebar.html' %}
+{% block admin_content %}
+{% include 'core/admin/_status_filter.html' %}
 
-  <div class="admin-main-content">
-    {% include 'includes/admin_topbar.html' %}
-
-    <div class="admin-content-wrapper">
-      <div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="admin-title"><i class="bi bi-calendar-event me-2"></i>{% translate "Eventos" %}</h1>
-      <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i>{% translate "Criar evento" %}
-      </a>
-    </div>
-
-    {# Os cartões são o filtro de status; "Sugestões" mostra os eventos achados automaticamente #}
-    <nav class="status-filter mb-4" aria-label="{% translate 'Filtrar por status' %}">
-      {% for key, label, count, icon, tone in status_cards %}
-      <a href="?status={{ key }}"
-         class="status-filter__item status-filter__item--{{ tone }}{% if status_filter == key %} is-active{% endif %}"
-         {% if status_filter == key %}aria-current="true"{% endif %}>
-        <i class="bi bi-{{ icon }}" aria-hidden="true"></i>
-        <span class="status-filter__label">{{ label }}</span>
-        <span class="status-filter__count">{{ count }}</span>
-      </a>
+{% if status_filter == 'suggested' %}
+{% include 'core/admin/_event_suggestions.html' %}
+{% else %}
+<form method="get" class="mb-6 grid gap-3 rounded-xl border bg-card p-4 shadow-card sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] sm:items-end">
+  <input type="hidden" name="status" value="{{ status_filter }}">
+  <div class="grid gap-2">
+    <label for="category" class="label">{% translate "Categoria" %}</label>
+    <select name="category" id="category" class="select w-full" data-autosubmit>
+      <option value="all" {% if category_filter == 'all' %}selected{% endif %}>{% translate "Todas" %}</option>
+      {% for cat in categories %}
+      <option value="{{ cat.name }}" {% if category_filter == cat.name %}selected{% endif %}>{{ cat.get_name_display }}</option>
       {% endfor %}
-    </nav>
+    </select>
+  </div>
+  <div class="grid gap-2">
+    <label for="search" class="label">{% translate "Buscar" %}</label>
+    <input type="search" name="q" id="search" class="input" placeholder="{% translate 'Buscar por título...' %}" value="{{ search_query }}">
+  </div>
+  <c-button type="submit">{% icon "search" %}{% translate "Buscar" %}</c-button>
+</form>
 
-    {% if status_filter == 'suggested' %}
-    {% include 'core/admin/_event_suggestions.html' %}
-    {% else %}
-    <!-- Filtros -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <form method="get" class="row g-3">
-          <div class="col-md-6">
-            <label for="category" class="form-label">{% translate "Categoria" %}</label>
-            <select name="category" id="category" class="form-select" onchange="this.form.submit()">
-              <option value="all" {% if category_filter == 'all' %}selected{% endif %}>{% translate "Todas" %}</option>
-              {% for cat in categories %}
-              <option value="{{ cat.name }}" {% if category_filter == cat.name %}selected{% endif %}>
-                {{ cat.get_name_display }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="search" class="form-label">{% translate "Buscar" %}</label>
-            <div class="input-group">
-              <input type="text" name="q" id="search" class="form-control"
-                     placeholder="{% translate 'Buscar por título...' %}" value="{{ search_query }}">
-              <button class="btn btn-outline-secondary" type="submit">
-                <i class="bi bi-search"></i>
-              </button>
+{% if news_list %}
+<div>
+  <form method="post" action="{% url 'core:admin_news_bulk' %}" id="bulk-news" class="contents" data-bulk-form>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <div class="z-40 mb-3 flex flex-wrap items-center gap-2 rounded-xl border bg-card px-3 py-2.5 shadow-card transition-shadow data-active:sticky data-active:top-2 data-active:border-foreground/30 data-active:shadow-lift" data-bulk-bar>
+      <span class="me-auto px-1 text-sm font-medium text-muted-foreground in-data-active:text-foreground" data-bulk-count="bulk-news" aria-live="polite">{% translate "0 selecionados" %}</span>
+      <button type="submit" name="action" value="publish" class="btn" data-size="sm" data-bulk-action disabled
+              data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles aparecerão na agenda. Publicar todos?' %}">
+        {% icon "circle-check" %}{% translate "Publicar" %}
+      </button>
+      <button type="submit" name="action" value="archive" class="btn" data-variant="outline" data-size="sm" data-bulk-action disabled
+              data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles sairão da agenda. Arquivar todos?' %}">
+        {% icon "archive" %}{% translate "Arquivar" %}
+      </button>
+      <button type="submit" name="action" value="delete" class="btn" data-variant="destructive" data-size="sm" data-bulk-action disabled
+              data-bulk-tone="danger" data-bulk-confirm="{% translate 'Eventos selecionados: %s. Esta ação não pode ser desfeita. Excluir todos?' %}">
+        {% icon "trash-2" %}{% translate "Excluir" %}
+      </button>
+    </div>
+  </form>
+
+  <div class="table-container rounded-xl border bg-card shadow-card">
+    <table class="table [&_td]:px-3 [&_td]:py-3 [&_th]:px-3 [&_th]:text-xs [&_th]:text-muted-foreground">
+      <thead>
+        <tr>
+          <th class="w-10"><input type="checkbox" class="input cursor-pointer" form="bulk-news" data-bulk-all aria-label="{% translate 'Selecionar todos' %}"></th>
+          <th>{% translate "Título" %}</th>
+          <th>{% translate "Categoria" %}</th>
+          <th>{% translate "Status" %}</th>
+          <th>{% translate "Autor" %}</th>
+          <th>{% translate "Data" %}</th>
+          <th>{% translate "Visualizações" %}</th>
+          <th class="text-end">{% translate "Ações" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for news in news_list %}
+        <tr class="data-selected:bg-brand-tint/60">
+          <td>
+            <input type="checkbox" class="input cursor-pointer" form="bulk-news" name="ids" value="{{ news.pk }}"
+                   data-bulk-item aria-label="{% translate 'Selecionar' %} {{ news.title }}">
+          </td>
+          <td>
+            <a href="{% url 'core:admin_news_edit' news.pk %}" class="group flex items-center gap-3">
+              {% if news.featured_image %}
+              <img src="{{ news.featured_image|thumb:480 }}" loading="lazy" decoding="async" alt="" class="img-ph size-12 shrink-0 rounded-md object-cover" style="{{ news.featured_image|placeholder }}">
+              {% else %}
+              <span class="grid size-12 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground" aria-hidden="true">{% icon "calendar-days" class="size-5" %}</span>
+              {% endif %}
+              <span class="max-w-[28rem] truncate font-medium group-hover:underline">{{ news.title }}</span>
+              {% if news.is_featured %}<c-badge variant="brand">{% translate "Destaque" %}</c-badge>{% endif %}
+            </a>
+          </td>
+          <td><c-badge variant="secondary">{{ news.category.get_name_display }}</c-badge></td>
+          <td>
+            {% if news.status == news.PUBLISHED %}
+            <c-badge variant="success">{% translate "Publicado" %}</c-badge>
+            {% elif news.status == news.DRAFT %}
+            <c-badge variant="warning">{% translate "Rascunho" %}</c-badge>
+            {% else %}
+            <c-badge variant="outline">{% translate "Arquivado" %}</c-badge>
+            {% endif %}
+          </td>
+          <td>{{ news.author.username }}</td>
+          <td class="text-muted-foreground tabular-nums">{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+          <td class="tabular-nums"><span class="inline-flex items-center gap-1.5 text-muted-foreground">{% icon "eye" class="size-4" %}{{ news.view_count }}</span></td>
+          <td>
+            <div class="flex justify-end gap-1">
+              <a href="{% url 'news:news_detail' news.slug %}" class="btn" data-variant="ghost" data-size="icon-sm" target="_blank" rel="noopener" title="{% translate 'Visualizar' %}" aria-label="{% translate 'Visualizar' %} {{ news.title }}">{% icon "external-link" %}</a>
+              <a href="{% url 'core:admin_news_edit' news.pk %}" class="btn" data-variant="ghost" data-size="icon-sm" title="{% translate 'Editar' %}" aria-label="{% translate 'Editar' %} {{ news.title }}">{% icon "pencil" %}</a>
+              <a href="{% url 'core:admin_news_delete' news.pk %}" class="btn text-destructive" data-variant="ghost" data-size="icon-sm" title="{% translate 'Excluir' %}" aria-label="{% translate 'Excluir' %} {{ news.title }}">{% icon "trash-2" %}</a>
             </div>
-          </div>
-          <input type="hidden" name="status" value="{{ status_filter }}">
-        </form>
-      </div>
-    </div>
-
-    <!-- Nova table -->
-    <div class="card admin-list-inset-card">
-      <div class="card-body">
-        {% if news_list %}
-        <form method="post" action="{% url 'core:admin_news_bulk' %}" id="bulk-news" data-bulk-form>
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          <div class="bulk-bar" data-bulk-bar>
-            <span class="bulk-bar__count" data-bulk-count="bulk-news" aria-live="polite">{% translate "0 selecionados" %}</span>
-            <button type="submit" name="action" value="publish" class="btn btn-success btn-sm" data-bulk-action disabled
-                    data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles aparecerão na agenda. Publicar todos?' %}">
-              <i class="bi bi-check-circle me-1" aria-hidden="true"></i>{% translate "Publicar" %}
-            </button>
-            <button type="submit" name="action" value="archive" class="btn btn-outline-secondary btn-sm" data-bulk-action disabled
-                    data-bulk-confirm="{% translate 'Eventos selecionados: %s. Eles sairão da agenda. Arquivar todos?' %}">
-              <i class="bi bi-archive me-1" aria-hidden="true"></i>{% translate "Arquivar" %}
-            </button>
-            <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm" data-bulk-action
-                    data-bulk-tone="danger" data-bulk-confirm="{% translate 'Eventos selecionados: %s. Esta ação não pode ser desfeita. Excluir todos?' %}" disabled>
-              <i class="bi bi-trash me-1" aria-hidden="true"></i>{% translate "Excluir" %}
-            </button>
-          </div>
-        </form>
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th style="width: 2rem;">
-                  <input type="checkbox" class="bulk-check" form="bulk-news" data-bulk-all aria-label="{% translate 'Selecionar todos' %}">
-                </th>
-                <th>{% translate "Título" %}</th>
-                <th>{% translate "Categoria" %}</th>
-                <th>{% translate "Status" %}</th>
-                <th>{% translate "Autor" %}</th>
-                <th>{% translate "Data" %}</th>
-                <th>{% translate "Visualizações" %}</th>
-                <th>{% translate "Ações" %}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for news in news_list %}
-              <tr>
-                <td>
-                  <input type="checkbox" class="bulk-check" form="bulk-news" name="ids" value="{{ news.pk }}"
-                         data-bulk-item aria-label="{% translate 'Selecionar' %} {{ news.title }}">
-                </td>
-                <td>
-                  <div class="d-flex align-items-center">
-                    {% if news.featured_image %}
-                    <img src="{{ news.featured_image|thumb:480 }}" loading="lazy" alt="{{ news.title }}"
-                         class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 4px;">
-                    {% endif %}
-                    <div>
-                      <strong>{{ news.title }}</strong>
-                      {% if news.is_featured %}
-                      <span class="badge bg-warning ms-2">{% translate "Destaque" %}</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge bg-info">{{ news.category.get_name_display }}</span>
-                </td>
-                <td>
-                  {% if news.status == news.PUBLISHED %}
-                  <span class="badge bg-success">{% translate "Publicado" %}</span>
-                  {% elif news.status == news.DRAFT %}
-                  <span class="badge bg-warning">{% translate "Rascunho" %}</span>
-                  {% else %}
-                  <span class="badge bg-secondary">{% translate "Arquivado" %}</span>
-                  {% endif %}
-                </td>
-                <td>{{ news.author.username }}</td>
-                <td>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                <td>
-                  <i class="bi bi-eye me-1"></i>{{ news.view_count }}
-                </td>
-                <td>
-                  <div class="btn-group btn-group-sm">
-                    <a href="{% url 'news:news_detail' news.slug %}" class="btn btn-outline-secondary"
-                       title="{% translate 'Visualizar' %}" target="_blank">
-                      <i class="bi bi-eye"></i>
-                    </a>
-                    <a href="{% url 'core:admin_news_edit' news.pk %}" class="btn btn-outline-primary"
-                       title="{% translate 'Editar' %}">
-                      <i class="bi bi-pencil"></i>
-                    </a>
-                    <a href="{% url 'core:admin_news_delete' news.pk %}" class="btn btn-outline-danger"
-                       title="{% translate 'Excluir' %}">
-                      <i class="bi bi-trash"></i>
-                    </a>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-        <div class="text-center py-5">
-          <i class="bi bi-inbox" style="font-size: 4rem; color: var(--text-muted);"></i>
-          <p class="text-muted mt-3">{% translate "Nenhum evento encontrado." %}</p>
-          <a href="{% url 'core:admin_news_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>{% translate "Criar primeiro evento" %}
-          </a>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
-      </div>
-    </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+{% else %}
+<c-empty-state icon="calendar-days" title="{% translate 'Nenhum evento encontrado.' %}">
+  <c-button href="{% url 'core:admin_news_create' %}">{% icon "plus" %}{% translate "Criar primeiro evento" %}</c-button>
+</c-empty-state>
+{% endif %}
+{% endif %}
 {% endblock %}
 
-{% block extra_js %}
+{% block admin_js %}
 <script src="{% static 'js/components/bulk_select.js' %}"></script>
 {% endblock %}

@@ -1,158 +1,106 @@
 /**
- * JavaScript de Gerenciamento de Usuários
- * Gerencia operações AJAX para atualizações de tipo de usuário e alternâncias de status
+ * Gerenciamento de usuários: tipo (moderador/regular) e conta ativa via AJAX,
+ * com confirmação em <dialog>; exclusão pelo diálogo #delete-user.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
   const csrfToken = getCookie('csrftoken');
+  const confirmDialog = document.getElementById('user-confirm');
 
-  // Gerenciar mudança de função de usuário (alternar entre staff e regular)
-  const userRoleSelects = document.querySelectorAll('.user-role-select');
-  userRoleSelects.forEach(select => {
-    select.addEventListener('change', function () {
-      const userId = this.dataset.userId;
-      const originalRole = this.querySelector('option[selected]')?.value;
-
-      if (
-        !confirm(
-          gettext(
-            'Tem certeza que deseja alterar o tipo deste usuário?\n\nIsso pode modificar as permissões do usuário no sistema.'
-          )
-        )
-      ) {
-        this.value = originalRole;
-        return;
-      }
-
-      // Desabilitar select durante a requisição
-      this.disabled = true;
-
-      fetch(`/accounts/usuarios/${userId}/tipo/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrfToken,
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Mostrar mensagem de sucesso
-            showNotification('success', data.message);
-
-            // Atualizar a opção selecionada com base na resposta
-            const options = this.querySelectorAll('option');
-            options.forEach(opt => {
-              opt.removeAttribute('selected');
-              if (
-                (data.is_staff && opt.value === 'staff') ||
-                (!data.is_staff && opt.value === 'regular')
-              ) {
-                opt.setAttribute('selected', 'selected');
-              }
-            });
-          } else {
-            // Reverter para função original
-            this.value = originalRole;
-            showNotification(
-              'error',
-              data.error || gettext('Erro ao atualizar tipo de usuário')
-            );
-          }
-        })
-        .catch(error => {
-          console.error('Erro:', error);
-          this.value = originalRole;
-          showNotification('error', gettext('Erro ao processar solicitação'));
-        })
-        .finally(() => {
-          this.disabled = false;
-        });
+  function askConfirm(message) {
+    confirmDialog.querySelector('[data-confirm-message]').textContent = message;
+    return new Promise(resolve => {
+      let ok = false;
+      confirmDialog.querySelector('[data-confirm]').onclick = () => {
+        ok = true;
+        confirmDialog.close();
+      };
+      confirmDialog.addEventListener('close', () => resolve(ok), { once: true });
+      confirmDialog.showModal();
     });
-  });
-
-  // Gerenciar alternância de status
-  const statusButtons = document.querySelectorAll('.toggle-status-btn');
-  statusButtons.forEach(button => {
-    button.addEventListener('click', function () {
-      const userId = this.dataset.userId;
-      const row = document.getElementById(`user-row-${userId}`);
-      const statusBadge = row.querySelector(`.status-badge-${userId}`);
-      const isActive = statusBadge.classList.contains('bg-success');
-
-      const question = isActive
-        ? gettext('Tem certeza que deseja desativar este usuário?')
-        : gettext('Tem certeza que deseja ativar este usuário?');
-      if (!confirm(question)) {
-        return;
-      }
-
-      // Desabilitar botão durante a requisição
-      this.disabled = true;
-
-      fetch(`/accounts/usuarios/${userId}/status/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrfToken,
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Atualizar badge
-            if (data.is_active) {
-              statusBadge.classList.remove('bg-secondary');
-              statusBadge.classList.add('bg-success');
-              statusBadge.textContent = gettext('Ativo');
-              this.innerHTML = '<i class="bi bi-x-circle"></i>';
-            } else {
-              statusBadge.classList.remove('bg-success');
-              statusBadge.classList.add('bg-secondary');
-              statusBadge.textContent = gettext('Inativo');
-              this.innerHTML = '<i class="bi bi-check-circle"></i>';
-            }
-
-            showNotification('success', data.message);
-          } else {
-            showNotification('error', data.error || gettext('Erro ao alterar status'));
-          }
-        })
-        .catch(error => {
-          console.error('Erro:', error);
-          showNotification('error', gettext('Erro ao processar solicitação'));
-        })
-        .finally(() => {
-          this.disabled = false;
-        });
-    });
-  });
-
-  /**
-   * Mostrar mensagem de notificação
-   * @param {string} type - 'success' ou 'error'
-   * @param {string} message - Mensagem para exibir
-   */
-  function showNotification(type, message) {
-    // Criar elemento de notificação
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${
-      type === 'success' ? 'success' : 'danger'
-    } alert-dismissible fade show position-fixed`;
-    notification.style.cssText =
-      'top: 20px; right: 20px; z-index: 9999; min-width: 300px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-    notification.innerHTML = `
-      <i class="bi bi-${
-        type === 'success' ? 'check-circle' : 'exclamation-circle'
-      } me-2"></i>
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-
-    document.body.appendChild(notification);
-
-    // Remover automaticamente após 5 segundos
-    setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 150);
-    }, 5000);
   }
+
+  function post(url) {
+    return fetch(url, { method: 'POST', headers: { 'X-CSRFToken': csrfToken } }).then(
+      response => response.json()
+    );
+  }
+
+  document.querySelectorAll('.user-role-select').forEach(select => {
+    select.addEventListener('change', async function () {
+      const original = this.querySelector('option[selected]')?.value;
+      const ok = await askConfirm(
+        gettext(
+          'Tem certeza que deseja alterar o tipo deste usuário? Isso pode modificar as permissões do usuário no sistema.'
+        )
+      );
+      if (!ok) {
+        this.value = original;
+        return;
+      }
+      this.disabled = true;
+      try {
+        const data = await post(`/accounts/usuarios/${this.dataset.userId}/tipo/`);
+        if (!data.success) throw new Error(data.error);
+        this.querySelectorAll('option').forEach(opt => {
+          opt.toggleAttribute(
+            'selected',
+            opt.value === (data.is_staff ? 'staff' : 'regular')
+          );
+        });
+        this.value = data.is_staff ? 'staff' : 'regular';
+        showToast(data.message, 'success');
+      } catch (error) {
+        this.value = original;
+        showToast(
+          error.message || gettext('Erro ao atualizar tipo de usuário'),
+          'error'
+        );
+      } finally {
+        this.disabled = false;
+      }
+    });
+  });
+
+  document.querySelectorAll('.toggle-status-btn').forEach(toggle => {
+    toggle.addEventListener('change', async function () {
+      const activating = this.checked;
+      const ok = await askConfirm(
+        activating
+          ? gettext('Tem certeza que deseja ativar este usuário?')
+          : gettext('Tem certeza que deseja desativar este usuário?')
+      );
+      if (!ok) {
+        this.checked = !activating;
+        return;
+      }
+      this.disabled = true;
+      try {
+        const data = await post(`/accounts/usuarios/${this.dataset.userId}/status/`);
+        if (!data.success) throw new Error(data.error);
+        this.checked = data.is_active;
+        const label = document.querySelector(`.status-label-${this.dataset.userId}`);
+        if (label) {
+          label.textContent = data.is_active ? gettext('Ativo') : gettext('Inativo');
+          label.classList.toggle('text-muted-foreground', !data.is_active);
+        }
+        showToast(data.message, 'success');
+      } catch (error) {
+        this.checked = !activating;
+        showToast(error.message || gettext('Erro ao alterar status'), 'error');
+      } finally {
+        this.disabled = false;
+      }
+    });
+  });
+
+  // O link de excluir abre o diálogo (sem JS ele leva à página de confirmação)
+  const deleteForm = document.getElementById('deleteUserForm');
+  document.querySelectorAll('[data-delete-user]').forEach(link => {
+    link.addEventListener('click', () => {
+      deleteForm.action = link.getAttribute('href');
+      document.querySelector('[data-delete-name]').textContent =
+        link.dataset.deleteUser;
+    });
+  });
 });
