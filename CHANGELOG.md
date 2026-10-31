@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Frontend redesign: Bootstrap 5 and Bootstrap Icons replaced by Tailwind
+  CSS 4 + Basecoat, django-cotton components and inline Lucide icons, with
+  self-hosted Fraunces/Inter fonts. `npm run build:css` compiles the CSS;
+  the output is committed and CI checks it is current.
+  - Navbar is transparent over hero images and solid on scroll, with the
+    language switcher inside it and a sheet menu on mobile; the cookie
+    notice is a slim bottom bar.
+  - Whole-card links, photo category tiles, a sticky filter bar with sort on
+    Explorar, and a place page with a photo hero, gallery lightbox, review
+    summary and a sticky facts sidebar.
+  - Split-layout sign-up and password pages with a 6-box code input.
+  - Admin panel on a collapsible sidebar layout with tables, stat cards and
+    dialog confirmations.
+  - Modals are native `<dialog>` elements; view transitions morph a place
+    card into its page.
+- Maps use Leaflet + OpenStreetMap (no API key); Google is only used for
+  address autocomplete when `GOOGLE_MAPS_API_KEY` is set.
+
 ### Added
 
 - Container pipeline (`.github/workflows/container.yml`):

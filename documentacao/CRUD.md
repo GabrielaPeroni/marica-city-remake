@@ -25,7 +25,7 @@ O projeto implementa operações CRUD seguindo o padrão MVT (Model-View-Templat
 - **READ**
 
   - `explore_view`: Lista todos os lugares aprovados com busca.
-  - `place_detail_view`: Mostra detalhes do lugar com reviews, imagens e mapa.
+  - `place_detail_view`: Mostra detalhes do lugar com reviews (média e distribuição por estrela), galeria de imagens com lightbox e mapa Leaflet/OpenStreetMap.
   - `category_detail_view`: Exibe lugares por categoria.
 
 - **UPDATE**
@@ -59,6 +59,7 @@ O projeto implementa operações CRUD seguindo o padrão MVT (Model-View-Templat
 - `place_detail_view`: Exibe todas as avaliações do lugar. Para não-donos/não-moderadores, só retorna o lugar se `is_approved=True` **e** `is_active=True` — um lugar aprovado mas desativado (ex.: rejeitado após já ter sido aprovado) não é exposto a outros usuários.
 - `review_edit_view`: Dono ou admin pode editar uma avaliação.
 - `review_delete_view`: Dono ou admin pode deletar uma avaliação.
+- Na página do lugar, criar/editar/excluir avaliação abre um `<dialog>` que envia o formulário normal para essas views; sem JS, os botões levam às páginas próprias.
 
 ---
 

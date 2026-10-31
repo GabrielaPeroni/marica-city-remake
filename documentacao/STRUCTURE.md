@@ -440,7 +440,7 @@ MaricaCity segue o padrão **MVT (Model-View-Template)** do Django com uma arqui
 - **Upload de múltiplas imagens:** Formset inline para múltiplas imagens, uma marcada como principal
 - **Sistema de avaliação:** Classificações de 5 estrelas, uma avaliação por usuário por local, restrição única aplicada
 - **Favoritos:** Toggle AJAX, sincronização localStorage para usuários anônimos, persistência backend para autenticados
-- **Integração Google Maps:** Autocomplete para entrada de endereço, mapas de detalhes, mapa da landing page
+- **Mapas:** Leaflet + OpenStreetMap no detalhe e na landing page; autocomplete de endereço pelo Google Places (só com `GOOGLE_MAPS_API_KEY`)
 - **Limite de taxa:** Criar (5/hora), Atualizar (10/hora), API do Mapa (configurado)
 
 ---
@@ -687,15 +687,15 @@ static/
    - `favorites-ui.js`: Atualizações de UI, alternância de ícone de coração, renderização de página de favoritos
    - Fluxo: Clique no coração → Alternar localStorage → Chamada AJAX → Atualizar UI → Sincronizar com backend
 
-2. **Integração Google Maps**
+2. **Mapas**
 
-   - `landing_map.js`: Mostra todos os locais aprovados na landing page
-   - `place_map.js`: Mostra local único na página de detalhe
-   - `address_autocomplete.js`: Autocomplete Google Places para criação de local
+   - `landing_map.js`: Leaflet com todos os locais aprovados na landing page
+   - `components/place_map.js`: Leaflet com o local na página de detalhe
+   - `components/address_autocomplete.js`: Autocomplete Google Places no formulário de local
 
 3. **Notificações Toast (toasts.js)**
 
-   - Sistema global de toast usando toasts Bootstrap 5
+   - Sistema global de toast usando o toast do Basecoat
    - Chamado via `showToast(message, type)` de qualquer página
 
 4. **Formulário de Local (place_form.js)**
@@ -1283,13 +1283,13 @@ ranges — confira lá antes de assumir uma versão específica.
 
 ### Bibliotecas Frontend (CDN)
 
-- **Bootstrap 5.3.2** - Framework CSS
-- **Shoelace** - Componentes web
+- **Tailwind CSS 4 + Basecoat** - CSS e componentes (compilados por `npm run build:css`)
+- **django-cotton** - Componentes de template (`templates/cotton/`)
+- **Lucide** - Ícones SVG inline (`{% icon %}`)
 - **Swiper.js 11** - Carrossel/slider
-- **Google Maps JavaScript API** - Integração de mapas
-- **Google Places API** - Autocomplete
+- **Leaflet 1.9 + OpenStreetMap** - Mapas
+- **Google Places API** - Autocomplete de endereço
 - **Google OAuth** - Autenticação social
-- **Bootstrap Icons** - Biblioteca de ícones
 
 ### Ferramentas de Desenvolvimento
 
