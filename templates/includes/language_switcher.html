@@ -3,11 +3,9 @@
 <form class="lang-switcher" action="{% url 'set_language' %}" method="post" aria-label="{% translate 'Idioma' %}">
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ request.get_full_path }}">
-  <i class="bi bi-translate" aria-hidden="true"></i>
   {% for code, label in LANGUAGES %}
-  <button type="submit" name="language" value="{{ code }}" lang="{{ code }}" title="{{ label }}"
-          {% if code == LANGUAGE_CODE %}aria-current="true" class="is-active"{% endif %}>
-    {% if code == 'pt-br' %}PT{% else %}{{ code|upper }}{% endif %}<span class="visually-hidden"> {{ label }}</span>
+  <button type="submit" name="language" value="{{ code }}" lang="{{ code }}" title="{{ label }}" {% if code == LANGUAGE_CODE %}aria-current="true"{% endif %}>
+    {% if code == 'pt-br' %}PT{% else %}{{ code|upper }}{% endif %}<span class="sr-only"> {{ label }}</span>
   </button>
   {% endfor %}
 </form>

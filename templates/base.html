@@ -1,4 +1,4 @@
-{% load i18n static content_i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+{% load i18n static content_i18n icons %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
@@ -6,88 +6,87 @@
     <title>{% block title %}MaricaCity{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{% translate "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da cidade." %}{% endblock %}">
 
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/fonts/bootstrap-icons.woff2?7141511ac37f13e1a387fb9fc6646256" as="font" type="font/woff2" crossorigin>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
-
+    <link rel="preload" href="{% static 'fonts/inter-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'fonts/fraunces-latin-opsz-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
     <link rel="icon" type="image/x-icon" href="{% static 'images/icon/bus.ico' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/components/headers.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/components/event-cards.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
 
     {% block extra_css %}{% endblock %}
   </head>
 
-  <body class="d-flex flex-column min-vh-100" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
-    <a class="skip-link" href="#conteudo">{% translate "Pular para o conteúdo" %}</a>
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
-      {% if messages %}
-        {% for message in messages %}
-        <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% elif message.tags == 'error' %}bg-danger{% elif message.tags == 'warning' %}bg-warning{% else %}bg-info{% endif %} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
-          <div class="d-flex">
-            <div class="toast-body">
-              {{ message }}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{% translate 'Fechar' %}"></button>
-          </div>
+  <body class="flex min-h-dvh flex-col bg-background text-foreground" data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+    <a class="skip-link sr-only z-50 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-4" href="#conteudo">{% translate "Pular para o conteúdo" %}</a>
+
+    <div id="toaster" class="toaster">
+      {% for message in messages %}
+      {% with category=message.level_tag|default:"info" %}
+      <div class="toast" role="{% if category == 'error' %}alert{% else %}status{% endif %}" aria-atomic="true" aria-hidden="false" data-category="{% if category == 'debug' %}info{% else %}{{ category }}{% endif %}" data-duration="5000">
+        <div class="toast-content">
+          {% if category == 'success' %}{% icon "circle-check" %}{% elif category == 'error' %}{% icon "circle-x" %}{% elif category == 'warning' %}{% icon "triangle-alert" %}{% else %}{% icon "info" %}{% endif %}
+          <section><h2>{{ message }}</h2></section>
+          <footer>
+            <button type="button" class="btn" data-variant="ghost" data-size="icon-xs" data-toast-cancel aria-label="{% translate 'Fechar' %}">{% icon "x" %}</button>
+          </footer>
         </div>
-        {% endfor %}
-      {% endif %}
+      </div>
+      {% endwith %}
+      {% endfor %}
     </div>
 
-    <main class="flex-grow-1">
+    <main class="flex-1">
       {% block content %}{% endblock %}
     </main>
 
-    {# Seletor de idioma, aviso de cookies e rodapé: só no site público (o painel sobrescreve) #}
+    {# Aviso de cookies e rodapé: só no site público (o painel sobrescreve) #}
     {% block site_chrome %}
-    {% include 'includes/language_switcher.html' %}
     {% include 'includes/cookie_consent.html' %}
 
-
-    <footer class="site-footer mt-auto">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <a class="site-footer-brand" href="{% url 'core:landing' %}">MaricaCity</a>
-            <p class="mt-2 mb-3">{% translate "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da cidade, em português, inglês e espanhol." %}</p>
-            <a class="site-footer-github" href="https://github.com/GabrielaPeroni/marica-city-remake" target="_blank" rel="noopener noreferrer">
-              <i class="bi bi-github me-1" aria-hidden="true"></i>{% translate "Código no GitHub" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
-            </a>
-          </div>
-          <nav class="col-6 col-md-4 col-lg-3" aria-label="{% translate 'Rodapé: explorar' %}">
-            <h2>{% translate "Explorar" %}</h2>
-            <ul>
+    <footer class="mt-auto bg-foreground text-background/70">
+      <div class="container-page grid gap-10 py-14 lg:grid-cols-12">
+        <div class="lg:col-span-5">
+          <a class="inline-flex items-center gap-2 font-display text-2xl font-semibold tracking-tight text-background" href="{% url 'core:landing' %}">
+            <span class="size-2 rounded-full bg-brand" aria-hidden="true"></span>MaricaCity
+          </a>
+          <p class="mt-3 max-w-sm text-sm">{% translate "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da cidade, em português, inglês e espanhol." %}</p>
+          <a class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-background hover:underline" href="https://github.com/GabrielaPeroni/marica-city-remake" target="_blank" rel="noopener noreferrer">
+            {% icon "code" class="size-4" %}{% translate "Código no GitHub" %}<span class="sr-only"> ({% translate "abre em nova aba" %})</span>
+          </a>
+        </div>
+        <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
+          <nav aria-label="{% translate 'Rodapé: explorar' %}">
+            <h2 class="text-sm font-semibold text-background">{% translate "Explorar" %}</h2>
+            <ul class="mt-3 space-y-2 text-sm">
               {% for category in footer_categories %}
-              <li><a href="{% url 'explore:category_detail' category.slug %}">{{ category|tr:"name" }}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'explore:category_detail' category.slug %}">{{ category|tr:"name" }}</a></li>
               {% endfor %}
-              <li><a href="{% url 'explore:explore' %}">{% translate "Todos os lugares" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'explore:explore' %}">{% translate "Todos os lugares" %}</a></li>
             </ul>
           </nav>
-          <nav class="col-6 col-md-4 col-lg-3" aria-label="{% translate 'Rodapé: visite' %}">
-            <h2>{% translate "Visite" %}</h2>
-            <ul>
-              <li><a href="{% url 'news:news_list' %}">{% translate "Agenda de eventos" %}</a></li>
-              <li><a href="{% url 'core:about' %}#visite">{% translate "Planeje sua visita" %}</a></li>
-              <li><a href="{% url 'core:about' %}#emergencyHeading">{% translate "Telefones de emergência" %}</a></li>
-              <li><a href="{% url 'core:about' %}">{% translate "Sobre o projeto" %}</a></li>
+          <nav aria-label="{% translate 'Rodapé: visite' %}">
+            <h2 class="text-sm font-semibold text-background">{% translate "Visite" %}</h2>
+            <ul class="mt-3 space-y-2 text-sm">
+              <li><a class="hover:text-background hover:underline" href="{% url 'news:news_list' %}">{% translate "Agenda de eventos" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'core:about' %}#visite">{% translate "Planeje sua visita" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'core:about' %}#emergencyHeading">{% translate "Telefones de emergência" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'core:about' %}">{% translate "Sobre o projeto" %}</a></li>
             </ul>
           </nav>
-          <nav class="col-6 col-md-4 col-lg-2" aria-label="{% translate 'Rodapé: participar' %}">
-            <h2>{% translate "Participar" %}</h2>
-            <ul>
+          <nav aria-label="{% translate 'Rodapé: participar' %}">
+            <h2 class="text-sm font-semibold text-background">{% translate "Participar" %}</h2>
+            <ul class="mt-3 space-y-2 text-sm">
               {% if user.is_authenticated %}
-              <li><a href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
-              {% if user.can_create_places %}<li><a href="{% url 'explore:place_create' %}">{% translate "Cadastrar lugar" %}</a></li>{% endif %}
+              <li><a class="hover:text-background hover:underline" href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
+              {% if user.can_create_places %}<li><a class="hover:text-background hover:underline" href="{% url 'explore:place_create' %}">{% translate "Cadastrar lugar" %}</a></li>{% endif %}
               {% else %}
-              <li><a href="{% url 'accounts:register' %}">{% translate "Criar conta" %}</a></li>
-              <li><a href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'accounts:register' %}">{% translate "Criar conta" %}</a></li>
+              <li><a class="hover:text-background hover:underline" href="{% url 'explore:favorites' %}">{% translate "Meus favoritos" %}</a></li>
               {% endif %}
             </ul>
           </nav>
         </div>
-        <div class="site-footer-bottom">
+      </div>
+      <div class="border-t border-background/10">
+        <div class="container-page flex flex-col gap-2 py-6 text-xs text-background/60 sm:flex-row sm:justify-between">
           <span>&copy; {% now "Y" %} MaricaCity</span>
           <span>{% translate "Código sob licença MIT · Fotos: Wikimedia Commons e colaboradores" %}</span>
         </div>
@@ -95,13 +94,22 @@
     </footer>
     {% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% include 'includes/js_icons.html' %}
 
     <script src="{% url 'javascript-catalog' %}"></script>
     <!-- Utilitários compartilhados (devem ser carregados primeiro) -->
     <script src="{% static 'js/utils.js' %}"></script>
 
+    <!-- Basecoat: núcleo antes dos componentes (dropdown, popover, toast) -->
+    <script src="{% static 'vendor/basecoat/basecoat.min.js' %}"></script>
+    <script src="{% static 'vendor/basecoat/dropdown-menu.min.js' %}"></script>
+    <script src="{% static 'vendor/basecoat/popover.min.js' %}"></script>
+    <script src="{% static 'vendor/basecoat/toast.min.js' %}"></script>
+    {% block basecoat_js %}{% endblock %}
+
     <script src="{% static 'js/components/toasts.js' %}"></script>
+    <script src="{% static 'js/components/dialogs.js' %}"></script>
+    <script src="{% static 'js/components/site_nav.js' %}"></script>
 
     <!-- Sistema de autenticação -->
     <script src="{% static 'js/login.js' %}"></script>

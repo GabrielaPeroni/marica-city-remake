@@ -197,17 +197,17 @@ class AuthenticationViewTests(TestCase):
         # Testar na página inicial
         response = self.client.get(reverse("core:landing"))
         self.assertContains(response, "Entre na sua conta")
-        self.assertContains(response, 'data-bs-toggle="dropdown"')
+        self.assertContains(response, 'id="login-popover"')
 
         # Testar na página de explorar
         response = self.client.get(reverse("explore:explore"))
         self.assertContains(response, "Entre na sua conta")
-        self.assertContains(response, 'data-bs-toggle="dropdown"')
+        self.assertContains(response, 'id="login-popover"')
 
     def test_login_button_present_for_anonymous_users(self):
         """Testa que o botão de login aparece para usuários anônimos"""
         response = self.client.get(reverse("core:landing"))
-        self.assertContains(response, 'data-bs-toggle="dropdown"')
+        self.assertContains(response, 'id="login-popover"')
         self.assertContains(response, "Entrar")
 
     def test_login_button_not_present_for_authenticated_users(self):

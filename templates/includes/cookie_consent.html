@@ -1,10 +1,13 @@
-{% load i18n %}
-<div class="cookie-consent" id="cookieConsent" role="region" aria-label="{% translate 'Cookies' %}" hidden>
-  <p class="cookie-consent__text">
-    {% translate "Podemos usar um cookie para contar visitas aos lugares de forma anônima? Isso ajuda a mostrar o que está em alta. Nenhum dado pessoal é coletado." %}
-  </p>
-  <div class="cookie-consent__actions">
-    <button type="button" class="btn btn-sm btn-outline-secondary" data-consent="declined">{% translate "Recusar" %}</button>
-    <button type="button" class="btn btn-sm btn-dark" data-consent="accepted">{% translate "Aceitar" %}</button>
+{% load i18n icons %}
+<div class="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 shadow-bar backdrop-blur" id="cookieConsent" role="region" aria-label="{% translate 'Cookies' %}" hidden>
+  <div class="container-page flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+    <p class="flex items-start gap-2.5 text-sm text-muted-foreground">
+      {% icon "cookie" class="mt-0.5 size-4 shrink-0 text-brand" %}
+      <span>{% translate "Podemos usar um cookie para contar visitas aos lugares de forma anônima? Isso ajuda a mostrar o que está em alta. Nenhum dado pessoal é coletado." %}</span>
+    </p>
+    <div class="flex shrink-0 justify-end gap-2">
+      <button type="button" class="btn" data-variant="outline" data-size="sm" data-consent="declined">{% translate "Recusar" %}</button>
+      <button type="button" class="btn" data-size="sm" data-consent="accepted">{% translate "Aceitar" %}</button>
+    </div>
   </div>
 </div>

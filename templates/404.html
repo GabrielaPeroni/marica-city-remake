@@ -1,24 +1,22 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n icons %}
 
 {% block title %}{% translate "Página não encontrada" %} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<header class="page-header">
-  <div class="container">
-    <h1>{% translate "Página não encontrada" %}</h1>
-    <p class="page-header-subtitle">{% translate "O endereço pode ter mudado ou o conteúdo foi removido." %}</p>
+<section class="container-page grid min-h-[60vh] place-items-center py-16 text-center">
+  <div class="max-w-xl">
+    <p class="text-sm font-semibold text-brand">{% translate "Erro 404" %}</p>
+    <h1 class="mt-2 font-display text-display-lg font-semibold">{% translate "Página não encontrada" %}</h1>
+    <p class="mt-4 text-lg text-muted-foreground">{% translate "O endereço pode ter mudado ou o conteúdo foi removido." %}</p>
+    <p class="mt-8 text-sm text-muted-foreground">{% translate "Tente um destes caminhos:" %}</p>
+    <div class="mt-3 flex flex-wrap justify-center gap-2">
+      <c-button href="{% url 'core:landing' %}">{% icon "house" %}{% translate "Página inicial" %}</c-button>
+      <c-button href="{% url 'explore:explore' %}" variant="outline">{% icon "compass" %}{% translate "Explorar lugares" %}</c-button>
+      <c-button href="{% url 'news:news_list' %}" variant="outline">{% icon "calendar-days" %}{% translate "Agenda de eventos" %}</c-button>
+    </div>
   </div>
-</header>
-
-<div class="container py-5">
-  <p class="mb-4">{% translate "Tente um destes caminhos:" %}</p>
-  <div class="d-flex flex-wrap gap-2">
-    <a href="{% url 'core:landing' %}" class="btn btn-dark">{% translate "Página inicial" %}</a>
-    <a href="{% url 'explore:explore' %}" class="btn btn-outline-dark">{% translate "Explorar lugares" %}</a>
-    <a href="{% url 'news:news_list' %}" class="btn btn-outline-dark">{% translate "Agenda de eventos" %}</a>
-  </div>
-</div>
+</section>
 {% endblock %}

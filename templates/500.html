@@ -1,21 +1,20 @@
-{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+{% load i18n static %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% translate "Erro no servidor" %} - MaricaCity</title>
-    <style>
-      body { font-family: system-ui, sans-serif; margin: 0; color: #2b2826; background: #f7f5f1; }
-      header { background: #bc2f38; color: #fff; padding: 2rem 1.5rem; }
-      main { padding: 2rem 1.5rem; }
-      a { color: #96252c; }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}" />
   </head>
-  <body>
-    <header><h1>{% translate "Algo deu errado" %}</h1></header>
-    <main>
-      <p>{% translate "Tivemos um problema ao carregar esta página. Tente novamente em instantes." %}</p>
-      <p><a href="/">{% translate "Voltar para a página inicial" %}</a></p>
+  <body class="grid min-h-dvh place-items-center bg-background px-4 text-center text-foreground">
+    <main class="max-w-xl py-16">
+      <p class="inline-flex items-center gap-2 font-display text-xl font-semibold">
+        <span class="size-2 rounded-full bg-brand" aria-hidden="true"></span>MaricaCity
+      </p>
+      <p class="mt-10 text-sm font-semibold text-brand">{% translate "Erro 500" %}</p>
+      <h1 class="mt-2 font-display text-display-lg font-semibold">{% translate "Algo deu errado" %}</h1>
+      <p class="mt-4 text-lg text-muted-foreground">{% translate "Tivemos um problema ao carregar esta página. Tente novamente em instantes." %}</p>
+      <a class="btn mt-8" href="/">{% translate "Voltar para a página inicial" %}</a>
     </main>
   </body>
 </html>

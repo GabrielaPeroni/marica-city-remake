@@ -101,10 +101,10 @@ function showGoogleButton() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const button = document.getElementById('google-signin-button');
-  const dropdown = button && button.closest('.dropdown');
-  if (!dropdown) return;
-  const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+  const popover = button && button.closest('.popover');
+  if (!popover) return;
+  const toggle = popover.querySelector(':scope > button');
   // Começa a baixar ao passar o mouse, para o botão já estar pronto ao abrir
   toggle?.addEventListener('pointerenter', loadGoogleSDK, { once: true });
-  dropdown.addEventListener('shown.bs.dropdown', showGoogleButton);
+  toggle?.addEventListener('click', showGoogleButton);
 });
