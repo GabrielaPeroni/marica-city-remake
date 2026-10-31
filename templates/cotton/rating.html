@@ -1,0 +1,25 @@
+{% load i18n icons %}
+<c-vars value=None count=None compact=False class="" />
+{% if value %}
+{% if compact %}
+<p class="flex items-center gap-1.5 text-sm {{ class }}" {{ attrs }}>
+  {% icon "star" class="size-4 fill-current text-star" %}
+  <span class="font-semibold"><span class="sr-only">{% translate "Nota" %} </span>{{ value|floatformat:1 }}</span>
+  {% if count is not None %}
+  <span class="text-muted-foreground">· {% blocktranslate trimmed count counter=count %}{{ counter }} avaliação{% plural %}{{ counter }} avaliações{% endblocktranslate %}</span>
+  {% endif %}
+</p>
+{% else %}
+<div class="flex items-center gap-2 {{ class }}" {{ attrs }}>
+  <span class="flex items-center gap-0.5" role="img" aria-label="{% blocktranslate with rating=value|floatformat:1 %}Nota {{ rating }} de 5{% endblocktranslate %}">
+    {% for i in "12345" %}
+    {% if i|add:"0" <= value %}{% icon "star" class="size-4 fill-current text-star" %}{% else %}{% icon "star" class="size-4 text-input" %}{% endif %}
+    {% endfor %}
+  </span>
+  <span class="text-sm font-semibold">{{ value|floatformat:1 }}</span>
+  {% if count is not None %}
+  <span class="text-sm text-muted-foreground">({% blocktranslate trimmed count counter=count %}{{ counter }} avaliação{% plural %}{{ counter }} avaliações{% endblocktranslate %})</span>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}

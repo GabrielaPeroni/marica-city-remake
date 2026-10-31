@@ -31,7 +31,7 @@
       <div class="row g-4">
         {% for event in agenda %}
         <div class="{% if forloop.first %}col-12{% else %}col-md-6 col-lg-4{% endif %}">
-          {% include 'includes/event_card.html' with event=event lead=forloop.first %}
+          <c-event-card :event="event" :lead="forloop.first" :eager="forloop.first" />
         </div>
         {% endfor %}
       </div>
@@ -51,7 +51,7 @@
       <div class="row g-4">
         {% for event in news_items %}
         <div class="col-md-6 col-lg-4">
-          {% include 'includes/event_card.html' with event=event %}
+          <c-event-card :event="event" />
         </div>
         {% endfor %}
       </div>

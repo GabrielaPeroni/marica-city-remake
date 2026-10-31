@@ -1,6 +1,7 @@
 from django.contrib.messages import get_messages
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from django.utils import translation
 
 from apps.accounts.models import User
 from apps.core.views import calculate_percentage_change
@@ -453,7 +454,7 @@ class LanguageSwitcherTests(TestCase):
     def test_switcher_is_on_every_page(self):
         for url in (reverse("core:landing"), reverse("news:news_list")):
             response = self.client.get(url)
-            self.assertContains(response, 'class="lang-switcher"')
+            self.assertContains(response, 'class="lang-switcher"', count=2)
             self.assertContains(response, 'value="es"')
 
     def test_default_language_is_portuguese(self):
@@ -646,3 +647,129 @@ class AdminNewsBulkTests(TestCase):
         self.client.login(username="staffuser", password="testpass123")
         response = self.client.get(reverse("core:admin_news_list"))
         self.assertContains(response, "data-bulk-item", count=3)
+
+
+class IconTagTests(TestCase):
+    """{% icon %}: SVG Lucide inline e decorativo"""
+
+    def render(self, source, **context):
+        from django.template import engines
+
+        template = engines["django"].from_string("{% load icons %}" + source)
+        return template.render(context)
+
+    def test_renders_inline_svg(self):
+        html = self.render('{% icon "map-pin" class="size-4" %}')
+        self.assertTrue(html.startswith("<svg "))
+        self.assertIn('class="lucide lucide-map-pin size-4"', html)
+        self.assertIn('aria-hidden="true"', html)
+        self.assertIn('stroke="currentColor"', html)
+        self.assertIn("<path", html)
+
+    def test_extra_attributes_pass_through(self):
+        html = self.render('{% icon "heart" data_icon="heart" aria_label="Favorito" %}')
+        self.assertIn('data-icon="heart"', html)
+        self.assertIn('aria-label="Favorito"', html)
+        self.assertIn('role="img"', html)
+        self.assertNotIn("aria-hidden", html)
+
+    def test_attributes_are_escaped(self):
+        html = self.render('{% icon "x" title=value %}', value="<b>")
+        self.assertIn('title="&lt;b&gt;"', html)
+
+    def test_missing_icon_fails_loudly(self):
+        from django.template import TemplateSyntaxError
+
+        with self.assertRaises(TemplateSyntaxError):
+            self.render('{% icon "no-such-icon" %}')
+
+
+class CottonComponentTests(TestCase):
+    """Componentes de templates/cotton renderizam com dados reais"""
+
+    def setUp(self):
+        user = User.objects.create_user(username="owner", password="pass12345")
+        self.category = Category.objects.create(name="Praias", slug="praias")
+        self.place = Place.objects.create(
+            name="Praia Teste",
+            description="Descrição",
+            address="Rua 1, Maricá",
+            created_by=user,
+            is_approved=True,
+        )
+        self.place.categories.add(self.category)
+
+    def render(self, source, **context):
+        from django.template import engines
+
+        from django_cotton.compiler_regex import CottonCompiler
+
+        compiled = CottonCompiler().process(source)
+        with translation.override("pt-br"):
+            return engines["django"].from_string(compiled).render(context)
+
+    def test_place_card(self):
+        html = self.render('<c-place-card :place="place" />', place=self.place)
+        self.assertIn(f'href="/explore/place/{self.place.pk}/"', html)
+        self.assertIn("Praia Teste", html)
+        self.assertIn("Praias", html)
+        self.assertIn(f'data-place-id="{self.place.pk}"', html)
+        self.assertIn('aria-pressed="false"', html)
+        self.assertIn("data-favorite-item", html)
+
+    def test_place_card_remove_mode(self):
+        html = self.render(
+            '<c-place-card :place="place" remove="true" />', place=self.place
+        )
+        self.assertIn('data-remove-mode="true"', html)
+        self.assertIn('aria-pressed="true"', html)
+
+    def test_event_card(self):
+        category = NewsCategory.objects.first()
+        event = News.objects.create(
+            title="Festa",
+            slug="festa",
+            content="Texto",
+            category=category,
+            author=User.objects.get(username="owner"),
+            status="PUBLISHED",
+        )
+        html = self.render('<c-event-card :event="event" lead />', event=event)
+        self.assertIn('href="/eventos/festa/"', html)
+        self.assertIn("Festa", html)
+        self.assertIn("md:flex-row", html)
+
+    def test_simple_components(self):
+        html = self.render(
+            '<c-button variant="outline" href="/x/">Ir</c-button>'
+            '<c-badge variant="brand">Novo</c-badge>'
+            '<c-section-heading title="Em alta" href="/explore/" />'
+            '<c-empty-state title="Nada" />'
+            '<c-skeleton variant="card" />'
+            '<c-rating :value="4.5" :count="2" />'
+            '<c-dialog id="d1" title="Remover?">Corpo</c-dialog>'
+            '<c-card title="Card">Conteúdo</c-card>'
+        )
+        self.assertIn('<a href="/x/" class="btn " data-variant="outline"', html)
+        self.assertIn('data-variant="brand"', html)
+        self.assertIn("Ver todos", html)
+        self.assertIn('class="empty', html)
+        self.assertIn('aria-label="Nota 4,5 de 5"', html)
+        self.assertIn('<dialog id="d1" class="dialog', html)
+        self.assertIn("data-dialog-close", html)
+        self.assertIn('<div class="card', html)
+
+    def test_form_field(self):
+        from apps.explore.forms import PlaceReviewForm
+
+        form = PlaceReviewForm(data={})
+        form.is_valid()
+        html = self.render(
+            '<c-form-field :field="form.comment" /><c-form-field :field="form.rating" />',
+            form=form,
+        )
+        self.assertIn('data-invalid="true"', html)
+        self.assertIn('class="textarea"', html)
+        self.assertNotIn("form-control", html)
+        self.assertIn('<fieldset class="field', html)
+        self.assertIn('role="alert"', html)

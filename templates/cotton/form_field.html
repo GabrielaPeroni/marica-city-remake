@@ -1,0 +1,30 @@
+{% load form_ui %}
+<c-vars field label="" help="" hide_label=False class="" />
+{% with label_text=label|default:field.label help_text=help|default:field.help_text %}
+{% if field.is_hidden %}
+{{ field }}
+{% elif field.widget_type == "checkbox" %}
+<div class="field gap-3 {{ class }}" data-orientation="horizontal" {% if field.errors %}data-invalid="true"{% endif %} {{ attrs }}>
+  {{ field|ui_widget }}
+  <section class="gap-1">
+    <label for="{{ field.id_for_label }}" class="font-medium">{{ label_text }}</label>
+    {% if help_text %}<p id="{{ field.auto_id }}_helptext" class="text-sm text-muted-foreground">{{ help_text }}</p>{% endif %}
+    {% if field.errors %}<div role="alert" id="{{ field.auto_id }}_error" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+  </section>
+</div>
+{% elif field|is_choice_list %}
+<fieldset class="field gap-2 {{ class }}" {% if field.errors %}data-invalid="true"{% endif %} {{ attrs }}>
+  <legend class="mb-2 text-sm font-medium {% if hide_label %}sr-only{% endif %}">{{ label_text }}{% if field.field.required %}<span class="text-brand" aria-hidden="true"> *</span>{% endif %}</legend>
+  <div class="choice-list">{{ field|ui_widget }}</div>
+  {% if help_text %}<p id="{{ field.auto_id }}_helptext" class="text-sm text-muted-foreground">{{ help_text }}</p>{% endif %}
+  {% if field.errors %}<div role="alert" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+</fieldset>
+{% else %}
+<div class="field gap-2 {{ class }}" {% if field.errors %}data-invalid="true"{% endif %} {{ attrs }}>
+  <label for="{{ field.id_for_label }}" class="text-sm font-medium {% if hide_label %}sr-only{% endif %}">{{ label_text }}{% if field.field.required %}<span class="text-brand" aria-hidden="true"> *</span>{% endif %}</label>
+  {{ field|ui_widget }}
+  {% if help_text %}<p id="{{ field.auto_id }}_helptext" class="text-sm text-muted-foreground">{{ help_text }}</p>{% endif %}
+  {% if field.errors %}<div role="alert" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+</div>
+{% endif %}
+{% endwith %}

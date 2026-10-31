@@ -1,0 +1,6 @@
+<c-vars variant="" size="" href="" type="button" class="" />
+{% if href %}
+<a href="{{ href }}" class="btn {{ class }}" {% if variant %}data-variant="{{ variant }}"{% endif %} {% if size %}data-size="{{ size }}"{% endif %} {{ attrs }}>{{ slot }}</a>
+{% else %}
+<button type="{{ type }}" class="btn {{ class }}" {% if variant %}data-variant="{{ variant }}"{% endif %} {% if size %}data-size="{{ size }}"{% endif %} {{ attrs }}>{{ slot }}</button>
+{% endif %}

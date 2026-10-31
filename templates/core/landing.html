@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-{% include 'includes/navbar.html' %}
+{% include 'includes/navbar.html' with transparent=True %}
 
 {% if request.GET.next and not user.is_authenticated %}
 <div class="alert alert-warning rounded-0 border-0 mb-0 text-center" role="status">
@@ -272,7 +272,7 @@
     <div class="row g-4">
       {% for event in upcoming_events|default:recent_events %}
       <div class="col-md-6 col-lg-3">
-        {% include 'includes/event_card.html' with event=event %}
+        <c-event-card :event="event" />
       </div>
       {% endfor %}
     </div>

@@ -1,0 +1,39 @@
+{% load i18n event_dates content_i18n thumbs icons %}
+<c-vars event lead=False eager=False level="3" sizes="(min-width: 1280px) 400px, (min-width: 640px) 50vw, 100vw" class="" />
+<a href="{% url 'news:news_detail' event.slug %}" class="group flex flex-col overflow-hidden rounded-xl bg-card text-card-foreground shadow-card ring-1 ring-foreground/8 transition duration-300 outline-none hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-3 focus-visible:ring-ring/50 {% if lead %}md:flex-row{% endif %} {{ class }}" {{ attrs }}>
+  <div class="relative aspect-[16/10] shrink-0 overflow-hidden bg-muted {% if lead %}md:aspect-auto md:min-h-80 md:w-1/2{% endif %}">
+    {% if event.featured_image %}
+    <img src="{{ event.featured_image|thumb:960 }}" srcset="{{ event.featured_image|srcset:'480,960' }}" sizes="{{ sizes }}" alt="" class="img-ph size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 {% if lead %}md:absolute md:inset-0{% endif %}" loading="{% if eager %}eager{% else %}lazy{% endif %}" decoding="async" style="{{ event.featured_image|placeholder }}">
+    {% else %}
+    <div class="grid size-full place-items-center bg-secondary text-muted-foreground {% if lead %}md:absolute md:inset-0{% endif %}">{% icon "calendar-days" class="size-10" %}</div>
+    {% endif %}
+    {% if event.event_date %}
+    <div class="absolute start-3 top-3 flex min-w-14 flex-col items-center rounded-lg bg-background/95 px-2 py-1.5 text-center leading-none shadow-sm backdrop-blur" aria-hidden="true">
+      <span class="text-[0.7rem] font-medium text-muted-foreground">{{ event.event_date|date:"D" }}</span>
+      <strong class="my-0.5 font-display text-2xl font-semibold">{{ event.event_date|date:"j" }}</strong>
+      <span class="text-[0.7rem] font-medium text-brand">{{ event.event_date|date:"b" }}</span>
+    </div>
+    {% endif %}
+    {% if event.is_ongoing_event %}
+    <span class="badge absolute end-3 top-3" data-variant="brand">{% translate "Acontecendo agora" %}</span>
+    {% elif event.is_past_event %}
+    <span class="badge absolute end-3 top-3" data-variant="overlay">{% translate "Encerrado" %}</span>
+    {% endif %}
+  </div>
+  <div class="flex flex-1 flex-col gap-2 p-4 {% if lead %}md:justify-center md:p-8{% endif %}">
+    {% if level == "2" %}
+    <h2 class="font-display font-semibold leading-snug {% if lead %}text-xl md:text-display-sm{% else %}text-lg{% endif %}">{{ event|tr:"title" }}</h2>
+    {% else %}
+    <h3 class="font-display font-semibold leading-snug {% if lead %}text-xl md:text-display-sm{% else %}text-lg{% endif %}">{{ event|tr:"title" }}</h3>
+    {% endif %}
+    <ul class="space-y-1 text-sm text-muted-foreground">
+      <li class="flex items-start gap-1.5">{% icon "calendar" class="mt-0.5 size-4 shrink-0" %}<span>{{ event|event_when }}</span></li>
+      {% if event.event_location %}
+      <li class="flex items-start gap-1.5">{% icon "map-pin" class="mt-0.5 size-4 shrink-0" %}<span class="line-clamp-1">{{ event.event_location }}</span></li>
+      {% endif %}
+    </ul>
+    {% if lead and event.excerpt %}
+    <p class="mt-2 line-clamp-3 text-muted-foreground">{{ event|tr:"excerpt" }}</p>
+    {% endif %}
+  </div>
+</a>

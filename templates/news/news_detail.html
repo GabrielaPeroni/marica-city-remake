@@ -105,7 +105,7 @@
     <div class="row g-4">
       {% for item in related_news %}
       <div class="col-md-4">
-        {% include 'includes/event_card.html' with event=item %}
+        <c-event-card :event="item" />
       </div>
       {% endfor %}
     </div>

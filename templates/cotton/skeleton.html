@@ -1,0 +1,19 @@
+<c-vars variant="block" class="" />
+{% if variant == "card" %}
+<div class="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/8 {{ class }}" aria-hidden="true" {{ attrs }}>
+  <div class="skeleton aspect-[4/3] bg-muted"></div>
+  <div class="space-y-2.5 p-4">
+    <div class="skeleton h-5 w-3/4 rounded-md bg-muted"></div>
+    <div class="skeleton h-4 w-1/3 rounded-md bg-muted"></div>
+    <div class="skeleton h-4 w-1/2 rounded-md bg-muted"></div>
+  </div>
+</div>
+{% elif variant == "text" %}
+<div class="space-y-2 {{ class }}" aria-hidden="true" {{ attrs }}>
+  <div class="skeleton h-4 w-full rounded-md bg-muted"></div>
+  <div class="skeleton h-4 w-11/12 rounded-md bg-muted"></div>
+  <div class="skeleton h-4 w-2/3 rounded-md bg-muted"></div>
+</div>
+{% else %}
+<div class="skeleton rounded-md bg-muted {{ class }}" aria-hidden="true" {{ attrs }}></div>
+{% endif %}

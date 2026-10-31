@@ -1,0 +1,12 @@
+<c-vars title="" description="" level="2" size="" class="" />
+<div class="card {{ class }}" {% if size %}data-size="{{ size }}"{% endif %} {{ attrs }}>
+  {% if title or description or action %}
+  <header>
+    {% if title %}{% if level == "3" %}<h3>{{ title }}</h3>{% else %}<h2>{{ title }}</h2>{% endif %}{% endif %}
+    {% if description %}<p>{{ description }}</p>{% endif %}
+    {% if action %}<div class="card-action">{{ action }}</div>{% endif %}
+  </header>
+  {% endif %}
+  <section>{{ slot }}</section>
+  {% if footer %}<footer>{{ footer }}</footer>{% endif %}
+</div>

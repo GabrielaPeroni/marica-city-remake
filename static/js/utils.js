@@ -23,7 +23,19 @@ function getCookie(name) {
   return cookieValue;
 }
 
+/**
+ * Cópia de um ícone Lucide de <template id="js-icons"> (includes/js_icons.html)
+ * @param {string} name - Nome do ícone, ex. "check"
+ * @returns {SVGElement|null}
+ */
+function cloneIcon(name) {
+  const template = document.getElementById('js-icons');
+  const svg = template && template.content.querySelector(`[data-icon="${name}"]`);
+  return svg ? svg.cloneNode(true) : null;
+}
+
 // Exportar para uso em outros scripts
 if (typeof window !== 'undefined') {
   window.getCookie = getCookie;
+  window.cloneIcon = cloneIcon;
 }

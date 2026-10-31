@@ -1,0 +1,10 @@
+{% load icons %}
+<c-vars icon="search" title="" description="" class="" />
+<div class="empty border bg-card {{ class }}" {{ attrs }}>
+  <header>
+    <figure>{% icon icon %}</figure>
+    {% if title %}<h2 class="font-display">{{ title }}</h2>{% endif %}
+    {% if description %}<p>{{ description }}</p>{% endif %}
+  </header>
+  {% if slot %}<section>{{ slot }}</section>{% endif %}
+</div>

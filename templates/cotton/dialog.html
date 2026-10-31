@@ -1,0 +1,15 @@
+{% load i18n icons %}
+<c-vars id title="" description="" size="" class="" panel_class="" />
+<dialog id="{{ id }}" class="dialog {{ class }}" {% if title %}aria-labelledby="{{ id }}-title"{% endif %} {% if description %}aria-describedby="{{ id }}-description"{% endif %} {{ attrs }}>
+  <div class="{% if size == 'lg' %}sm:max-w-2xl{% elif size == 'sm' %}sm:max-w-sm{% endif %} {{ panel_class }}">
+    {% if title or description %}
+    <header>
+      {% if title %}<h2 id="{{ id }}-title" class="font-display text-xl font-semibold">{{ title }}</h2>{% endif %}
+      {% if description %}<p id="{{ id }}-description" class="text-muted-foreground">{{ description }}</p>{% endif %}
+    </header>
+    {% endif %}
+    <section>{{ slot }}</section>
+    {% if footer %}<footer>{{ footer }}</footer>{% endif %}
+    <button type="button" class="btn" data-variant="ghost" data-size="icon-sm" aria-label="{% translate 'Fechar' %}" data-dialog-close>{% icon "x" %}</button>
+  </div>
+</dialog>

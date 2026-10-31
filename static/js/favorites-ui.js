@@ -9,25 +9,12 @@
  * @param {boolean} isFavorited - Status atual de favoritado
  */
 function updateFavoriteButton(button, isFavorited) {
-  const icon = button.querySelector('i');
-
-  if (isFavorited) {
-    // Estado favoritado
-    icon.classList.remove('bi-heart');
-    icon.classList.add('bi-heart-fill');
-    button.classList.add('favorited');
-    button.setAttribute('title', gettext('Remover dos favoritos'));
-    button.setAttribute('aria-label', gettext('Remover dos favoritos'));
-  } else {
-    // Estado não favoritado
-    icon.classList.remove('bi-heart-fill');
-    icon.classList.add('bi-heart');
-    button.classList.remove('favorited');
-    button.setAttribute('title', gettext('Adicionar aos favoritos'));
-    button.setAttribute('aria-label', gettext('Adicionar aos favoritos'));
-  }
-
-  button.dataset.favorited = isFavorited;
+  const label = isFavorited
+    ? gettext('Remover dos favoritos')
+    : gettext('Adicionar aos favoritos');
+  button.setAttribute('aria-pressed', isFavorited ? 'true' : 'false');
+  button.setAttribute('title', label);
+  button.setAttribute('aria-label', label);
 }
 
 /**
@@ -91,12 +78,7 @@ function updateNavbarFavoritesCount() {
     const count = favoritesService.getCount();
     navbarCount.textContent = count;
 
-    // Mostrar/ocultar badge
-    if (count > 0) {
-      navbarCount.classList.remove('d-none');
-    } else {
-      navbarCount.classList.add('d-none');
-    }
+    navbarCount.hidden = count === 0;
   }
 }
 
@@ -129,11 +111,9 @@ async function handleFavoriteClick(e) {
     updateNavbarFavoritesCount();
 
     // Mostrar animação de feedback
-    button.style.transition = 'transform 0.2s ease';
-    button.style.transform = 'scale(1.3)';
-    setTimeout(() => {
-      button.style.transform = 'scale(1)';
-    }, 200);
+    button.removeAttribute('data-pop');
+    void button.offsetWidth;
+    button.setAttribute('data-pop', '');
 
     // Se logado, também sincronizar com backend (opcional - dispara e esquece)
     const isLoggedIn = document.body.dataset.userAuthenticated === 'true';
@@ -179,11 +159,9 @@ async function handleRemoveFavorite(e) {
   favoritesService.removeFavorite(placeId);
 
   // Remover cartão com animação
-  const card = button.closest('.col-12, .col-md-6, .col-lg-4');
+  const card = button.closest('[data-favorite-item]');
   if (card) {
-    card.style.transition = 'all 0.3s ease';
-    card.style.opacity = '0';
-    card.style.transform = 'scale(0.9)';
+    card.classList.add('transition', 'duration-300', 'opacity-0', 'scale-95');
 
     setTimeout(() => {
       card.remove();
