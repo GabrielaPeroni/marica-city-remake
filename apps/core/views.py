@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.db import connection
+from django.db.models import OuterRef, Subquery
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -17,7 +18,7 @@ from django.views.static import serve
 from apps.accounts.models import User
 from apps.core.decorators import moderator_required
 from apps.core.utils import safe_next
-from apps.explore.models import Category, Place, PlaceReview
+from apps.explore.models import Category, Place, PlaceImage, PlaceReview
 from apps.explore.visits import most_visited
 from apps.news import event_crawler
 from apps.news.forms import EventCandidateForm, NewsForm
@@ -55,30 +56,48 @@ def media_view(request, path):
 
 
 def landing_view(request):
-    # "Onde ir": os destacados pela equipe primeiro, depois os mais recentes
-    featured_places = (
-        Place.objects.public()
-        .with_ratings()
-        .prefetch_related("images", "categories")
-        .order_by("-is_featured", "-created_at")[:6]
-    )
-
     # Em alta: mais visitados na semana; sem visitas, os cadastrados na semana
     trending_places = list(most_visited())
     if not trending_places:
-        trending_places = (
+        trending_places = list(
             Place.objects.public()
             .filter(created_at__gte=timezone.now() - timedelta(days=7))
             .with_ratings()
             .prefetch_related("images", "categories")
             .order_by("-created_at")[:4]
         )
+    trending_ids = {place.pk for place in trending_places}
 
-    categories = (
+    # "Onde ir": os destacados pela equipe primeiro, depois os mais recentes
+    featured_places = list(
+        Place.objects.public()
+        .with_ratings()
+        .prefetch_related("images", "categories")
+        .order_by("-is_featured", "-created_at")[:6]
+    )
+    # view-transition-name precisa ser único: só o card de "Em alta" anima
+    for place in featured_places:
+        place.morph = place.pk not in trending_ids
+
+    # Foto de capa: imagem principal do lugar público destacado/mais recente
+    cover = (
+        PlaceImage.objects.filter(
+            place__in=Place.objects.public(),
+            place__categories=OuterRef("pk"),
+            is_primary=True,
+        )
+        .order_by("-place__is_featured", "-place__created_at")
+        .values("pk")[:1]
+    )
+    categories = list(
         Category.objects.filter(is_active=True)
         .with_place_counts()
+        .annotate(cover_id=Subquery(cover))
         .order_by("display_order")[:6]
     )
+    covers = PlaceImage.objects.in_bulk(c.cover_id for c in categories if c.cover_id)
+    for category in categories:
+        category.cover = covers.get(category.cover_id)
 
     events = News.objects.published().select_related("category")
     upcoming_events = list(events.upcoming_events()[:4])

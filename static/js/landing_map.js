@@ -17,7 +17,8 @@ async function initLandingMap() {
   // Centro padrão (Maricá, Brasil)
   const defaultCenter = { lat: -22.9194, lng: -42.8186 };
 
-  // Inicializar mapa
+  mapContainer.replaceChildren();
+  mapContainer.removeAttribute('aria-busy');
   landingMap = new google.maps.Map(mapContainer, {
     center: defaultCenter,
     zoom: 12,
@@ -75,54 +76,57 @@ function createMarkers(places) {
   });
 }
 
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text) node.textContent = text;
+  return node;
+}
+
 function showInfoWindow(marker) {
   const place = marker.placeData;
+  const card = el('a', 'block w-64 text-foreground no-underline');
+  card.href = place.url;
 
-  // Construir conteúdo da janela de informação
-  let content = `
-    <div style="max-width: 280px; padding: 8px;">
-      ${
-        place.image_url
-          ? `
-        <img src="${place.image_url}" alt="${place.name}"
-             style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
-      `
-          : ''
-      }
+  if (place.image_url) {
+    const img = el('img', 'mb-3 h-36 w-full rounded-lg bg-muted object-cover');
+    img.src = place.image_url;
+    img.alt = '';
+    card.append(img);
+  }
+  card.append(
+    el('h3', 'font-display text-base font-semibold leading-snug', place.name)
+  );
 
-      <h6 style="margin: 0 0 8px 0; font-weight: 600; color: #212529;">
-        ${place.category_icon} ${place.name}
-      </h6>
+  if (place.rating) {
+    const rating = el('p', 'mt-1 flex items-center gap-1 text-sm');
+    rating.append(
+      el('span', 'text-star', '★'),
+      el('span', 'font-semibold', place.rating.toFixed(1)),
+      el(
+        'span',
+        'text-muted-foreground',
+        interpolate(ngettext('(%s avaliação)', '(%s avaliações)', place.review_count), [
+          place.review_count,
+        ])
+      )
+    );
+    card.append(rating);
+  }
+  if (place.description) {
+    card.append(
+      el('p', 'mt-2 line-clamp-3 text-sm text-muted-foreground', place.description)
+    );
+  }
+  card.append(
+    el(
+      'span',
+      'mt-3 inline-block text-sm font-semibold text-brand',
+      gettext('Ver detalhes')
+    )
+  );
 
-      ${
-        place.rating
-          ? `
-        <div style="margin-bottom: 8px;">
-          <span style="color: #ffc107; font-size: 14px;">★</span>
-          <span style="font-weight: 600; font-size: 14px;">${place.rating.toFixed(
-            1
-          )}</span>
-          <span style="color: #6c757d; font-size: 13px;">(${
-            place.review_count
-          } avaliações)</span>
-        </div>
-      `
-          : ''
-      }
-
-      <p style="margin: 0 0 12px 0; font-size: 14px; color: #6c757d; line-height: 1.4;">
-        ${place.description}
-      </p>
-
-      <a href="${place.url}"
-         style="display: inline-block; padding: 8px 16px; background: #212529; color: white;
-                text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: 500;">
-        Ver Detalhes →
-      </a>
-    </div>
-  `;
-
-  infoWindow.setContent(content);
+  infoWindow.setContent(card);
   infoWindow.open(landingMap, marker);
 }
 

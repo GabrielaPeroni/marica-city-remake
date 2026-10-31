@@ -1,0 +1,30 @@
+/* Hero da página inicial: prévia borrada (32 px) atrás de cada foto enquanto ela carrega */
+.hero-bg--1 {
+  background-image: url(data:image/webp;base64,UklGRugAAABXRUJQVlA4INwAAACQBQCdASogABIAPtFUpk2oJCOiMBgIAQAaCWQAnTMv5cgMPddjz441olQcZ4ys95wGvJBv4AD31D/BUuYOgpzBYtFyA3To89Qd22Bd7idwfQK0zfPR9Ck1E23O74DEQcHUJmEJaMqwY+zN1NXrYmvyb5Fbg+LHT9wMbWOhRszgL7LRQJ7Hp4dGS5DGpvcjrrd7JlNJtddMQTA4tISCuqBl9GS4chde+cdW5t8e38EBlCTghZtfr/YAnigeAoAp4wGwL+ILa3KJLd7g9xGUYL2le/gi8/vv4JqhgAAA);
+}
+
+.hero-bg--2 {
+  background-image: url(data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAAAwBQCdASogABIAPtFWokuoJKMhsAgBABoJYwDCgCHn37Rh8QcM5asJSkf9YjtSw6grQADgxgvO/XFmzSng47Tc/UxqgUFMGBC8ma3YGTrX2b2EBbyec8FHZBNtYVN5JCjJa9kIdp1gx1YpbiZVZ/PT7wWV9I27o3IEKFAqLlga+iRSxw9FtLJ6lpFP1WnMW+b01YhLaDoCbK99fEDgaibGr/GSCRzz9aXwPXlj/WSSayYiBEFnjG+RxBMAAA==);
+}
+
+.hero-bg--3 {
+  background-image: url(data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAACwBQCdASogABIAPtFgqE+oJSOiKAgBABoJYwCsABGjdT+6tLNM5SzWA6Yo3wMmlcE1UjhdKXgA/kmezSYrlEbUkGBxiexknPLSPtnUIo+zGrrJRrtq5rYbuPr/Jo1jmCKSW2JpFQ2+7yb86zbL5OZH6c0dBYpTcFn993s5Ke+dFQ7sgq0k9LIkQBpNgYsCGoCHindcqy2G8crt2PKbmuDHdiQQ+LLq5VESPq2YwGHJLlwZEAA=);
+}
+
+/* Indicadores do carrossel: pontos com área de toque de 44 px */
+.hero-dot {
+  @apply relative mx-1 block h-2 w-2 cursor-pointer rounded-full bg-white/50 transition-all duration-300 hover:bg-white/80;
+}
+
+.hero-dot::after {
+  content: '';
+  @apply absolute -inset-x-1.5 -inset-y-[18px];
+}
+
+.hero-dot.is-active {
+  @apply w-6 bg-white;
+}
+
+.hero-dot:focus-visible {
+  @apply outline-2 outline-offset-4 outline-white;
+}

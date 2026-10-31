@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n thumbs %}
+{% load i18n static content_i18n thumbs icons %}
 
 {% block title %}MaricaCity - {% translate "Descubra o Turismo Local" %}{% endblock %}
 
@@ -7,359 +7,175 @@
 <link rel="preload" as="image" type="image/webp" fetchpriority="high"
       href="{% static 'images/hero/hero_1-1920.webp' %}"
       imagesrcset="{% static 'images/hero/hero_1-1280.webp' %} 1280w, {% static 'images/hero/hero_1-1920.webp' %} 1920w" imagesizes="100vw">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.css">
-<link rel="stylesheet" href="{% static 'css/pages/landing.css' %}">
 {% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' with transparent=True %}
 
-{% if request.GET.next and not user.is_authenticated %}
-<div class="alert alert-warning rounded-0 border-0 mb-0 text-center" role="status">
-  {% url 'accounts:register' as register_url %}{% blocktranslate trimmed %}Entre na sua conta (menu <strong>Entrar</strong>) ou <a href="{{ register_url }}" class="alert-link">crie uma conta gratuita</a> para continuar.{% endblocktranslate %}
-</div>
-{% endif %}
-
-<!-- Seção do Carrossel Hero -->
-<section id="heroSection" class="hero-section" aria-roledescription="{% translate 'carrossel' %}" aria-label="{% translate 'Destaques' %}">
-
-  <!-- Contêiner Swiper -->
-  <div class="swiper hero-swiper">
+<section id="heroSection" class="hero-section relative isolate h-[clamp(34rem,88svh,56rem)] overflow-hidden bg-foreground text-white" aria-roledescription="{% translate 'carrossel' %}" aria-label="{% translate 'Destaques' %}">
+  <div class="swiper hero-swiper size-full">
     <div class="swiper-wrapper">
-
-      <!-- Slide 1 -->
-      <div class="swiper-slide">
-        <!-- Contêiner da Imagem de Fundo -->
-        <div class="hero-bg-container hero-bg-container--1">
-          <img src="{% static 'images/hero/hero_1-1920.webp' %}" srcset="{% static 'images/hero/hero_1-1280.webp' %} 1280w, {% static 'images/hero/hero_1-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" fetchpriority="high">
-          <div class="hero-bg-overlay"></div>
+      {% url 'explore:explore' as explore_url %}{% url 'news:news_list' as news_url %}{% url 'explore:place_create' as create_url %}
+      {% for n in "123" %}
+      <div class="swiper-slide relative">
+        <div class="hero-bg hero-bg--{{ n }} absolute inset-0 -z-10 bg-cover bg-center">
+          <img src="{% static 'images/hero/hero_'|add:n|add:'-1920.webp' %}" srcset="{% static 'images/hero/hero_'|add:n|add:'-1280.webp' %} 1280w, {% static 'images/hero/hero_'|add:n|add:'-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="size-full object-cover" decoding="async" {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+          <div class="absolute inset-0 bg-linear-to-r from-black/65 via-black/35 to-black/10"></div>
+          <div class="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/45 to-transparent"></div>
         </div>
-
-        <!-- Contêiner de Conteúdo (Layout em Grade) -->
-        <div class="hero-content-container">
-          <div class="container">
-            <div class="row h-100">
-              <div class="col-lg-6 d-flex flex-column justify-content-center">
-                <!-- Conteúdo de Texto -->
-                <div class="hero-text-content">
-                  <h1 class="hero-heading">{% translate "Descubra as Maravilhas de Maricá" %}</h1>
-                  <p class="hero-text">{% translate "Explore a beleza de praias intocadas, lagoas cristalinas e uma cultura vibrante. Embarque em uma jornada repleta de aventura e memórias inesquecíveis." %}</p>
-                  <a href="{% url 'explore:explore' %}" class="hero-cta-btn">
-                    {% translate "Começar a Explorar" %} <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
+        <div class="container-page flex h-full flex-col justify-center pt-16 pb-20">
+          <div class="max-w-3xl">
+            {% if forloop.first %}
+            <h1 class="font-display text-display-xl font-semibold text-balance drop-shadow-sm">{% translate "Descubra as Maravilhas de Maricá" %}</h1>
+            <p class="mt-5 max-w-xl text-lg text-white/90 md:text-xl">{% translate "Explore a beleza de praias intocadas, lagoas cristalinas e uma cultura vibrante. Embarque em uma jornada repleta de aventura e memórias inesquecíveis." %}</p>
+            <a href="{{ explore_url }}" class="btn group mt-8" data-variant="brand" data-size="lg">{% translate "Começar a Explorar" %}{% icon "arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" %}</a>
+            {% elif n == "2" %}
+            <h2 class="font-display text-display-xl font-semibold text-balance drop-shadow-sm">{% translate "Viva Experiências Únicas" %}</h2>
+            <p class="mt-5 max-w-xl text-lg text-white/90 md:text-xl">{% translate "Descubra eventos locais, gastronomia autêntica e lugares escondidos. Maricá oferece experiências que vão além do comum." %}</p>
+            <a href="{{ news_url }}" class="btn group mt-8" data-variant="brand" data-size="lg">{% translate "Ver Eventos" %}{% icon "arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" %}</a>
+            {% else %}
+            <h2 class="font-display text-display-xl font-semibold text-balance drop-shadow-sm">{% translate "Compartilhe Seus Lugares Favoritos" %}</h2>
+            <p class="mt-5 max-w-xl text-lg text-white/90 md:text-xl">{% translate "Contribua com a comunidade e ajude outros a descobrirem Maricá. Adicione lugares especiais e conte sua história." %}</p>
+            <a href="{{ create_url }}" class="btn group mt-8" data-variant="brand" data-size="lg">{% translate "Cadastrar lugar" %}{% icon "arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" %}</a>
+            {% endif %}
           </div>
         </div>
       </div>
-
-      <!-- Slide 2 -->
-      <div class="swiper-slide">
-        <div class="hero-bg-container hero-bg-container--2">
-          <img src="{% static 'images/hero/hero_2-1920.webp' %}" srcset="{% static 'images/hero/hero_2-1280.webp' %} 1280w, {% static 'images/hero/hero_2-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" loading="lazy">
-          <div class="hero-bg-overlay"></div>
-        </div>
-
-        <div class="hero-content-container">
-          <div class="container">
-            <div class="row h-100">
-              <div class="col-lg-6 d-flex flex-column justify-content-center">
-                <div class="hero-text-content">
-                  <h2 class="hero-heading">{% translate "Viva Experiências Únicas" %}</h2>
-                  <p class="hero-text">{% translate "Descubra eventos locais, gastronomia autêntica e lugares escondidos. Maricá oferece experiências que vão além do comum." %}</p>
-                  <a href="{% url 'news:news_list' %}" class="hero-cta-btn">
-                    {% translate "Ver Eventos" %} <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 3 -->
-      <div class="swiper-slide">
-        <div class="hero-bg-container hero-bg-container--3">
-          <img src="{% static 'images/hero/hero_3-1920.webp' %}" srcset="{% static 'images/hero/hero_3-1280.webp' %} 1280w, {% static 'images/hero/hero_3-1920.webp' %} 1920w" sizes="100vw" width="1920" height="1080" alt="" class="hero-bg-image" decoding="async" loading="lazy">
-          <div class="hero-bg-overlay"></div>
-        </div>
-
-        <div class="hero-content-container">
-          <div class="container">
-            <div class="row h-100">
-              <div class="col-lg-6 d-flex flex-column justify-content-center">
-                <div class="hero-text-content">
-                  <h2 class="hero-heading">{% translate "Compartilhe Seus Lugares Favoritos" %}</h2>
-                  <p class="hero-text">{% translate "Contribua com a comunidade e ajude outros a descobrirem Maricá. Adicione lugares especiais e conte sua história." %}</p>
-                  <a href="{% url 'explore:place_create' %}" class="hero-cta-btn">
-                    {% translate "Cadastrar lugar" %} <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {% endfor %}
     </div>
+  </div>
 
-    <!-- Controles de Navegação (Fora dos slides para aparecerem em todos) -->
-    <div class="hero-controls">
-      <button class="hero-arrow-btn swiper-button-prev-custom" type="button" aria-label="{% translate 'Slide anterior' %}">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <div class="hero-pagination-custom swiper-pagination"></div>
-      <button class="hero-arrow-btn swiper-button-next-custom" type="button" aria-label="{% translate 'Próximo slide' %}">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-      <button class="hero-arrow-btn hero-pause-btn" type="button" aria-pressed="false" aria-label="{% translate 'Pausar apresentação' %}">
-        <i class="bi bi-pause-fill" aria-hidden="true"></i>
+  {% if request.GET.next and not user.is_authenticated %}
+  <div class="absolute inset-x-0 top-20 z-20">
+    <div class="container-page">
+      <div role="status" class="flex max-w-xl items-start gap-3 rounded-xl bg-background/95 px-4 py-3 text-sm text-foreground shadow-lift backdrop-blur [&_a]:font-semibold [&_a]:text-brand [&_a]:underline [&_a]:underline-offset-2">
+        {% icon "log-in" class="mt-0.5 size-4 shrink-0 text-brand" %}
+        <p>{% url 'accounts:register' as register_url %}{% blocktranslate trimmed %}Entre na sua conta (menu <strong>Entrar</strong>) ou <a href="{{ register_url }}">crie uma conta gratuita</a> para continuar.{% endblocktranslate %}</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="absolute inset-x-0 bottom-6 z-20 md:bottom-8">
+    <div class="container-page flex items-center gap-3">
+      <div class="hero-pagination flex w-auto! items-center"></div>
+      <button class="hero-pause-btn group btn rounded-full text-white hover:bg-white/15 hover:text-white" data-variant="ghost" data-size="icon-sm" type="button" aria-pressed="false" aria-label="{% translate 'Pausar apresentação' %}">
+        {% icon "pause" class="size-4 fill-current group-aria-pressed:hidden" %}
+        {% icon "play" class="hidden size-4 fill-current group-aria-pressed:block" %}
       </button>
     </div>
   </div>
 </section>
 
 {% if trending_places %}
-<section id="trendingSection" class="bg-white py-5">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 id="trendingHeading" class="display-5 fw-bold text-uppercase">{% translate "Em alta agora" %}</h2>
-      <p id="trendingSubheading" class="lead text-muted">{% translate "Destinos populares este mês" %}</p>
-    </div>
-
-    <div id="trendingPlaceGrid" class="row g-4">
+<section id="trendingSection" class="py-16 md:py-24">
+  <div class="container-page">
+    {% url 'explore:explore' as explore_url %}
+    {% translate "Em alta agora" as trending_title %}{% translate "Destinos populares este mês" as trending_sub %}{% translate "Ver todos" as see_all %}
+    <c-section-heading id="trendingHeading" :title="trending_title" :subtitle="trending_sub" :href="explore_url" :link_text="see_all" />
+    <div id="trendingPlaceGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {% for place in trending_places %}
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card border h-100 card-hover">
-          <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none">
-            {% if place.primary_image %}
-            <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ place.name }}" class="img-ph card-img-top place-card-img" loading="eager" style="{{ place.primary_image.image|placeholder }}">
-            {% else %}
-            <div class="bg-dark text-white d-flex align-items-center justify-content-center place-card-placeholder">
-              <span class="display-4 fw-bold">{{ place.name|first }}</span>
-            </div>
-            {% endif %}
-          </a>
-          <div class="card-body d-flex flex-column">
-            <h3 class="h5 card-title fw-bold text-uppercase">{{ place.name }}</h3>
-
-            {% if place.average_rating %}
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="text-warning small" role="img" aria-label="{% blocktranslate with rating=place.average_rating %}Nota {{ rating }} de 5{% endblocktranslate %}">
-                {% for i in "12345" %}
-                  {% if i|add:"0" <= place.average_rating %}★{% else %}☆{% endif %}
-                {% endfor %}
-              </span>
-            </div>
-            {% endif %}
-
-            <p class="card-text text-muted small">{{ place|tr:"description"|truncatewords:15 }}</p>
-
-            {% if place.categories.exists %}
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              {% for category in place.categories.all|slice:":2" %}
-              <span class="badge bg-light text-dark small">{{ category.icon }} {{ category|tr:"name" }}</span>
-              {% endfor %}
-            </div>
-            {% endif %}
-
-            <div class="d-flex gap-2 mt-auto">
-              <a href="{% url 'explore:place_detail' place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">{% translate "Ver detalhes" %} →</a>
-              <button class="btn btn-outline-danger btn-sm favorite-btn"
-                      data-place-id="{{ place.pk }}"
-                      title="{% translate 'Adicionar aos favoritos' %}"
-                      aria-label="{% translate 'Adicionar aos favoritos' %}">
-                <i class="bi bi-heart"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <c-place-card :place="place" sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw" />
       {% endfor %}
     </div>
   </div>
 </section>
 {% endif %}
 
-<section id="featuredSection" class="bg-light py-5">
+<section id="featuredSection" class="border-y bg-card py-16 md:py-24">
   {% if featured_places %}
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-12 col-lg-4 mb-4 mb-lg-0">
-        <p id="featuredSectionSubtitle" class="text-uppercase text-muted small mb-2 featured-heading-subtitle">{% translate "Onde ir" %}</p>
-        <h2 id="featuredSectionHeading" class="fw-bold mb-3 featured-heading">{% translate "Escolha sua própria jornada." %}</h2>
-        <p id="featuredSectionDescription" class="text-muted mb-4">
-          {% blocktranslate trimmed %}Explore os lugares mais incríveis de Maricá. De praias paradisíacas a experiências culturais únicas,
-          há um lugar em Maricá para todos! Descubra o que torna cada um deles único.{% endblocktranslate %}
-        </p>
-        <a id="featuredSectionCta" href="{% url 'explore:explore' %}" class="btn btn-outline-dark rounded-pill px-4">{% translate "Veja mais" %}</a>
-      </div>
+  <div class="container-page grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+    <div>
+      {% translate "Onde ir" as featured_eyebrow %}{% translate "Escolha sua própria jornada." as featured_title %}
+      {% blocktranslate trimmed asvar featured_desc %}Explore os lugares mais incríveis de Maricá. De praias paradisíacas a experiências culturais únicas,
+      há um lugar em Maricá para todos! Descubra o que torna cada um deles único.{% endblocktranslate %}
+      <c-section-heading id="featuredSectionHeading" :eyebrow="featured_eyebrow" :title="featured_title" :subtitle="featured_desc" class="mb-0!" />
+      <a id="featuredSectionCta" href="{% url 'explore:explore' %}" class="btn group mt-6" data-variant="outline">{% translate "Veja mais" %}{% icon "arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" %}</a>
+    </div>
 
-      <div class="col-12 col-lg-8">
-        <div id="featuredSwiper" class="swiper featured-swiper">
-          <div class="swiper-wrapper">
-            {% for place in featured_places %}
-            <div class="swiper-slide swiper-slide-featured">
-              <a href="{% url 'explore:place_detail' place.pk %}" class="text-decoration-none d-block h-100">
-                {% if place.primary_image %}
-                <div class="position-relative rounded-4 overflow-hidden shadow h-100">
-                  <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ place.name }}" class="img-ph w-100 h-100 img-cover" loading="eager" style="{{ place.primary_image.image|placeholder }}">
-                  <div class="position-absolute bottom-0 start-0 end-0 p-4 text-center featured-image-gradient">
-                    <h3 class="text-white fw-bold fs-5 mb-2">{{ place.name }}</h3>
-                    {% if place.average_rating %}
-                    <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                      <span class="text-warning">
-                        {% for i in "12345" %}
-                          {% if i|add:"0" <= place.average_rating %}★{% else %}☆{% endif %}
-                        {% endfor %}
-                      </span>
-                    </div>
-                    {% endif %}
-                    <span class="btn btn-outline-light rounded-pill px-4 py-2">{% translate "Saiba mais" %}</span>
-                  </div>
-                </div>
-                {% else %}
-                <div class="position-relative rounded-4 overflow-hidden bg-dark d-flex align-items-center justify-content-center shadow h-100">
-                  <span class="display-1 fw-bold text-white opacity-25">{{ place.name|first }}</span>
-                  <div class="position-absolute bottom-0 start-0 end-0 p-4 text-center featured-image-gradient">
-                    <h3 class="text-white fw-bold fs-5 mb-2">{{ place.name }}</h3>
-                    {% if place.average_rating %}
-                    <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
-                      <span class="text-warning">
-                        {% for i in "12345" %}
-                          {% if i|add:"0" <= place.average_rating %}★{% else %}☆{% endif %}
-                        {% endfor %}
-                      </span>
-                    </div>
-                    {% endif %}
-                    <span class="btn btn-outline-light rounded-pill px-4 py-2">{% translate "Saiba mais" %}</span>
-                  </div>
-                </div>
-                {% endif %}
-              </a>
-            </div>
-            {% endfor %}
-          </div>
+    <div id="featuredSwiper" class="swiper featured-swiper -mx-4! px-4! sm:mx-0! sm:px-0! sm:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
+      <div class="swiper-wrapper py-2">
+        {% for place in featured_places %}
+        <div class="swiper-slide w-72! h-auto!">
+          <c-place-card :place="place" :morph="place.morph" class="h-full" sizes="288px" />
         </div>
+        {% endfor %}
       </div>
     </div>
   </div>
   {% else %}
-  <div class="container">
-    <div class="text-center py-5">
-      <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Volte em breve!" %}</p>
+  <div class="container-page">
+    {% translate "Nenhum lugar disponível ainda. Volte em breve!" as empty_title %}
+    <c-empty-state icon="map-pin" :title="empty_title">
       {% if user.is_authenticated and user.can_create_places %}
-      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">
-        {% translate "Cadastrar lugar" %}
-      </a>
+      <a href="{% url 'explore:place_create' %}" class="btn" data-variant="brand">{% translate "Cadastrar lugar" %}</a>
       {% endif %}
-    </div>
+    </c-empty-state>
   </div>
   {% endif %}
 </section>
 
 {% if upcoming_events or recent_events %}
-<section id="eventsSection" class="bg-light py-5">
-  <div class="container">
-    <div class="section-heading">
-      <h2>{% if upcoming_events %}{% translate "Próximos eventos em Maricá" %}{% else %}{% translate "Eventos recentes em Maricá" %}{% endif %}</h2>
-      <a href="{% url 'news:news_list' %}">{% translate "Ver agenda completa" %} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-    </div>
-    <div class="row g-4">
-      {% for event in upcoming_events|default:recent_events %}
-      <div class="col-md-6 col-lg-3">
-        <c-event-card :event="event" />
-      </div>
+<section id="eventsSection" class="py-16 md:py-24">
+  <div class="container-page">
+    {% url 'news:news_list' as news_url %}{% translate "Ver agenda completa" as agenda_link %}
+    {% if upcoming_events %}{% translate "Próximos eventos em Maricá" as events_title %}{% else %}{% translate "Eventos recentes em Maricá" as events_title %}{% endif %}
+    <c-section-heading :title="events_title" :href="news_url" :link_text="agenda_link" />
+    {% with events=upcoming_events|default:recent_events %}
+    {% if events|length == 1 %}
+    <c-event-card :event="events.0" :lead="True" sizes="(min-width: 768px) 640px, 100vw" />
+    {% else %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {% for event in events %}
+      <c-event-card :event="event" class="h-full" sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw" />
       {% endfor %}
     </div>
+    {% endif %}
+    {% endwith %}
   </div>
 </section>
 {% endif %}
 
-<section id="categoriesSection" class="bg-white py-5">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="display-5 fw-bold text-uppercase">{% translate "Explorar por Categoria" %}</h2>
-      <p class="lead text-muted">{% translate "Encontre exatamente o que você procura" %}</p>
-    </div>
-
-    <div class="row g-4">
-      {% with categories=categories|default_if_none:"" %}
-        {% if categories %}
-          {% for category in categories %}
-          <div class="col-6 col-md-4">
-            <a href="{% url 'explore:category_detail' category.slug %}" class="text-decoration-none">
-              <div class="card border-2 h-100 text-center p-4 card-hover">
-                <div class="display-3 mb-3">{{ category.icon|default:"📍" }}</div>
-                <h3 class="h5 card-title fw-bold text-uppercase text-dark">{{ category|tr:"name" }}</h3>
-                <p class="card-text text-muted small">{% blocktranslate trimmed count counter=category.active_places_count %}{{ counter }} lugar{% plural %}{{ counter }} lugares{% endblocktranslate %}</p>
-              </div>
-            </a>
+{% if categories %}
+<section id="categoriesSection" class="border-t bg-card py-16 md:py-24">
+  <div class="container-page">
+    {% url 'explore:explore' as explore_url %}{% translate "Explorar por categoria" as categories_title %}{% translate "Encontre exatamente o que você procura" as categories_sub %}{% translate "Ver todos" as see_all %}
+    <c-section-heading :title="categories_title" :subtitle="categories_sub" :href="explore_url" :link_text="see_all" />
+    <ul class="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3">
+      {% for category in categories %}
+      <li>
+        <a href="{% url 'explore:category_detail' category.slug %}" class="group relative isolate flex aspect-[4/3] flex-col justify-end overflow-hidden rounded-xl bg-secondary shadow-card ring-1 ring-foreground/8 transition duration-300 outline-none hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-3 focus-visible:ring-ring/50 sm:aspect-[3/2]">
+          {% if category.cover %}
+          <img src="{{ category.cover.image|thumb:960 }}" srcset="{{ category.cover.image|srcset:'480,960' }}" sizes="(min-width: 768px) 33vw, 50vw" alt="" class="img-ph absolute inset-0 -z-10 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" loading="lazy" decoding="async" style="{{ category.cover.image|placeholder }}">
+          <div class="absolute inset-0 -z-10 bg-linear-to-t from-black/75 via-black/25 to-transparent"></div>
+          {% else %}
+          <span class="absolute inset-0 -z-10 grid place-items-center pb-10 text-5xl sm:text-6xl" aria-hidden="true">{{ category.icon|default:"📍" }}</span>
+          {% endif %}
+          <div class="p-3 sm:p-5 {% if category.cover %}text-white{% endif %}">
+            <h3 class="font-display text-lg leading-tight font-semibold sm:text-2xl">{{ category|tr:"name" }}</h3>
+            <p class="mt-1 text-sm {% if category.cover %}text-white/85{% else %}text-muted-foreground{% endif %}">{% blocktranslate trimmed count counter=category.public_place_count %}{{ counter }} lugar{% plural %}{{ counter }} lugares{% endblocktranslate %}</p>
           </div>
-          {% endfor %}
-        {% else %}
-          <div class="col-6 col-md-4">
-            <div class="card border-2 h-100 text-center p-4 card-hover">
-              <div class="display-3 mb-3">🍽️</div>
-              <h3 class="h5 card-title fw-bold text-uppercase">{% translate "Restaurantes" %}</h3>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="card border-2 h-100 text-center p-4 card-hover">
-              <div class="display-3 mb-3">🎨</div>
-              <h3 class="h5 card-title fw-bold text-uppercase">{% translate "Artes e Cultura" %}</h3>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="card border-2 h-100 text-center p-4 card-hover">
-              <div class="display-3 mb-3">🌳</div>
-              <h3 class="h5 card-title fw-bold text-uppercase">{% translate "Natureza e Parques" %}</h3>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="card border-2 h-100 text-center p-4 card-hover">
-              <div class="display-3 mb-3">🏨</div>
-              <h3 class="h5 card-title fw-bold text-uppercase">{% translate "Hotéis" %}</h3>
-            </div>
-          </div>
-        {% endif %}
-      {% endwith %}
-    </div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
   </div>
 </section>
+{% endif %}
 
 {% if GOOGLE_MAPS_API_KEY %}
-<section id="mapSection" class="py-5">
-  <div class="container">
-    <div class="text-center mb-4">
-      <p class="text-uppercase text-muted small mb-2">{% translate "Explore no mapa" %}</p>
-      <h2 class="fw-bold mb-3">{% translate "Navegue pelos Lugares de Maricá" %}</h2>
-      <p class="text-muted mb-4">
-        {% translate "Todos os lugares cadastrados, no mapa interativo" %}
-      </p>
+<section id="mapSection" class="py-16 md:py-24">
+  <div class="container-page">
+    {% translate "Explore no mapa" as map_eyebrow %}{% translate "Navegue pelos Lugares de Maricá" as map_title %}{% translate "Todos os lugares cadastrados, no mapa interativo" as map_sub %}
+    <c-section-heading :eyebrow="map_eyebrow" :title="map_title" :subtitle="map_sub" />
+    <div id="landing-map" class="relative h-[28rem] overflow-hidden rounded-xl bg-muted shadow-card ring-1 ring-foreground/8 md:h-[32rem]" aria-busy="true">
+      <c-skeleton class="absolute inset-0" />
+      <p class="absolute inset-0 grid place-items-center text-sm text-muted-foreground" role="status">{% translate "Carregando mapa interativo..." %}</p>
     </div>
-
-    <div id="landing-map" style="width: 100%; height: 500px; border-radius: 12px; border: 2px solid var(--line); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-      <div class="d-flex align-items-center justify-content-center h-100">
-        <div class="text-center">
-          <div class="spinner-border text-dark mb-3" role="status">
-            <span class="visually-hidden">{% translate "Carregando mapa..." %}</span>
-          </div>
-          <p class="text-muted">{% translate "Carregando mapa interativo..." %}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-4">
-      <p class="text-muted small mb-0">
-        <i class="bi bi-info-circle me-1"></i>
-        {% translate "Clique nos marcadores para ver detalhes de cada lugar" %}
-      </p>
-    </div>
+    <p class="mt-4 flex items-center gap-1.5 text-sm text-muted-foreground">
+      {% icon "info" class="size-4 shrink-0" %}{% translate "Clique nos marcadores para ver detalhes de cada lugar" %}
+    </p>
   </div>
 </section>
 {% endif %}
@@ -369,8 +185,7 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11.2.10/swiper-bundle.min.js"></script>
 <script src="{% static 'js/landing.js' %}"></script>
 {% if GOOGLE_MAPS_API_KEY %}
-<script src="{% static 'js/landing_map.js' %}?v=2"></script>
+<script src="{% static 'js/landing_map.js' %}?v=3"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initLandingMap&loading=async" async defer></script>
 {% endif %}
-{# A autenticação do Google agora é gerenciada no modal de login global no base.html #}
 {% endblock %}

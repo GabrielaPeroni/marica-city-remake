@@ -5,7 +5,7 @@ from django.utils import translation
 
 from apps.accounts.models import User
 from apps.core.views import calculate_percentage_change
-from apps.explore.models import Category, Place
+from apps.explore.models import Category, Place, PlaceImage
 from apps.news.models import News, NewsCategory
 
 
@@ -71,6 +71,59 @@ class LandingPageTests(TestCase):
         response = self.client.get(self.url)
         self.assertNotContains(response, "landing-map")
         self.assertNotContains(response, "maps.googleapis.com")
+
+
+class LandingCategoryTileTests(TestCase):
+    """Cada categoria mostra a foto do seu lugar público mais recente, sem N+1"""
+
+    def setUp(self):
+        from unittest import mock
+
+        self.owner = User.objects.create_user(username="dono", password="x")
+        for name in ("thumbnail_url", "placeholder_uri"):
+            patcher = mock.patch(
+                f"apps.core.templatetags.thumbs.{name}", autospec=True, return_value=""
+            )
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def _category_with_place(self, slug, approved=True):
+        category = Category.objects.create(name=slug.title(), slug=slug)
+        place = Place.objects.create(
+            name=f"Lugar {slug}",
+            description="d",
+            address="a",
+            created_by=self.owner,
+            is_approved=approved,
+        )
+        place.categories.add(category)
+        PlaceImage.objects.create(
+            place=place, image=f"places/{slug}.jpg", is_primary=True
+        )
+        return category
+
+    def test_each_category_gets_its_own_cover(self):
+        self._category_with_place("praias")
+        self._category_with_place("lagoas")
+        self._category_with_place("trilhas", approved=False)
+        categories = self.client.get(reverse("core:landing")).context["categories"]
+        covers = {c.slug: c.cover and c.cover.image.name for c in categories}
+        self.assertEqual(covers["praias"], "places/praias.jpg")
+        self.assertEqual(covers["lagoas"], "places/lagoas.jpg")
+        self.assertIsNone(covers["trilhas"])
+
+    def test_query_count_does_not_grow_with_categories(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        self._category_with_place("praias")
+        with CaptureQueriesContext(connection) as one:
+            self.client.get(reverse("core:landing"))
+        for slug in ("lagoas", "trilhas", "cultura"):
+            self._category_with_place(slug)
+        with CaptureQueriesContext(connection) as many:
+            self.client.get(reverse("core:landing"))
+        self.assertEqual(len(many), len(one))
 
 
 class AboutPageTests(TestCase):
