@@ -58,6 +58,7 @@ Thumbs.db
 
 # Environment variables
 .env.local
+.vercel/
 .env.*.local
 
 # Node.js / frontend tooling
