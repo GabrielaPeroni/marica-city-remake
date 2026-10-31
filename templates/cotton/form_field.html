@@ -1,5 +1,5 @@
-{% load form_ui %}
-<c-vars field label="" help="" hide_label=False class="" />
+{% load form_ui icons %}
+<c-vars field label="" help="" hide_label=False variant="" class="" />
 {% with label_text=label|default:field.label help_text=help|default:field.help_text %}
 {% if field.is_hidden %}
 {{ field }}
@@ -12,10 +12,26 @@
     {% if field.errors %}<div role="alert" id="{{ field.auto_id }}_error" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
   </section>
 </div>
+{% elif variant == "stars" %}
+<fieldset class="field gap-2 {{ class }}" {% if field.errors %}data-invalid="true"{% endif %} {{ attrs }}>
+  <legend class="mb-2 text-sm font-medium {% if hide_label %}sr-only{% endif %}">{{ label_text }}{% if field.field.required %}<span class="text-brand" aria-hidden="true"> *</span>{% endif %}</legend>
+  <div class="star-picker">
+    {% for radio in field %}{% if radio.data.value != "" %}
+    <input type="radio" class="sr-only" name="{{ radio.data.name }}" value="{{ radio.data.value }}" id="{{ radio.id_for_label }}" {% if radio.data.selected %}checked{% endif %} {% if field.field.required %}required{% endif %} {% if help_text %}aria-describedby="{{ field.auto_id }}_helptext"{% endif %}>
+    <label for="{{ radio.id_for_label }}" title="{{ radio.choice_label }}">{% icon "star" class="size-8" %}<span class="sr-only">{{ radio.choice_label }}</span></label>
+    {% endif %}{% endfor %}
+  </div>
+  {% if help_text %}<p id="{{ field.auto_id }}_helptext" class="text-sm text-muted-foreground">{{ help_text }}</p>{% endif %}
+  {% if field.errors %}<div role="alert" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+</fieldset>
 {% elif field|is_choice_list %}
 <fieldset class="field gap-2 {{ class }}" {% if field.errors %}data-invalid="true"{% endif %} {{ attrs }}>
   <legend class="mb-2 text-sm font-medium {% if hide_label %}sr-only{% endif %}">{{ label_text }}{% if field.field.required %}<span class="text-brand" aria-hidden="true"> *</span>{% endif %}</legend>
-  <div class="choice-list">{{ field|ui_widget }}</div>
+  <div class="choice-list" id="{{ field.auto_id }}">
+    {% for option in field %}{% if option.data.value != "" %}
+    <label for="{{ option.id_for_label }}"><input type="{{ option.data.type }}" class="input" name="{{ option.data.name }}" value="{{ option.data.value }}" id="{{ option.id_for_label }}" {% if option.data.selected %}checked{% endif %} {% if field.field.required and option.data.type == "radio" %}required{% endif %}>{{ option.choice_label }}</label>
+    {% endif %}{% endfor %}
+  </div>
   {% if help_text %}<p id="{{ field.auto_id }}_helptext" class="text-sm text-muted-foreground">{{ help_text }}</p>{% endif %}
   {% if field.errors %}<div role="alert" class="text-sm">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
 </fieldset>

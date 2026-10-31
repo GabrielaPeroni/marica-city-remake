@@ -1,6 +1,7 @@
 /* Fonte do CSS do site. Compile com `npm run build:css` (gera static/css/app.css). */
 @import 'tailwindcss' source(none);
 @import 'basecoat-css';
+@import './pages/place.css';
 
 @source '../../../templates';
 @source '../../js';
@@ -338,16 +339,46 @@
   }
 
   /* RadioSelect / CheckboxSelectMultiple renderizados pelo <c-form-field> */
-  .choice-list > div {
-    @apply grid gap-2 text-sm;
+  .choice-list {
+    @apply grid gap-2.5 text-sm text-foreground;
   }
 
   .choice-list label {
-    @apply flex cursor-pointer items-center gap-2;
+    @apply flex w-fit cursor-pointer items-center gap-2.5;
   }
 
-  .choice-list input:is([type='radio'], [type='checkbox']) {
-    @apply size-4 accent-primary;
+  /* Nota em estrelas: radios ocultos, labels com estrela; sem :has() ainda marca a escolhida */
+  .star-picker {
+    @apply flex w-fit items-center gap-0.5;
+  }
+
+  .star-picker label {
+    @apply cursor-pointer rounded-md p-0.5 text-input transition-[color,transform] hover:scale-110;
+  }
+
+  .star-picker label svg {
+    fill: currentColor;
+  }
+
+  .star-picker input:checked + label,
+  .star-picker:has(:checked) label {
+    @apply text-star;
+  }
+
+  .star-picker :checked + label ~ label {
+    @apply text-input;
+  }
+
+  .star-picker:has(label:hover) label {
+    @apply text-star!;
+  }
+
+  .star-picker label:hover ~ label {
+    @apply text-input!;
+  }
+
+  .star-picker input:focus-visible + label {
+    @apply ring-3 ring-ring/50;
   }
 
   .machine-note {

@@ -271,7 +271,9 @@ resumo), `:eager`, `level`, `sizes`, `class`. O card inteiro é um link.
 os do form), `hide_label`, `class`. Renderiza label (com `*` se obrigatório),
 widget com as classes do Basecoat (remove `form-control`/`form-select`/`btn*`),
 ajuda e erros (`data-invalid`, `role="alert"`). Campo oculto sai só com o input;
-checkbox fica na horizontal; radio/checkbox múltiplo vira `<fieldset>`.
+checkbox fica na horizontal; radio/checkbox múltiplo vira `<fieldset>` (sem a
+opção vazia `---------`). `variant="stars"` mostra um radio de nota 1–5 como
+estrelas clicáveis (`.star-picker`).
 
 ```django
 <form method="post" class="grid gap-5">
