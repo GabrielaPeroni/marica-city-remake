@@ -15,6 +15,7 @@ const browserGlobals = {
   sessionStorage: 'readonly',
   fetch: 'readonly',
   FormData: 'readonly',
+  URL: 'readonly',
   URLSearchParams: 'readonly',
   FileReader: 'readonly',
   Promise: 'readonly',
@@ -35,7 +36,6 @@ const browserGlobals = {
 // Third-party libraries loaded from <script> tags in templates/base.html
 // and templates/core/landing.html (Swiper, Google Maps / Sign-In SDK).
 const thirdPartyGlobals = {
-  bootstrap: 'readonly',
   basecoat: 'readonly',
   Swiper: 'readonly',
   google: 'readonly',
@@ -64,16 +64,12 @@ module.exports = [
     },
   },
   {
-    // getCookie() and cloneIcon() are defined in utils.js and consumed by these
-    // files via script load order (utils.js is loaded first in base.html).
-    files: [
-      'static/js/components/user_management.js',
-      'static/js/favorites-ui.js',
-      'static/js/google_auth.js',
-      'static/js/login.js',
-    ],
+    // getCookie()/cloneIcon() (utils.js) and showToast() (toasts.js) load first
+    // in base.html, so every other file can use them.
+    files: ['static/js/**/*.js'],
+    ignores: ['static/js/utils.js', 'static/js/components/toasts.js'],
     languageOptions: {
-      globals: { getCookie: 'readonly', cloneIcon: 'readonly' },
+      globals: { getCookie: 'readonly', cloneIcon: 'readonly', showToast: 'readonly' },
     },
   },
   {

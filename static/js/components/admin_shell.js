@@ -9,7 +9,9 @@ document.addEventListener('click', e => {
   if (window.innerWidth >= 768) {
     try {
       localStorage.setItem('adminSidebar', open ? 'open' : 'closed');
-    } catch (err) {}
+    } catch (err) {
+      // armazenamento bloqueado: o estado só não persiste
+    }
   }
 });
 
