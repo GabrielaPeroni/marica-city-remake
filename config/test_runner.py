@@ -2,6 +2,7 @@
 Custom test runner that excludes .github directory from test discovery
 """
 
+from django.conf import settings
 from django.test.runner import DiscoverRunner
 
 
@@ -21,3 +22,8 @@ class CustomTestRunner(DiscoverRunner):
             test_labels = ["apps"]
 
         return super().build_suite(test_labels=test_labels, **kwargs)
+
+    def setup_test_environment(self, **kwargs):
+        super().setup_test_environment(**kwargs)
+        # Ícone ausente quebra o teste em vez de sumir em silêncio
+        settings.ICONS_STRICT = True

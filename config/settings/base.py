@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     # Aplicativos
     "django_ratelimit",
+    "django_cotton",
     "apps.core",
     "apps.accounts",
     "apps.explore",

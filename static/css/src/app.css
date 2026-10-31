@@ -1,0 +1,425 @@
+/* Fonte do CSS do site. Compile com `npm run build:css` (gera static/css/app.css). */
+@import 'tailwindcss' source(none);
+@import 'basecoat-css';
+
+@source '../../../templates';
+@source '../../js';
+@source '../../../apps/**/*.py';
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Fraunces Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../fonts/fraunces-latin-opsz-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Fraunces Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../fonts/fraunces-latin-ext-opsz-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Paleta: neutros carvão/off-white; o vermelho de Maricá é só acento (--brand) */
+:root {
+  --radius: 0.75rem;
+  --background: #f7f5f1;
+  --foreground: #2b2826;
+  --card: #ffffff;
+  --card-foreground: #2b2826;
+  --popover: #ffffff;
+  --popover-foreground: #2b2826;
+  --primary: #2b2826;
+  --primary-foreground: #ffffff;
+  --secondary: #efece6;
+  --secondary-foreground: #2b2826;
+  --muted: #efece6;
+  --muted-foreground: #655e58;
+  --accent: #efece6;
+  --accent-foreground: #2b2826;
+  --destructive: #bc2f38;
+  --border: #e3ded6;
+  --input: #d6d0c7;
+  --ring: #bc2f38;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #2b2826;
+  --sidebar-primary: #2b2826;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #efece6;
+  --sidebar-accent-foreground: #2b2826;
+  --sidebar-border: #e3ded6;
+  --sidebar-ring: #bc2f38;
+
+  --brand: #bc2f38;
+  --brand-strong: #96252c;
+  --brand-tint: #f7ebea;
+  --ink-soft: #968e87;
+  --star: #d9a441;
+  --success: #3f7558;
+  --success-tint: #e4eee8;
+  --warning: #9a5a1c;
+  --warning-tint: #f8eeda;
+  --info: #47705f;
+  --info-tint: #e4eee8;
+
+  --chevron-down-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23655e58" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+  --chevron-down-icon-50: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23968e87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+  --check-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23655e58" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>');
+}
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+
+  /* Controles 0.5rem (rounded-md), cards e diálogos 0.75rem (rounded-xl) */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  /* Escala: corpo 16px; títulos display em Fraunces (use com font-display) */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.35rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.6;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.3;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 1.15;
+  --text-display-sm: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.01em;
+  --text-display-md: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --text-display-md--line-height: 1.12;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-display-lg: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  --text-display-lg--line-height: 1.05;
+  --text-display-lg--letter-spacing: -0.025em;
+  --text-display-xl: clamp(2.75rem, 1.6rem + 5vw, 5.5rem);
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.03em;
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-tint: var(--brand-tint);
+  --color-ink-soft: var(--ink-soft);
+  --color-star: var(--star);
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-warning: var(--warning);
+  --color-warning-tint: var(--warning-tint);
+  --color-info: var(--info);
+  --color-info-tint: var(--info-tint);
+
+  --shadow-card: 0 1px 2px rgb(43 40 38 / 0.06), 0 1px 3px rgb(43 40 38 / 0.08);
+  --shadow-lift: 0 12px 28px -6px rgb(43 40 38 / 0.18),
+    0 4px 10px -4px rgb(43 40 38 / 0.1);
+  --shadow-bar: 0 -4px 16px rgb(43 40 38 / 0.08);
+
+  --animate-shake: shake 0.3s ease;
+  --animate-pop: pop 0.25s ease;
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-8px);
+    }
+    75% {
+      transform: translateX(8px);
+    }
+  }
+
+  @keyframes pop {
+    50% {
+      transform: scale(1.25);
+    }
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    /* clip (não hidden): corta o excesso lateral sem quebrar position: sticky */
+    overflow-x: clip;
+  }
+
+  :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  :where(p) {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline-color: var(--ring);
+  }
+}
+
+@layer components {
+  /* Variantes extras do Basecoat: CTA vermelho e selos sobre fotos/status */
+  .btn[data-variant='brand'] {
+    @apply bg-brand text-white hover:bg-brand-strong;
+  }
+
+  .badge[data-variant='brand'] {
+    @apply bg-brand text-white;
+  }
+
+  .badge[data-variant='overlay'] {
+    @apply bg-background/90 text-foreground shadow-sm backdrop-blur;
+  }
+
+  .badge[data-variant='success'] {
+    @apply bg-success-tint text-success;
+  }
+
+  .badge[data-variant='warning'] {
+    @apply bg-warning-tint text-warning;
+  }
+
+  .badge[data-variant='info'] {
+    @apply bg-info-tint text-info;
+  }
+
+  /* Navbar: sólida por padrão; data-variant="transparent" fica sobre o hero até rolar */
+  .site-nav {
+    view-transition-name: site-nav;
+    @apply sticky top-0 z-40 border-b border-border/70 bg-background/85 text-foreground backdrop-blur-md backdrop-saturate-150 transition-[background-color,color,border-color,box-shadow] duration-300;
+  }
+
+  .site-nav[data-variant='transparent'] {
+    @apply fixed inset-x-0 border-transparent bg-transparent text-white backdrop-blur-none;
+    background-image: linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent);
+  }
+
+  .site-nav[data-variant='transparent'][data-scrolled] {
+    @apply border-border/70 bg-background/85 text-foreground shadow-sm backdrop-blur-md;
+    background-image: none;
+  }
+
+  .site-nav-link {
+    @apply relative inline-flex h-9 items-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-foreground/5;
+  }
+
+  .site-nav:is([data-variant='transparent']:not([data-scrolled])) .site-nav-link {
+    @apply hover:bg-white/15;
+  }
+
+  .site-nav-link[aria-current='page']::after {
+    content: '';
+    @apply absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand;
+  }
+
+  .site-nav:is([data-variant='transparent']:not([data-scrolled]))
+    .btn[data-variant='ghost'] {
+    @apply hover:bg-white/15 hover:text-white aria-expanded:bg-white/15 aria-expanded:text-white;
+  }
+
+  /* Seletor de idioma: segmentado, no navbar e no menu móvel */
+  .lang-switcher {
+    @apply inline-flex items-center gap-0.5 rounded-full border border-current/15 p-0.5 text-xs font-semibold;
+  }
+
+  .lang-switcher button {
+    @apply rounded-full px-2 py-1 tracking-wide opacity-75 transition hover:opacity-100;
+  }
+
+  .lang-switcher button[aria-current='true'] {
+    @apply bg-brand text-white opacity-100;
+  }
+
+  /* Menu móvel: popover nativo em forma de painel lateral */
+  .site-sheet {
+    @apply fixed inset-y-0 start-auto end-0 m-0 h-dvh max-h-none w-[min(22rem,100vw)] border-s border-border bg-background p-0 text-foreground shadow-xl;
+    transition:
+      translate 0.25s ease,
+      display 0.25s allow-discrete,
+      overlay 0.25s allow-discrete;
+    translate: 100% 0;
+  }
+
+  .site-sheet:popover-open {
+    translate: 0 0;
+    @starting-style {
+      translate: 100% 0;
+    }
+  }
+
+  .site-sheet::backdrop {
+    @apply bg-black/30 backdrop-blur-xs;
+  }
+
+  /* Coração de favorito: contorno até salvar, depois preenchido (aria-pressed) */
+  .favorite-btn {
+    @apply text-brand;
+  }
+
+  .favorite-btn[aria-pressed='true'] svg {
+    fill: currentColor;
+  }
+
+  .favorite-btn[data-pop] {
+    @apply animate-pop;
+  }
+
+  /* Prévia borrada da foto (data URI no style da <img>) enquanto ela carrega */
+  img.img-ph {
+    @apply bg-muted bg-cover bg-center bg-no-repeat;
+  }
+
+  /* RadioSelect / CheckboxSelectMultiple renderizados pelo <c-form-field> */
+  .choice-list > div {
+    @apply grid gap-2 text-sm;
+  }
+
+  .choice-list label {
+    @apply flex cursor-pointer items-center gap-2;
+  }
+
+  .choice-list input:is([type='radio'], [type='checkbox']) {
+    @apply size-4 accent-primary;
+  }
+
+  .machine-note {
+    @apply text-xs text-ink-soft;
+  }
+
+  .nav-progress {
+    view-transition-name: nav-progress;
+    @apply pointer-events-none fixed top-0 left-0 z-[2000] h-[3px] w-0 bg-brand opacity-0;
+    box-shadow: 0 0 8px rgb(188 47 56 / 0.6);
+  }
+
+  .nav-progress.is-loading {
+    @apply w-[85%] opacity-100;
+    transition: width 4s cubic-bezier(0.1, 0.7, 0.2, 1);
+  }
+
+  .nav-progress.is-done {
+    @apply w-full opacity-0;
+    transition:
+      width 0.2s ease-out,
+      opacity 0.25s ease 0.2s;
+  }
+
+  .toaster .toast[data-category='success'] .toast-content > svg {
+    @apply text-success;
+  }
+
+  .toaster .toast[data-category='error'] .toast-content > svg {
+    @apply text-destructive;
+  }
+
+  .toaster .toast[data-category='warning'] .toast-content > svg {
+    @apply text-warning;
+  }
+
+  .toaster .toast[data-category='info'] .toast-content > svg {
+    @apply text-info;
+  }
+
+  /* Toasts acima da barra de cookies enquanto ela está aberta */
+  body:has(#cookieConsent:not([hidden])) .toaster {
+    @apply pb-36 sm:pb-20;
+  }
+
+  /* Num formulário em edição a barra de cookies cobriria o botão de salvar */
+  body:has(form[data-unsaved-guard]) #cookieConsent {
+    display: none;
+  }
+}
+
+/* Navegação entre páginas com transição (Chrome/Edge/Safari 18+); navbar fica parada */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

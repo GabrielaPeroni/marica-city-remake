@@ -29,12 +29,14 @@ const browserGlobals = {
   alert: 'readonly',
   confirm: 'readonly',
   module: 'readonly',
+  HTMLDialogElement: 'readonly',
 };
 
-// Third-party libraries loaded from CDN <script> tags in templates/base.html
-// and templates/core/landing.html (Bootstrap, Swiper, Google Maps / Sign-In SDK).
+// Third-party libraries loaded from <script> tags in templates/base.html
+// and templates/core/landing.html (Swiper, Google Maps / Sign-In SDK).
 const thirdPartyGlobals = {
   bootstrap: 'readonly',
+  basecoat: 'readonly',
   Swiper: 'readonly',
   google: 'readonly',
   // Django JavaScriptCatalog (/jsi18n/), loaded first in base.html
@@ -62,8 +64,8 @@ module.exports = [
     },
   },
   {
-    // getCookie() is defined in utils.js and consumed by these files via
-    // script load order (utils.js is loaded first in base.html).
+    // getCookie() and cloneIcon() are defined in utils.js and consumed by these
+    // files via script load order (utils.js is loaded first in base.html).
     files: [
       'static/js/components/user_management.js',
       'static/js/favorites-ui.js',
@@ -71,7 +73,7 @@ module.exports = [
       'static/js/login.js',
     ],
     languageOptions: {
-      globals: { getCookie: 'readonly' },
+      globals: { getCookie: 'readonly', cloneIcon: 'readonly' },
     },
   },
   {
@@ -83,7 +85,12 @@ module.exports = [
     },
   },
   {
-    ignores: ['static/js/dist/**', 'node_modules/**', 'staticfiles/**'],
+    ignores: [
+      'static/js/dist/**',
+      'static/vendor/**',
+      'node_modules/**',
+      'staticfiles/**',
+    ],
   },
   prettier,
 ];

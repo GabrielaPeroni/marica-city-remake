@@ -59,6 +59,13 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Check compiled CSS, fonts and icons are current
+        run: |
+          npm ci
+          npm run build:css
+          git diff --exit-code -- static/css/app.css static/fonts static/vendor apps/core/icons
+          test -z "$(git status --porcelain -- static/fonts static/vendor apps/core/icons)" || (echo "::error::Run 'npm run build:css' and commit the output." && exit 1)
+
       - name: Install Prettier
         run: |
           npm install -g prettier@3.1.0

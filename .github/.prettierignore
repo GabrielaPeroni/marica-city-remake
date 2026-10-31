@@ -62,3 +62,7 @@ package-lock.json
 # Minified files
 *.min.css
 *.min.js
+
+# Compiled by npm run build:css
+static/css/app.css
+static/vendor/
