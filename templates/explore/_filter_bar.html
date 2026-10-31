@@ -1,0 +1,39 @@
+{% load i18n icons content_i18n %}
+{# Barra fixa de busca e categorias: explore.html e category_detail.html #}
+<div class="sticky top-16 z-30 border-b bg-background/90 backdrop-blur-md backdrop-saturate-150">
+  <div class="container-page flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:gap-6">
+    <form method="get" action="{{ action }}" class="flex shrink-0 gap-2 lg:w-[27rem]" role="search">
+      <div class="relative min-w-0 flex-1">
+        {% icon "search" class="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" %}
+        <input type="search" name="q" class="input w-full ps-9" placeholder="{% translate 'Buscar lugares...' %}" value="{{ request.GET.q }}" aria-label="{% translate 'Buscar lugares' %}">
+      </div>
+      <label class="sr-only" for="sortSelect">{% translate "Ordenar por" %}</label>
+      <select id="sortSelect" name="sort" class="select w-auto" onchange="this.form.requestSubmit()">
+        <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>{% translate "Mais recentes" %}</option>
+        <option value="created_at" {% if current_sort == "created_at" %}selected{% endif %}>{% translate "Mais antigos" %}</option>
+        <option value="name" {% if current_sort == "name" %}selected{% endif %}>{% translate "Nome (A–Z)" %}</option>
+        <option value="-name" {% if current_sort == "-name" %}selected{% endif %}>{% translate "Nome (Z–A)" %}</option>
+      </select>
+      {% if request.GET.q %}
+      <c-button href="{{ action }}" variant="ghost" size="icon" aria-label="{% translate 'Limpar busca' %}" title="{% translate 'Limpar busca' %}">{% icon "x" %}</c-button>
+      {% endif %}
+      <c-button type="submit" class="max-sm:sr-only">{% translate "Buscar" %}</c-button>
+    </form>
+
+    <nav class="-mx-4 min-w-0 sm:-mx-6 lg:mx-0" aria-label="{% translate 'Categorias' %}">
+      <ul id="categoryChips" class="flex gap-2 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] sm:px-6 lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <li class="shrink-0"><a href="{% url 'explore:explore' %}{% querystring %}" class="category-chip" {% if not active %}aria-current="page"{% endif %}>{% icon "layout-grid" class="size-4" %}{% translate "Todas" %}</a></li>
+        {% for cat in categories %}
+        <li class="shrink-0"><a href="{% url 'explore:category_detail' cat.slug %}{% querystring %}" class="category-chip" {% if cat.pk == active.pk %}aria-current="page"{% endif %}>{{ cat|tr:"name" }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</div>
+<script>
+  (function () {
+    const rail = document.getElementById('categoryChips');
+    const active = rail.querySelector('[aria-current="page"]');
+    if (active) rail.scrollLeft = active.offsetLeft - rail.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+  })();
+</script>

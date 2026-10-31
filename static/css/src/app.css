@@ -1,6 +1,7 @@
 /* Fonte do CSS do site. Compile com `npm run build:css` (gera static/css/app.css). */
 @import 'tailwindcss' source(none);
 @import 'basecoat-css';
+@import './pages/discovery.css';
 
 @source '../../../templates';
 @source '../../js';
