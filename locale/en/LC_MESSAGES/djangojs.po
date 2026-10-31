@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-27 00:12-0300\n"
+"POT-Creation-Date: 2026-10-31 17:08-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -19,94 +19,88 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: static/js/components/address_autocomplete.js:30
+#: static/js/components/address_autocomplete.js:37
 msgid "Comece a digitar o endereço..."
 msgstr "Start typing the address..."
 
-#: static/js/components/bulk_select.js:34
+#: static/js/components/bulk_select.js:35
 #, python-format
 msgid "%s selecionado"
 msgid_plural "%s selecionados"
 msgstr[0] "%s selected"
 msgstr[1] "%s selected"
 
-#: static/js/components/bulk_select.js:135
-msgid "Fechar"
-msgstr "Close"
-
-#: static/js/components/bulk_select.js:137
+#: static/js/components/bulk_select.js:136
 msgid "Cancelar"
 msgstr "Cancel"
 
-#: static/js/components/unsaved_guard.js:40
+#: static/js/components/bulk_select.js:138
+msgid "Fechar"
+msgstr "Close"
+
+#: static/js/components/toasts.js:37 static/js/google_auth.js:31 static/js/login.js:37
+msgid "usuário"
+msgstr "user"
+
+#: static/js/components/unsaved_guard.js:36
 msgid "Sair sem salvar?"
 msgstr "Leave without saving?"
 
-#: static/js/components/unsaved_guard.js:41
+#: static/js/components/unsaved_guard.js:37
 msgid "Você fez alterações neste formulário. Se sair agora, elas serão perdidas."
 msgstr "You changed this form. If you leave now, your changes will be lost."
 
-#: static/js/components/unsaved_guard.js:44
+#: static/js/components/unsaved_guard.js:40
 msgid "Continuar editando"
 msgstr "Keep editing"
 
-#: static/js/components/unsaved_guard.js:45
+#: static/js/components/unsaved_guard.js:41
 msgid "Descartar e sair"
 msgstr "Discard and leave"
 
-#: static/js/components/user_management.js:18
+#: static/js/components/user_management.js:33
 msgid ""
-"Tem certeza que deseja alterar o tipo deste usuário?\n"
-"\n"
-"Isso pode modificar as permissões do usuário no sistema."
+"Tem certeza que deseja alterar o tipo deste usuário? Isso pode modificar as "
+"permissões do usuário no sistema."
 msgstr ""
-"Are you sure you want to change this user's type?\n"
-"\n"
-"This may modify the user's permissions in the system."
+"Are you sure you want to change this user's type? This may modify the user's "
+"permissions in the system."
 
-#: static/js/components/user_management.js:58
+#: static/js/components/user_management.js:56
 msgid "Erro ao atualizar tipo de usuário"
 msgstr "Error updating user type"
 
-#: static/js/components/user_management.js:65 static/js/components/user_management.js:121
-msgid "Erro ao processar solicitação"
-msgstr "Error processing request"
+#: static/js/components/user_management.js:70
+msgid "Tem certeza que deseja ativar este usuário?"
+msgstr "Are you sure you want to activate this user?"
 
-#: static/js/components/user_management.js:83
+#: static/js/components/user_management.js:71
 msgid "Tem certeza que deseja desativar este usuário?"
 msgstr "Are you sure you want to deactivate this user?"
 
 #: static/js/components/user_management.js:84
-msgid "Tem certeza que deseja ativar este usuário?"
-msgstr "Are you sure you want to activate this user?"
-
-#: static/js/components/user_management.js:105
 msgid "Ativo"
 msgstr "Active"
 
-#: static/js/components/user_management.js:110
+#: static/js/components/user_management.js:84
 msgid "Inativo"
 msgstr "Inactive"
 
-#: static/js/components/user_management.js:116
+#: static/js/components/user_management.js:90
 msgid "Erro ao alterar status"
 msgstr "Error changing status"
 
-#: static/js/favorites-ui.js:19 static/js/favorites-ui.js:20
+#: static/js/favorites-ui.js:13
 msgid "Remover dos favoritos"
 msgstr "Remove from favorites"
 
-#: static/js/favorites-ui.js:26 static/js/favorites-ui.js:27
+#: static/js/favorites-ui.js:14
 msgid "Adicionar aos favoritos"
 msgstr "Add to favorites"
 
-#: static/js/favorites-ui.js:159
+#: static/js/favorites-ui.js:139
 msgid "Erro ao atualizar favorito. Tente novamente."
 msgstr "Error updating favorite. Try again."
-
-#: static/js/google_auth.js:31 static/js/login.js:72
-msgid "usuário"
-msgstr "user"
 
 #: static/js/google_auth.js:35
 msgid "Falha ao autenticar com Google. Por favor, tente novamente."
@@ -116,78 +110,58 @@ msgstr "Failed to authenticate with Google. Please try again."
 msgid "Erro ao conectar com o servidor. Por favor, tente novamente."
 msgstr "Error connecting to server. Please try again."
 
-#: static/js/landing.js:23
+#: static/js/landing.js:17
 msgid "Slide anterior"
 msgstr "Previous slide"
 
-#: static/js/landing.js:24
+#: static/js/landing.js:18
 msgid "Próximo slide"
 msgstr "Next slide"
 
-#: static/js/landing.js:25
+#: static/js/landing.js:19
 msgid "Ir para o slide {{index}}"
 msgstr "Go to slide {{index}}"
 
-#: static/js/landing.js:48
+#: static/js/landing.js:36
 msgid "Retomar apresentação"
 msgstr "Resume presentation"
 
-#: static/js/landing.js:48
+#: static/js/landing.js:36
 msgid "Pausar apresentação"
 msgstr "Pause presentation"
 
-#: static/js/login.js:29
+#: static/js/landing_map.js:125
+msgid "Ver detalhes"
+msgstr "View details"
+
+#: static/js/login.js:19
 msgid "Entrando..."
 msgstr "Logging in..."
 
-#: static/js/login.js:54
+#: static/js/login.js:34
 msgid "Sucesso!"
 msgstr "Success!"
 
-#: static/js/login.js:80
+#: static/js/login.js:40
 msgid "Erro ao fazer login."
 msgstr "Error logging in."
 
-#: static/js/login.js:90
+#: static/js/login.js:48
 msgid "Erro ao conectar com o servidor. Tente novamente."
 msgstr "Error connecting to server. Try again."
 
-#: static/js/place_detail.js:22
-msgid "Escrever avaliação"
-msgstr "Write review"
-
-#: static/js/place_detail.js:23
-msgid "Enviar avaliação"
-msgstr "Submit review"
-
-#: static/js/place_detail.js:42
+#: static/js/place_detail.js:15
 msgid "Editar avaliação"
 msgstr "Edit review"
 
-#: static/js/place_detail.js:43
+#: static/js/place_detail.js:16
+msgid "Escrever avaliação"
+msgstr "Write review"
+
+#: static/js/place_detail.js:19
 msgid "Atualizar avaliação"
 msgstr "Update review"
 
-#: static/js/place_detail.js:59
-msgid "Erro: CSRF token não encontrado."
-msgstr "Error: CSRF token not found."
-
-#: static/js/place_detail.js:89 static/js/place_detail.js:94
-msgid "Erro ao enviar avaliação. Por favor, tente novamente."
-msgstr "Error submitting review. Please try again."
-
-#: static/js/place_detail.js:116
-msgid "Erro ao excluir avaliação."
-msgstr "Error deleting review."
-
-#: static/js/place_detail.js:137 static/js/place_detail.js:142
-msgid "Erro ao excluir avaliação. Por favor, tente novamente."
-msgstr "Error deleting review. Please try again."
-
-#: static/js/place_form.js:51
-msgid "Não há mais espaço para novas imagens."
-msgstr "No more space for new images."
-
-#: static/js/place_form.js:94
-msgid "Principal"
-msgstr "Main"
+#: static/js/place_detail.js:20
+msgid "Enviar avaliação"
+msgstr "Submit review"
