@@ -2,7 +2,7 @@
 @import 'tailwindcss' source(none);
 @import 'basecoat-css';
 @import './pages/landing.css' layer(components);
-@import './pages/discovery.css' layer(components);
+@import './pages/discovery.css';
 
 @source '../../../templates';
 @source '../../js';
