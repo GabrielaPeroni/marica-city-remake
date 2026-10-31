@@ -11,12 +11,16 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
       redis:
+        condition: service_started
+      mailhog:
         condition: service_started
 
   # Importadores em segundo plano (eventos da Prefeitura e manchetes) a cada 6h.
@@ -35,6 +39,8 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
     depends_on:
       db:
         condition: service_healthy
@@ -55,6 +61,14 @@ services:
 
   redis:
     image: redis:7
+
+  # Caixa de e-mail de testes: captura cadastro e redefinição de senha (nada sai para a
+  # internet). Caixa em http://localhost:8025. Com runserver local: docker compose up mailhog
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
   # Mock Cloudflare edge: TLS termination + X-Forwarded-Proto, for testing the prod
   # SECURE_PROXY_SSL_HEADER/SECURE_SSL_REDIRECT path locally. Opt-in via --profile mock-cloudflare;

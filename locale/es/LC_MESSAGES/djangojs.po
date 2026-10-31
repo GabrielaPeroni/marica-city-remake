@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 23:37-0300\n"
+"POT-Creation-Date: 2026-10-27 00:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -46,11 +46,11 @@ msgstr "¿Salir sin guardar?"
 msgid "Você fez alterações neste formulário. Se sair agora, elas serão perdidas."
 msgstr "Hiciste cambios en este formulario. Si sales ahora, se perderán."
 
-#: static/js/components/unsaved_guard.js:42
+#: static/js/components/unsaved_guard.js:44
 msgid "Continuar editando"
 msgstr "Seguir editando"
 
-#: static/js/components/unsaved_guard.js:43
+#: static/js/components/unsaved_guard.js:45
 msgid "Descartar e sair"
 msgstr "Descartar y salir"
 

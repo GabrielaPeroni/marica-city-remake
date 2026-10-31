@@ -176,6 +176,25 @@ LOGOUT_REDIRECT_URL = "core:landing"
 GOOGLE_OAUTH_CLIENT_ID = config("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_MAPS_API_KEY = config("GOOGLE_MAPS_API_KEY", default="")
 
+# E-mail (códigos de cadastro e de senha). O padrão aponta para o MailHog local
+# (docker compose up mailhog); em produção defina EMAIL_HOST e credenciais reais.
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_HOST = config("EMAIL_HOST", default="localhost")
+EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL", default="MaricaCity <nao-responda@maricacity.local>"
+)
+# Preenchimento automático das telas de código (apps/accounts/codes.py): "mailhog" no
+# dev.py, "server" no prod.py com APP_ENV=test, desligado ("") em produção
+EMAIL_CODE_AUTOFILL = ""
+EMAIL_CODE_AUTOFILL_DOMAINS = []
+
 # Vercel Cron envia este segredo no cabeçalho Authorization (/cron/...)
 CRON_SECRET = config("CRON_SECRET", default="")
 

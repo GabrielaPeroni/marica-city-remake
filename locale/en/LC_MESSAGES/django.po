@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MaricaCity VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-26 23:37-0300\n"
+"POT-Creation-Date: 2026-10-27 00:12-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -41,7 +41,7 @@ msgstr "Home"
 msgid "Explorar lugares"
 msgstr "Explore places"
 
-#: templates/404.html:21 templates/base.html:71 templates/news/news_list.html:4
+#: templates/404.html:21 templates/base.html:70 templates/news/news_list.html:4
 msgid "Agenda de eventos"
 msgstr "Events agenda"
 
@@ -61,6 +61,42 @@ msgstr "We had a problem loading this page. Try again in a moment."
 msgid "Voltar para a página inicial"
 msgstr "Back to home page"
 
+#: templates/accounts/email_code.html:13
+#, python-format
+msgid "Enviamos um código de 6 dígitos para <strong>%(email)s</strong>."
+msgstr "We sent a 6-digit code to <strong>%(email)s</strong>."
+
+#: templates/accounts/email_code.html:24
+msgid "Modo de desenvolvimento: código preenchido a partir do MailHog."
+msgstr "Development mode: code filled from MailHog."
+
+#: templates/accounts/email_code.html:48
+msgid "Não recebeu?"
+msgstr "Didn't receive it?"
+
+#: templates/accounts/email_code.html:49
+msgid "Enviar novo código"
+msgstr "Send new code"
+
+#: templates/accounts/emails/code.txt:1
+msgid "Olá! Use o código abaixo para confirmar seu cadastro no MaricaCity:"
+msgstr "Hello! Use the code below to confirm your registration at MaricaCity:"
+
+#: templates/accounts/emails/code.txt:1
+msgid ""
+"Recebemos um pedido para redefinir a senha da sua conta no MaricaCity. Use o código "
+"abaixo:"
+msgstr "We received a request to reset your password at MaricaCity. Use the code below:"
+
+#: templates/accounts/emails/code.txt:5
+#, python-format
+msgid ""
+"O código vale por %(minutes)s minutos. Se você não fez esse pedido, ignore este "
+"e-mail."
+msgstr ""
+"The code is valid for %(minutes)s minutes. If you did not make this request, ignore "
+"this email."
+
 #: templates/accounts/register.html:4
 msgid "Cadastro"
 msgstr "Sign up"
@@ -73,21 +109,23 @@ msgstr "Create your account"
 msgid "Salve favoritos, avalie e compartilhe os seus lugares de Maricá."
 msgstr "Save favorites, rate and share your places in Maricá."
 
-#: templates/accounts/register.html:25 templates/explore/review_delete_confirm.html:40
+#: apps/accounts/forms.py:27 templates/accounts/register.html:25
+#: templates/explore/review_delete_confirm.html:40
 #: templates/includes/login_dropdown.html:12
 msgid "Nome de usuário"
 msgstr "Username"
 
-#: templates/accounts/register.html:35
+#: apps/accounts/forms.py:15 apps/accounts/forms.py:75 templates/accounts/register.html:35
 msgid "Endereço de e-mail"
 msgstr "Email address"
 
-#: templates/accounts/register.html:45 templates/explore/review_delete_confirm.html:44
+#: apps/accounts/forms.py:39 templates/accounts/register.html:45
+#: templates/explore/review_delete_confirm.html:44
 #: templates/includes/login_dropdown.html:16
 msgid "Senha"
 msgstr "Password"
 
-#: templates/accounts/register.html:55
+#: apps/accounts/forms.py:45 templates/accounts/register.html:55
 msgid "Confirmar senha"
 msgstr "Confirm password"
 
@@ -95,7 +133,7 @@ msgstr "Confirm password"
 msgid "Cadastrar"
 msgstr "Sign up"
 
-#: templates/accounts/register.html:76 templates/includes/login_dropdown.html:31
+#: templates/accounts/register.html:76 templates/includes/login_dropdown.html:32
 msgid "ou"
 msgstr "or"
 
@@ -177,12 +215,12 @@ msgstr "All types"
 msgid "Administrador"
 msgstr "Administrator"
 
-#: apps/accounts/views.py:206 templates/accounts/user_management.html:45
+#: apps/accounts/views.py:315 templates/accounts/user_management.html:45
 #: templates/accounts/user_management.html:102
 msgid "Moderador"
 msgstr "Moderator"
 
-#: apps/accounts/views.py:206 templates/accounts/user_management.html:46
+#: apps/accounts/views.py:315 templates/accounts/user_management.html:46
 #: templates/accounts/user_management.html:103
 msgid "Regular"
 msgstr "Regular"
@@ -269,17 +307,17 @@ msgstr "You cannot delete your own account"
 msgid "Nenhum usuário encontrado"
 msgstr "No user found"
 
-#: templates/base.html:23
+#: templates/base.html:22
 msgid "Pular para o conteúdo"
 msgstr "Skip to content"
 
-#: templates/base.html:32 templates/explore/place_detail.html:269
+#: templates/base.html:31 templates/explore/place_detail.html:269
 #: templates/explore/place_detail.html:329 templates/explore/place_form.html:218
 #: templates/includes/remove_place_modal.html:9
 msgid "Fechar"
 msgstr "Close"
 
-#: templates/base.html:54
+#: templates/base.html:53
 msgid ""
 "Guia de turismo de Maricá: praias, lagoas, trilhas, cultura e a agenda de eventos da "
 "cidade, em português, inglês e espanhol."
@@ -287,64 +325,64 @@ msgstr ""
 "A tourism guide to Maricá: beaches, lagoons, trails, culture and the city's events, "
 "in Portuguese, English and Spanish."
 
-#: templates/base.html:56
+#: templates/base.html:55
 msgid "Código no GitHub"
 msgstr "Code on GitHub"
 
-#: templates/base.html:56 templates/news/news_detail.html:74
+#: templates/base.html:55 templates/news/news_detail.html:74
 #: templates/news/news_detail.html:90
 msgid "abre em nova aba"
 msgstr "opens in new tab"
 
-#: templates/base.html:59
+#: templates/base.html:58
 msgid "Rodapé: explorar"
 msgstr "Footer: explore"
 
-#: templates/base.html:60 templates/explore/category_detail.html:17
+#: templates/base.html:59 templates/explore/category_detail.html:17
 #: templates/explore/place_detail.html:26 templates/explore/place_form.html:22
 #: templates/explore/review_delete_confirm.html:15 templates/explore/review_form.html:22
 #: templates/includes/navbar.html:17
 msgid "Explorar"
 msgstr "Explore"
 
-#: templates/base.html:65
+#: templates/base.html:64
 msgid "Todos os lugares"
 msgstr "All places"
 
-#: templates/base.html:68
+#: templates/base.html:67
 msgid "Rodapé: visite"
 msgstr "Footer: visit"
 
-#: templates/base.html:69
+#: templates/base.html:68
 msgid "Visite"
 msgstr "Visit"
 
-#: templates/base.html:72 templates/core/about.html:58
+#: templates/base.html:71 templates/core/about.html:58
 msgid "Planeje sua visita"
 msgstr "Plan your visit"
 
-#: templates/base.html:73 templates/core/about.html:138
+#: templates/base.html:72 templates/core/about.html:138
 msgid "Telefones de emergência"
 msgstr "Emergency numbers"
 
-#: templates/base.html:74 templates/core/about.html:4
+#: templates/base.html:73 templates/core/about.html:4
 msgid "Sobre o projeto"
 msgstr "About the project"
 
-#: templates/base.html:77
+#: templates/base.html:76
 msgid "Rodapé: participar"
 msgstr "Footer: participate"
 
-#: templates/base.html:78
+#: templates/base.html:77
 msgid "Participar"
 msgstr "Participate"
 
-#: templates/base.html:81 templates/base.html:85 templates/explore/favorites.html:4
+#: templates/base.html:80 templates/base.html:84 templates/explore/favorites.html:4
 #: templates/explore/favorites.html:17 templates/includes/navbar.html:52
 msgid "Meus favoritos"
 msgstr "My favorites"
 
-#: apps/explore/views.py:252 templates/base.html:82 templates/core/landing.html:99
+#: apps/explore/views.py:161 templates/base.html:81 templates/core/landing.html:99
 #: templates/core/landing.html:257 templates/explore/category_detail.html:123
 #: templates/explore/explore.html:59 templates/explore/explore.html:61
 #: templates/explore/explore.html:128 templates/includes/admin_navbar.html:47
@@ -352,11 +390,11 @@ msgstr "My favorites"
 msgid "Cadastrar lugar"
 msgstr "Submit a place"
 
-#: templates/base.html:84 templates/core/about.html:158
+#: templates/base.html:83 templates/core/about.html:158
 msgid "Criar conta"
 msgstr "Create account"
 
-#: templates/base.html:92
+#: templates/base.html:91
 msgid "Código sob licença MIT · Fotos: Wikimedia Commons e colaboradores"
 msgstr "Code under the MIT licence · Photos: Wikimedia Commons and contributors"
 
@@ -617,6 +655,7 @@ msgstr "Back"
 msgid "Tem certeza que deseja excluir este evento?"
 msgstr "Are you sure you want to delete this event?"
 
+#: apps/news/models.py:66 apps/news/models.py:249
 #: templates/core/admin/news_delete_confirm.html:67 templates/core/admin/news_list.html:148
 msgid "Publicado"
 msgstr "Published"
@@ -625,7 +664,8 @@ msgstr "Published"
 msgid "Rascunho"
 msgstr "Draft"
 
-#: templates/core/admin/news_delete_confirm.html:71 templates/core/admin/news_list.html:152
+#: apps/news/models.py:67 templates/core/admin/news_delete_confirm.html:71
+#: templates/core/admin/news_list.html:152
 msgid "Arquivado"
 msgstr "Archived"
 
@@ -665,8 +705,8 @@ msgstr "Publication Settings"
 msgid "Cancelar e voltar"
 msgstr "Cancel and go back"
 
-#: templates/core/admin/news_list.html:31 templates/includes/admin_sidebar.html:40
-#: templates/includes/navbar.html:20
+#: apps/news/models.py:19 templates/core/admin/news_list.html:31
+#: templates/includes/admin_sidebar.html:40 templates/includes/navbar.html:20
 msgid "Eventos"
 msgstr "Events"
 
@@ -724,7 +764,7 @@ msgstr "Selected events: %%s. This cannot be undone. Delete all?"
 msgid "Excluir"
 msgstr "Delete"
 
-#: templates/core/admin/news_list.html:113
+#: apps/news/forms.py:80 apps/news/forms.py:148 templates/core/admin/news_list.html:113
 msgid "Título"
 msgstr "Title"
 
@@ -779,7 +819,7 @@ msgstr "Since last week"
 msgid "Novos Usuários"
 msgstr "New Users"
 
-#: apps/explore/views.py:597 templates/core/admin_dashboard.html:85
+#: apps/explore/views.py:326 templates/core/admin_dashboard.html:85
 #: templates/explore/explore.html:83 templates/includes/admin_sidebar.html:34
 msgid "Aguardando aprovação"
 msgstr "Pending approval"
@@ -1127,11 +1167,11 @@ msgstr "Categories"
 msgid "Criado por"
 msgstr "Created by"
 
-#: templates/explore/admin/backlog.html:145
+#: apps/explore/models.py:151 templates/explore/admin/backlog.html:145
 msgid "Em destaque na página inicial"
 msgstr "Featured on the home page"
 
-#: apps/explore/views.py:603 templates/explore/admin/backlog.html:145
+#: apps/explore/views.py:338 templates/explore/admin/backlog.html:145
 msgid "Em destaque"
 msgstr "Featured"
 
@@ -1369,7 +1409,7 @@ msgstr "Click the stars to rate"
 msgid "Comentário"
 msgstr "Comment"
 
-#: templates/explore/place_detail.html:305
+#: apps/explore/forms.py:117 templates/explore/place_detail.html:305
 msgid "Compartilhe sua experiência neste lugar..."
 msgstr "Share your experience at this place..."
 
@@ -1510,7 +1550,7 @@ msgstr "Sign out"
 
 #: templates/explore/review_delete_confirm.html:33
 #: templates/explore/review_delete_confirm.html:48 templates/includes/login_dropdown.html:5
-#: templates/includes/login_dropdown.html:25
+#: templates/includes/login_dropdown.html:26
 msgid "Entrar"
 msgstr "Sign in"
 
@@ -1519,12 +1559,12 @@ msgid "Entre na sua conta"
 msgstr "Sign in to your account"
 
 #: templates/explore/review_delete_confirm.html:53
-#: templates/includes/login_dropdown.html:20
+#: templates/includes/login_dropdown.html:21
 msgid "Não tem uma conta?"
 msgstr "Don't have an account?"
 
 #: templates/explore/review_delete_confirm.html:54
-#: templates/includes/login_dropdown.html:21
+#: templates/includes/login_dropdown.html:22
 msgid "Cadastre-se agora"
 msgstr "Sign up now"
 
@@ -1641,6 +1681,10 @@ msgstr "Ended"
 #: templates/includes/language_switcher.html:3
 msgid "Idioma"
 msgstr "Language"
+
+#: apps/accounts/views.py:147 templates/includes/login_dropdown.html:18
+msgid "Esqueci minha senha"
+msgstr "Forgot my password"
 
 #: templates/includes/navbar.html:5
 msgid "Navegação principal"
@@ -1780,212 +1824,437 @@ msgstr "Page %(number)s of %(total)s"
 msgid "Próxima"
 msgstr "Next"
 
-#: apps/accounts/views.py:26
+#: apps/accounts/forms.py:53
+msgid "Já existe uma conta com este e-mail."
+msgstr "There is already an account with this email."
+
+#: apps/accounts/forms.py:60
+msgid "Código de 6 dígitos"
+msgstr "6-digit code"
+
+#: apps/accounts/forms.py:61
+msgid "Digite os 6 dígitos do código."
+msgstr "Enter the 6-digit code."
+
+#: apps/accounts/forms.py:84
+msgid "Nova senha"
+msgstr "New password"
+
+#: apps/accounts/forms.py:91
+msgid "Confirmar nova senha"
+msgstr "Confirm new password"
+
+#: apps/accounts/forms.py:108
+msgid "As senhas não coincidem."
+msgstr "The passwords do not match."
+
+#: apps/accounts/models.py:7
+msgid "Biografia do usuário"
+msgstr "User biography"
+
+#: apps/accounts/models.py:14
+msgid "Número de telefone de contato"
+msgstr "Contact phone number"
+
+#: apps/accounts/models.py:19
+msgid "E-mail de contato público (diferente do e-mail de login)"
+msgstr "Public email (different from login email)"
+
+#: apps/accounts/models.py:22
+msgid "Website ou URL de rede social"
+msgstr "Website or social network URL"
+
+#: apps/accounts/views.py:35
+msgid "Seu código de cadastro no MaricaCity"
+msgstr "Your registration code at MaricaCity"
+
+#: apps/accounts/views.py:36
+msgid "Código para redefinir sua senha no MaricaCity"
+msgstr "Code to reset your password at MaricaCity"
+
+#: apps/accounts/views.py:53
+msgid "Não foi possível enviar o e-mail agora. Tente novamente em instantes."
+msgstr "Could not send the email now. Try again in a moment."
+
+#: apps/accounts/views.py:103
+msgid "Esse nome de usuário ou e-mail acabou de ser usado. Tente outro."
+msgstr "This username or email was just used. Try another."
+
+#: apps/accounts/views.py:110
 msgid "Cadastro realizado com sucesso! Bem-vindo ao MaricaCity."
 msgstr "Sign-up complete! Welcome to MaricaCity."
 
-#: apps/accounts/views.py:52
+#: apps/accounts/views.py:113 apps/accounts/views.py:171
+msgid "Código inválido ou expirado."
+msgstr "Invalid or expired code."
+
+#: apps/accounts/views.py:119
+msgid "Confirme seu e-mail"
+msgstr "Confirm your email"
+
+#: apps/accounts/views.py:120
+msgid "Confirmar cadastro"
+msgstr "Confirm registration"
+
+#: apps/accounts/views.py:148
+msgid "Informe o e-mail da sua conta para receber um código."
+msgstr "Enter your account email to receive a code."
+
+#: apps/accounts/views.py:149
+msgid "Enviar código"
+msgstr "Send code"
+
+#: apps/accounts/views.py:168
+msgid "Senha alterada! Entre com a nova senha no menu Entrar."
+msgstr "Password changed! Sign in with your new password from the login menu."
+
+#: apps/accounts/views.py:177
+msgid "Redefinir senha"
+msgstr "Reset password"
+
+#: apps/accounts/views.py:178
+msgid "Salvar nova senha"
+msgstr "Save new password"
+
+#: apps/accounts/views.py:198
+msgid "Enviamos um novo código."
+msgstr "We sent a new code."
+
+#: apps/accounts/views.py:213
 msgid "Por favor, preencha todos os campos."
 msgstr "Please fill in all fields."
 
-#: apps/accounts/views.py:64
+#: apps/accounts/views.py:222
 #, python-format
 msgid "Bem-vindo de volta, %(username)s!"
 msgstr "Welcome back, %(username)s!"
 
-#: apps/accounts/views.py:77
+#: apps/accounts/views.py:232
 msgid "Sua conta foi desativada. Entre em contato com o administrador."
 msgstr "Your account has been deactivated. Please contact the administrator."
 
-#: apps/accounts/views.py:86
+#: apps/accounts/views.py:235
 msgid "Nome de usuário ou senha incorretos."
 msgstr "Incorrect username or password."
 
-#: apps/accounts/views.py:93 apps/accounts/views.py:182 apps/accounts/views.py:230
+#: apps/accounts/views.py:237 apps/accounts/views.py:296
 msgid "Método não permitido"
 msgstr "Method not allowed"
 
-#: apps/accounts/views.py:101
+#: apps/accounts/views.py:244
 msgid "Você saiu com sucesso."
 msgstr "You have successfully logged out."
 
-#: apps/accounts/views.py:119 apps/core/views.py:113 apps/core/views.py:191
-#: apps/core/views.py:270 apps/core/views.py:300 apps/core/views.py:330
-#: apps/core/views.py:354 apps/core/views.py:432 apps/core/views.py:441
-#: apps/core/views.py:476 apps/core/views.py:500 apps/explore/views.py:382
-#: apps/explore/views.py:520
-msgid "Você não tem permissão para acessar esta página."
-msgstr "You do not have permission to access this page."
-
-#: apps/accounts/views.py:178 apps/accounts/views.py:226
+#: apps/accounts/views.py:294
 msgid "Sem permissão"
 msgstr "Permission denied"
 
-#: apps/accounts/views.py:188 apps/accounts/views.py:236
+#: apps/accounts/views.py:299
 msgid "O administrador não pode ser alterado."
 msgstr "The administrator cannot be changed."
 
-#: apps/accounts/views.py:197
+#: apps/accounts/views.py:309
 msgid "Você não pode alterar seu próprio status"
 msgstr "You cannot change your own status"
 
-#: apps/accounts/views.py:209
+#: apps/accounts/views.py:319
 #, python-format
 msgid "Status de %(username)s alterado para %(role_display)s."
 msgstr "Status of %(username)s changed to %(role_display)s."
 
-#: apps/accounts/views.py:215
-msgid "Status de usuário atualizado"
-msgstr "User status updated"
-
-#: apps/accounts/views.py:243
+#: apps/accounts/views.py:331
 msgid "Você não pode desativar sua própria conta"
 msgstr "You cannot deactivate your own account"
 
-#: apps/accounts/views.py:253
+#: apps/accounts/views.py:338
 #, python-format
-msgid "Usuário %(username)s %(status_text)s com sucesso."
-msgstr "User %(username)s %(status_text)s successfully."
+msgid "Usuário %(username)s ativado com sucesso."
+msgstr "User %(username)s activated successfully."
 
-#: apps/accounts/views.py:261
+#: apps/accounts/views.py:340
 #, python-format
-msgid "Usuário %(status_text)s"
-msgstr "User %(status_text)s"
+msgid "Usuário %(username)s desativado com sucesso."
+msgstr "User %(username)s deactivated successfully."
 
-#: apps/accounts/views.py:270
-msgid "Você não tem permissão para excluir usuários."
-msgstr "You do not have permission to delete users."
-
-#: apps/accounts/views.py:276
+#: apps/accounts/views.py:355
 msgid "O administrador não pode ser excluído."
 msgstr "The administrator cannot be deleted."
 
-#: apps/accounts/views.py:281
+#: apps/accounts/views.py:358
 msgid "Você não pode excluir sua própria conta."
 msgstr "You cannot delete your own account."
 
-#: apps/accounts/views.py:289
+#: apps/accounts/views.py:365
 #, python-format
 msgid "Usuário %(username)s excluído com sucesso."
 msgstr "User %(username)s deleted successfully."
 
-#: apps/core/views.py:254 apps/explore/views.py:594
+#: apps/core/decorators.py:17
+msgid "Você não tem permissão para acessar esta página."
+msgstr "You do not have permission to access this page."
+
+#: apps/core/views.py:145 apps/explore/views.py:324
 msgid "Todos"
 msgstr "All"
 
-#: apps/core/views.py:255
+#: apps/core/views.py:146
 msgid "Sugestões"
 msgstr "Suggestions"
 
-#: apps/core/views.py:256
+#: apps/core/views.py:147
 msgid "Publicados"
 msgstr "Published"
 
-#: apps/core/views.py:257
+#: apps/core/views.py:148
 msgid "Rascunhos"
 msgstr "Drafts"
 
-#: apps/core/views.py:258
+#: apps/core/views.py:149
 msgid "Arquivados"
 msgstr "Archived"
 
-#: apps/core/views.py:281
+#: apps/core/views.py:230
 #, python-format
 msgid "Evento \"%(title)s\" criado com sucesso!"
 msgstr "Event \"%(title)s\" created successfully!"
 
-#: apps/core/views.py:290
+#: apps/core/views.py:233
 msgid "Criar novo evento"
 msgstr "Create new event"
 
-#: apps/core/views.py:291
+#: apps/core/views.py:233
 msgid "Criar"
 msgstr "Create"
 
-#: apps/core/views.py:311
+#: apps/core/views.py:244
 #, python-format
 msgid "Evento \"%(title)s\" atualizado com sucesso!"
 msgstr "Event \"%(title)s\" updated successfully!"
 
-#: apps/core/views.py:320
+#: apps/core/views.py:250
 #, python-format
 msgid "Editar: %(title)s"
 msgstr "Edit: %(title)s"
 
-#: apps/core/views.py:321 apps/explore/views.py:313
+#: apps/core/views.py:251 apps/explore/views.py:182
 msgid "Salvar Alterações"
 msgstr "Save Changes"
 
-#: apps/core/views.py:340
+#: apps/core/views.py:265
 #, python-format
 msgid "Evento \"%(news_title)s\" excluído com sucesso."
 msgstr "Event \"%(news_title)s\" deleted successfully."
 
-#: apps/core/views.py:361 apps/core/views.py:481
-msgid "Selecione ao menos um evento."
-msgstr "Select at least one event."
-
-#: apps/core/views.py:373
+#: apps/core/views.py:277
 #, python-format
 msgid "%(count)d evento publicado"
 msgid_plural "%(count)d eventos publicados"
 msgstr[0] "%(count)d event published"
 msgstr[1] "%(count)d events published"
 
-#: apps/core/views.py:383
+#: apps/core/views.py:280
 #, python-format
 msgid "%(count)d evento arquivado"
 msgid_plural "%(count)d eventos arquivados"
 msgstr[0] "%(count)d event archived"
 msgstr[1] "%(count)d events archived"
 
-#: apps/core/views.py:389
+#: apps/core/views.py:283
 #, python-format
 msgid "%(count)d evento excluído"
 msgid_plural "%(count)d eventos excluídos"
 msgstr[0] "%(count)d event deleted"
 msgstr[1] "%(count)d events deleted"
 
-#: apps/core/views.py:392 apps/core/views.py:492 apps/explore/views.py:510
+#: apps/core/views.py:295 apps/core/views.py:390
+msgid "Selecione ao menos um evento."
+msgstr "Select at least one event."
+
+#: apps/core/views.py:310 apps/core/views.py:401 apps/explore/views.py:315
 msgid "Ação inválida."
 msgstr "Invalid action."
 
-#: apps/core/views.py:448
+#: apps/core/views.py:361
 #, python-format
 msgid "\"%(title)s\" foi descartado."
 msgstr "\"%(title)s\" has been discarded."
 
-#: apps/core/views.py:455
+#: apps/core/views.py:368
 #, python-format
 msgid "Revise os campos de \"%(title)s\"."
 msgstr "Review the fields of \"%(title)s\"."
 
-#: apps/core/views.py:466
+#: apps/core/views.py:379
 #, python-format
 msgid "\"%(title)s\" publicado na agenda."
 msgstr "\"%(title)s\" published to the agenda."
 
-#: apps/core/views.py:487
+#: apps/core/views.py:396
 #, python-format
 msgid "%(count)d evento descartado"
 msgid_plural "%(count)d eventos descartados"
 msgstr[0] "%(count)d event discarded"
 msgstr[1] "%(count)d events discarded"
 
-#: apps/core/views.py:506
+#: apps/core/views.py:412
 msgid "Não foi possível consultar a Prefeitura agora."
 msgstr "Couldn't reach the Prefeitura's website right now."
 
-#: apps/core/views.py:510
+#: apps/core/views.py:416
 #, python-format
 msgid "%(created)s evento(s) novo(s) para triagem."
 msgstr "%(created)s new event(s) to review."
 
-#: apps/explore/views.py:201
+#: apps/explore/forms.py:23 apps/explore/models.py:103
+msgid "Nome do lugar"
+msgstr "Place name"
+
+#: apps/explore/forms.py:29
+msgid "Descreva o lugar em detalhes..."
+msgstr "Describe the place in detail..."
+
+#: apps/explore/forms.py:36
+msgid "Comece a digitar o endereço..."
+msgstr "Start typing the address..."
+
+#: apps/explore/forms.py:73
+msgid "Descrição da imagem (opcional)"
+msgstr "Image description (optional)"
+
+#: apps/explore/models.py:22
+msgid "Nome da categoria"
+msgstr "Category name"
+
+#: apps/explore/models.py:26
+msgid "Identificador amigável para URL"
+msgstr "Friendly URL identifier"
+
+#: apps/explore/models.py:29
+msgid "Descrição da categoria"
+msgstr "Category description"
+
+#: apps/explore/models.py:34
+msgid "Classe do ícone ou emoji para a categoria"
+msgstr "Class of icon or emoji for the category"
+
+#: apps/explore/models.py:38
+msgid "Se a categoria está atualmente ativa"
+msgstr "Whether the category is currently active"
+
+#: apps/explore/models.py:43
+msgid "Ordem em que a categoria aparece (números menores primeiro)"
+msgstr "Order in which the category appears (lower numbers first)"
+
+#: apps/explore/models.py:53 apps/explore/models.py:161 apps/explore/models.py:352
+#: apps/news/models.py:167
+msgid "Traduções automáticas (en, es); editáveis pela equipe"
+msgstr "Automatic translations (en, es); editable by the team"
+
+#: apps/explore/models.py:105
+msgid "Descrição detalhada do lugar"
+msgstr "Detailed description of the place"
+
+#: apps/explore/models.py:107
+msgid "Endereço completo do lugar"
+msgstr "Complete address of the place"
+
+#: apps/explore/models.py:115
+msgid "Coordenada de latitude"
+msgstr "Latitude coordinate"
+
+#: apps/explore/models.py:122
+msgid "Coordenada de longitude"
+msgstr "Longitude coordinate"
+
+#: apps/explore/models.py:130
+msgid "Categorias às quais este lugar pertence"
+msgstr "Categories to which this place belongs"
+
+#: apps/explore/models.py:137
+msgid "Usuário que criou este lugar"
+msgstr "User who created this place"
+
+#: apps/explore/models.py:142
+msgid "Se o lugar foi aprovado pelo administrador"
+msgstr "Whether the place has been approved by the administrator"
+
+#: apps/explore/models.py:146
+msgid "Se o lugar está atualmente ativo"
+msgstr "Whether the place is currently active"
+
+#: apps/explore/models.py:227
+msgid "Lugar ao qual esta imagem pertence"
+msgstr "Place to which this image belongs"
+
+#: apps/explore/models.py:231
+msgid "Imagem do lugar"
+msgstr "Place image"
+
+#: apps/explore/models.py:235
+msgid "Legenda ou descrição da imagem"
+msgstr "Caption or description of the image"
+
+#: apps/explore/models.py:239
+msgid "Se esta é a imagem principal/primária do lugar"
+msgstr "Whether this is the main/primary image of the place"
+
+#: apps/explore/models.py:245
+msgid "Ordem em que a imagem aparece na galeria (números menores primeiro)"
+msgstr "Order in which the image appears in the gallery (lower numbers first)"
+
+#: apps/explore/models.py:250
+msgid "Quando a imagem foi carregada"
+msgstr "When the image was uploaded"
+
+#: apps/explore/models.py:284
+msgid "Lugar sendo revisado"
+msgstr "Place being reviewed"
+
+#: apps/explore/models.py:292
+msgid "Usuário administrador que revisou o lugar"
+msgstr "Admin user who reviewed the place"
+
+#: apps/explore/models.py:298
+msgid "Ação realizada pelo revisor"
+msgstr "Action performed by the reviewer"
+
+#: apps/explore/models.py:302
+msgid "Comentários ou feedback do revisor"
+msgstr "Reviewer's comments or feedback"
+
+#: apps/explore/models.py:306
+msgid "Quando a revisão foi realizada"
+msgstr "When the review was performed"
+
+#: apps/explore/models.py:359
+msgid "Lugar sendo avaliado"
+msgstr "Place being reviewed"
+
+#: apps/explore/models.py:366
+msgid "Usuário que escreveu a avaliação"
+msgstr "User who wrote the review"
+
+#: apps/explore/models.py:377
+msgid "Avaliação de 1 a 5 estrelas"
+msgstr "Review rating from 1 to 5 stars"
+
+#: apps/explore/models.py:381
+msgid "Comentário/feedback da avaliação"
+msgstr "Review comment/feedback"
+
+#: apps/explore/models.py:415
+msgid "Usuário que favoritou o lugar"
+msgstr "User who favorited the place"
+
+#: apps/explore/models.py:422
+msgid "Lugar que foi favoritado"
+msgstr "Place that was favorited"
+
+#: apps/explore/views.py:148
 msgid "Você não tem permissão para criar lugares."
 msgstr "You do not have permission to create places."
 
-#: apps/explore/views.py:240
+#: apps/explore/views.py:156
 #, python-format
 msgid ""
 "Lugar \"%(name)s\" criado com sucesso! Ele será revisado por um administrador antes "
@@ -1994,132 +2263,259 @@ msgstr ""
 "Place \"%(name)s\" created successfully! It will be reviewed by an administrator "
 "before appearing on the site."
 
-#: apps/explore/views.py:253
+#: apps/explore/views.py:161
 msgid "Enviar para Aprovação"
 msgstr "Submit for Approval"
 
-#: apps/explore/views.py:269
+#: apps/explore/views.py:170
 msgid "Você não tem permissão para editar este lugar."
 msgstr "You do not have permission to edit this place."
 
-#: apps/explore/views.py:300
+#: apps/explore/views.py:177
 #, python-format
 msgid "Lugar \"%(name)s\" atualizado com sucesso!"
 msgstr "Place \"%(name)s\" updated successfully!"
 
-#: apps/explore/views.py:312
+#: apps/explore/views.py:181
 #, python-format
 msgid "Editar %(name)s"
 msgstr "Edit %(name)s"
 
-#: apps/explore/views.py:327
+#: apps/explore/views.py:191
 msgid "Você não tem permissão para excluir este lugar."
 msgstr "You do not have permission to delete this place."
 
-#: apps/explore/views.py:335
+#: apps/explore/views.py:199
 #, python-format
 msgid "Lugar \"%(place_name)s\" foi excluído com sucesso."
 msgstr "Place \"%(place_name)s\" was deleted successfully."
 
-#: apps/explore/views.py:359
+#: apps/explore/views.py:211
 msgid "Por favor, selecione um motivo para a rejeição."
 msgstr "Please select a reason for rejection."
 
-#: apps/explore/views.py:362
+#: apps/explore/views.py:215
 msgid "Por favor, especifique o motivo da rejeição."
 msgstr "Please specify the reason for rejection."
 
-#: apps/explore/views.py:393 apps/explore/views.py:416 apps/explore/views.py:440
-#: apps/explore/views.py:471
-msgid "Você não tem permissão para realizar esta ação."
-msgstr "You do not have permission to perform this action."
-
-#: apps/explore/views.py:401
+#: apps/explore/views.py:237
 #, python-format
 msgid "%(name)s está em destaque na página inicial."
 msgstr "%(name)s is now featured on the home page."
 
-#: apps/explore/views.py:405
+#: apps/explore/views.py:239
 #, python-format
 msgid "%(name)s saiu dos destaques."
 msgstr "%(name)s is no longer featured."
 
-#: apps/explore/views.py:426
+#: apps/explore/views.py:256
 #, python-format
 msgid "Lugar \"%(name)s\" foi aprovado com sucesso!"
 msgstr "Place \"%(name)s\" was approved successfully!"
 
-#: apps/explore/views.py:458
+#: apps/explore/views.py:276
 #, python-format
 msgid "Lugar \"%(name)s\" foi removido."
 msgstr "Place \"%(name)s\" was removed."
 
-#: apps/explore/views.py:478
+#: apps/explore/views.py:288
 msgid "Selecione ao menos um lugar."
 msgstr "Select at least one place."
 
-#: apps/explore/views.py:489
+#: apps/explore/views.py:298
 #, python-format
 msgid "%(count)d lugar aprovado"
 msgid_plural "%(count)d lugares aprovados"
 msgstr[0] "%(count)d place approved"
 msgstr[1] "%(count)d places approved"
 
-#: apps/explore/views.py:506
+#: apps/explore/views.py:312
 #, python-format
 msgid "%(count)d lugar removido"
 msgid_plural "%(count)d lugares removidos"
 msgstr[0] "%(count)d place removed"
 msgstr[1] "%(count)d places removed"
 
-#: apps/explore/views.py:602
+#: apps/explore/views.py:332
 msgid "Aprovados"
 msgstr "Approved"
 
-#: apps/explore/views.py:604
+#: apps/explore/views.py:343
 msgid "Removidos"
 msgstr "Removed"
 
-#: apps/explore/views.py:622
+#: apps/explore/views.py:402
 msgid "Você já avaliou este lugar. Edite sua avaliação existente."
 msgstr "You have already reviewed this place. Edit your existing review."
 
-#: apps/explore/views.py:633
+#: apps/explore/views.py:411
 msgid "Avaliação enviada com sucesso!"
 msgstr "Review submitted successfully!"
 
-#: apps/explore/views.py:649
+#: apps/explore/views.py:428
 msgid "Você não tem permissão para editar esta avaliação."
 msgstr "You do not have permission to edit this review."
 
-#: apps/explore/views.py:656
+#: apps/explore/views.py:436
 msgid "Avaliação atualizada com sucesso!"
 msgstr "Review updated successfully!"
 
-#: apps/explore/views.py:673
+#: apps/explore/views.py:445
 msgid "Você não tem permissão para excluir esta avaliação."
 msgstr "You do not have permission to delete this review."
 
-#: apps/explore/views.py:680
+#: apps/explore/views.py:452
 msgid "Avaliação excluída com sucesso!"
 msgstr "Review deleted successfully!"
 
-#: apps/explore/views.py:710
-msgid "Lugar removido dos favoritos"
-msgstr "Place removed from favorites"
-
-#: apps/explore/views.py:715
-msgid "Lugar adicionado aos favoritos"
-msgstr "Place added to favorites"
-
-#: apps/explore/views.py:734
+#: apps/explore/views.py:469
 msgid "Favorito atualizado"
 msgstr "Favorite updated"
 
-#: apps/explore/views.py:816
+#: apps/explore/views.py:480
+msgid "Lugar removido dos favoritos"
+msgstr "Place removed from favorites"
+
+#: apps/explore/views.py:482
+msgid "Lugar adicionado aos favoritos"
+msgstr "Place added to favorites"
+
+#: apps/explore/views.py:527
 #, python-format
 msgid "%(value)s favoritos sincronizados"
 msgstr "%(value)s favorites synchronized"
+
+#: apps/news/forms.py:40
+msgid "Digite o título do evento"
+msgstr "Enter the event title"
+
+#: apps/news/forms.py:47
+msgid "Conteúdo completo..."
+msgstr "Full content..."
+
+#: apps/news/forms.py:54
+msgid "Resumo curto (até 300 caracteres)"
+msgstr "Short summary (up to 300 characters)"
+
+#: apps/news/forms.py:65
+msgid "Legenda da imagem (opcional)"
+msgstr "Image caption (optional)"
+
+#: apps/news/forms.py:72
+msgid "Local do evento (opcional)"
+msgstr "Event location (optional)"
+
+#: apps/news/forms.py:112
+msgid "Data do evento é obrigatória para eventos."
+msgstr "Event date is required for events."
+
+#: apps/news/forms.py:116
+msgid "Local do evento é obrigatório para eventos."
+msgstr "Event location is required for events."
+
+#: apps/news/forms.py:123
+msgid "A data final do evento não pode ser anterior à data de início."
+msgstr "The end date of the event cannot be before the start date."
+
+#: apps/news/forms.py:143
+msgid "Ex.: Praça Orlando de Barros Pimentel, Centro"
+msgstr "Example: Praça Orlando de Barros Pimentel, Centro"
+
+#: apps/news/forms.py:164
+msgid "O término deve ser depois do início."
+msgstr "The end must be after the start."
+
+#: apps/news/models.py:18
+msgid "Noticias"
+msgstr "News"
+
+#: apps/news/models.py:20
+msgid "Anuncios"
+msgstr "Announcements"
+
+#: apps/news/models.py:26
+msgid "Classe de ícone ou emoji"
+msgstr "Icon or emoji class"
+
+#: apps/news/models.py:65
+msgid "Em Progresso"
+msgstr "In Progress"
+
+#: apps/news/models.py:72
+msgid "Titulo da noticia ou evento"
+msgstr "News or event title"
+
+#: apps/news/models.py:75
+msgid "URL-friendly identifier"
+msgstr "URL-friendly identifier"
+
+#: apps/news/models.py:77
+msgid "Full content of the news or event"
+msgstr "Full content of the news or event"
+
+#: apps/news/models.py:81
+msgid "Short summary for listings (max 300 chars)"
+msgstr "Short summary for listings (max 300 chars)"
+
+#: apps/news/models.py:89
+msgid "Type of content (news, event, announcement)"
+msgstr "Type of content (news, event, announcement)"
+
+#: apps/news/models.py:97
+msgid "Main image for the news/event"
+msgstr "Main image for the news/event"
+
+#: apps/news/models.py:100
+msgid "Caption for featured image"
+msgstr "Caption for featured image"
+
+#: apps/news/models.py:107
+msgid "Date and time of event (for events only)"
+msgstr "Date and time of event (for events only)"
+
+#: apps/news/models.py:112
+msgid "Location of event (for events only)"
+msgstr "Location of event (for events only)"
+
+#: apps/news/models.py:117
+msgid "End date and time of event (optional)"
+msgstr "End date and time of event (optional)"
+
+#: apps/news/models.py:125
+msgid "Publication status"
+msgstr "Publication status"
+
+#: apps/news/models.py:129
+msgid "Date when this should be published"
+msgstr "Date when this should be published"
+
+#: apps/news/models.py:137
+msgid "User who created this news/event"
+msgstr "User who created this news/event"
+
+#: apps/news/models.py:141
+msgid "Show in featured/highlighted sections"
+msgstr "Show in featured/highlighted sections"
+
+#: apps/news/models.py:145
+msgid "Number of times this has been viewed"
+msgstr "Number of times this has been viewed"
+
+#: apps/news/models.py:152
+msgid "Veículo que publicou a matéria original"
+msgstr "Original publishing vehicle"
+
+#: apps/news/models.py:155
+msgid "Link para a matéria original"
+msgstr "Link to original article"
+
+#: apps/news/models.py:248
+msgid "Aguardando triagem"
+msgstr "Awaiting review"
+
+#: apps/news/models.py:250
+msgid "Descartado"
+msgstr "Discarded"
 
 #: apps/news/templatetags/event_dates.py:27
 #, python-format

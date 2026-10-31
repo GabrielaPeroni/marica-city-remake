@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ title }} - MaricaCity{% endblock %}
+
+{% block content %}
+{% include 'includes/navbar.html' %}
+
+<header class="page-header">
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <p class="page-header-subtitle">
+      {% if email %}{% blocktranslate trimmed %}Enviamos um código de 6 dígitos para <strong>{{ email }}</strong>.{% endblocktranslate %}{% else %}{{ subtitle }}{% endif %}
+    </p>
+  </div>
+</header>
+
+<div class="bg-light py-4 py-md-5">
+  <div class="container" style="max-width: 500px;">
+    <div class="card shadow">
+      <div class="card-body p-4">
+        {% if autofilled %}
+        <div class="alert alert-warning small" role="status">
+          <i class="bi bi-bug me-1" aria-hidden="true"></i>{% translate "Ambiente de testes: código preenchido automaticamente." %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="text-danger small mt-2">{{ field.errors.0 }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-dark btn-lg">{{ submit_label }}</button>
+          </div>
+        </form>
+
+        {% if resend_purpose %}
+        <form method="post" action="{% url 'accounts:resend_code' resend_purpose %}" class="text-center mt-3">
+          {% csrf_token %}
+          <span class="text-muted small">{% translate "Não recebeu?" %}</span>
+          <button type="submit" class="btn btn-link btn-sm p-0 align-baseline fw-semibold">{% translate "Enviar novo código" %}</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

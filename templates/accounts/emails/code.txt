@@ -1,0 +1,6 @@
+{% load i18n %}{% autoescape off %}{% if purpose == "signup" %}{% translate "Olá! Use o código abaixo para confirmar seu cadastro no MaricaCity:" %}{% else %}{% translate "Recebemos um pedido para redefinir a senha da sua conta no MaricaCity. Use o código abaixo:" %}{% endif %}
+
+    {{ code }}
+
+{% blocktranslate trimmed %}O código vale por {{ minutes }} minutos. Se você não fez esse pedido, ignore este e-mail.{% endblocktranslate %}
+{% endautoescape %}

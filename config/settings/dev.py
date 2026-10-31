@@ -1,6 +1,6 @@
 """Development settings. Loaded by default unless DJANGO_SETTINGS_MODULE=config.settings.prod."""
 
-from decouple import config
+from decouple import Csv, config
 
 from .base import *  # noqa: F401,F403
 from .base import INSTALLED_APPS, LOGGING
@@ -29,6 +29,15 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "config.storage.VersionedStaticFilesStorage"},
 }
+
+# Testes manuais: as telas de código já vêm preenchidas com o que chegou ao MailHog
+EMAIL_CODE_AUTOFILL = (
+    "mailhog" if config("EMAIL_CODE_AUTOFILL", default=DEBUG, cast=bool) else ""
+)
+EMAIL_CODE_AUTOFILL_DOMAINS = config(
+    "EMAIL_CODE_AUTOFILL_DOMAINS", default="*", cast=Csv()
+)
+MAILHOG_API_URL = config("MAILHOG_API_URL", default="http://localhost:8025")
 
 LOGGING["root"]["level"] = "DEBUG"
 LOGGING["loggers"]["apps"]["level"] = "DEBUG"

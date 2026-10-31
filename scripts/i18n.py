@@ -36,6 +36,7 @@ LANGS = {"en": "English", "es": "Spanish (Latin America)"}
 LOCALE = ROOT / "locale"
 PY_KEYWORDS = {
     "_": None,
+    "_l": None,
     "gettext": None,
     "gettext_lazy": None,
     "ngettext": (1, 2),
@@ -50,8 +51,9 @@ SKIP_DIRS = {"migrations", "tests", "__pycache__"}
 
 
 def _sources():
-    for path in sorted((ROOT / "templates").rglob("*.html")):
-        yield "django", path, "template"
+    for path in sorted((ROOT / "templates").rglob("*")):
+        if path.suffix in (".html", ".txt"):
+            yield "django", path, "template"
     for path in sorted((ROOT / "apps").rglob("*")):
         if SKIP_DIRS & set(path.parts) or path.name == "tests.py":
             continue

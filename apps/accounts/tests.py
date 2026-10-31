@@ -1,8 +1,41 @@
+import importlib
+import json
+import os
+import re
+import sys
+from unittest import mock
+
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.core import mail
+from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
+from . import codes
+
 User = get_user_model()
+
+SIGNUP_DATA = {
+    "username": "newuser",
+    "email": "new@example.com",
+    "password1": "newpass123!",
+    "password2": "newpass123!",
+}
+
+
+def _sent_code():
+    return re.search(r"^\s*(\d{6})\s*$", mail.outbox[-1].body, re.M).group(1)
+
+
+def _wrong(code):
+    return "000000" if code != "000000" else "111111"
+
+
+def _register(client, data=SIGNUP_DATA):
+    """Cadastro completo: formulário + código recebido por e-mail"""
+    client.post(reverse("accounts:register"), data)
+    return client.post(reverse("accounts:register_verify"), {"code": _sent_code()})
 
 
 class UserModelTests(TestCase):
@@ -114,15 +147,7 @@ class AuthenticationViewTests(TestCase):
 
     def test_user_registration(self):
         """Testa que um novo usuário pode se registrar"""
-        response = self.client.post(
-            reverse("accounts:register"),
-            {
-                "username": "newuser",
-                "email": "new@example.com",
-                "password1": "newpass123!",
-                "password2": "newpass123!",
-            },
-        )
+        response = _register(self.client)
         self.assertEqual(response.status_code, 302)  # Redirect after registration
 
         # Verificar que o usuário foi criado
@@ -140,15 +165,7 @@ class AuthenticationViewTests(TestCase):
 
     def test_new_users_default_to_regular_account(self):
         """Testa que usuários recém-registrados são contas regulares (não staff)"""
-        response = self.client.post(
-            reverse("accounts:register"),
-            {
-                "username": "newuser",
-                "email": "new@example.com",
-                "password1": "newpass123!",
-                "password2": "newpass123!",
-            },
-        )
+        response = _register(self.client)
         self.assertEqual(response.status_code, 302)
         new_user = User.objects.get(username="newuser")
         self.assertFalse(new_user.is_staff)
@@ -205,7 +222,7 @@ class AuthenticationViewTests(TestCase):
     def test_google_client_id_in_register_context(self):
         """Testa que o ID do cliente Google OAuth é passado para a página de registro"""
         response = self.client.get(reverse("accounts:register"))
-        self.assertIn("google_client_id", response.context)
+        self.assertIn("GOOGLE_OAUTH_CLIENT_ID", response.context)
 
     def test_authenticated_user_redirected_from_register(self):
         """Testa que usuário já autenticado é redirecionado ao acessar registro"""
@@ -269,6 +286,213 @@ class AuthenticationViewTests(TestCase):
         self.assertRedirects(response, reverse("core:landing"))
 
 
+class SignupEmailCodeTests(TestCase):
+    def setUp(self):
+        cache.clear()
+
+    def test_register_sends_code_and_defers_account(self):
+        response = self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        self.assertRedirects(response, reverse("accounts:register_verify"))
+        self.assertEqual(mail.outbox[0].to, ["new@example.com"])
+        self.assertFalse(User.objects.filter(username="newuser").exists())
+
+    def test_correct_code_creates_account_and_logs_in(self):
+        _register(self.client)
+        user = User.objects.get(username="newuser")
+        self.assertTrue(user.check_password("newpass123!"))
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_wrong_code_is_rejected(self):
+        self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        response = self.client.post(
+            reverse("accounts:register_verify"), {"code": _wrong(_sent_code())}
+        )
+        self.assertContains(response, "Código inválido ou expirado")
+        self.assertFalse(User.objects.filter(username="newuser").exists())
+
+    def test_code_dies_after_max_attempts(self):
+        self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        code = _sent_code()
+        for _ in range(codes.MAX_ATTEMPTS):
+            self.client.post(
+                reverse("accounts:register_verify"), {"code": _wrong(code)}
+            )
+        self.client.post(reverse("accounts:register_verify"), {"code": code})
+        self.assertFalse(User.objects.filter(username="newuser").exists())
+
+    def test_resend_sends_a_new_code(self):
+        self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        self.client.post(reverse("accounts:resend_code", args=[codes.SIGNUP]))
+        self.assertEqual(len(mail.outbox), 2)
+        response = self.client.post(
+            reverse("accounts:register_verify"), {"code": _sent_code()}
+        )
+        self.assertRedirects(response, reverse("core:landing"))
+
+    def test_resend_unknown_purpose_404(self):
+        response = self.client.post(reverse("accounts:resend_code", args=["nope"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_duplicate_email_rejected(self):
+        User.objects.create_user("other", "NEW@example.com", "x")
+        response = self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        self.assertContains(response, "Já existe uma conta com este e-mail")
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_verify_without_pending_signup_redirects(self):
+        response = self.client.get(reverse("accounts:register_verify"))
+        self.assertRedirects(response, reverse("accounts:register"))
+
+    def test_smtp_failure_shows_error_instead_of_500(self):
+        with mock.patch.object(codes, "send_mail", autospec=True, side_effect=OSError):
+            response = self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Não foi possível enviar o e-mail")
+
+
+class PasswordResetTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.user = User.objects.create_user("maria", "maria@example.com", "old-pass-9")
+
+    def _confirm(self, code, password="brand-new-pass-7"):
+        return self.client.post(
+            reverse("accounts:password_reset_confirm"),
+            {"code": code, "new_password1": password, "new_password2": password},
+        )
+
+    def test_reset_with_code_changes_password(self):
+        self.client.post(
+            reverse("accounts:password_reset"), {"email": "Maria@example.com"}
+        )
+        response = self._confirm(_sent_code())
+        self.assertRedirects(response, reverse("core:landing"))
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("brand-new-pass-7"))
+
+    def test_unknown_email_gets_same_response_without_mail(self):
+        response = self.client.post(
+            reverse("accounts:password_reset"), {"email": "nobody@example.com"}
+        )
+        self.assertRedirects(response, reverse("accounts:password_reset_confirm"))
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_weak_password_keeps_code_valid(self):
+        self.client.post(
+            reverse("accounts:password_reset"), {"email": "maria@example.com"}
+        )
+        code = _sent_code()
+        self._confirm(code, password="123")
+        self._confirm(code)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("brand-new-pass-7"))
+
+    def test_wrong_code_keeps_old_password(self):
+        self.client.post(
+            reverse("accounts:password_reset"), {"email": "maria@example.com"}
+        )
+        response = self._confirm(_wrong(_sent_code()))
+        self.assertContains(response, "Código inválido ou expirado")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("old-pass-9"))
+
+    def test_login_dropdown_links_to_reset(self):
+        response = self.client.get(reverse("core:landing"))
+        self.assertContains(response, reverse("accounts:password_reset"))
+
+
+class AutofillTests(TestCase):
+    """Preenchimento do código: MailHog no dev, servidor na homologação, nunca em prod"""
+
+    mailhog_reply = json.dumps(
+        {"items": [{"Content": {"Body": "Olá\r\n\r\n    654321\r\n\r\nValidade 15"}}]}
+    ).encode()
+
+    def setUp(self):
+        cache.clear()
+
+    def _mailhog(self, email="a@example.com"):
+        with mock.patch.object(codes, "urlopen", autospec=True) as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = (
+                self.mailhog_reply
+            )
+            return codes.autofill_code(codes.SIGNUP, email), urlopen
+
+    @override_settings(
+        DEBUG=True,
+        EMAIL_CODE_AUTOFILL="mailhog",
+        EMAIL_CODE_AUTOFILL_DOMAINS=["*"],
+        MAILHOG_API_URL="http://mailhog:8025",
+    )
+    def test_dev_reads_code_from_mailhog(self):
+        code, _ = self._mailhog()
+        self.assertEqual(code, "654321")
+
+    @override_settings(
+        DEBUG=False, EMAIL_CODE_AUTOFILL="mailhog", EMAIL_CODE_AUTOFILL_DOMAINS=["*"]
+    )
+    def test_mailhog_mode_needs_debug(self):
+        code, urlopen = self._mailhog()
+        self.assertEqual(code, "")
+        urlopen.assert_not_called()
+
+    @override_settings(EMAIL_CODE_AUTOFILL="", EMAIL_CODE_AUTOFILL_DOMAINS=["*"])
+    def test_off_by_default(self):
+        codes.send_code(codes.SIGNUP, "a@maricacity.test", "x")
+        self.assertEqual(codes.autofill_code(codes.SIGNUP, "a@maricacity.test"), "")
+        self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(
+        EMAIL_CODE_AUTOFILL="server", EMAIL_CODE_AUTOFILL_DOMAINS=["maricacity.test"]
+    )
+    def test_server_mode_test_domain_skips_mail_and_prefills(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {**SIGNUP_DATA, "email": "ana@MaricaCity.test"},
+        )
+        self.assertEqual(len(mail.outbox), 0)
+        page = self.client.get(response.url)
+        self.assertContains(page, "Ambiente de testes")
+        code = page.context["form"].initial["code"]
+        self.client.post(reverse("accounts:register_verify"), {"code": code})
+        self.assertTrue(
+            User.objects.filter(email__iexact="ana@maricacity.test").exists()
+        )
+
+    @override_settings(
+        EMAIL_CODE_AUTOFILL="server", EMAIL_CODE_AUTOFILL_DOMAINS=["maricacity.test"]
+    )
+    def test_server_mode_real_domain_gets_normal_flow(self):
+        response = self.client.post(reverse("accounts:register"), SIGNUP_DATA)
+        self.assertEqual(len(mail.outbox), 1)
+        page = self.client.get(response.url)
+        self.assertNotContains(page, "Ambiente de testes")
+        self.assertFalse(page.context["form"].initial.get("code"))
+
+    def _load_prod(self, **env):
+        env = {"ALLOWED_HOSTS": "example.com", **env}
+        with mock.patch.dict(os.environ, env):
+            sys.modules.pop("config.settings.prod", None)
+            try:
+                return importlib.import_module("config.settings.prod")
+            finally:
+                sys.modules.pop("config.settings.prod", None)
+
+    def test_prod_settings_never_autofill(self):
+        prod = self._load_prod()
+        self.assertEqual(prod.APP_ENV, "prod")
+        self.assertEqual(prod.EMAIL_CODE_AUTOFILL, "")
+
+    def test_test_env_autofills_only_test_domains(self):
+        prod = self._load_prod(APP_ENV="test")
+        self.assertEqual(prod.EMAIL_CODE_AUTOFILL, "server")
+        self.assertEqual(prod.EMAIL_CODE_AUTOFILL_DOMAINS, ["maricacity.test"])
+
+    def test_unknown_app_env_refuses_to_start(self):
+        with self.assertRaises(ImproperlyConfigured):
+            self._load_prod(APP_ENV="staging")
+
+
 class UserManagementViewTests(TestCase):
     """Testes para a view de gerenciamento de usuários (admin)"""
 
@@ -302,15 +526,12 @@ class UserManagementViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, reverse("core:landing"))
 
-    def test_loads_for_moderator_with_statistics(self):
-        """Testa que a página carrega para moderadores com estatísticas corretas"""
+    def test_loads_for_moderator_listing_everyone(self):
+        """Moderadores veem todos os usuários"""
         self.client.login(username="admin", password="pass123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["total_users"], 4)
-        self.assertEqual(response.context["staff_users"], 2)
-        self.assertEqual(response.context["regular_users"], 2)
-        self.assertEqual(response.context["active_users"], 3)
+        self.assertEqual(len(response.context["users"]), 4)
 
     def test_filter_by_role_staff(self):
         """Testa filtro de usuários por função (staff)"""
@@ -471,16 +692,14 @@ class UserDeleteViewTests(TestCase):
         )
 
     def test_requires_moderator_permission(self):
-        """Testa que apenas moderadores podem excluir usuários.
-        Note: the redirect target itself denies non-moderators and
-        redirects again, so we don't follow the chain here."""
+        """Testa que apenas moderadores podem excluir usuários"""
         self.client.login(username="regular", password="pass123")
         response = self.client.post(
             reverse("accounts:user_delete", kwargs={"user_id": self.admin.id})
         )
         self.assertRedirects(
             response,
-            reverse("accounts:user_management"),
+            reverse("core:landing"),
             fetch_redirect_response=False,
         )
         self.assertTrue(User.objects.filter(pk=self.admin.pk).exists())

@@ -1,58 +1,223 @@
-from django.conf import settings
+import logging
+import smtplib
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.db.models import Q
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _l
 from django.views.decorators.http import require_POST
 
-from .forms import UserRegistrationForm
+from django_ratelimit.decorators import ratelimit
+
+from apps.core.decorators import moderator_required
+from apps.core.utils import is_local_url
+
+from . import codes
+from .forms import (
+    EmailCodeForm,
+    PasswordResetConfirmForm,
+    PasswordResetRequestForm,
+    UserRegistrationForm,
+)
 from .models import User
 
+logger = logging.getLogger(__name__)
 
+# A conta só é criada depois que o código enviado ao e-mail é confirmado
+SIGNUP_SESSION = "pending_signup"
+RESET_SESSION = "password_reset_email"
+
+CODE_SUBJECTS = {
+    codes.SIGNUP: _l("Seu código de cadastro no MaricaCity"),
+    codes.PASSWORD_RESET: _l("Código para redefinir sua senha no MaricaCity"),
+}
+
+
+def _pending_email(request, purpose):
+    if purpose == codes.SIGNUP:
+        return request.session.get(SIGNUP_SESSION, {}).get("email")
+    return request.session.get(RESET_SESSION)
+
+
+def _send_code(request, purpose, email):
+    try:
+        codes.send_code(purpose, email, str(CODE_SUBJECTS[purpose]))
+    except (OSError, smtplib.SMTPException):
+        logger.exception("Falha ao enviar código de %s", purpose)
+        messages.error(
+            request,
+            _("Não foi possível enviar o e-mail agora. Tente novamente em instantes."),
+        )
+        return False
+    return True
+
+
+def _render_code_page(request, form, email, purpose, **context):
+    autofill = ""
+    if request.method == "GET":
+        autofill = codes.autofill_code(purpose, email)
+        form.initial["code"] = autofill
+    context.update(
+        {
+            "form": form,
+            "email": email,
+            "resend_purpose": purpose,
+            "autofilled": bool(autofill),
+        }
+    )
+    return render(request, "accounts/email_code.html", context)
+
+
+@ratelimit(key="ip", rate="10/h", method="POST", block=True)
 def register_view(request):
     if request.user.is_authenticated:
         return redirect("core:landing")
 
-    if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+    form = UserRegistrationForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save(commit=False)
+        request.session[SIGNUP_SESSION] = {
+            "username": user.username,
+            "email": user.email,
+            "password": user.password,  # já com hash
+        }
+        if _send_code(request, codes.SIGNUP, user.email):
+            return redirect("accounts:register_verify")
+    return render(request, "accounts/register.html", {"form": form})
+
+
+def register_verify_view(request):
+    pending = request.session.get(SIGNUP_SESSION)
+    if not pending:
+        return redirect("accounts:register")
+
+    form = EmailCodeForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        if codes.check_code(codes.SIGNUP, pending["email"], form.cleaned_data["code"]):
+            del request.session[SIGNUP_SESSION]
+            taken = User.objects.filter(
+                Q(username__iexact=pending["username"])
+                | Q(email__iexact=pending["email"])
+            ).exists()
+            if taken:
+                messages.error(
+                    request,
+                    _(
+                        "Esse nome de usuário ou e-mail acabou de ser usado. Tente outro."
+                    ),
+                )
+                return redirect("accounts:register")
+            user = User.objects.create(**pending)
             login(request, user)
             messages.success(
                 request, _("Cadastro realizado com sucesso! Bem-vindo ao MaricaCity.")
             )
             return redirect("core:landing")
-    else:
-        form = UserRegistrationForm()
+        form.add_error("code", _("Código inválido ou expirado."))
 
-    context = {
-        "form": form,
-        "google_client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
-    }
-    return render(request, "accounts/register.html", context)
+    return _render_code_page(
+        request,
+        form,
+        pending["email"],
+        codes.SIGNUP,
+        title=_("Confirme seu e-mail"),
+        submit_label=_("Confirmar cadastro"),
+    )
+
+
+def _reset_user(email):
+    # Contas antigas podem repetir e-mail; nesse caso não há como saber qual redefinir
+    users = list(User.objects.filter(email__iexact=email, is_active=True)[:2])
+    return users[0] if len(users) == 1 else None
+
+
+@ratelimit(key="ip", rate="5/h", method="POST", block=True)
+def password_reset_view(request):
+    form = PasswordResetRequestForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        email = form.cleaned_data["email"]
+        # Mesma resposta exista ou não a conta, para não revelar quem está cadastrado
+        if _reset_user(email) is None or _send_code(
+            request, codes.PASSWORD_RESET, email
+        ):
+            request.session[RESET_SESSION] = email
+            return redirect("accounts:password_reset_confirm")
+    return render(
+        request,
+        "accounts/email_code.html",
+        {
+            "form": form,
+            "title": _("Esqueci minha senha"),
+            "subtitle": _("Informe o e-mail da sua conta para receber um código."),
+            "submit_label": _("Enviar código"),
+        },
+    )
+
+
+def password_reset_confirm_view(request):
+    email = request.session.get(RESET_SESSION)
+    if not email:
+        return redirect("accounts:password_reset")
+
+    user = _reset_user(email)
+    form = PasswordResetConfirmForm(user, request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        code = form.cleaned_data["code"]
+        if user and codes.check_code(codes.PASSWORD_RESET, email, code):
+            user.set_password(form.cleaned_data["new_password1"])
+            user.save()
+            del request.session[RESET_SESSION]
+            messages.success(
+                request, _("Senha alterada! Entre com a nova senha no menu Entrar.")
+            )
+            return redirect("core:landing")
+        form.add_error("code", _("Código inválido ou expirado."))
+
+    return _render_code_page(
+        request,
+        form,
+        email,
+        codes.PASSWORD_RESET,
+        title=_("Redefinir senha"),
+        submit_label=_("Salvar nova senha"),
+    )
+
+
+@require_POST
+@ratelimit(key="ip", rate="5/h", method="POST", block=True)
+def resend_code_view(request, purpose):
+    if purpose not in CODE_SUBJECTS:
+        raise Http404
+    email = _pending_email(request, purpose)
+    if not email:
+        return redirect("core:landing")
+    target = {
+        codes.SIGNUP: "accounts:register_verify",
+        codes.PASSWORD_RESET: "accounts:password_reset_confirm",
+    }[purpose]
+    if purpose == codes.SIGNUP or _reset_user(email):
+        if not _send_code(request, purpose, email):
+            return redirect(target)
+    messages.success(request, _("Enviamos um novo código."))
+    return redirect(target)
+
+
+def _json_error(message, status):
+    return JsonResponse({"success": False, "error": message}, status=status)
 
 
 def login_view(request):
-    """
-    Endpoint AJAX de login para autenticação baseada em modal
-    Retorna resposta JSON com mensagens de sucesso/erro
-    """
+    """Login do menu "Entrar" (AJAX): responde em JSON"""
     if request.method == "POST":
         username = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
 
         if not username or not password:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": _("Por favor, preencha todos os campos."),
-                },
-                status=400,
-            )
+            return _json_error(_("Por favor, preencha todos os campos."), 400)
 
         user = authenticate(request, username=username, password=password)
 
@@ -70,28 +235,13 @@ def login_view(request):
         # desativação a quem acertou a senha.
         inactive = User.objects.filter(username=username, is_active=False).first()
         if inactive and inactive.check_password(password):
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": _(
-                        "Sua conta foi desativada. Entre em contato com o administrador."
-                    ),
-                },
-                status=403,
+            return _json_error(
+                _("Sua conta foi desativada. Entre em contato com o administrador."),
+                403,
             )
+        return _json_error(_("Nome de usuário ou senha incorretos."), 401)
 
-        return JsonResponse(
-            {
-                "success": False,
-                "error": _("Nome de usuário ou senha incorretos."),
-            },
-            status=401,
-        )
-
-    # Requisição GET - não permitida para endpoint AJAX
-    return JsonResponse(
-        {"success": False, "error": _("Método não permitido")}, status=405
-    )
+    return _json_error(_("Método não permitido"), 405)
 
 
 @login_required
@@ -102,47 +252,28 @@ def logout_view(request):
 
     # Volta para a página de origem, ou para a inicial
     next_url = request.POST.get("next") or request.META.get("HTTP_REFERER")
-    if next_url and url_has_allowed_host_and_scheme(
-        next_url,
-        allowed_hosts={request.get_host()},
-        require_https=request.is_secure(),
-    ):
-        return redirect(next_url)
-    return redirect("core:landing")
+    return redirect(next_url if is_local_url(request, next_url) else "core:landing")
 
 
-# Views de Gerenciamento de Usuários Admin
-@login_required
+# Gerenciamento de usuários (painel)
+
+ROLE_FILTERS = {
+    "admin": Q(is_superuser=True),
+    "staff": Q(is_staff=True, is_superuser=False),
+    "regular": Q(is_staff=False, is_superuser=False),
+}
+STATUS_FILTERS = {"active": Q(is_active=True), "inactive": Q(is_active=False)}
+
+
+@moderator_required
 def user_management_view(request):
-    """View de administração para gerenciar todos os usuários"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para acessar esta página."))
-        return redirect("core:landing")
-
-    # Obter parâmetros de filtro
-    role_filter = request.GET.get("role", "")  # Alterado de user_type para role
+    role_filter = request.GET.get("role", "")
     status_filter = request.GET.get("status", "")
     search_query = request.GET.get("q", "")
 
-    # Queryset base com estatísticas
-    users = User.objects.annotate(
-        places_count=Count("places", distinct=True),
-        reviews_count=Count("place_reviews_written", distinct=True),
-    ).select_related()
-
-    # Aplicar filtros
-    if role_filter == "admin":
-        users = users.filter(is_superuser=True)
-    elif role_filter == "staff":
-        users = users.filter(is_staff=True, is_superuser=False)
-    elif role_filter == "regular":
-        users = users.filter(is_staff=False, is_superuser=False)
-
-    if status_filter == "active":
-        users = users.filter(is_active=True)
-    elif status_filter == "inactive":
-        users = users.filter(is_active=False)
-
+    users = User.objects.filter(
+        ROLE_FILTERS.get(role_filter, Q()), STATUS_FILTERS.get(status_filter, Q())
+    )
     if search_query:
         users = users.filter(
             Q(username__icontains=search_query)
@@ -151,19 +282,9 @@ def user_management_view(request):
             | Q(last_name__icontains=search_query)
         )
 
-    # Obter estatísticas
-    total_users = User.objects.count()
-    active_users = User.objects.filter(is_active=True).count()
-    staff_users = User.objects.filter(is_staff=True).count()
-    regular_users = User.objects.filter(is_staff=False).count()
-
     context = {
         # Administrador primeiro, depois moderadores, depois os demais
         "users": users.order_by("-is_superuser", "-is_staff", "-created_at"),
-        "total_users": total_users,
-        "active_users": active_users,
-        "staff_users": staff_users,
-        "regular_users": regular_users,
         "role_filter": role_filter,
         "status_filter": status_filter,
         "search_query": search_query,
@@ -171,48 +292,39 @@ def user_management_view(request):
     return render(request, "accounts/user_management.html", context)
 
 
-@login_required
-def user_update_type_view(request, user_id):
-    """Alterna o status de staff do usuário"""
+def _managed_user(request, user_id, self_error):
+    """(usuário, None) se o moderador pode alterá-lo; senão (None, resposta de erro).
+
+    O administrador é protegido e ninguém altera a própria conta por aqui.
+    """
     if not request.user.can_moderate:
-        return JsonResponse({"success": False, "error": _("Sem permissão")}, status=403)
-
+        return None, _json_error(_("Sem permissão"), 403)
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "error": _("Método não permitido")}, status=405
-        )
-
+        return None, _json_error(_("Método não permitido"), 405)
     user = get_object_or_404(User, id=user_id)
     if user.is_superuser:
-        return JsonResponse(
-            {"success": False, "error": _("O administrador não pode ser alterado.")},
-            status=403,
-        )
-
-    # Prevenir alteração do próprio status de staff
+        return None, _json_error(_("O administrador não pode ser alterado."), 403)
     if user == request.user:
-        return JsonResponse(
-            {
-                "success": False,
-                "error": _("Você não pode alterar seu próprio status"),
-            },
-            status=400,
-        )
+        return None, _json_error(self_error, 400)
+    return user, None
 
-    # Alternar status de staff
-    user.is_staff = not user.is_staff
-    user.save()
 
-    role_display = _("Moderador") if user.is_staff else _("Regular")
-    messages.success(
-        request,
-        _("Status de %(username)s alterado para %(role_display)s.")
-        % {"username": user.username, "role_display": role_display},
+@login_required
+def user_update_type_view(request, user_id):
+    """Alterna entre moderador e usuário comum"""
+    user, error = _managed_user(
+        request, user_id, _("Você não pode alterar seu próprio status")
     )
+    if error:
+        return error
+    user.is_staff = not user.is_staff
+    user.save(update_fields=["is_staff"])
+    role_display = _("Moderador") if user.is_staff else _("Regular")
     return JsonResponse(
         {
             "success": True,
-            "message": _("Status de usuário atualizado"),
+            "message": _("Status de %(username)s alterado para %(role_display)s.")
+            % {"username": user.username, "role_display": role_display},
             "role_display": role_display,
             "is_staff": user.is_staff,
         }
@@ -221,74 +333,46 @@ def user_update_type_view(request, user_id):
 
 @login_required
 def user_toggle_status_view(request, user_id):
-    """Alterna o status ativo do usuário"""
-    if not request.user.can_moderate:
-        return JsonResponse({"success": False, "error": _("Sem permissão")}, status=403)
-
-    if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "error": _("Método não permitido")}, status=405
-        )
-
-    user = get_object_or_404(User, id=user_id)
-    if user.is_superuser:
-        return JsonResponse(
-            {"success": False, "error": _("O administrador não pode ser alterado.")},
-            status=403,
-        )
-
-    # Prevenir desativação da própria conta
-    if user == request.user:
-        return JsonResponse(
-            {"success": False, "error": _("Você não pode desativar sua própria conta")},
-            status=400,
-        )
-
-    user.is_active = not user.is_active
-    user.save()
-
-    status_text = "ativado" if user.is_active else "desativado"
-    messages.success(
-        request,
-        _("Usuário %(username)s %(status_text)s com sucesso.")
-        % {"username": user.username, "status_text": status_text},
+    """Ativa ou desativa a conta"""
+    user, error = _managed_user(
+        request, user_id, _("Você não pode desativar sua própria conta")
     )
-
+    if error:
+        return error
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active"])
+    message = (
+        _("Usuário %(username)s ativado com sucesso.")
+        if user.is_active
+        else _("Usuário %(username)s desativado com sucesso.")
+    )
     return JsonResponse(
         {
             "success": True,
             "is_active": user.is_active,
-            "message": _("Usuário %(status_text)s") % {"status_text": status_text},
+            "message": message % {"username": user.username},
         }
     )
 
 
-@login_required
+@moderator_required
 def user_delete_view(request, user_id):
-    """Excluir conta de usuário"""
-    if not request.user.can_moderate:
-        messages.error(request, _("Você não tem permissão para excluir usuários."))
-        return redirect("accounts:user_management")
-
     user = get_object_or_404(User, id=user_id)
-
     if user.is_superuser:
         messages.error(request, _("O administrador não pode ser excluído."))
         return redirect("accounts:user_management")
-
-    # Prevenir exclusão da própria conta
     if user == request.user:
         messages.error(request, _("Você não pode excluir sua própria conta."))
         return redirect("accounts:user_management")
 
     if request.method == "POST":
-        username = user.username
         user.delete()
         messages.success(
             request,
-            _("Usuário %(username)s excluído com sucesso.") % {"username": username},
+            _("Usuário %(username)s excluído com sucesso.")
+            % {"username": user.username},
         )
         return redirect("accounts:user_management")
-
-    context = {"user_to_delete": user}
-    return render(request, "accounts/user_delete_confirm.html", context)
+    return render(
+        request, "accounts/user_delete_confirm.html", {"user_to_delete": user}
+    )

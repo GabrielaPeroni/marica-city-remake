@@ -1,11 +1,26 @@
 """Production settings. Activate with DJANGO_SETTINGS_MODULE=config.settings.prod."""
 
-from decouple import config
+from django.core.exceptions import ImproperlyConfigured
+
+from decouple import Csv, config
 
 from .base import *  # noqa: F401,F403
 from .base import LOGGING
 
 DEBUG = config("DEBUG", default=False, cast=bool)
+
+# Mesmas settings para os dois ambientes publicados; "test" é a homologação
+APP_ENV = config("APP_ENV", default="prod")
+if APP_ENV not in ("prod", "test"):
+    raise ImproperlyConfigured(f"APP_ENV must be 'prod' or 'test', not {APP_ENV!r}")
+
+if APP_ENV == "test":
+    # Contas com e-mail desses domínios não recebem e-mail: o código é guardado no
+    # servidor e preenchido na tela. Endereços reais seguem o fluxo normal.
+    EMAIL_CODE_AUTOFILL = "server"
+    EMAIL_CODE_AUTOFILL_DOMAINS = config(
+        "EMAIL_CODE_AUTOFILL_DOMAINS", default="maricacity.test", cast=Csv()
+    )
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
 

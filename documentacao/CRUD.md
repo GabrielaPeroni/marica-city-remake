@@ -73,7 +73,9 @@ O projeto implementa operações CRUD seguindo o padrão MVT (Model-View-Templat
 
 #### 5. **Users (Usuários)** — Gerenciamento Admin
 
-- `register_view`: Registro público com suporte a **Google OAuth**.
+- `register_view`: Registro público com suporte a **Google OAuth**; envia um código de 6 dígitos por e-mail e a conta só é criada em `register_verify_view`.
+- `password_reset_view` / `password_reset_confirm_view`: "Esqueci minha senha" com código por e-mail (mesma resposta exista ou não a conta).
+- `resend_code_view`: Reenvia o código de cadastro ou de senha (POST, limitado por IP).
 - `user_management_view`: Lista usuários (**admin only**).
 - `user_update_type_view`: Atualiza permissões (**admin**).
 - `user_toggle_status_view`: Ativa ou desativa usuários (**admin**).

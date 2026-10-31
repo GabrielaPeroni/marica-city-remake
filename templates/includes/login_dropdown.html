@@ -15,6 +15,7 @@
       <div class="mb-2">
         <label for="dropdownPassword{{ dropdown_id|default:'' }}" class="form-label fw-semibold small mb-1">{% translate "Senha" %}</label>
         <input type="password" class="form-control" id="dropdownPassword{{ dropdown_id|default:'' }}" name="password" autocomplete="current-password" required>
+        <a href="{% url 'accounts:password_reset' %}" class="d-inline-block small text-decoration-none mt-1">{% translate "Esqueci minha senha" %}</a>
       </div>
       <p class="text-muted small mb-3">
         {% translate "Não tem uma conta?" %}

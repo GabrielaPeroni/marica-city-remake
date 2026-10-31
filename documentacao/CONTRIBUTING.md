@@ -1,8 +1,7 @@
 # Contribuindo com o MaricaCity
 
 Guia prático para configurar o ambiente, rodar testes/lint e abrir PRs neste
-repositório. Assume familiaridade básica com Django; para a arquitetura
-completa veja [STRUCTURE.md](./STRUCTURE.md) e [CRUD.md](./CRUD.md).
+repositório. Para a arquitetura completa veja [STRUCTURE.md](./STRUCTURE.md) e [CRUD.md](./CRUD.md).
 
 ## Setup do ambiente
 

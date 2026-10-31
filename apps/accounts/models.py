@@ -4,24 +4,6 @@ from django.utils.translation import gettext_lazy as _l
 
 
 class User(AbstractUser):
-    @property
-    def can_create_places(self):
-        """Verifica se o usuário pode criar lugares - todos os usuários autenticados podem criar"""
-        return self.is_authenticated
-
-    @property
-    def can_moderate(self):
-        """Verifica se o usuário pode moderar/aprovar lugares - apenas staff/superusuário"""
-        return self.is_staff or self.is_superuser
-
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = "Usuário"
-        verbose_name_plural = "Usuários"
-
-    def __str__(self):
-        return self.username
-
     bio = models.TextField(blank=True, null=True, help_text=_l("Biografia do usuário"))
 
     # Informações de contato
@@ -42,3 +24,21 @@ class User(AbstractUser):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
+
+    def __str__(self):
+        return self.username
+
+    @property
+    def can_create_places(self):
+        """Todo usuário logado pode cadastrar lugares (ficam pendentes até a aprovação)"""
+        return self.is_authenticated
+
+    @property
+    def can_moderate(self):
+        """Equipe (staff) e superusuário moderam lugares, eventos e usuários"""
+        return self.is_staff or self.is_superuser
