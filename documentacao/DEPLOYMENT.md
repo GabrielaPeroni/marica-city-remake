@@ -88,26 +88,44 @@ Bearer token).
 
 One-time setup:
 
-1. **Vercel**: _Add New → Project_, import this repository (framework: Django).
-2. **Database**: in the project, _Storage → Neon (Postgres)_. It adds
-   `DATABASE_URL`.
+1. **Vercel**: _Add New → Project_, import this repository. In _Configure
+   Project_ (_Build and Output Settings_), keep the defaults: the build step and
+   the entry point come from `pyproject.toml`.
+
+   | Setting          | Value                                                                          |
+   | ---------------- | ------------------------------------------------------------------------------ |
+   | Framework Preset | Django (detected from `manage.py`; pick it if it isn't)                        |
+   | Root Directory   | `./` (repository root, where `manage.py` is)                                   |
+   | Build Command    | default (runs `scripts/vercel_build.py`, see `pyproject.toml`)                 |
+   | Output Directory | default/empty (Django is a function; static files are collected automatically) |
+   | Install Command  | default (installs the dependencies from `pyproject.toml`)                      |
+
+2. **Database**: in the project, _Storage → Neon (Postgres)_, connected to
+   Production and Preview. It adds `DATABASE_URL` (with Neon branching, each
+   preview gets its own database copy).
 3. **Photos** (Cloudflare R2, required: Vercel's filesystem is read-only):
    create a bucket and an API token with read/write on it; enable public access
    (r2.dev or a custom domain).
-4. **Environment variables** (Project → Settings → Environment Variables):
+4. **Environment variables** (Project → Settings → Environment Variables). Local
+   development keeps using `.env`, so nothing goes in _Development_. _Preview_
+   covers the per-branch URLs; give it its own `SECRET_KEY`.
 
-   | Variable                                                                           | Value                                                         |
-   | ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-   | `DJANGO_SETTINGS_MODULE`                                                           | `config.settings.prod`                                        |
-   | `SECRET_KEY`                                                                       | long random string                                            |
-   | `ALLOWED_HOSTS`                                                                    | `.vercel.app` (plus your domain, comma-separated)             |
-   | `GOOGLE_OAUTH_CLIENT_ID`                                                           | OAuth client id, or any placeholder to disable Google sign-in |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                       | R2 token                                                      |
-   | `AWS_STORAGE_BUCKET_NAME`                                                          | bucket name                                                   |
-   | `AWS_S3_ENDPOINT_URL`                                                              | `https://<account-id>.r2.cloudflarestorage.com`               |
-   | `AWS_S3_CUSTOM_DOMAIN`                                                             | public bucket host, e.g. `pub-….r2.dev`                       |
-   | `CRON_SECRET`                                                                      | long random string                                            |
-   | `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD` | the admin account created on the first build                  |
+   | Variable                                                                           | Environments        | Value                                                         |
+   | ---------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------- |
+   | `DJANGO_SETTINGS_MODULE`                                                           | Production, Preview | `config.settings.prod`                                        |
+   | `SECRET_KEY`                                                                       | Production, Preview | long random string, different per environment                 |
+   | `ALLOWED_HOSTS`                                                                    | Production, Preview | `.vercel.app` (plus your domain, comma-separated)             |
+   | `GOOGLE_OAUTH_CLIENT_ID`                                                           | Production, Preview | OAuth client id, or any placeholder to disable Google sign-in |
+   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`                                       | Production, Preview | R2 token                                                      |
+   | `AWS_STORAGE_BUCKET_NAME`                                                          | Production, Preview | bucket name                                                   |
+   | `AWS_S3_ENDPOINT_URL`                                                              | Production, Preview | `https://<account-id>.r2.cloudflarestorage.com`               |
+   | `AWS_S3_CUSTOM_DOMAIN`                                                             | Production, Preview | public bucket host, e.g. `pub-….r2.dev`                       |
+   | `CRON_SECRET`                                                                      | Production          | long random string (crons only run on production)             |
+   | `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD` | Production, Preview | the admin account created on the first build of each database |
+   | `DATABASE_URL`                                                                     | (set by Neon)       | don't add it by hand                                          |
+
+   Generate random strings with
+   `python -c "import secrets; print(secrets.token_urlsafe(50))"`.
 
 5. Deploy. Every push to `main` then deploys production, and every other branch
    gets a preview URL.
