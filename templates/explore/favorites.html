@@ -1,204 +1,79 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n thumbs %}
+{% load i18n icons %}
 
 {% block title %}{% translate "Meus favoritos" %} - MaricaCity{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
-{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<header class="page-header">
-  <div class="container">
-    <div class="page-header-row">
-      <div>
-        <h1>{% translate "Meus favoritos" %}</h1>
-        <p class="page-header-subtitle">{% blocktranslate trimmed count counter=favorites_count %}{{ counter }} lugar salvo.{% plural %}{{ counter }} lugares salvos.{% endblocktranslate %}</p>
-      </div>
-      <a href="{% url 'explore:explore' %}" class="btn btn-light"><i class="bi bi-compass me-1" aria-hidden="true"></i>{% translate "Explorar mais lugares" %}</a>
-    </div>
-  </div>
-</header>
+<c-page-header title="{% translate 'Meus favoritos' %}">
+  <c-slot name="actions">
+    <c-button href="{% url 'explore:explore' %}" variant="outline">{% icon "compass" %}{% translate "Explorar mais lugares" %}</c-button>
+  </c-slot>
+  <p class="mt-3 text-lg text-muted-foreground" id="favoritesCount">{% blocktranslate trimmed count counter=favorites_count %}{{ counter }} lugar salvo.{% plural %}{{ counter }} lugares salvos.{% endblocktranslate %}</p>
+</c-page-header>
 
-<div class="container py-5">
+<section class="container-page py-8 md:py-12" id="favoritesContent" aria-label="{% translate 'Lugares salvos' %}">
   {% if favorites %}
-  <div class="row g-4">
-    {% for favorite in favorites %}
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card border-2 h-100 card-hover">
-        {% if favorite.place.primary_image %}
-        <img src="{{ favorite.place.primary_image.image|thumb:960 }}" srcset="{{ favorite.place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="{{ favorite.place.name }}" class="img-ph card-img-top" style="height: 240px; object-fit: cover;" loading="{% if forloop.counter <= 6 %}eager{% else %}lazy{% endif %}" style="{{ favorite.place.primary_image.image|placeholder }}">
-        {% else %}
-        <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 240px;">
-          <span class="display-4 fw-bold">{{ favorite.place.name|first }}</span>
-        </div>
-        {% endif %}
-        <div class="card-body d-flex flex-column">
-          <h3 class="h5 card-title fw-bold text-uppercase">{{ favorite.place.name }}</h3>
-          <p class="card-text text-muted">{{ favorite.place|tr:"description"|truncatewords:25 }}</p>
-          {% if favorite.place.categories.exists %}
-          <div class="d-flex flex-wrap gap-2 mb-3">
-            {% for cat in favorite.place.categories.all|slice:":3" %}
-            <span class="badge rounded-pill bg-light text-dark">
-              {% if cat.icon %}{{ cat.icon }}{% endif %} {{ cat|tr:"name" }}
-            </span>
-            {% endfor %}
-          </div>
-          {% endif %}
-          <p class="text-muted small mb-3">
-            {% blocktranslate with date=favorite.created_at|date:"DATE_FORMAT" %}Salvo em {{ date }}{% endblocktranslate %}
-          </p>
-          <div class="d-flex gap-2 mt-auto">
-            <a href="{% url 'explore:place_detail' favorite.place.pk %}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">{% translate "Ver detalhes" %} →</a>
-            <button class="btn btn-outline-danger btn-sm favorite-btn favorited"
-                    data-place-id="{{ favorite.place.pk }}"
-                    data-favorited="true"
-                    data-remove-mode="true"
-                    title="{% translate 'Remover dos favoritos' %}">
-              <i class="bi bi-heart-fill"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {% for place in favorites %}
+    <c-place-card :place="place" eager="{% if forloop.counter <= 4 %}1{% endif %}" remove="1" level="2" sizes="(min-width: 1280px) 300px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
     {% endfor %}
   </div>
   {% else %}
-  <!-- Vazio pra quando nao tiver favoritos -->
-  <div class="text-center py-5" id="emptyFavoritesState">
-    <div class="display-1 mb-4">
-      <i class="bi bi-heart"></i>
-    </div>
+  <div id="emptyFavoritesState">
     {% if not is_authenticated %}
-    <p class="lead text-muted mb-2">{% translate "Seus favoritos são salvos no seu navegador." %}</p>
-    <p class="text-muted mb-4">{% translate "Favoritos são armazenados localmente e disponíveis apenas neste dispositivo." %}</p>
+    <c-empty-state icon="heart" title="{% translate 'Seus favoritos são salvos no seu navegador.' %}" description="{% translate 'Favoritos são armazenados localmente e disponíveis apenas neste dispositivo.' %}">
+      <c-button href="{% url 'explore:explore' %}">{% icon "compass" %}{% translate "Explorar lugares" %}</c-button>
+    </c-empty-state>
     {% else %}
-    <p class="lead text-muted mb-2">{% translate "Você ainda não tem favoritos." %}</p>
-    <p class="text-muted mb-4">{% translate "Explore lugares incríveis e salve seus favoritos!" %}</p>
+    <c-empty-state icon="heart" title="{% translate 'Você ainda não tem favoritos.' %}" description="{% translate 'Explore lugares incríveis e salve seus favoritos!' %}">
+      <c-button href="{% url 'explore:explore' %}">{% icon "compass" %}{% translate "Explorar lugares" %}</c-button>
+    </c-empty-state>
     {% endif %}
-    <a href="{% url 'explore:explore' %}" class="btn btn-dark btn-lg text-uppercase">
-      <i class="bi bi-compass me-2"></i>{% translate "Explorar lugares" %}
-    </a>
   </div>
   {% endif %}
-</div>
-{% endblock %}
+</section>
 
-{% block extra_js %}
-<!-- Favorites UI carrega de base.html por favorites-ui.js -->
-{% if not is_authenticated %}
+{% if not is_authenticated and not favorites %}
+<template id="favoritesSkeleton">
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true">
+    <c-skeleton variant="card" /><c-skeleton variant="card" /><c-skeleton variant="card" />
+  </div>
+</template>
 <script>
-  const favoritesText = {
-    details: '{% filter escapejs %}{% translate "Ver detalhes" %}{% endfilter %}',
-    remove: '{% filter escapejs %}{% translate "Remover dos favoritos" %}{% endfilter %}',
-  };
-  document.addEventListener('DOMContentLoaded', async function() {
-    const favoritePlaceIds = favoritesService.getFavorites();
-    const emptyState = document.getElementById('emptyFavoritesState');
-    const container = emptyState.parentElement;
+  // Sem login os favoritos estão no localStorage: pede os cards renderizados com ?ids=
+  (function () {
+    let ids = [];
+    try { ids = JSON.parse(localStorage.getItem('marica_favorites') || '[]'); } catch (e) {}
+    if (!ids.length) return;
+    const content = document.getElementById('favoritesContent');
+    const empty = document.getElementById('emptyFavoritesState');
+    empty.hidden = true;
+    content.appendChild(document.getElementById('favoritesSkeleton').content.cloneNode(true));
 
-    if (favoritePlaceIds.length === 0) {
-      emptyState.classList.remove('d-none');
-    } else {
+    document.addEventListener('DOMContentLoaded', async function () {
       try {
-        const response = await fetch(`/explore/api/places-by-ids/?ids=${favoritePlaceIds.join(',')}`);
-        const data = await response.json();
-
-        if (data.places && data.places.length > 0) {
-          emptyState.remove();
-
-          const countElement = container.querySelector('.text-white-50');
-          if (countElement) {
-            const count = data.places.length;
-            countElement.textContent = `${count} lugar${count !== 1 ? 'es' : ''} salvo${count !== 1 ? 's' : ''}`;
-          }
-
-          const gridHtml = `
-            <div class="row g-4">
-              ${data.places.map(place => `
-                <div class="col-12 col-md-6 col-lg-4">
-                  <div class="card border-2 h-100 card-hover">
-                    ${place.image_url
-                      ? `<img src="${place.image_url}" alt="${place.name}" class="card-img-top" style="height: 240px; object-fit: cover;" loading="lazy">`
-                      : `<div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 240px;">
-                           <span class="display-4 fw-bold">${place.name.charAt(0)}</span>
-                         </div>`
-                    }
-                    <div class="card-body d-flex flex-column">
-                      <h3 class="h5 card-title fw-bold text-uppercase">${place.name}</h3>
-                      <p class="card-text text-muted">${place.description.substring(0, 100)}${place.description.length > 100 ? '...' : ''}</p>
-                      ${place.categories.length > 0
-                        ? `<div class="d-flex flex-wrap gap-2 mb-3">
-                             ${place.categories.slice(0, 3).map(cat => `
-                               <span class="badge rounded-pill bg-light text-dark">
-                                 ${cat.icon} ${cat.name}
-                               </span>
-                             `).join('')}
-                           </div>`
-                        : ''
-                      }
-                      <div class="d-flex gap-2 mt-auto">
-                        <a href="${place.url}" class="btn btn-dark btn-sm text-uppercase flex-grow-1">${favoritesText.details} →</a>
-                        <button class="btn btn-outline-danger btn-sm favorite-btn favorited"
-                                data-place-id="${place.id}"
-                                data-favorited="true"
-                                data-remove-mode="true"
-                                title="${favoritesText.remove}">
-                          <i class="bi bi-heart-fill"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          `;
-
-          container.innerHTML = gridHtml;
-
-          const favoriteButtons = container.querySelectorAll('.favorite-btn');
-          favoriteButtons.forEach(button => {
-            button.addEventListener('click', async function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-
-              const placeId = button.dataset.placeId;
-              favoritesService.removeFavorite(placeId);
-
-              const card = button.closest('.col-12');
-              if (card) {
-                card.style.transition = 'all 0.3s ease';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.9)';
-
-                setTimeout(() => {
-                  card.remove();
-
-                  const remainingCards = container.querySelectorAll('.favorite-btn').length;
-                  if (remainingCards === 0) {
-                    location.reload();
-                  } else {
-                    const countElement = document.querySelector('.text-white-50');
-                    if (countElement) {
-                      const newCount = remainingCards;
-                      countElement.textContent = `${newCount} lugar${newCount !== 1 ? 'es' : ''} salvo${newCount !== 1 ? 's' : ''}`;
-                    }
-                  }
-                }, 300);
-              }
-            });
-          });
-        } else {
-          emptyState.classList.remove('d-none');
+        const response = await fetch(`?ids=${ids.join(',')}`);
+        const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const grid = page.querySelector('#favoritesContent [data-favorite-item]')?.parentElement;
+        content.querySelector('[aria-busy]').remove();
+        if (!grid) {
+          empty.hidden = false;
+          return;
         }
+        content.appendChild(document.adoptNode(grid));
+        document.getElementById('favoritesCount').replaceWith(document.adoptNode(page.getElementById('favoritesCount')));
+        grid.querySelectorAll('.favorite-btn[data-remove-mode]').forEach(function (button) {
+          button.addEventListener('click', handleRemoveFavorite);
+        });
       } catch (error) {
         console.error('Error loading favorites:', error);
-        emptyState.classList.remove('d-none');
+        content.querySelector('[aria-busy]')?.remove();
+        empty.hidden = false;
       }
-    }
-  });
+    });
+  })();
 </script>
 {% endif %}
 {% endblock %}

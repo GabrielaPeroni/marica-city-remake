@@ -1,115 +1,101 @@
 {% extends 'base.html' %}
-{% load i18n static event_dates content_i18n thumbs %}
+{% load i18n icons event_dates content_i18n thumbs %}
 
 {% block title %}{{ news_item|tr:"title" }} - MaricaCity{% endblock %}
 {% block meta_description %}{{ news_item|tr:"excerpt"|truncatechars:155 }}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
 <meta name="view-beacon" content="{% url 'news:news_view_beacon' news_item.slug %}">
 {% endblock %}
 
 {% block content %}
+{% if news_item.featured_image %}
+{% include 'includes/navbar.html' with transparent=True %}
+<header class="relative isolate overflow-hidden bg-primary text-white">
+  <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="100vw" fetchpriority="high" class="img-ph absolute inset-0 -z-10 size-full object-cover" alt="{{ news_item.image_caption|default:news_item.title }}" style="{{ news_item.featured_image|placeholder }}">
+  <div class="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/40 to-black/45" aria-hidden="true"></div>
+  <div class="container-page flex min-h-[24rem] flex-col justify-end pt-24 pb-10 md:min-h-[32rem] md:pb-14">
+{% else %}
 {% include 'includes/navbar.html' %}
-
-<header class="page-header">
-  <div class="container">
-    <nav aria-label="{% translate 'Trilha de navegação' %}">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'news:news_list' %}">{% translate "Agenda" %}</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ news_item|tr:"title"|truncatechars:50 }}</li>
+<header class="border-b bg-card">
+  <div class="container-page py-8 md:py-12">
+{% endif %}
+    <nav class="mb-4" aria-label="{% translate 'Trilha de navegação' %}">
+      <ol class="flex flex-wrap items-center gap-1.5 text-sm {% if news_item.featured_image %}text-white/80 [&_a:hover]:text-white{% else %}text-muted-foreground [&_a:hover]:text-foreground{% endif %} [&>li:not(:last-child)]:after:ms-1.5 [&>li:not(:last-child)]:after:content-['/']">
+        <li><a href="{% url 'news:news_list' %}">{% translate "Agenda" %}</a></li>
+        <li aria-current="page" class="line-clamp-1">{{ news_item|tr:"title"|truncatechars:50 }}</li>
       </ol>
     </nav>
-    <h1>{{ news_item|tr:"title" }}</h1>
-    <p class="page-header-subtitle">
-      <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>{{ news_item|event_when }}
-      {% if news_item.event_location %}<span class="mx-1" aria-hidden="true">·</span><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>{{ news_item.event_location }}{% endif %}
+    <div class="mb-4 flex flex-wrap gap-2">
+      <c-badge variant="{% if news_item.featured_image %}overlay{% else %}secondary{% endif %}">{% icon "calendar" %}{% translate "Evento" %}</c-badge>
+      {% if news_item.is_ongoing_event %}
+      <c-badge variant="brand">{% translate "Acontecendo agora" %}</c-badge>
+      {% elif news_item.is_past_event %}
+      <c-badge variant="{% if news_item.featured_image %}overlay{% else %}secondary{% endif %}">{% translate "Encerrado" %}</c-badge>
+      {% endif %}
+    </div>
+    <h1 class="max-w-4xl font-display text-display-lg font-semibold">{{ news_item|tr:"title" }}</h1>
+    <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 {% if news_item.featured_image %}text-white/90{% else %}text-muted-foreground{% endif %}">
+      <span class="inline-flex items-center gap-1.5">{% icon "calendar" class="size-4" %}{{ news_item|event_when }}</span>
+      {% if news_item.event_location %}<span class="inline-flex items-center gap-1.5">{% icon "map-pin" class="size-4" %}{{ news_item.event_location }}</span>{% endif %}
     </p>
   </div>
 </header>
 
-<div class="container py-4 py-md-5 place-detail-container">
-  <div class="row g-4">
-    <article class="place-detail-main">
-      {% if news_item.featured_image %}
-      <figure class="mb-3 place-detail-image-container">
-        <img src="{{ news_item.featured_image|thumb:1600 }}" srcset="{{ news_item.featured_image|srcset:'960,1600' }}" sizes="(min-width: 992px) 66vw, 100vw" fetchpriority="high" class="img-ph place-detail-image" alt="{{ news_item.image_caption|default:news_item.title }}" loading="eager" style="{{ news_item.featured_image|placeholder }}">
-      </figure>
-      {% if news_item.image_caption %}
-      <p class="text-muted small mb-3">{{ news_item.image_caption }}</p>
+<div class="container-page grid gap-10 py-10 md:py-14 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+  <article class="max-w-prose">
+    {% if news_item.image_caption %}
+    <p class="mb-6 text-sm text-muted-foreground">{{ news_item.image_caption }}</p>
+    {% endif %}
+    <div class="text-lg leading-relaxed text-foreground/90 [&_p]:mb-5">{{ news_item|tr:"content"|linebreaks }}</div>
+    {% if news_item|machine_translated %}
+    <p class="machine-note inline-flex items-center gap-1.5">{% icon "languages" class="size-3.5" %}{% translate "Traduzido automaticamente do português." %}</p>
+    {% endif %}
+    <c-button href="{% url 'news:news_list' %}" variant="ghost" class="mt-8 -ms-3">{% icon "arrow-left" %}{% translate "Voltar" %}</c-button>
+  </article>
+
+  <aside class="lg:sticky lg:top-24 lg:self-start">
+    <div class="rounded-xl bg-card p-6 shadow-card ring-1 ring-foreground/8">
+      <h2 class="font-display text-xl font-semibold">{% translate "Quando e onde" %}</h2>
+      <ul class="mt-4 space-y-3">
+        <li class="flex items-start gap-3">
+          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-brand-tint text-brand">{% icon "calendar" class="size-4" %}</span>
+          <span class="pt-1.5 text-sm font-medium">{{ news_item|event_when }}</span>
+        </li>
+        {% if news_item.event_location %}
+        <li class="flex items-start gap-3">
+          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-brand-tint text-brand">{% icon "map-pin" class="size-4" %}</span>
+          <span class="pt-1.5 text-sm font-medium">{{ news_item.event_location }}</span>
+        </li>
+        {% endif %}
+      </ul>
+      {% if news_item.is_past_event %}
+      <p class="mt-4 text-sm text-muted-foreground">{% translate "Este evento já terminou." %}</p>
+      {% elif news_item.maps_url %}
+      <c-button href="{{ news_item.maps_url }}" class="mt-5 w-full" target="_blank" rel="noopener noreferrer">{% icon "signpost" %}{% translate "Como chegar" %}<span class="sr-only"> ({% translate "abre em nova aba" %})</span></c-button>
       {% endif %}
-      {% endif %}
 
-      <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
-        <span class="badge bg-light text-dark" style="font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.5rem;">📅 {% translate "Evento" %}</span>
-        {% if news_item.is_ongoing_event %}
-        <span class="event-status-inline">{% translate "Acontecendo agora" %}</span>
-        {% elif news_item.is_past_event %}
-        <span class="badge text-bg-secondary">{% translate "Encerrado" %}</span>
+      <div class="mt-6 space-y-2 border-t pt-5 text-sm text-muted-foreground">
+        <div>{% blocktranslate with date=news_item.publish_date|date:"DATE_FORMAT" %}Publicado em <strong>{{ date }}</strong>{% endblocktranslate %}</div>
+        <div class="flex items-center gap-1.5">{% icon "eye" class="size-4" %}{% blocktranslate trimmed count counter=news_item.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}</div>
+        {% if news_item.source_url %}
+        <div>{% translate "Fonte" %}: <a class="font-medium text-foreground underline-offset-4 hover:underline" href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="sr-only"> ({% translate "abre em nova aba" %})</span></a></div>
         {% endif %}
       </div>
-
-      <div class="mb-4">
-        <div class="text-muted" style="line-height: 1.6; font-size: 0.875rem;">{{ news_item|tr:"content"|linebreaks }}</div>
-        {% if news_item|machine_translated %}
-        <p class="machine-note"><i class="bi bi-translate me-1" aria-hidden="true"></i>{% translate "Traduzido automaticamente do português." %}</p>
-        {% endif %}
-      </div>
-
-      {# Quando e onde: no fim do texto, com "Voltar" à esquerda e "Como chegar" à direita #}
-      <div class="event-info" role="note">
-        <a href="{% url 'news:news_list' %}" class="event-info-back">
-          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{% translate "Voltar" %}
-        </a>
-        <ul class="event-info-facts">
-          <li><i class="bi bi-calendar3" aria-hidden="true"></i><span class="event-card-when">{{ news_item|event_when }}</span></li>
-          {% if news_item.event_location %}
-          <li><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ news_item.event_location }}</li>
-          {% endif %}
-          {% if news_item.is_past_event %}
-          <li class="text-muted">{% translate "Este evento já terminou." %}</li>
-          {% endif %}
-        </ul>
-        {% if news_item.maps_url and not news_item.is_past_event %}
-        <a class="btn btn-dark" href="{{ news_item.maps_url }}" target="_blank" rel="noopener noreferrer">
-          <i class="bi bi-signpost-2 me-1" aria-hidden="true"></i>{% translate "Como chegar" %}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span>
-        </a>
-        {% endif %}
-      </div>
-    </article>
-
-    <aside class="place-detail-sidebar">
-      <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body p-3">
-          <h2 class="text-uppercase mb-3" style="font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">{% translate "Sobre este evento" %}</h2>
-          <p class="mb-1" style="font-size: 0.8rem;">{% blocktranslate with date=news_item.publish_date|date:"DATE_FORMAT" %}Publicado em <strong>{{ date }}</strong>{% endblocktranslate %}</p>
-          <p class="text-muted mb-2" style="font-size: 0.75rem;">
-            <i class="bi bi-eye me-1" aria-hidden="true"></i>{% blocktranslate trimmed count counter=news_item.view_count %}{{ counter }} visualização{% plural %}{{ counter }} visualizações{% endblocktranslate %}
-          </p>
-          {% if news_item.source_url %}
-          <p class="mb-0" style="font-size: 0.8rem;">
-            {% translate "Fonte" %}: <a href="{{ news_item.source_url }}" target="_blank" rel="noopener noreferrer">{{ news_item.source_name }}<span class="visually-hidden"> ({% translate "abre em nova aba" %})</span></a>
-          </p>
-          {% endif %}
-        </div>
-      </div>
-    </aside>
-  </div>
-
-  {% if related_news %}
-  <section class="mt-5">
-    <div class="section-heading">
-      <h2>{% translate "Mais eventos" %}</h2>
-      <a href="{% url 'news:news_list' %}">{% translate "Ver agenda completa" %}</a>
     </div>
-    <div class="row g-4">
+  </aside>
+</div>
+
+{% if related_news %}
+<section class="border-t bg-card/60 py-12 md:py-16">
+  <div class="container-page">
+    <c-section-heading title="{% translate 'Mais eventos' %}" href="{% url 'news:news_list' %}" link_text="{% translate 'Ver agenda completa' %}" />
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {% for item in related_news %}
-      <div class="col-md-4">
-        <c-event-card :event="item" />
-      </div>
+      <c-event-card :event="item" />
       {% endfor %}
     </div>
-  </section>
-  {% endif %}
-</div>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

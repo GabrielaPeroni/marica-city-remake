@@ -19,7 +19,7 @@ from apps.core.decorators import moderator_required
 from apps.core.utils import safe_next
 
 from .forms import PlaceForm, PlaceImageFormSet, PlaceReviewForm
-from .models import Category, Favorite, Place, PlaceApproval, PlaceReview
+from .models import Category, Favorite, Place, PlaceApproval, PlaceImage, PlaceReview
 from .visits import record_visit
 
 SORTS = ("-created_at", "created_at", "name", "-name")
@@ -71,8 +71,17 @@ def category_detail_view(request, slug):
         )
 
     sort = _sort(request)
+    cover = (
+        PlaceImage.objects.filter(
+            is_primary=True,
+            place__in=Place.objects.public().filter(categories=category),
+        )
+        .order_by("-place__created_at")
+        .first()
+    )
     context = {
         "category": category,
+        "cover": cover,
         "places": places.with_ratings()
         .prefetch_related("images", "categories")
         .order_by(sort),
@@ -486,15 +495,24 @@ def toggle_favorite_view(request, pk):
 
 
 def favorites_list_view(request):
-    """Logado: favoritos do banco. Anônimo: a página carrega do localStorage via JS."""
-    favorites = []
+    """Logado: favoritos do banco. Anônimo: o JS pede ?ids= com os do localStorage."""
     if request.user.is_authenticated:
-        favorites = list(
+        ids = list(
             Favorite.objects.filter(user=request.user)
-            .select_related("place", "place__created_by")
-            .prefetch_related("place__images", "place__categories")
             .order_by("-created_at")
+            .values_list("place_id", flat=True)
         )
+        places = Place.objects.filter(pk__in=ids)
+    else:
+        try:
+            ids = [int(i) for i in request.GET.get("ids", "").split(",") if i.strip()]
+        except ValueError:
+            ids = []
+        places = Place.objects.public().filter(pk__in=ids)
+    by_id = {
+        p.pk: p for p in places.with_ratings().prefetch_related("images", "categories")
+    }
+    favorites = [by_id[i] for i in ids if i in by_id]
     context = {
         "favorites": favorites,
         "favorites_count": len(favorites),

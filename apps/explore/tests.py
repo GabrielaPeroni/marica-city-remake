@@ -2139,6 +2139,20 @@ class FavoritesListViewTests(TestCase):
         self.assertFalse(response.context["is_authenticated"])
         self.assertEqual(response.context["favorites_count"], 0)
 
+    def test_anonymous_ids_render_public_places(self):
+        hidden = Place.objects.create(
+            name="Hidden", description="d", address="a", created_by=self.creator
+        )
+        response = self.client.get(
+            reverse("explore:favorites"), {"ids": f"{self.place.pk},{hidden.pk},x"}
+        )
+        self.assertEqual(response.context["favorites_count"], 0)
+        response = self.client.get(
+            reverse("explore:favorites"), {"ids": f"{self.place.pk},{hidden.pk}"}
+        )
+        self.assertEqual(response.context["favorites"], [self.place])
+        self.assertContains(response, 'data-remove-mode="true"')
+
 
 class SyncFavoritesViewTests(TestCase):
     """Tests for syncing localStorage favorites to the backend"""

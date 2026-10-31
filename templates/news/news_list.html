@@ -1,81 +1,68 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n %}
+{% load i18n icons %}
 
 {% block title %}{% translate "Agenda de eventos" %} - MaricaCity{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<header class="page-header">
-  <div class="container">
-    <div class="page-header-row">
-      <div>
-        <h1>{% translate "Agenda de Maricá" %}</h1>
-        <p class="page-header-subtitle">{% if upcoming_count %}{% blocktranslate trimmed count counter=upcoming_count %}{{ counter }} evento programado: festivais, shows, feiras e tradições da cidade.{% plural %}{{ counter }} eventos programados: festivais, shows, feiras e tradições da cidade.{% endblocktranslate %}{% else %}{% translate "Festivais, shows, feiras e tradições da cidade." %}{% endif %}</p>
-      </div>
-      <a href="{% url 'explore:explore' %}" class="btn btn-light">
-        <i class="bi bi-compass me-1" aria-hidden="true"></i>{% translate "Explorar lugares" %}
-      </a>
+{% if upcoming_count %}
+{% blocktranslate trimmed asvar page_subtitle count counter=upcoming_count %}{{ counter }} evento programado: festivais, shows, feiras e tradições da cidade.{% plural %}{{ counter }} eventos programados: festivais, shows, feiras e tradições da cidade.{% endblocktranslate %}
+{% else %}
+{% translate "Festivais, shows, feiras e tradições da cidade." as page_subtitle %}
+{% endif %}
+
+<c-page-header title="{% translate 'Agenda de Maricá' %}" :subtitle="page_subtitle" eyebrow="{% translate 'Eventos' %}">
+  <c-slot name="actions">
+    <c-button href="{% url 'explore:explore' %}" variant="outline">{% icon "compass" %}{% translate "Explorar lugares" %}</c-button>
+  </c-slot>
+</c-page-header>
+
+<div class="container-page space-y-16 py-10 md:space-y-20 md:py-14">
+  {% if agenda or not news_items.has_previous %}
+  <section aria-labelledby="agendaHeading">
+    <c-section-heading id="agendaHeading" title="{% translate 'Próximos eventos' %}" />
+    {% if agenda %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for event in agenda %}
+      {% if forloop.first %}
+      <c-event-card :event="event" lead eager class="sm:col-span-2 lg:col-span-3" sizes="(min-width: 768px) 50vw, 100vw" />
+      {% else %}
+      <c-event-card :event="event" />
+      {% endif %}
+      {% endfor %}
     </div>
-  </div>
-</header>
-
-<div class="bg-light">
-  <div class="container py-4 py-md-5">
-
-    <section class="mb-5" aria-labelledby="agendaHeading">
-      <div class="section-heading">
-        <h2 id="agendaHeading">{% translate "Próximos eventos" %}</h2>
-      </div>
-      {% if agenda %}
-      <div class="row g-4">
-        {% for event in agenda %}
-        <div class="{% if forloop.first %}col-12{% else %}col-md-6 col-lg-4{% endif %}">
-          <c-event-card :event="event" :lead="forloop.first" :eager="forloop.first" />
-        </div>
-        {% endfor %}
-      </div>
-      {% elif not news_items.has_previous %}
-      <div class="agenda-empty">
-        <i class="bi bi-calendar-x fs-2 d-block mb-2" aria-hidden="true"></i>
-        {% translate "Nenhum evento programado no momento. Volte em breve." %}
-      </div>
-      {% endif %}
-    </section>
-
-    {% if news_items %}
-    <section aria-labelledby="pastHeading">
-      <div class="section-heading">
-        <h2 id="pastHeading">{% translate "Eventos anteriores" %}</h2>
-      </div>
-      <div class="row g-4">
-        {% for event in news_items %}
-        <div class="col-md-6 col-lg-4">
-          <c-event-card :event="event" />
-        </div>
-        {% endfor %}
-      </div>
-
-      {% if news_items.has_other_pages %}
-      <nav class="mt-5" aria-label="{% translate 'Paginação' %}">
-        <ul class="pagination justify-content-center mb-0">
-          {% if news_items.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page={{ news_items.previous_page_number }}">{% translate "Anterior" %}</a></li>
-          {% else %}
-          <li class="page-item disabled"><span class="page-link">{% translate "Anterior" %}</span></li>
-          {% endif %}
-          <li class="page-item disabled"><span class="page-link">{% blocktranslate with number=news_items.number total=news_items.paginator.num_pages %}Página {{ number }} de {{ total }}{% endblocktranslate %}</span></li>
-          {% if news_items.has_next %}
-          <li class="page-item"><a class="page-link" href="?page={{ news_items.next_page_number }}">{% translate "Próxima" %}</a></li>
-          {% else %}
-          <li class="page-item disabled"><span class="page-link">{% translate "Próxima" %}</span></li>
-          {% endif %}
-        </ul>
-      </nav>
-      {% endif %}
-    </section>
+    {% else %}
+    <c-empty-state icon="calendar-x" title="{% translate 'Nenhum evento programado no momento. Volte em breve.' %}" />
     {% endif %}
+  </section>
+  {% endif %}
 
-  </div>
+  {% if news_items %}
+  <section aria-labelledby="pastHeading">
+    <c-section-heading id="pastHeading" title="{% translate 'Eventos anteriores' %}" />
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for event in news_items %}
+      <c-event-card :event="event" />
+      {% endfor %}
+    </div>
+
+    {% if news_items.has_other_pages %}
+    <nav class="mt-10 flex items-center justify-center gap-3" aria-label="{% translate 'Paginação' %}">
+      {% if news_items.has_previous %}
+      <c-button href="{% querystring page=news_items.previous_page_number %}" variant="outline" size="sm">{% icon "arrow-left" %}{% translate "Anterior" %}</c-button>
+      {% else %}
+      <c-button variant="outline" size="sm" disabled>{% icon "arrow-left" %}{% translate "Anterior" %}</c-button>
+      {% endif %}
+      <span class="text-sm text-muted-foreground">{% blocktranslate with number=news_items.number total=news_items.paginator.num_pages %}Página {{ number }} de {{ total }}{% endblocktranslate %}</span>
+      {% if news_items.has_next %}
+      <c-button href="{% querystring page=news_items.next_page_number %}" variant="outline" size="sm">{% translate "Próxima" %}{% icon "arrow-right" %}</c-button>
+      {% else %}
+      <c-button variant="outline" size="sm" disabled>{% translate "Próxima" %}{% icon "arrow-right" %}</c-button>
+      {% endif %}
+    </nav>
+    {% endif %}
+  </section>
+  {% endif %}
 </div>
 {% endblock %}

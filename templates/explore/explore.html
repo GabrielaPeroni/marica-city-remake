@@ -1,141 +1,47 @@
 {% extends 'base.html' %}
-{% load i18n static content_i18n thumbs %}
+{% load i18n icons %}
 
 {% block title %}{% translate "Explorar lugares" %} - MaricaCity{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/pages/explore.css' %}">
-{% endblock %}
 
 {% block content %}
 {% include 'includes/navbar.html' %}
 
-<header class="page-header">
-  <div class="container">
-    <div class="page-header-row">
-      <div>
-        <h1>{% if request.GET.q %}{% blocktranslate with query=request.GET.q %}Resultados para "{{ query }}"{% endblocktranslate %}{% else %}{% translate "Explorar lugares" %}{% endif %}</h1>
-        <p class="page-header-subtitle">{% blocktranslate trimmed count counter=all_places|length %}{{ counter }} lugar para conhecer em Maricá.{% plural %}{{ counter }} lugares para conhecer em Maricá.{% endblocktranslate %}</p>
-      </div>
-      <form method="get" action="{% url 'explore:explore' %}" class="page-header-search" role="search">
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-search" aria-hidden="true"></i></span>
-          <input type="search" name="q" class="form-control" placeholder="{% translate 'Buscar lugares...' %}" value="{{ request.GET.q }}" aria-label="{% translate 'Buscar lugares' %}">
-          {% if request.GET.q %}
-          <a href="{% url 'explore:explore' %}" class="btn btn-light" aria-label="{% translate 'Limpar busca' %}"><i class="bi bi-x-lg" aria-hidden="true"></i></a>
-          {% endif %}
-          <button class="btn btn-dark" type="submit">{% translate "Buscar" %}</button>
-        </div>
-      </form>
-    </div>
+{% if request.GET.q %}
+{% blocktranslate asvar page_title with query=request.GET.q %}Resultados para "{{ query }}"{% endblocktranslate %}
+{% else %}
+{% translate "Explorar lugares" as page_title %}
+{% endif %}
+{% blocktranslate trimmed asvar page_subtitle count counter=all_places|length %}{{ counter }} lugar para conhecer em Maricá.{% plural %}{{ counter }} lugares para conhecer em Maricá.{% endblocktranslate %}
+
+<c-page-header :title="page_title" :subtitle="page_subtitle" eyebrow="{% translate 'Explorar' %}">
+  {% if user.is_authenticated and user.can_create_places %}
+  <c-slot name="actions">
+    <c-button href="{% url 'explore:place_create' %}" variant="brand">{% icon "circle-plus" %}{% translate "Cadastrar lugar" %}</c-button>
+  </c-slot>
+  {% endif %}
+</c-page-header>
+
+{% url 'explore:explore' as explore_url %}
+{% include 'explore/_filter_bar.html' with action=explore_url %}
+
+<section class="container-page py-8 md:py-12" aria-label="{% translate 'Lugares' %}">
+  {% if all_places %}
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {% for place in all_places %}
+    <c-place-card :place="place" eager="{% if forloop.counter <= 4 %}1{% endif %}" level="2" sizes="(min-width: 1280px) 300px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+    {% endfor %}
   </div>
-</header>
-
-<div class="container py-4">
-  <div class="row">
-    <div class="col-md-3 col-lg-2">
-      <div class="sidebar-sticky">
-        <div class="mb-4">
-          <h2 class="fw-bold mb-3" style="font-size: 0.875rem; color: var(--ink-muted);">{% translate "Categorias" %}</h2>
-          <div class="list-group list-group-flush border-0">
-            <a href="{% url 'explore:explore' %}" class="list-group-item list-group-item-action border-0 px-0 py-2 mb-2 pb-3 all-categories-link {% if not request.resolver_match.url_name == 'category_detail' %}active{% endif %}" style="background: transparent; border-bottom: 1px solid var(--line) !important;">
-              <i class="bi bi-grid-3x3-gap me-2"></i><span style="font-size: 0.875rem; font-weight: 600;">{% translate "Todas as categorias" %}</span>
-            </a>
-            {% if categories %}
-              {% for category in categories %}
-              <a href="{% url 'explore:category_detail' category.slug %}" class="list-group-item list-group-item-action border-0 px-0 py-2" style="background: transparent;">
-                <span style="font-size: 0.875rem;">{{ category|tr:"name" }}</span>
-              </a>
-              {% endfor %}
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-9 col-lg-10">
-      {% if user.is_authenticated and user.can_create_places %}
-      <div class="d-flex justify-content-end mb-3">
-        <a href="{% url 'explore:place_create' %}" class="btn btn-dark d-flex align-items-center gap-2" title="{% translate 'Cadastrar lugar' %}">
-          <i class="bi bi-plus-circle" aria-hidden="true"></i>
-          <span>{% translate "Cadastrar lugar" %}</span>
-        </a>
-      </div>
-      {% endif %}
-
-  <section>
-
-    {% if all_places %}
-    <div class="row g-4">
-      {% for place in all_places %}
-      <div class="col-12 col-md-6 col-lg-4">
-          <div class="card place-card position-relative h-100 shadow-sm" {% if place.is_pending %}style="border: 2px solid #60a5fa !important;"{% else %}style="border: 0;"{% endif %}>
-            <div class="position-relative place-card-image-wrapper">
-              {% if place.primary_image %}
-              <img src="{{ place.primary_image.image|thumb:960 }}" srcset="{{ place.primary_image.image|srcset:'480,960' }}" sizes="(min-width: 1200px) 400px, (min-width: 768px) 50vw, 100vw" alt="" class="img-ph card-img-top place-card-img" loading="{% if forloop.counter <= 6 %}eager{% else %}lazy{% endif %}" style="{{ place.primary_image.image|placeholder }}">
-              {% else %}
-              <div class="bg-light text-muted d-flex align-items-center justify-content-center place-card-placeholder">
-                <span class="display-4 fw-bold" aria-hidden="true">{{ place.name|first }}</span>
-              </div>
-              {% endif %}
-              {% if place.is_pending %}
-              <span class="badge bg-primary position-absolute top-0 start-0 m-2" style="font-size: 0.7rem; z-index: 10;">
-                <i class="bi bi-clock-history me-1"></i>{% translate "Aguardando aprovação" %}
-              </span>
-              {% endif %}
-              <button class="btn btn-light btn-sm rounded-circle position-absolute favorite-btn-overlay favorite-btn"
-                      data-place-id="{{ place.pk }}"
-                      title="{% translate 'Adicionar aos favoritos' %}"
-                      aria-label="{% translate 'Adicionar aos favoritos' %}">
-                <i class="bi bi-heart"></i>
-              </button>
-            </div>
-            <div class="card-body p-3">
-              {% if place.categories.exists %}
-                {% with place.categories.first as first_category %}
-                <p class="text-muted mb-1" style="font-size: 0.75rem; font-weight: 500;">
-                  {{ first_category|tr:"name" }}
-                </p>
-                {% endwith %}
-              {% endif %}
-              <h2 class="card-title fw-bold mb-2" style="font-size: 1rem;"><a class="stretched-link text-decoration-none" style="color: var(--ink);" href="{% url 'explore:place_detail' place.pk %}">{{ place.name }}</a></h2>
-              {% with avg=place.average_rating %}{% if avg %}
-              <p class="place-card-rating mb-1">
-                <span class="text-warning" aria-hidden="true">★</span>
-                {% blocktranslate trimmed with rating=avg|floatformat:1 count counter=place.review_count %}
-                {{ rating }} · {{ counter }} avaliação
-                {% plural %}
-                {{ rating }} · {{ counter }} avaliações
-                {% endblocktranslate %}
-              </p>
-              {% endif %}{% endwith %}
-              <p class="text-muted mb-0" style="font-size: 0.875rem;">
-                <i class="bi bi-geo-alt"></i> {{ place.address|truncatewords:5 }}
-              </p>
-            </div>
-          </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="text-center py-5">
-      {% if request.GET.q %}
-      <p class="lead text-muted mb-3">{% blocktranslate with query=request.GET.q %}Nenhum resultado para "{{ query }}".{% endblocktranslate %}</p>
-      <a href="{% url 'explore:explore' %}" class="btn btn-dark">{% translate "Limpar busca" %}</a>
-      {% else %}
-      <p class="lead text-muted">{% translate "Nenhum lugar disponível ainda. Seja o primeiro a cadastrar um!" %}</p>
-      {% if user.is_authenticated and user.can_create_places %}
-      <a href="{% url 'explore:place_create' %}" class="btn btn-dark btn-lg text-uppercase mt-3">{% translate "Cadastrar lugar" %}</a>
-      {% endif %}
-      {% endif %}
-    </div>
+  {% elif request.GET.q %}
+  {% blocktranslate asvar empty_title with query=request.GET.q %}Nenhum resultado para "{{ query }}".{% endblocktranslate %}
+  <c-empty-state icon="search" :title="empty_title" description="{% translate 'Tente outra palavra ou escolha uma categoria.' %}">
+    <c-button href="{% url 'explore:explore' %}" variant="outline">{% translate "Limpar busca" %}</c-button>
+  </c-empty-state>
+  {% else %}
+  <c-empty-state icon="map-pin" title="{% translate 'Nenhum lugar disponível ainda.' %}" description="{% translate 'Seja o primeiro a cadastrar um!' %}">
+    {% if user.is_authenticated and user.can_create_places %}
+    <c-button href="{% url 'explore:place_create' %}" variant="brand">{% icon "circle-plus" %}{% translate "Cadastrar lugar" %}</c-button>
     {% endif %}
-  </section>
-
-    </div>
-  </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
+  </c-empty-state>
+  {% endif %}
+</section>
 {% endblock %}
