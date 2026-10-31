@@ -156,12 +156,12 @@ marica-city-remake/
 │
 ├── static/                         # Arquivos estáticos (CSS, JS, imagens)
 │   ├── css/
-│   │   ├── main.css               # Estilos globais
+│   │   ├── src/app.css            # Fonte Tailwind + Basecoat (tokens); npm run build:css
+│   │   ├── app.css                # CSS compilado (commitado)
 │   │   ├── components/            # Estilos específicos de componentes
 │   │   │   ├── admin_sidebar.css
 │   │   │   ├── admin_topbar.css
-│   │   │   ├── carousel.css
-│   │   │   └── headers.css
+│   │   │   └── bulk_select.css
 │   │   └── pages/                 # Estilos específicos de páginas
 │   │       ├── admin.css
 │   │       ├── explore.css
@@ -645,12 +645,12 @@ Dashboard Admin (/painel-admin/)
 ```
 static/
 ├── css/
-│   ├── main.css                    # Estilos globais (tipografia, cores, utilitários)
+│   ├── src/app.css                 # Fonte: Tailwind v4 + Basecoat, tokens e @theme
+│   ├── app.css                     # Compilado por npm run build:css (commitado)
 │   ├── components/                 # Estilos de componentes reutilizáveis
 │   │   ├── admin_sidebar.css      # Navegação da barra lateral admin
 │   │   ├── admin_topbar.css       # Barra superior admin com badges de stats
-│   │   ├── carousel.css           # Estilização do carrossel Swiper.js
-│   │   └── headers.css            # Cabeçalhos e títulos de páginas
+│   │   └── bulk_select.css        # Barra de seleção em massa
 │   └── pages/                      # Estilos específicos de páginas
 │       ├── admin.css              # Estilos do dashboard admin
 │       ├── explore.css            # Grid e filtros da página explore
