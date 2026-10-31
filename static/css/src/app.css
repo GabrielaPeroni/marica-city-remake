@@ -4,6 +4,7 @@
 @import './pages/landing.css' layer(components);
 @import './pages/discovery.css';
 @import './pages/place.css';
+@import './pages/maps.css';
 
 @source '../../../templates';
 @source '../../js';

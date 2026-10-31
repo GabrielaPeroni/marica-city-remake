@@ -1,0 +1,19 @@
+/* Leaflet: o CSS dele não tem camada e carrega depois, por isso a classe duplicada */
+.leaflet-container.leaflet-container {
+  font-family: inherit;
+  font-size: var(--text-sm);
+}
+
+.leaflet-container.leaflet-container a {
+  color: inherit;
+}
+
+.leaflet-container .leaflet-popup-content-wrapper {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.leaflet-container .leaflet-popup-content {
+  margin: 0.75rem;
+  width: auto !important;
+}

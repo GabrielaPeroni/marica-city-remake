@@ -58,18 +58,13 @@ class LandingPageTests(TestCase):
         self.assertContains(response, "hero-section")
         self.assertContains(response, "swiper")
 
-    @override_settings(GOOGLE_MAPS_API_KEY="test-key")
-    def test_landing_page_shows_google_maps_section(self):
-        """Testa que a pagina inicial tem o google-maps"""
+    @override_settings(GOOGLE_MAPS_API_KEY="")
+    def test_landing_map_uses_leaflet_without_api_key(self):
+        """O mapa usa Leaflet + OpenStreetMap e não depende da chave do Google"""
         response = self.client.get(self.url)
         self.assertContains(response, "landing-map")
         self.assertContains(response, "Navegue pelos Lugares")
-
-    @override_settings(GOOGLE_MAPS_API_KEY="")
-    def test_landing_page_hides_map_without_api_key(self):
-        """Sem chave, o mapa quebrado do Google não deve ser renderizado"""
-        response = self.client.get(self.url)
-        self.assertNotContains(response, "landing-map")
+        self.assertContains(response, "leaflet")
         self.assertNotContains(response, "maps.googleapis.com")
 
 
