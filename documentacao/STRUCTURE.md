@@ -45,7 +45,7 @@ MaricaCity é uma plataforma de turismo baseada em Django para a cidade de Maric
 ## 🗂️ Estrutura Completa de Diretórios
 
 ```
-marica-city-remake/
+marica-city/
 │
 ├── apps/                           # Aplicações Django
 │   ├── __init__.py

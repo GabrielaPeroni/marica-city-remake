@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-31
+
+MaricaCity v2: the project is now `marica-city` (GitHub and
+[marica-city.vercel.app](https://marica-city.vercel.app)); the original course
+project is archived as `Marica-City-v1`.
+
 ### Changed
 
 - Frontend redesign: Bootstrap 5 and Bootstrap Icons replaced by Tailwind

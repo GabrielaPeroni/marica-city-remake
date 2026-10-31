@@ -1,7 +1,7 @@
 [project]
-name = "site-python"
-version = "0.3.0"
-description = "Django site with uv"
+name = "marica-city"
+version = "2.0.0"
+description = "MaricaCity v2: guia de turismo de Maricá (RJ)"
 authors = [{ name = "Noell" }]
 readme = "README.md"
 requires-python = ">=3.11"
@@ -137,7 +137,7 @@ exclude_lines = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.3.0"
+version = "2.0.0"
 version_files = ["pyproject.toml:version"]
 changelog_file = "CHANGELOG.md"
 update_changelog_on_bump = true

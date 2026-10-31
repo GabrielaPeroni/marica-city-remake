@@ -9,7 +9,7 @@ Pré-requisitos: Python 3.10+ e [uv](https://docs.astral.sh/uv/getting-started/i
 
 ```bash
 git clone <repo>
-cd marica-city-remake
+cd marica-city
 uv sync                      # cria .venv/ e instala deps (inclui o grupo dev)
 cp .env.example .env         # preencha SECRET_KEY e GOOGLE_OAUTH_CLIENT_ID no mínimo
 uv run python manage.py migrate

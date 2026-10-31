@@ -1,6 +1,6 @@
 # MaricaCity — Plataforma de Turismo Local
 
-MaricaCity é uma plataforma web para descoberta e avaliação de pontos turísticos de Maricá (RJ). É um **remake** de um projeto acadêmico original ([Marica-City](https://github.com/GabrielaPeroni/Marica-City)), reconstruído com foco em uma base de código mais robusta, organizada e preparada para produção.
+MaricaCity é uma plataforma web para descoberta e avaliação de pontos turísticos de Maricá (RJ). Esta é a **versão 2** de um projeto acadêmico original ([Marica-City-v1](https://github.com/GabrielaPeroni/Marica-City-v1), arquivado), reconstruída com foco em uma base de código mais robusta, organizada e preparada para produção. No ar em [marica-city.vercel.app](https://marica-city.vercel.app).
 
 ## Funcionalidades
 
